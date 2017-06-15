@@ -20,7 +20,7 @@
 
 require_relative 'server'
 
-require 'async/reactor'
+require 'async/container'
 
 require 'samovar'
 require 'etc'
@@ -35,6 +35,8 @@ module Falcon
 		end
 		
 		class Serve < Samovar::Command
+			self.description = "Run an HTTP server."
+			
 			options do
 				option '-c/--config <path>', "Rackup configuration file to load", default: 'config.ru'
 				option '-n/--concurrency <count>', "Number of processes to start", default: Etc.nprocessors, type: Integer
@@ -62,6 +64,8 @@ module Falcon
 		end
 		
 		class Top < Samovar::Command
+			self.description = "An asynchronous HTTP client/server toolset."
+			
 			nested '<command>',
 				'serve' => Serve
 				# 'get' => Get
