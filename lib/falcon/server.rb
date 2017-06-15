@@ -41,7 +41,7 @@ module Falcon
 				'rack.input' => input,
 				'rack.errors' => $stderr,
 				
-				'rack.multithread' => false,
+				'rack.multithread' => true,
 				'rack.multiprocess' => true,
 				'rack.run_once' => false,
 				
@@ -65,9 +65,8 @@ module Falcon
 				'SERVER_PORT' => server_port,
 			}.merge(request.headers)
 			
-			@app.call(env)
+			return @app.call(env)
 		rescue
-			puts $!, $!.backtrace
 			[500, {'Content-Type' => 'text/plain'}, [$!.inspect, "\n", $!.backtrace.join("\n\t")]]
 		end
 	end
