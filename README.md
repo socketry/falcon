@@ -32,14 +32,9 @@ You can run `falcon` directly, and it will load the `config.ru` and start servin
 
 ### Integration with Guard
 
-Falcon can restart very quickly and is ideal for use with guard. In your `Guardfile`:
+Falcon can restart very quickly and is ideal for use with guard. See [guard-falcon] for more details.
 
-```ruby
-
-guard :falcon do
-end
-
-```
+[guard-falcon]: https://github.com/socketry/guard-falcon
 
 ### Deploying with Passenger
 
