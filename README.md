@@ -36,6 +36,23 @@ Falcon can restart very quickly and is ideal for use with guard. See [guard-falc
 
 [guard-falcon]: https://github.com/socketry/guard-falcon
 
+### Integration with Capybara
+
+It is a very fast and light-weight alternative:
+
+```ruby
+Capybara.register_server :falcon do |app, port, host|
+	require 'async/reactor'
+	require 'falcon/server'
+	
+	Async::Reactor.run do
+		server = Falcon::Server.new(app, [Async::IO::Address.tcp(host, port)])
+		
+		server.run
+	end
+end
+```
+
 ### Deploying with Passenger
 
 You can run Falcon within Passenger to improve asyncronicity by using the `Falcon::Hijack` middleware. The first request from a client will be parsed by Passenger, but `rack.hijack` allows us to start parsing requests using Falcon within a separate `Async::Reactor` which reduces latency and avoids blocking IO where possible.
