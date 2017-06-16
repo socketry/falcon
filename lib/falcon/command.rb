@@ -30,6 +30,12 @@ require 'rack/server'
 
 module Falcon
 	module Command
+		def self.default_concurrency
+			Etc.nprocessors
+		rescue
+			2
+		end
+		
 		def self.parse(*args)
 			Top.parse(*args)
 		end
@@ -39,7 +45,7 @@ module Falcon
 			
 			options do
 				option '-c/--config <path>', "Rackup configuration file to load", default: 'config.ru'
-				option '-n/--concurrency <count>', "Number of processes to start", default: Etc.nprocessors, type: Integer
+				option '-n/--concurrency <count>', "Number of processes to start", default: Command.default_concurrency, type: Integer
 				
 				option '-b/--bind <address>', "Bind to the given hostname/address", default: "tcp://localhost:9292"
 			end
