@@ -65,6 +65,10 @@ module Falcon
 				'SERVER_PORT' => server_port,
 			}.merge(request.headers)
 			
+			if remote_address = peer.remote_address
+				env['REMOTE_ADDR'] = remote_address.ip_address if remote_address.ip?
+			end
+			
 			return @app.call(env)
 		rescue
 			$stderr.puts "handle_request: #{$!.inspect} (#{$!.backtrace.first})"
