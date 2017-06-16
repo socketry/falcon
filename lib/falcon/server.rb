@@ -67,6 +67,7 @@ module Falcon
 			
 			return @app.call(env)
 		rescue
+			$stderr.puts "handle_request: #{$!.inspect} (#{$!.backtrace.first})"
 			[500, {'Content-Type' => 'text/plain'}, [$!.inspect, "\n", $!.backtrace.join("\n\t")]]
 		end
 	end
