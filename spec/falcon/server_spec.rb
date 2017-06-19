@@ -23,29 +23,29 @@ require 'async/http/client'
 require 'async/rspec/reactor'
 
 RSpec.describe Falcon::Server do
-	include_context Async::RSpec::Reactor
-	
-	let(:server_addresses) {[
-		Async::IO::Address.tcp('127.0.0.1', 6264, reuse_port: true)
-	]}
-	
-	it "client can get resource" do
-		app = lambda do |env|
-			[200, {}, ["Hello World"]]
-		end
+  include_context Async::RSpec::Reactor
 
-		server = Falcon::Server.new(app, server_addresses)
-		client = Async::HTTP::Client.new(server_addresses)
-		
-		server_task = reactor.async do
-			server.run
-		end
-		
-		response = client.get("/", {})
-		
-		expect(response).to be_success
-		expect(response.body).to be == "Hello World"
-		
-		server_task.stop
-	end
+  let(:server_addresses) {[
+      Async::IO::Address.tcp('127.0.0.1', 6264, reuse_port: true)
+  ]}
+
+  it "client can get resource" do
+    app = lambda do |env|
+      [200, {}, ["Hello World"]]
+    end
+
+    server = Falcon::Server.new(app, server_addresses)
+    client = Async::HTTP::Client.new(server_addresses)
+
+    server_task = reactor.async do
+      server.run
+    end
+
+    response = client.get("/", {})
+
+    expect(response).to be_success
+    expect(response.body).to be == "Hello World"
+
+    server_task.stop
+  end
 end

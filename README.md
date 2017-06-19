@@ -42,14 +42,14 @@ It is a very fast and light-weight alternative:
 
 ```ruby
 Capybara.register_server :falcon do |app, port, host|
-	require 'async/reactor'
-	require 'falcon/server'
-	
-	Async::Reactor.run do
-		server = Falcon::Server.new(app, [Async::IO::Address.tcp(host, port)])
-		
-		server.run
-	end
+    require 'async/reactor'
+    require 'falcon/server'
+    
+    Async::Reactor.run do
+        server = Falcon::Server.new(app, [Async::IO::Address.tcp(host, port)])
+        
+        server.run
+    end
 end
 ```
 
@@ -60,7 +60,7 @@ You can run Falcon within Passenger to improve asyncronicity by using the `Falco
 ```ruby
 
 if RACK_ENV == :production
-	use Falcon::Hijack
+  use Falcon::Hijack
 end
 
 run MyApp

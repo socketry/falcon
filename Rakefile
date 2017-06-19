@@ -6,66 +6,60 @@ RSpec::Core::RakeTask.new(:test)
 task :default => :test
 
 task :server do
-	require 'async/reactor'
-	require 'async/http/server'
-	
-	app = lambda do |env|
-		[200, {}, ["Hello World"]]
-	end
+  require 'async/reactor'
+  require 'async/http/server'
 
-	server = Async::HTTP::Server.new([
-		Async::IO::Address.tcp('127.0.0.1', 9294, reuse_port: true)
-	], app)
+  app = lambda do |env|
+    [200, {}, ["Hello World"]]
+  end
 
-	Async::Reactor.run do
-		server.run
-	end
+  server = Async::HTTP::Server.new([Async::IO::Address.tcp('127.0.0.1', 9294, reuse_port: true)], app)
+
+  Async::Reactor.run do
+    server.run
+  end
 end
 
 task :client do
-	require 'async/reactor'
-	require 'async/http/client'
-	
-	client = Async::HTTP::Client.new([
-		Async::IO::Address.tcp('127.0.0.1', 9294, reuse_port: true)
-	])
-	
-	Async::Reactor.run do
-		response = client.get("/")
-		
-		puts response.inspect
-	end
+  require 'async/reactor'
+  require 'async/http/client'
+
+  client = Async::HTTP::Client.new([Async::IO::Address.tcp('127.0.0.1', 9294, reuse_port: true)])
+
+  Async::Reactor.run do
+    response = client.get("/")
+
+    puts response.inspect
+  end
 end
 
 task :wrk do
-	require 'async/reactor'
-	require 'async/http/server'
-	
-	app = lambda do |env|
-		[200, {}, ["Hello World"]]
-	end
+  require 'async/reactor'
+  require 'async/http/server'
 
-	server = Async::HTTP::Server.new([
-		Async::IO::Address.tcp('127.0.0.1', 9294, reuse_port: true)
-	], app)
+  app = lambda do |env|
+    [200, {}, ["Hello World"]]
+  end
 
-	process_count = Etc.nprocessors
+  server = Async::HTTP::Server.new([Async::IO::Address.tcp('127.0.0.1', 9294, reuse_port: true)], app)
 
-	pids = process_count.times.collect do
-		fork do
-			Async::Reactor.run do
-				server.run
-			end
-		end
-	end
+  process_count = Etc.nprocessors
 
-	url = "http://127.0.0.1:9294/"
-	
-	connections = process_count
-	system("wrk", "-c", connections.to_s, "-d", "2", "-t", connections.to_s, url)
+  pids = process_count.times.collect do
+    fork do
+      Async::Reactor.run do
+        server.run
+      end
+    end
+  end
 
-	pids.each do |pid|
-		Process.kill(:KILL, pid)
-		Process.wait pid
-	end
+  url = "http://127.0.0.1:9294/"
+
+  connections = process_count
+  system("wrk", "-c", connections.to_s, "-d", "2", "-t", connections.to_s, url)
+
+  pids.each do |pid|
+    Process.kill(:KILL, pid)
+    Process.wait pid
+  end
 end
