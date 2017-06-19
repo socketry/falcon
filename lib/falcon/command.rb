@@ -29,64 +29,64 @@ require 'rack/builder'
 require 'rack/server'
 
 module Falcon
-	module Command
-		def self.default_concurrency
-			Etc.nprocessors
-		rescue
-			2
-		end
-		
-		def self.parse(*args)
-			Top.parse(*args)
-		end
-		
-		class Serve < Samovar::Command
-			self.description = "Run an HTTP server."
-			
-			options do
-				option '-c/--config <path>', "Rackup configuration file to load", default: 'config.ru'
-				option '-n/--concurrency <count>', "Number of processes to start", default: Command.default_concurrency, type: Integer
-				
-				option '-b/--bind <address>', "Bind to the given hostname/address", default: "tcp://localhost:9292"
-			end
-			
-			def run
-				app, options = Rack::Builder.parse_file(@options[:config])
-				
-				Async::Container.new(concurrency: @options[:concurrency]) do
-					server = Falcon::Server.new(app, [
-						Async::IO::Address.parse(@options[:bind], reuse_port: true)
-					])
-					
-					server.run
-				end
-			end
-			
-			def invoke
-				run
-				
-				sleep
-			end
-		end
-		
-		class Top < Samovar::Command
-			self.description = "An asynchronous HTTP client/server toolset."
-			
-			nested '<command>',
-				'serve' => Serve
-				# 'get' => Get
-				# 'post' => Post
-				# 'head' => Head,
-				# 'put' => Put,
-				# 'delete' => Delete
-				
-			def invoke(program_name: File.basename($0))
-				if @command
-					@command.invoke
-				else
-					print_usage(program_name)
-				end
-			end
-		end
-	end
+  module Command
+    def self.default_concurrency
+      Etc.nprocessors
+    rescue
+      2
+    end
+
+    def self.parse(*args)
+      Top.parse(*args)
+    end
+
+    class Serve < Samovar::Command
+      self.description = "Run an HTTP server."
+
+      options do
+        option '-c/--config <path>', "Rackup configuration file to load", default: 'config.ru'
+        option '-n/--concurrency <count>', "Number of processes to start", default: Command.default_concurrency, type: Integer
+
+        option '-b/--bind <address>', "Bind to the given hostname/address", default: "tcp://localhost:9292"
+      end
+
+      def run
+        app, options = Rack::Builder.parse_file(@options[:config])
+
+        Async::Container.new(concurrency: @options[:concurrency]) do
+          server = Falcon::Server.new(app, [
+              Async::IO::Address.parse(@options[:bind], reuse_port: true)
+          ])
+
+          server.run
+        end
+      end
+
+      def invoke
+        run
+
+        sleep
+      end
+    end
+
+    class Top < Samovar::Command
+      self.description = "An asynchronous HTTP client/server toolset."
+
+      nested '<command>',
+             'serve' => Serve
+      # 'get' => Get
+      # 'post' => Post
+      # 'head' => Head,
+      # 'put' => Put,
+      # 'delete' => Delete
+
+      def invoke(program_name: File.basename($0))
+        if @command
+          @command.invoke
+        else
+          print_usage(program_name)
+        end
+      end
+    end
+  end
 end
