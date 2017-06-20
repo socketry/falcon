@@ -53,6 +53,14 @@ Capybara.register_server :falcon do |app, port, host|
 end
 ```
 
+### Using with Rackup
+
+You can invoke Falcon via `rackup`:
+
+	rackup --server falcon
+
+This will run a single-threaded instance of Falcon.
+
 ### Deploying with Passenger
 
 You can run Falcon within Passenger to improve asyncronicity by using the `Falcon::Hijack` middleware. The first request from a client will be parsed by Passenger, but `rack.hijack` allows us to start parsing requests using Falcon within a separate `Async::Reactor` which reduces latency and avoids blocking IO where possible.
