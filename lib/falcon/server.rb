@@ -65,8 +65,9 @@ module Falcon
 				'SERVER_PROTOCOL' => request.version,
 				'rack.url_scheme' => 'http',
 				
-				'SERVER_NAME' => server_name,
-				'SERVER_PORT' => server_port,
+				# I'm not sure what sane defaults should be here:
+				'SERVER_NAME' => server_name || '',
+				'SERVER_PORT' => server_port || '',
 			}.merge(request.headers)
 			
 			if remote_address = peer.remote_address

@@ -18,6 +18,35 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-module Falcon
-	VERSION = "0.3.2"
+require 'falcon/server'
+require 'async/http/client'
+require 'async/rspec/reactor'
+
+RSpec.describe Falcon::Server do
+	include_context Async::RSpec::Reactor
+	
+	let(:config_path) {File.join(__dir__, "config.ru")}
+	
+	let(:server) {'falcon'} # of course :)
+	let(:host) {'127.0.0.1'}
+	let(:port) {9290}
+	
+	let(:server_addresses) {[Async::IO::Address.tcp(host, port)]}
+	let(:client) {Async::HTTP::Client.new(server_addresses)}
+	
+	it "can start server" do
+		pid = Process.spawn("rackup", "--server", server, "--host", host, "--port", String(port), config_path)
+		
+		sleep 1
+		
+		begin
+			response = client.get("/", {})
+		
+			expect(response).to be_success
+			expect(response.body).to be == "Hello World"
+		ensure
+			Process.kill :INT, pid
+			Process.wait pid
+		end
+	end
 end
