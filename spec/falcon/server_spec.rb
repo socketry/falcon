@@ -29,23 +29,49 @@ RSpec.describe Falcon::Server do
 		Async::IO::Address.tcp('127.0.0.1', 6264, reuse_port: true)
 	]}
 	
-	it "client can get resource" do
-		app = lambda do |env|
-			[200, {}, ["Hello World"]]
-		end
-
-		server = Falcon::Server.new(app, server_addresses)
-		client = Async::HTTP::Client.new(server_addresses)
-		
+	let(:server) {Falcon::Server.new(app, server_addresses)}
+	let(:client) {Async::HTTP::Client.new(server_addresses)}
+	
+	around(:each) do |example|
 		server_task = reactor.async do
 			server.run
 		end
 		
-		response = client.get("/", {})
+		begin
+			example.run
+		ensure
+			server_task.stop
+		end
+	end
+	
+	context "basic middleware" do
+		let(:app) do
+			app = lambda do |env|
+				[200, {}, ["Hello World"]]
+			end
+		end
 		
-		expect(response).to be_success
-		expect(response.body).to be == "Hello World"
+		it "client can get resource" do
+			response = client.get("/", {})
+			
+			expect(response).to be_success
+			expect(response.body).to be == "Hello World"
+		end
+	end
+	
+	context "broken middleware" do
+		let(:app) do
+			app = lambda do |env|
+				raise RuntimeError, "Middleware is broken"
+			end
+		end
 		
-		server_task.stop
+		it "results in a 500 error if middleware raises an exception" do
+			response = client.get("/", {})
+			
+			expect(response).to_not be_success
+			expect(response.status).to be == 500
+			expect(response.body).to be =~ /RuntimeError: Middleware is broken/
+		end
 	end
 end

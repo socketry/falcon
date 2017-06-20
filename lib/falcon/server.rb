@@ -28,6 +28,10 @@ module Falcon
 			@app = app
 		end
 		
+		def logger
+			Async.logger
+		end
+		
 		def handle_request(request, peer, address)
 			request_path, query_string = request.path.split('?', 2)
 			server_name, server_port = request.headers.fetch('HTTP_HOST', '').split(':', 2)
@@ -70,9 +74,14 @@ module Falcon
 			end
 			
 			return @app.call(env)
-		rescue
-			$stderr.puts "handle_request: #{$!.inspect} (#{$!.backtrace.first})"
-			[500, {'Content-Type' => 'text/plain'}, [$!.inspect, "\n", $!.backtrace.join("\n\t")]]
+		rescue => exception
+			logger.error "#{exception.class}: #{exception.message}\n\t#{$!.backtrace.join("\n\t")}"
+			
+			return failure_response(exception)
+		end
+		
+		def failure_response(exception)
+			[500, {'Content-Type' => 'text/plain'}, ["Request failed due to: #{exception.class}: #{exception.message}"]]
 		end
 	end
 end
