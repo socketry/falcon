@@ -46,7 +46,7 @@ Capybara.register_server :falcon do |app, port, host|
 	require 'falcon/server'
 	
 	Async::Reactor.run do
-		server = Falcon::Server.new(app, [Async::IO::Address.tcp(host, port)])
+		server = Falcon::Server.new(app, [Async::IO::Endpoint.tcp(host, port)])
 		
 		server.run
 	end

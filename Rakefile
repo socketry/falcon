@@ -14,7 +14,7 @@ task :server do
 	end
 
 	server = Async::HTTP::Server.new([
-		Async::IO::Address.tcp('127.0.0.1', 9294, reuse_port: true)
+		Async::IO::Endpoint.tcp('127.0.0.1', 9294, reuse_port: true)
 	], app)
 
 	Async::Reactor.run do
@@ -27,7 +27,7 @@ task :client do
 	require 'async/http/client'
 	
 	client = Async::HTTP::Client.new([
-		Async::IO::Address.tcp('127.0.0.1', 9294, reuse_port: true)
+		Async::IO::Endpoint.tcp('127.0.0.1', 9294, reuse_port: true)
 	])
 	
 	Async::Reactor.run do
@@ -46,7 +46,7 @@ task :wrk do
 	end
 
 	server = Async::HTTP::Server.new([
-		Async::IO::Address.tcp('127.0.0.1', 9294, reuse_port: true)
+		Async::IO::Endpoint.tcp('127.0.0.1', 9294, reuse_port: true)
 	], app)
 
 	process_count = Etc.nprocessors

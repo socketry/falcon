@@ -26,7 +26,7 @@ RSpec.describe Falcon::Server do
 	include_context Async::RSpec::Reactor
 	
 	let(:server_addresses) {[
-		Async::IO::Address.tcp('127.0.0.1', 6264, reuse_port: true)
+		Async::IO::Endpoint.tcp('127.0.0.1', 6264, reuse_port: true)
 	]}
 	
 	let(:server) {Falcon::Server.new(app, server_addresses)}

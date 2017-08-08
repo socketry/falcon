@@ -11,7 +11,7 @@ module Rack
 				port = Integer(options[:Port] || 9292)
 				
 				return [
-					Async::IO::Address.tcp(host, port)
+					Async::IO::Endpoint.tcp(host, port)
 				]
 			end
 			

@@ -55,7 +55,7 @@ module Falcon
 				
 				Async::Container.new(concurrency: @options[:concurrency]) do
 					server = Falcon::Server.new(app, [
-						Async::IO::Address.parse(@options[:bind], reuse_port: true)
+						Async::IO::Endpoint.parse(@options[:bind], reuse_port: true)
 					])
 					
 					server.run

@@ -31,7 +31,7 @@ RSpec.describe Falcon::Server do
 	let(:host) {'127.0.0.1'}
 	let(:port) {9290}
 	
-	let(:server_addresses) {[Async::IO::Address.tcp(host, port)]}
+	let(:server_addresses) {[Async::IO::Endpoint.tcp(host, port)]}
 	let(:client) {Async::HTTP::Client.new(server_addresses)}
 	
 	it "can start server" do
