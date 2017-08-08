@@ -68,9 +68,11 @@ module Falcon
 				# I'm not sure what sane defaults should be here:
 				'SERVER_NAME' => server_name || '',
 				'SERVER_PORT' => server_port || '',
-				
-				'CONTENT_TYPE' => request.headers['HTTP_CONTENT_TYPE'],
 			}.merge(request.headers)
+			
+			if content_type = request.headers['HTTP_CONTENT_TYPE']
+				env['CONTENT_TYPE'] = content_type
+			end
 			
 			if remote_address = peer.remote_address
 				env['REMOTE_ADDR'] = remote_address.ip_address if remote_address.ip?
