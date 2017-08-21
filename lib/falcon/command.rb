@@ -48,12 +48,25 @@ module Falcon
 				option '-n/--concurrency <count>', "Number of processes to start", default: Command.default_concurrency, type: Integer
 				
 				option '-b/--bind <address>', "Bind to the given hostname/address", default: "tcp://localhost:9292"
+				
+				option '--forked | --threaded', "Select a specific concurrency model", key: :container, default: :threaded
+			end
+			
+			def container_class
+				case @options[:container]
+				when :threaded
+					require 'async/container/threaded'
+					return Async::Container::Threaded
+				when :forked
+					require 'async/container/forked'
+					return Async::Container::Forked
+				end
 			end
 			
 			def run
 				app, options = Rack::Builder.parse_file(@options[:config])
 				
-				Async::Container.new(concurrency: @options[:concurrency]) do
+				container_class.new(concurrency: @options[:concurrency]) do
 					server = Falcon::Server.new(app, [
 						Async::IO::Endpoint.parse(@options[:bind], reuse_port: true)
 					])
