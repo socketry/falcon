@@ -38,20 +38,9 @@ Falcon can restart very quickly and is ideal for use with guard. See [guard-falc
 
 ### Integration with Capybara
 
-It is a very fast and light-weight alternative:
+It is a very fast and light-weight implementation for Capybara:
 
-```ruby
-Capybara.register_server :falcon do |app, port, host|
-	require 'async/reactor'
-	require 'falcon/server'
-	
-	Async::Reactor.run do
-		server = Falcon::Server.new(app, [Async::IO::Endpoint.tcp(host, port)])
-		
-		server.run
-	end
-end
-```
+[falcon-capybara]: https://github.com/socketry/falcon-capybara
 
 ### Using with Rackup
 
