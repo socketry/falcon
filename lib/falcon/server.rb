@@ -70,6 +70,11 @@ module Falcon
 				'SERVER_PORT' => server_port || '',
 			}.merge(request.headers)
 			
+			env['rack.hijack?'] = true
+			env['rack.hijack'] = lambda do
+				env['rack.hijack_io'] = peer
+			end
+			
 			if content_type = request.headers['HTTP_CONTENT_TYPE']
 				env['CONTENT_TYPE'] = content_type
 			end
@@ -78,7 +83,13 @@ module Falcon
 				env['REMOTE_ADDR'] = remote_address.ip_address if remote_address.ip?
 			end
 			
-			return @app.call(env)
+			response = @app.call(env)
+			
+			if env['rack.hijack_io']
+				throw :hijack
+			else
+				return response
+			end
 		rescue => exception
 			logger.error "#{exception.class}: #{exception.message}\n\t#{$!.backtrace.join("\n\t")}"
 			
