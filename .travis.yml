@@ -2,16 +2,18 @@ language: ruby
 sudo: false
 dist: trusty
 cache: bundler
-rvm:
-  - 2.0
-  - 2.1
-  - 2.2
-  - 2.3
-  - 2.4
-  - jruby-head
-  - ruby-head
-  - rbx-3
+
 matrix:
+  include:
+    - rvm: 2.0
+    - rvm: 2.1
+    - rvm: 2.2
+    - rvm: 2.3
+    - rvm: 2.4
+    - rvm: jruby-head
+      env: JRUBY_OPTS="--debug -X+O"
+    - rvm: ruby-head
+    - rvm: rbx-3
   allow_failures:
     - rvm: ruby-head
     - rvm: jruby-head
