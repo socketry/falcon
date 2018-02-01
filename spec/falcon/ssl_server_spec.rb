@@ -21,40 +21,15 @@
 require 'falcon/server'
 require 'async/http/client'
 require 'async/rspec/reactor'
+require 'async/rspec/ssl'
 
 require 'async/io/ssl_socket'
 
 RSpec.describe "Falcon::Server with SSL" do
 	include_context Async::RSpec::Reactor
 	
-	let(:key) {OpenSSL::PKey::RSA.new(2048)}
-	
-	let(:certificate) do
-		subject = "/C=NZ/O=Test/OU=Test/CN=Test"
-		
-		certificate = OpenSSL::X509::Certificate.new
-		certificate.subject = certificate.issuer = OpenSSL::X509::Name.parse(subject)
-		certificate.not_before = Time.now - 3600
-		certificate.not_after = Time.now + 3600
-		certificate.public_key = key.public_key
-		certificate.serial = 0x0
-		certificate.version = 2
-		
-		certificate.sign key, OpenSSL::Digest::SHA1.new
-	end
-		
-	let(:server_context) do
-		OpenSSL::SSL::SSLContext.new.tap do |context|
-			context.cert = certificate
-			context.key = key
-		end
-	end
-	
-	let(:client_context) do
-		OpenSSL::SSL::SSLContext.new.tap do |context|
-			context.verify_mode = OpenSSL::SSL::VERIFY_NONE
-		end
-	end
+	include_context Async::RSpec::SSL::ValidCertificate
+	include_context Async::RSpec::SSL::VerifiedContexts
 	
 	let(:endpoint) {Async::IO::Endpoint.tcp("localhost", 6365, reuse_port: true)}
 	let(:server_endpoint) {Async::IO::SecureEndpoint.new(endpoint, ssl_context: server_context)}
