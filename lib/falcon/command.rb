@@ -19,6 +19,7 @@
 # THE SOFTWARE.
 
 require_relative 'server'
+require_relative 'verbose'
 
 require 'async/container'
 
@@ -63,8 +64,20 @@ module Falcon
 				end
 			end
 			
-			def run
+			def load_app(verbose)
 				app, options = Rack::Builder.parse_file(@options[:config])
+				
+				if verbose
+					app = Verbose.new(app)
+				end
+				
+				return app, options
+			end
+			
+			def run(verbose)
+				app, options = load_app(verbose)
+				
+				Async.logger.info "Falcon taking flight! Binding to #{@options[:bind]} [#{container_class} with concurrency: #{@options[:concurrency]}]"
 				
 				container_class.new(concurrency: @options[:concurrency]) do
 					server = Falcon::Server.new(app, [
@@ -75,8 +88,8 @@ module Falcon
 				end
 			end
 			
-			def invoke
-				run
+			def invoke(parent)
+				run(parent.verbose?)
 				
 				sleep
 			end
@@ -85,6 +98,10 @@ module Falcon
 		class Top < Samovar::Command
 			self.description = "An asynchronous HTTP client/server toolset."
 			
+			options do
+				option '--verbose', 'Increase the log output', default: false
+			end
+			
 			nested '<command>',
 				'serve' => Serve
 				# 'get' => Get
@@ -92,10 +109,18 @@ module Falcon
 				# 'head' => Head,
 				# 'put' => Put,
 				# 'delete' => Delete
-				
+			
+			def verbose?
+				options[:verbose]
+			end
+			
 			def invoke(program_name: File.basename($0))
+				if options[:verbose]
+					Async.logger.level = Logger::INFO
+				end
+				
 				if @command
-					@command.invoke
+					@command.invoke(self)
 				else
 					print_usage(program_name)
 				end
