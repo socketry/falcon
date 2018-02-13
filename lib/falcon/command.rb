@@ -89,7 +89,7 @@ module Falcon
 			end
 			
 			def invoke(parent)
-				run(parent.verbose?)
+				run(!parent.quiet?)
 				
 				sleep
 			end
@@ -99,7 +99,9 @@ module Falcon
 			self.description = "An asynchronous HTTP client/server toolset."
 			
 			options do
-				option '--verbose', 'Increase the log output', default: false
+				option '--verbose | --quiet', "Verbosity of output for debugging.", key: :logging
+				option '-h/--help', "Print out help information."
+				option '-v/--version', "Print out the application version."
 			end
 			
 			nested '<command>',
@@ -111,18 +113,28 @@ module Falcon
 				# 'delete' => Delete
 			
 			def verbose?
-				options[:verbose]
+				@options[:logging] == :verbose
+			end
+			
+			def quiet?
+				@options[:logging] == :quiet
 			end
 			
 			def invoke(program_name: File.basename($0))
-				if options[:verbose]
+				if verbose?
+					Async.logger.level = Logger::DEBUG
+				elsif quiet?
+					Async.logger.level = Logger::WARN
+				else
 					Async.logger.level = Logger::INFO
 				end
 				
-				if @command
-					@command.invoke(self)
-				else
+				if @options[:version]
+					puts "falcon v#{Falcon::VERSION}"
+				elsif @options[:help] or @command.nil?
 					print_usage(program_name)
+				else
+					@command.invoke(self)
 				end
 			end
 		end
