@@ -27,6 +27,14 @@ module Falcon
 			@logger = logger
 		end
 		
+		def annotate(env, task = Async::Task.current)
+			request_method = env['REQUEST_METHOD']
+			request_path = env['PATH_INFO']
+			remote_address = env['REMOTE_ADDR']
+			
+			task.annotate("#{request_method} #{request_path} for #{remote_address}")
+		end
+		
 		def log(start_time, env, response, error)
 			duration = Time.now - start_time
 			
@@ -43,6 +51,8 @@ module Falcon
 		
 		def call(env)
 			start_time = Time.now
+			
+			annotate(env)
 			
 			response = @app.call(env)
 		ensure

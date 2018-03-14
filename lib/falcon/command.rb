@@ -22,6 +22,7 @@ require_relative 'server'
 require_relative 'verbose'
 
 require 'async/container'
+require 'async/io/trap'
 
 require 'samovar'
 require 'etc'
@@ -79,7 +80,18 @@ module Falcon
 				
 				Async.logger.info "Falcon taking flight! Binding to #{@options[:bind]} [#{container_class} with concurrency: #{@options[:concurrency]}]"
 				
-				container_class.new(concurrency: @options[:concurrency]) do
+				debug_trap = Async::IO::Trap.new(:USR1)
+				
+				container_class.new(concurrency: @options[:concurrency]) do |task|
+					task.async do
+						debug_trap.install!
+						Async.logger.info "Send `kill -USR1 #{Process.pid}` for detailed status :)"
+						
+						debug_trap.trap do
+							task.reactor.print_hierarchy($stderr)
+						end
+					end
+					
 					server = Falcon::Server.new(app, [
 						Async::IO::Endpoint.parse(@options[:bind], reuse_port: true)
 					])
@@ -89,7 +101,7 @@ module Falcon
 			end
 			
 			def invoke(parent)
-				run(!parent.quiet?)
+				container = run(parent.verbose?)
 				
 				sleep
 			end
