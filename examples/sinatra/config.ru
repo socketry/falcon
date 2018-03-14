@@ -6,7 +6,7 @@
 require 'sinatra/base'
 class MyApp < Sinatra::Base
 	get "/" do
-		"hello world"
+		response = Faraday.get 'http://sushi.com/nigiri/sake.json'
 	end
 end
 
