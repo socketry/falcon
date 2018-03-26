@@ -19,6 +19,7 @@
 # THE SOFTWARE.
 
 require_relative 'command/serve'
+require_relative 'version'
 
 require 'samovar'
 
