@@ -1,6 +1,6 @@
 language: ruby
-sudo: false
-dist: trusty
+sudo: required
+dist: xenial
 cache: bundler
 
 matrix:
