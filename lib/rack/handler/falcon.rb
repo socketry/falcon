@@ -6,19 +6,17 @@ require_relative '../../falcon'
 module Rack
 	module Handler
 		module Falcon
-			def self.addresses_for(**options)
+			def self.endpoint_for(**options)
 				host = options[:Host] || 'localhost'
 				port = Integer(options[:Port] || 9292)
 				
-				return [
-					Async::IO::Endpoint.tcp(host, port)
-				]
+				return Async::IO::Endpoint.tcp(host, port)
 			end
 			
 			def self.run(app, **options)
-				addresses = addresses_for(**options)
+				endpoint = endpoint_for(**options)
 				
-				server = ::Falcon::Server.new(app, addresses)
+				server = ::Falcon::Server.new(app, endpoint)
 				
 				Async::Reactor.run do
 					server.run

@@ -25,12 +25,12 @@ require 'async/rspec/reactor'
 RSpec.describe Falcon::Server do
 	include_context Async::RSpec::Reactor
 	
-	let(:server_addresses) {[
-		Async::IO::Endpoint.tcp('127.0.0.1', 6264, reuse_port: true)
-	]}
+	let(:endpoint) {Async::IO::Endpoint.tcp('127.0.0.1', 6264, reuse_port: true)}
 	
-	let(:server) {Falcon::Server.new(app, server_addresses)}
-	let(:client) {Async::HTTP::Client.new(server_addresses)}
+	let(:protocol) {Async::HTTP::Protocol::HTTP1}
+	let(:server) {Falcon::Server.new(app, endpoint, protocol)}
+	let(:client) {Async::HTTP::Client.new(endpoint, protocol)}
+	after(:each) {client.close}
 	
 	around(:each) do |example|
 		server_task = reactor.async do

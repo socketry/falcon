@@ -31,8 +31,11 @@ RSpec.describe Falcon::Server do
 	let(:host) {'127.0.0.1'}
 	let(:port) {9290}
 	
-	let(:server_addresses) {[Async::IO::Endpoint.tcp(host, port)]}
-	let(:client) {Async::HTTP::Client.new(server_addresses)}
+	let(:protocol) {Async::HTTP::Protocol::HTTP1}
+	let(:endpoint) {Async::IO::Endpoint.tcp(host, port)}
+	let(:client) {Async::HTTP::Client.new(endpoint, protocol)}
+	
+	after(:each) {client.close}
 	
 	it "can start server" do
 		pid = Process.spawn("rackup", "--server", server, "--host", host, "--port", String(port), config_path)

@@ -31,12 +31,15 @@ RSpec.describe "Falcon::Server with SSL" do
 	include_context Async::RSpec::SSL::ValidCertificate
 	include_context Async::RSpec::SSL::VerifiedContexts
 	
+	let(:protocol) {Async::HTTP::Protocol::HTTPS}
+	
 	let(:endpoint) {Async::IO::Endpoint.tcp("localhost", 6365, reuse_port: true)}
 	let(:server_endpoint) {Async::IO::SecureEndpoint.new(endpoint, ssl_context: server_context)}
 	let(:client_endpoint) {Async::IO::SecureEndpoint.new(endpoint, ssl_context: client_context)}
 	
-	let(:server) {Falcon::Server.new(app, [server_endpoint])}
-	let(:client) {Async::HTTP::Client.new([client_endpoint])}
+	let(:server) {Falcon::Server.new(app, server_endpoint, protocol)}
+	let(:client) {Async::HTTP::Client.new(client_endpoint, protocol)}
+	after(:each) {client.close}
 	
 	around(:each) do |example|
 		server_task = reactor.async do

@@ -74,7 +74,9 @@ module Falcon
 			def run(verbose)
 				app, options = load_app(verbose)
 				
-				Async.logger.info "Falcon taking flight! Binding to #{@options[:bind]} [#{container_class} with concurrency: #{@options[:concurrency]}]"
+				endpoint = Async::IO::Endpoint.parse(@options[:bind], reuse_port: true)
+				
+				Async.logger.info "Falcon taking flight! Binding to #{endpoint} [#{container_class} with concurrency: #{@options[:concurrency]}]"
 				
 				debug_trap = Async::IO::Trap.new(:USR1)
 				
@@ -88,9 +90,7 @@ module Falcon
 						end
 					end
 					
-					server = Falcon::Server.new(app, [
-						Async::IO::Endpoint.parse(@options[:bind], reuse_port: true)
-					])
+					server = Falcon::Server.new(app, endpoint)
 					
 					server.run
 				end
