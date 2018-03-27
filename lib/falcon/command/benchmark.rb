@@ -59,7 +59,7 @@ module Falcon
 				@duration.to_f / @samples.count.to_f
 			end
 			
-			def similar?(other, difference = 1.1)
+			def similar?(other, difference = 2.0)
 				ratio = other.latency / self.latency
 				
 				return ratio < difference
@@ -119,7 +119,7 @@ module Falcon
 			private
 			
 			def confident?
-				(@samples.count > @concurrency * 10) && @duration > (self.latency * 100)
+				(@samples.count > @concurrency) && (@duration > @concurrency * 2)
 			end
 		end
 		
@@ -146,7 +146,7 @@ module Falcon
 					end
 				end.each(&:wait)
 				
-				puts "I made #{statistics.count} requests in #{statistics.duration.round(1)} seconds. That's #{statistics.per_second} asynchronous requests/second."
+				puts "I made #{statistics.count} requests in #{statistics.duration.round(1)} seconds. The per-request latency was #{statistics.latency}. That's #{statistics.per_second} asynchronous requests/second."
 				
 				return statistics
 			end
@@ -167,24 +167,30 @@ module Falcon
 					current = 2
 					maximum = nil
 					
-					while true
+					while statistics.last.concurrency < current
 						results = measure_performance(current, endpoint, request_path)
 						
 						if base.similar?(results)
 							statistics << results
 							
 							minimum = current
-							current *= 2
+							
+							if maximum
+								current += (maximum - current) / 2
+							else
+								current *= 2
+							end
 						else
+							# current concurrency is too big, so we limit maximum to it.
 							maximum = current
 							
 							current = (minimum + (maximum - minimum) / 2).floor
-							
-							break if statistics.last.concurrency >= current
 						end
 					end
 					
 					puts "Your server can handle #{statistics.last.concurrency} concurrent requests."
+					
+					puts "At this level of concurrency, requests have ~#{(statistics.last.latency / statistics.first.latency).round(2)}x higher latency."
 				end
 			end
 			
