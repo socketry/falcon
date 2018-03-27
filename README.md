@@ -50,20 +50,6 @@ You can invoke Falcon via `rackup`:
 
 This will run a single-threaded instance of Falcon.
 
-### Deploying with Passenger
-
-You can run Falcon within Passenger to improve asyncronicity by using the `Falcon::Hijack` middleware. The first request from a client will be parsed by Passenger, but `rack.hijack` allows us to start parsing requests using Falcon within a separate `Async::Reactor` which reduces latency and avoids blocking IO where possible.
-
-```ruby
-
-if RACK_ENV == :production
-	use Falcon::Hijack
-end
-
-run MyApp
-
-```
-
 ## Performance
 
 Falcon is uses an asynchronous event-driven reactor to provide non-blocking IO. It can handle an arbitrary number of in-flight requests with minimal overhead per request.
