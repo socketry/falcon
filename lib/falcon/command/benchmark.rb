@@ -1,4 +1,4 @@
-# Copyright, 2017, by Samuel G. D. Williams. <http://www.codeotaku.com>
+# Copyright, 2018, by Samuel G. D. Williams. <http://www.codeotaku.com>
 # 
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -22,17 +22,73 @@ require_relative '../server'
 require_relative '../verbose'
 
 require 'async/container'
-require 'async/io/trap'
+
+require 'async/http/client'
+require 'async/http/url_endpoint'
 
 require 'samovar'
 
-require 'rack/builder'
-require 'rack/server'
-
 module Falcon
 	module Command
-		class Serve < Samovar::Command
-			self.description = "Run an HTTP server."
+		class Statistics
+			def initialize
+				@samples = []
+			end
+			
+			attr :samples
+			
+			def average
+				if @samples.any?
+					@samples.sum / @samples.count
+				end
+			end
+			
+			def variance
+				return nil if @samples.count < 2
+				
+				average = self.average
+				
+				return @samples.map{|n| n - average}.sum / @samples.count
+			end
+			
+			def standard_deviation
+				if variance = self.variance
+					Math.sqrt(variance)
+				end
+			end
+			
+			def standard_error
+				if standard_deviation = self.standard_deviation
+					standard_deviation / Math.sqrt(@samples.count)
+				end
+			end
+			
+			def measure
+				start_time = Time.now
+				
+				result = yield
+				
+				@samples << Time.now - start_time
+				
+				return result
+			end
+			
+			def sample(&block)
+				# warmup
+				yield
+				
+				100.times do
+					measure(&block)
+				end
+			end
+			
+			def print(out = STDOUT)
+				out.puts "#{@samples.count} samples. #{1.0 / self.average} per second. #{variance}."
+			end
+		end
+		
+		class Benchmark < Samovar::Command
+			self.description = "Benchmark an HTTP server."
 			
 			options do
 				option '-c/--config <path>', "Rackup configuration file to load", default: 'config.ru'
@@ -42,6 +98,8 @@ module Falcon
 				
 				option '--forked | --threaded', "Select a specific concurrency model", key: :container, default: :threaded
 			end
+			
+			many :hosts
 			
 			def container_class
 				case @options[:container]
@@ -54,45 +112,31 @@ module Falcon
 				end
 			end
 			
-			def load_app(verbose)
-				app, options = Rack::Builder.parse_file(@options[:config])
+			def run(url)
+				endpoint = Async::HTTP::URLEndpoint.parse(url)
+				request_path = endpoint.url.request_uri
 				
-				if verbose
-					app = Verbose.new(app)
-				end
-				
-				return app, options
-			end
-			
-			def run(verbose)
-				app, options = load_app(verbose)
-				
-				endpoint = Async::IO::Endpoint.parse(@options[:bind], reuse_port: true)
-				
-				Async.logger.info "Falcon taking flight! Binding to #{endpoint} [#{container_class} with concurrency: #{@options[:concurrency]}]"
-				
-				debug_trap = Async::IO::Trap.new(:USR1)
+				Async.logger.info "Benchmarking #{url}..."
 				
 				container_class.new(concurrency: @options[:concurrency]) do |task|
-					task.async do
-						debug_trap.install!
-						Async.logger.info "Send `kill -USR1 #{Process.pid}` for detailed status :)"
-						
-						debug_trap.trap do
-							task.reactor.print_hierarchy($stderr)
-						end
+					client = Async::HTTP::Client.new(endpoint, endpoint.protocol)
+					statistics = Statistics.new
+					
+					statistics.sample do
+						response = client.get(request_path)
 					end
 					
-					server = Falcon::Server.new(app, endpoint)
-					
-					server.run
+					statistics.print
+					client.close
 				end
 			end
 			
 			def invoke(parent)
-				container = run(parent.verbose?)
-				
-				container.wait
+				Async::Reactor.run do
+					@hosts.each do |host|
+						run(host).wait
+					end
+				end
 			end
 		end
 	end

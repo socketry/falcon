@@ -19,6 +19,8 @@
 # THE SOFTWARE.
 
 require_relative 'command/serve'
+require_relative 'command/benchmark'
+
 require_relative 'version'
 
 require 'samovar'
@@ -39,7 +41,8 @@ module Falcon
 			end
 			
 			nested '<command>',
-				'serve' => Serve
+				'serve' => Serve,
+				'benchmark' => Benchmark
 				# 'get' => Get
 				# 'post' => Post
 				# 'head' => Head,
