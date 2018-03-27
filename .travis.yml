@@ -3,6 +3,9 @@ sudo: required
 dist: xenial
 cache: bundler
 
+before_script:
+  - gem update --system
+
 matrix:
   include:
     - rvm: 2.3
