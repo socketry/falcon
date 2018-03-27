@@ -85,6 +85,8 @@ module Falcon
 					
 					server = Falcon::Server.new(app, endpoint)
 					
+					server.run
+					
 					task.children.each(&:wait)
 				end
 			end
