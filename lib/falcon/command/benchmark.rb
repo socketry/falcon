@@ -31,11 +31,39 @@ require 'samovar'
 module Falcon
 	module Command
 		class Statistics
-			def initialize
+			def initialize(concurrency)
 				@samples = []
+				@duration = 0
+				
+				@concurrency = concurrency
 			end
 			
 			attr :samples
+			attr :duration
+			
+			attr :concurrency
+			
+			def sequential_duration
+				@duration / @concurrency
+			end
+			
+			def count
+				@samples.count
+			end
+			
+			def per_second
+				@samples.count.to_f / sequential_duration.to_f
+			end
+			
+			def latency
+				@duration.to_f / @samples.count.to_f
+			end
+			
+			def similar?(other, difference = 1.1)
+				ratio = other.latency / self.latency
+				
+				return ratio < difference
+			end
 			
 			def average
 				if @samples.any?
@@ -53,7 +81,7 @@ module Falcon
 			
 			def standard_deviation
 				if variance = self.variance
-					Math.sqrt(variance)
+					Math.sqrt(variance.abs)
 				end
 			end
 			
@@ -68,7 +96,9 @@ module Falcon
 				
 				result = yield
 				
-				@samples << Time.now - start_time
+				duration = Time.now - start_time
+				@samples << duration
+				@duration += duration
 				
 				return result
 			end
@@ -77,65 +107,90 @@ module Falcon
 				# warmup
 				yield
 				
-				100.times do
+				begin
 					measure(&block)
-				end
+				end until confident?
 			end
 			
 			def print(out = STDOUT)
-				out.puts "#{@samples.count} samples. #{1.0 / self.average} per second. #{variance}."
+				out.puts "#{@samples.count} samples. #{1.0 / self.average} per second. S/D: #{standard_deviation}."
+			end
+			
+			private
+			
+			def confident?
+				(@samples.count > @concurrency * 10) && @duration > (self.latency * 100)
 			end
 		end
 		
 		class Benchmark < Samovar::Command
 			self.description = "Benchmark an HTTP server."
 			
-			options do
-				option '-c/--config <path>', "Rackup configuration file to load", default: 'config.ru'
-				option '-n/--concurrency <count>', "Number of processes to start", default: Async::Container.hardware_concurrency, type: Integer
-				
-				option '-b/--bind <address>', "Bind to the given hostname/address", default: "tcp://localhost:9292"
-				
-				option '--forked | --threaded', "Select a specific concurrency model", key: :container, default: :threaded
-			end
-			
 			many :hosts
 			
-			def container_class
-				case @options[:container]
-				when :threaded
-					require 'async/container/threaded'
-					return Async::Container::Threaded
-				when :forked
-					require 'async/container/forked'
-					return Async::Container::Forked
-				end
+			def measure_performance(concurrency, endpoint, request_path)
+				puts "I am running #{concurrency} asynchronous tasks that will each make sequential requests..."
+				
+				statistics = Statistics.new(concurrency)
+				task = Async::Task.current
+				
+				concurrency.times.map do
+					task.async do
+						client = Async::HTTP::Client.new(endpoint, endpoint.protocol)
+						
+						statistics.sample do
+							response = client.get(request_path)
+						end
+						
+						client.close
+					end
+				end.each(&:wait)
+				
+				puts "I made #{statistics.count} requests in #{statistics.duration.round(1)} seconds. That's #{statistics.per_second} asynchronous requests/second."
+				
+				return statistics
 			end
 			
 			def run(url)
 				endpoint = Async::HTTP::URLEndpoint.parse(url)
 				request_path = endpoint.url.request_uri
 				
-				Async.logger.info "Benchmarking #{url}..."
+				puts "I am going to benchmark #{url}..."
 				
-				container_class.new(concurrency: @options[:concurrency]) do |task|
-					client = Async::HTTP::Client.new(endpoint, endpoint.protocol)
-					statistics = Statistics.new
+				Async::Reactor.run do |task|
+					statistics = []
+					minimum = 1
 					
-					statistics.sample do
-						response = client.get(request_path)
+					base = measure_performance(minimum, endpoint, request_path)
+					statistics << base
+					
+					current = 2
+					maximum = nil
+					
+					while true
+						results = measure_performance(current, endpoint, request_path)
+						
+						if base.similar?(results)
+							statistics << results
+							
+							minimum = current
+							current *= 2
+						else
+							maximum = current
+							
+							current = (minimum + (maximum - minimum) / 2).floor
+							
+							break if statistics.last.concurrency >= current
+						end
 					end
 					
-					statistics.print
-					client.close
+					puts "Your server can handle #{statistics.last.concurrency} concurrent requests."
 				end
 			end
 			
 			def invoke(parent)
-				Async::Reactor.run do
-					@hosts.each do |host|
-						run(host).wait
-					end
+				@hosts.each do |host|
+					run(host).wait
 				end
 			end
 		end
