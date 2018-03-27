@@ -19,7 +19,6 @@
 # THE SOFTWARE.
 
 require_relative 'command/serve'
-require_relative 'command/benchmark'
 
 require_relative 'version'
 
@@ -41,8 +40,7 @@ module Falcon
 			end
 			
 			nested '<command>',
-				'serve' => Serve,
-				'benchmark' => Benchmark
+				'serve' => Serve
 				# 'get' => Get
 				# 'post' => Post
 				# 'head' => Head,
