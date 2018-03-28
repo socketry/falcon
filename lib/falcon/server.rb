@@ -34,10 +34,12 @@ module Falcon
 		
 		def handle_request(request, peer, address)
 			request_path, query_string = request.path.split('?', 2)
-			server_name, server_port = request.headers.fetch('HTTP_HOST', '').split(':', 2)
+			server_name, server_port = (request.authority || '').split(':', 2)
 			
 			input = StringIO.new(request.body || '')
 			input.set_encoding(Encoding::BINARY)
+			
+			headers = request.headers.to_http_hash
 			
 			env = {
 				'rack.version' => [2, 0, 0],
@@ -68,7 +70,7 @@ module Falcon
 				# I'm not sure what sane defaults should be here:
 				'SERVER_NAME' => server_name || '',
 				'SERVER_PORT' => server_port || '',
-			}.merge(request.headers)
+			}.merge(headers)
 			
 			env['rack.hijack?'] = true
 			env['rack.hijack'] = lambda do
