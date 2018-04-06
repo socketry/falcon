@@ -39,8 +39,6 @@ module Falcon
 			input = StringIO.new(request.body || '')
 			input.set_encoding(Encoding::BINARY)
 			
-			headers = request.headers.to_http_hash
-			
 			env = {
 				'rack.version' => [2, 0, 0],
 				
@@ -70,7 +68,11 @@ module Falcon
 				# I'm not sure what sane defaults should be here:
 				'SERVER_NAME' => server_name || '',
 				'SERVER_PORT' => server_port || '',
-			}.merge(headers)
+			}
+			
+			request.headers.each do |key, value|
+				env["HTTP_#{key.upcase.tr('-', '_')}"] = value
+			end
 			
 			env['rack.hijack?'] = true
 			env['rack.hijack'] = lambda do
