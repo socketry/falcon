@@ -18,6 +18,8 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
+require_relative 'input'
+
 require 'async/http/server'
 
 module Falcon
@@ -36,13 +38,10 @@ module Falcon
 			request_path, query_string = request.path.split('?', 2)
 			server_name, server_port = (request.authority || '').split(':', 2)
 			
-			input = StringIO.new(request.body || '')
-			input.set_encoding(Encoding::BINARY)
-			
 			env = {
 				'rack.version' => [2, 0, 0],
 				
-				'rack.input' => input,
+				'rack.input' => Input.new(request.body),
 				'rack.errors' => $stderr,
 				
 				'rack.multithread' => true,
@@ -69,6 +68,10 @@ module Falcon
 				'SERVER_NAME' => server_name || '',
 				'SERVER_PORT' => server_port || '',
 			}
+			
+			if content_type = request.headers['content-type']
+				env['CONTENT_TYPE'] = content_type
+			end
 			
 			request.headers.each do |key, value|
 				env["HTTP_#{key.upcase.tr('-', '_')}"] = value

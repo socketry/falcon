@@ -64,7 +64,7 @@ RSpec.describe "Falcon::Server with SSL" do
 			response = client.get("/", {})
 			
 			expect(response).to be_success
-			expect(response.body).to be == "Hello World"
+			expect(response.read).to be == "Hello World"
 		end
 	end
 end

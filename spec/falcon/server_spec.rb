@@ -22,6 +22,8 @@ require 'falcon/server'
 require 'async/http/client'
 require 'async/rspec/reactor'
 
+require 'rack'
+
 RSpec.describe Falcon::Server do
 	include_context Async::RSpec::Reactor
 	
@@ -44,18 +46,38 @@ RSpec.describe Falcon::Server do
 		end
 	end
 	
-	context "basic middleware" do
+	context "http client" do
 		let(:app) do
 			app = lambda do |env|
-				[200, {}, ["Hello World"]]
+				request = Rack::Request.new(env)
+				
+				if request.post?
+					[200, {}, ["POST: #{request.POST.inspect}"]]
+				else
+					[200, {}, ["Hello World"]]
+				end
 			end
 		end
 		
-		it "client can get resource" do
+		it "can GET" do
 			response = client.get("/", {})
 			
 			expect(response).to be_success
-			expect(response.body).to be == "Hello World"
+			expect(response.read).to be == "Hello World"
+		end
+		
+		it "can POST application/x-www-form-urlencoded" do
+			response = client.post("/", {'content-type' => 'application/x-www-form-urlencoded'}, ['hello=world'])
+			
+			expect(response).to be_success
+			expect(response.read).to be == 'POST: {"hello"=>"world"}'
+		end
+		
+		it "can POST multipart/form-data" do
+			response = client.post("/", {'content-type' => 'multipart/form-data; boundary=multipart'}, ["--multipart\r\nContent-Disposition: form-data; name=\"hello\"\r\n\r\nworld\r\n--multipart--"])
+			
+			expect(response).to be_success
+			expect(response.read).to be == 'POST: {"hello"=>"world"}'
 		end
 	end
 	
@@ -71,7 +93,7 @@ RSpec.describe Falcon::Server do
 			
 			expect(response).to_not be_success
 			expect(response.status).to be == 500
-			expect(response.body).to be =~ /RuntimeError: Middleware is broken/
+			expect(response.read).to be =~ /RuntimeError: Middleware is broken/
 		end
 	end
 end
