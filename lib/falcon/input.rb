@@ -26,19 +26,15 @@ module Falcon
 			@body = body
 			@chunks = []
 			
-			@buffer = nil
+			@index = 0
+			@buffer = Async::IO::BinaryString.new
 			@closed = false
 		end
 		
 		def each(&block)
-			while @index < @chunks.count
-				chunk = @chunks[@index]
-				@index += 1
-				yield chunk
-			end
+			return to_enum unless block_given?
 			
-			@body.each do |chunk|
-				@chunks << chunk
+			while chunk = read_next
 				yield chunk
 			end
 			
@@ -48,29 +44,32 @@ module Falcon
 		def rewind
 			@index = 0
 			@closed = false
+			@buffer.clear
 		end
 		
 		def read(length = nil, buffer = nil)
-			unless @buffer
-				self.each do |chunk|
-					@buffer = chunk
-					break
+			if length
+				fill_buffer(length) if @buffer.bytesize <= length
+				
+				return @buffer.slice!(0, length)
+			else
+				buffer ||= Async::IO::BinaryString.new
+				
+				buffer << @buffer
+				@buffer.clear
+				
+				while chunk = read_next
+					buffer << chunk
 				end
-			end
-			
-			if @buffer
-				if length and @buffer.bytesize < length
-					return @buffer.slice!(0, length)
-				else
-					buffer = @buffer
-					@buffer = nil
-					return buffer
-				end
+				
+				@closed = true
+				
+				return buffer
 			end
 		end
 		
 		def eof?
-			@closed and @buffer.nil?
+			@closed and @buffer.empty?
 		end
 		
 		def gets
@@ -79,6 +78,33 @@ module Falcon
 		
 		def close
 			@body.close
+		end
+		
+		private
+		
+		def read_next
+			if @index < @chunks.count
+				chunk = @chunks[@index]
+				@index += 1
+			else
+				if chunk = @body.read
+					@chunks << chunk
+					@index += 1
+				end
+			end
+			
+			return chunk
+		end
+		
+		def fill_buffer(length)
+			while @buffer.bytesize < length
+				unless chunk = read_next
+					@closed = true
+					return false
+				end
+				
+				@buffer << chunk
+			end
 		end
 	end
 end

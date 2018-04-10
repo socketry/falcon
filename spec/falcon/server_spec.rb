@@ -74,7 +74,7 @@ RSpec.describe Falcon::Server do
 		end
 		
 		it "can POST multipart/form-data" do
-			response = client.post("/", {'content-type' => 'multipart/form-data; boundary=multipart'}, ["--multipart\r\nContent-Disposition: form-data; name=\"hello\"\r\n\r\nworld\r\n--multipart--"])
+			response = client.post("/", {'content-type' => 'multipart/form-data; boundary=multipart'}, ["--multipart\r\n", "Content-Disposition: form-data; name=\"hello\"\r\n\r\n", "world\r\n", "--multipart--"])
 			
 			expect(response).to be_success
 			expect(response.read).to be == 'POST: {"hello"=>"world"}'
