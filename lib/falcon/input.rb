@@ -28,7 +28,7 @@ module Falcon
 			
 			@index = 0
 			@buffer = Async::IO::BinaryString.new
-			@closed = false
+			@finished = false
 		end
 		
 		def each(&block)
@@ -43,7 +43,7 @@ module Falcon
 		
 		def rewind
 			@index = 0
-			@closed = false
+			@finished = false
 			@buffer.clear
 		end
 		
@@ -62,14 +62,12 @@ module Falcon
 					buffer << chunk
 				end
 				
-				@closed = true
-				
 				return buffer
 			end
 		end
 		
 		def eof?
-			@closed and @buffer.empty?
+			@finished and @buffer.empty?
 		end
 		
 		def gets
@@ -77,12 +75,16 @@ module Falcon
 		end
 		
 		def close
-			@body.close
+			@body.finish
 		end
 		
 		private
 		
 		def read_next
+			return nil if @finished
+			
+			chunk = nil
+			
 			if @index < @chunks.count
 				chunk = @chunks[@index]
 				@index += 1
@@ -93,16 +95,13 @@ module Falcon
 				end
 			end
 			
+			@finished = true if chunk.nil?
+			
 			return chunk
 		end
 		
 		def fill_buffer(length)
-			while @buffer.bytesize < length
-				unless chunk = read_next
-					@closed = true
-					return false
-				end
-				
+			while @buffer.bytesize < length and chunk = read_next
 				@buffer << chunk
 			end
 		end
