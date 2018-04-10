@@ -1,6 +1,4 @@
 language: ruby
-sudo: required
-dist: xenial
 cache: bundler
 
 before_script:
