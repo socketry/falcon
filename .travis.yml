@@ -3,6 +3,7 @@ cache: bundler
 
 before_script:
   - gem update --system
+  - gem install bundler
 
 matrix:
   include:
