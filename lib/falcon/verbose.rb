@@ -40,12 +40,13 @@ module Falcon
 			
 			request_method = env['REQUEST_METHOD']
 			request_path = env['PATH_INFO']
+			server_protocol = env['SERVER_PROTOCOL']
 			
 			if response
 				status, headers, body = response
-				@logger.info "#{request_method} #{request_path} -> #{status}; Content length #{headers.fetch('Content-Length', '-')} bytes; took #{duration} seconds"
+				@logger.info "#{request_method} #{request_path} #{server_protocol} -> #{status}; Content length #{headers.fetch('Content-Length', '-')} bytes; took #{duration} seconds"
 			else
-				@logger.info "#{request_method} #{request_path} -> #{error}; took #{duration} seconds"
+				@logger.info "#{request_method} #{request_path} #{server_protocol} -> #{error}; took #{duration} seconds"
 			end
 		end
 		
