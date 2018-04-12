@@ -7,6 +7,9 @@ end
 # Browsers don't show streaming content until a certain threshold has been met. For most browers, it's about 1024 bytes. So, we have a comment of about that length which we feed to the client before streaming actual content. For more details see https://stackoverflow.com/questions/16909227
 COMMENT = "<!--#{'-' * 1024}-->"
 
+# To test this example with the curl command-line tool, you'll need to add the `--no-buffer` flag or set the COMMENT size to the required 4096 bytes in order for curl to start streaming. 
+# curl http://localhost:9292/ --no-buffer
+
 run lambda {|env|
 	task = Async::Task.current
 	body = Async::HTTP::Body.new
