@@ -12,7 +12,7 @@ COMMENT = "<!--#{'-' * 1024}-->"
 
 run lambda {|env|
 	task = Async::Task.current
-	body = Async::HTTP::Body.new
+	body = Async::HTTP::Body::Writable.new
 	
 	body.write("<!DOCTYPE html><html><head><title>99 Bottles of Beer</title></head><body>")
 	
