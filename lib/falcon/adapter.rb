@@ -98,7 +98,7 @@ module Falcon
 				return Async::HTTP::Response[status, headers, Body::Output.wrap(body)]
 			end
 		rescue => exception
-			logger.error "#{exception.class}: #{exception.message}\n\t#{$!.backtrace.join("\n\t")}"
+			@logger.error "#{exception.class}: #{exception.message}\n\t#{$!.backtrace.join("\n\t")}"
 			
 			return failure_response(exception)
 		end

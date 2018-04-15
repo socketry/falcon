@@ -22,13 +22,13 @@ run lambda {|env|
 		99.downto(1) do |i|
 			puts "#{bottles(i)} of beer on the wall..."
 			body.write("<p>#{bottles(i)} of beer on the wall, ")
-			task.sleep(1)
+			task.sleep(0.1)
 			body.write("#{bottles(i)} of beer, ")
-			task.sleep(1)
+			task.sleep(0.1)
 			body.write("take one down and pass it around, ")
-			task.sleep(1)
+			task.sleep(0.1)
 			body.write("#{bottles(i-1)} of beer on the wall.</p>")
-			task.sleep(1)
+			task.sleep(0.1)
 			body.write("<script>var child; while (child = document.body.firstChild) child.remove();</script>")
 		end
 		

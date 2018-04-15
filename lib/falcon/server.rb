@@ -21,6 +21,7 @@
 require_relative 'adapter'
 
 require 'async/http/server'
+require 'async/http/content_encoding'
 
 module Falcon
 	class Server < Async::HTTP::Server
