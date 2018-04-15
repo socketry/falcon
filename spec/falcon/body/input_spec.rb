@@ -18,12 +18,11 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-require 'falcon/input'
-require 'async/http/body'
+require 'falcon/body/input'
 
-RSpec.describe Falcon::Input do
+RSpec.describe Falcon::Body::Input do
 	let(:sample_data) {%w{The quick brown fox jumped over the lazy dog}}
-	let(:body) {Async::HTTP::BufferedBody.new(sample_data)}
+	let(:body) {Async::HTTP::Body::Buffered.new(sample_data)}
 	
 	subject {described_class.new(body)}
 	

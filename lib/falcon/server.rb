@@ -18,7 +18,8 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-require_relative 'input'
+require_relative 'body/input'
+require_relative 'body/output'
 
 require 'async/http/server'
 
@@ -41,7 +42,7 @@ module Falcon
 			env = {
 				'rack.version' => [2, 0, 0],
 				
-				'rack.input' => Input.new(request.body),
+				'rack.input' => Body::Input.new(request.body),
 				'rack.errors' => $stderr,
 				
 				'rack.multithread' => true,
@@ -69,8 +70,12 @@ module Falcon
 				'SERVER_PORT' => server_port || '',
 			}
 			
-			if content_type = request.headers['content-type']
+			if content_type = request.headers.delete('content-type')
 				env['CONTENT_TYPE'] = content_type
+			end
+			
+			if content_length = request.headers.delete('content-length')
+				env['CONTENT_LENGTH'] = content_length
 			end
 			
 			request.headers.each do |key, value|
@@ -90,12 +95,12 @@ module Falcon
 				env['REMOTE_ADDR'] = remote_address.ip_address if remote_address.ip?
 			end
 			
-			response = @app.call(env)
+			status, headers, body = @app.call(env)
 			
 			if env['rack.hijack_io']
 				throw :hijack
 			else
-				return response
+				return Async::HTTP::Response[status, headers, Body::Output.wrap(body)]
 			end
 		rescue => exception
 			logger.error "#{exception.class}: #{exception.message}\n\t#{$!.backtrace.join("\n\t")}"
@@ -104,7 +109,7 @@ module Falcon
 		end
 		
 		def failure_response(exception)
-			[500, {'Content-Type' => 'text/plain'}, ["Request failed due to: #{exception.class}: #{exception.message}"]]
+			Async::HTTP::Response.for_exception(exception)
 		end
 	end
 end
