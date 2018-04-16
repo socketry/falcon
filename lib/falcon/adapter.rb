@@ -82,15 +82,14 @@ module Falcon
 				env['rack.hijack_io'] = peer
 			end
 			
-			if content_type = request.headers['HTTP_CONTENT_TYPE']
-				env['CONTENT_TYPE'] = content_type
-			end
-			
 			if remote_address = peer.remote_address
 				env['REMOTE_ADDR'] = remote_address.ip_address if remote_address.ip?
 			end
 			
 			status, headers, body = @app.call(env)
+			
+			# We normalize headers to be lower case.
+			headers = headers.map{|key, value| [key.downcase, value]}.to_h
 			
 			if env['rack.hijack_io']
 				throw :hijack
