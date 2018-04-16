@@ -1,5 +1,7 @@
 #!/usr/bin/env falcon --verbose serve -c
 
+require 'rack'
+
 def bottles(n)
 	n == 1 ? "#{n} bottle" : "#{n} bottles"
 end
@@ -14,12 +16,15 @@ run lambda {|env|
 	task = Async::Task.current
 	body = Async::HTTP::Body::Writable.new
 	
-	body.write("<!DOCTYPE html><html><head><title>99 Bottles of Beer</title></head><body>")
+	request = Rack::Request.new(env)
+	count = (request.params['count'] || 99).to_i
+	
+	body.write("<!DOCTYPE html><html><head><title>#{count} Bottles of Beer</title></head><body>")
 	
 	task.async do |task|
 		body.write(COMMENT)
 		
-		99.downto(1) do |i|
+		count.downto(1) do |i|
 			puts "#{bottles(i)} of beer on the wall..."
 			body.write("<p>#{bottles(i)} of beer on the wall, ")
 			task.sleep(0.1)

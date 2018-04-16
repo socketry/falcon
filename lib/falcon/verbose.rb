@@ -19,7 +19,7 @@
 # THE SOFTWARE.
 
 require 'async/logger'
-require 'async/http/body/statistics'
+require 'async/http/statistics'
 
 module Falcon
 	class Verbose < Async::HTTP::Middleware
@@ -32,16 +32,23 @@ module Falcon
 		def annotate(request, peer: nil, address: nil)
 			task = Async::Task.current
 			
+			# @logger.debug "#{request.method} #{request.path} #{request.version} from #{address.inspect}"
+			# @logger.debug request.headers.inspect
+			
 			task.annotate("#{request.method} #{request.path} from #{address.inspect}")
 		end
 		
 		def call(request, **options)
 			annotate(request, **options)
 			
+			statistics = Async::HTTP::Statistics.start
+			
 			response = super
 			
-			Async::HTTP::Body::Statistics.wrap(response) do |statistics|
-				@logger.info "#{request.method} #{request.path} #{request.version} -> #{response.status}; Content length #{statistics.bytesize} bytes; took #{(statistics.duration*1000.0).round(2)}ms"
+			statistics.wrap(response) do |statistics, error|
+				@logger.info "#{request.method} #{request.path} #{request.version} -> #{response.status}; #{statistics.inspect}"
+				# @logger.info response.headers.inspect
+				@logger.error "#{error.class}: #{error.message}" if error
 			end
 			
 			return response
