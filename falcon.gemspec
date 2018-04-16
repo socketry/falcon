@@ -1,4 +1,4 @@
-# coding: utf-8
+
 require_relative 'lib/falcon/version'
 
 Gem::Specification.new do |spec|
