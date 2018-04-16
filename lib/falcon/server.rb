@@ -28,13 +28,11 @@ module Falcon
 		def initialize(app, *args)
 			super(*args)
 			
-			@app = Async::HTTP::ContentEncoding.new(
-				Adapter.new(app)
-			)
+			@app = app
 		end
 		
 		def handle_request(request, peer, address)
-			@app.call(request, peer, address)
+			@app.call(request, peer: peer, address: address)
 		end
 	end
 end

@@ -18,9 +18,9 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-require 'falcon/body/input'
+require 'falcon/input'
 
-RSpec.describe Falcon::Body::Input do
+RSpec.describe Falcon::Input do
 	let(:sample_data) {%w{The quick brown fox jumped over the lazy dog}}
 	let(:body) {Async::HTTP::Body::Buffered.new(sample_data)}
 	

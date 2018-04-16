@@ -18,48 +18,92 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-require 'async/logger'
+require 'async/http/body'
 
 module Falcon
-	class Verbose < Async::HTTP::Middleware
-		def initialize(app, logger = Async.logger)
-			super(app)
+	class Input
+		def initialize(body)
+			@body = body
+			@chunks = []
 			
-			@logger = logger
+			@index = 0
+			@buffer = Async::IO::BinaryString.new
+			@finished = false
 		end
 		
-		def annotate(request, peer: nil, address: nil)
-			task = Async::Task.current
+		def each(&block)
+			return to_enum unless block_given?
 			
-			task.annotate("#{request.method} #{request.path} from #{address.inspect}")
+			while chunk = read_next
+				yield chunk
+			end
+			
+			@closed = true
 		end
 		
-		def log(start_time, request, response, error)
-			duration = Time.now - start_time
-			
-			request_method = env['REQUEST_METHOD']
-			request_path = env['PATH_INFO']
-			server_protocol = env['SERVER_PROTOCOL']
-			
-			if response
+		def rewind
+			@index = 0
+			@finished = false
+			@buffer.clear
+		end
+		
+		def read(length = nil, buffer = nil)
+			if length
+				fill_buffer(length) if @buffer.bytesize <= length
 				
+				return @buffer.slice!(0, length)
 			else
-				@logger.info "#{request.method} #{request.path} #{request.version} -> #{error}; took #{(duration/1000.0).round(2)}ms"
+				buffer ||= Async::IO::BinaryString.new
+				
+				buffer << @buffer
+				@buffer.clear
+				
+				while chunk = read_next
+					buffer << chunk
+				end
+				
+				return buffer
 			end
 		end
 		
-		def call(request, **options)
-			start_time = Time.now
+		def eof?
+			@finished and @buffer.empty?
+		end
+		
+		def gets
+			read
+		end
+		
+		def close
+			@body.finish
+		end
+		
+		private
+		
+		def read_next
+			return nil if @finished
 			
-			annotate(request, **options)
+			chunk = nil
 			
-			response = @app.call(env)
-			
-			Async::HTTP::Body::Statistics.wrap(response) do |statistics|
-				@logger.info "#{request.method} #{request.path} #{request.version} -> #{response.status}; Content length #{statistics.bytesize} bytes; took #{(statistics.duration/1000.0).round(2)}ms"
+			if @index < @chunks.count
+				chunk = @chunks[@index]
+				@index += 1
+			else
+				if chunk = @body.read
+					@chunks << chunk
+					@index += 1
+				end
 			end
 			
-			return response
+			@finished = true if chunk.nil?
+			
+			return chunk
+		end
+		
+		def fill_buffer(length)
+			while @buffer.bytesize < length and chunk = read_next
+				@buffer << chunk
+			end
 		end
 	end
 end

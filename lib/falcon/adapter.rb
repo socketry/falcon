@@ -18,8 +18,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-require_relative 'body/input'
-require_relative 'body/output'
+require 'async/http/body/buffered'
 
 require 'async/logger'
 
@@ -30,14 +29,14 @@ module Falcon
 			@logger = logger
 		end
 		
-		def call(request, peer, address)
+		def call(request, peer: nil, address: nil)
 			request_path, query_string = request.path.split('?', 2)
 			server_name, server_port = (request.authority || '').split(':', 2)
 			
 			env = {
 				'rack.version' => [2, 0, 0],
 				
-				'rack.input' => Body::Input.new(request.body),
+				'rack.input' => Input.new(request.body),
 				'rack.errors' => $stderr,
 				
 				'rack.multithread' => true,
@@ -95,7 +94,7 @@ module Falcon
 			if env['rack.hijack_io']
 				throw :hijack
 			else
-				return Async::HTTP::Response[status, headers, Body::Output.wrap(body)]
+				return Async::HTTP::Response[status, headers, Async::HTTP::Body::Buffered.wrap(body)]
 			end
 		rescue => exception
 			@logger.error "#{exception.class}: #{exception.message}\n\t#{$!.backtrace.join("\n\t")}"
