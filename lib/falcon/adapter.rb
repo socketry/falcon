@@ -18,8 +18,9 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-require 'async/http/body/buffered'
+require_relative 'input'
 
+require 'async/http/body/buffered'
 require 'async/logger'
 
 module Falcon

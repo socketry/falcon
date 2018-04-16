@@ -19,3 +19,4 @@
 # THE SOFTWARE.
 
 require_relative "falcon/command"
+require_relative "falcon/server"
