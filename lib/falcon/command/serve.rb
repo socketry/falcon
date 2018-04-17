@@ -20,6 +20,7 @@
 
 require_relative '../server'
 require_relative '../verbose'
+require_relative '../adapters/rack'
 
 require 'async/container'
 require 'async/io/trap'
@@ -58,7 +59,7 @@ module Falcon
 				app, options = Rack::Builder.parse_file(@options[:config])
 				
 				# We adapt the rack app to Async::HTTP::Middleware
-				app = Adapter.new(app)
+				app = Adapters::Rack.new(app)
 				
 				app =  Async::HTTP::ContentEncoding.new(app)
 				

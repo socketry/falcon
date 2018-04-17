@@ -30,7 +30,7 @@ RSpec.describe Falcon::Server do
 	let(:endpoint) {Async::IO::Endpoint.tcp('127.0.0.1', 6264, reuse_port: true)}
 	
 	let(:protocol) {Async::HTTP::Protocol::HTTP1}
-	let(:server) {Falcon::Server.new(Falcon::Adapter.new(app), endpoint, protocol)}
+	let(:server) {Falcon::Server.new(Falcon::Adapters::Rack.new(app), endpoint, protocol)}
 	let(:client) {Async::HTTP::Client.new(endpoint, protocol)}
 	after(:each) {client.close}
 	

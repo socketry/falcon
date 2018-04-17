@@ -37,7 +37,7 @@ RSpec.describe "Falcon::Server with SSL" do
 	let(:server_endpoint) {Async::IO::SecureEndpoint.new(endpoint, ssl_context: server_context)}
 	let(:client_endpoint) {Async::IO::SecureEndpoint.new(endpoint, ssl_context: client_context)}
 	
-	let(:server) {Falcon::Server.new(Falcon::Adapter.new(app), server_endpoint, protocol)}
+	let(:server) {Falcon::Server.new(Falcon::Adapters::Rack.new(app), server_endpoint, protocol)}
 	let(:client) {Async::HTTP::Client.new(client_endpoint, protocol)}
 	after(:each) {client.close}
 	
