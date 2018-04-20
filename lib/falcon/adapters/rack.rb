@@ -78,13 +78,15 @@ module Falcon
 					env["HTTP_#{key.upcase.tr('-', '_')}"] = value
 				end
 				
-				env['rack.hijack?'] = true
-				env['rack.hijack'] = lambda do
-					env['rack.hijack_io'] = peer
-				end
-				
-				if remote_address = peer.remote_address
-					env['REMOTE_ADDR'] = remote_address.ip_address if remote_address.ip?
+				if peer
+					env['rack.hijack?'] = true
+					env['rack.hijack'] = lambda do
+						env['rack.hijack_io'] = peer
+					end
+					
+					if remote_address = peer.remote_address
+						env['REMOTE_ADDR'] = remote_address.ip_address if remote_address.ip?
+					end
 				end
 				
 				status, headers, body = @app.call(env)
