@@ -91,12 +91,12 @@ module Falcon
 				
 				status, headers, body = @app.call(env)
 				
-				# We normalize headers to be lower case.
-				headers = headers.map{|key, value| [key.downcase, value]}.to_h
-				
 				if env['rack.hijack_io']
 					throw :hijack
 				else
+					# We normalize headers to be lower case.
+					headers = headers.map{|key, value| [key.downcase, value]}.to_h
+					
 					return Async::HTTP::Response[status, headers, Async::HTTP::Body::Buffered.wrap(body)]
 				end
 			rescue => exception
