@@ -18,6 +18,8 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
+require 'async/io/endpoint'
+
 module Falcon
 	class Host
 		def initialize
@@ -30,23 +32,9 @@ module Falcon
 		attr_accessor :app
 		
 		attr_accessor :endpoint
-		attr_accessor :client_endpoint
 		
 		attr_accessor :ssl_certificate
 		attr_accessor :ssl_key
-		
-		# A client would connect to this endpoint
-		def proxy_endpoint
-			if ssl_context = self.ssl_context
-				Async::IO::SecureEndpoint.new()
-			else
-				@endpoint
-			end
-		end
-		
-		# The app will bind to this endpoint
-		def server_endpoint
-		end
 		
 		def ssl_certificate_path= path
 			@ssl_certificate = OpenSSL::X509::Certificate.new(File.read(path))
@@ -79,22 +67,33 @@ module Falcon
 	end
 	
 	class Hosts
+		DEFAULT_ALPN_PROTOCOLS = ['h2', 'http/1.1'].freeze
+		
 		def initialize
 			@named = {}
 			@server_context = nil
 			@server_endpoint = nil
 		end
 		
+		def each(&block)
+			@named.each(&block)
+		end
+		
 		def endpoint
-			@server_endpoint ||= Async::IO::SecureEndpoint.new(
-				Async::IO::Endpoint.tcp('0.0.0.0', 443),
-				ssl_context: self.ssl_context
+			@server_endpoint ||= Async::HTTP::URLEndpoint.parse(
+				'https://0.0.0.0',
+				ssl_context: self.ssl_context,
+				reuse_address: true
 			)
 		end
 		
 		def ssl_context
 			@server_context ||= OpenSSL::SSL::SSLContext.new.tap do |context|
-				context.servername_cb = self.method(:host_context)
+				context.servername_cb = Proc.new do |socket, hostname|
+					self.host_context(socket, hostname)
+				end
+				
+				context.alpn_protocols = DEFAULT_ALPN_PROTOCOLS
 				
 				context.set_params
 			end
@@ -118,7 +117,7 @@ module Falcon
 		
 		def client_endpoints
 			Hash[
-				@named.collect{|name, host| [name, host.client_endpoint]}
+				@named.collect{|name, host| [name, host.endpoint]}
 			]
 		end
 	end

@@ -20,3 +20,6 @@
 
 require_relative "falcon/command"
 require_relative "falcon/server"
+
+require_relative 'falcon/hosts'
+require_relative 'falcon/proxy'

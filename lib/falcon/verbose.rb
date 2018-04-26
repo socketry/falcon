@@ -32,8 +32,8 @@ module Falcon
 		def annotate(request, peer: nil, address: nil)
 			task = Async::Task.current
 			
-			# @logger.debug "#{request.method} #{request.path} #{request.version} from #{address.inspect}"
-			# @logger.debug request.headers.inspect
+			@logger.debug(request.authority) {"#{request.method} #{request.path} #{request.version} from #{address.inspect}"}
+			@logger.debug(request.authority) {request.headers.inspect}
 			
 			task.annotate("#{request.method} #{request.path} from #{address.inspect}")
 		end
@@ -46,9 +46,9 @@ module Falcon
 			response = super
 			
 			statistics.wrap(response) do |statistics, error|
-				@logger.info "#{request.method} #{request.path} #{request.version} -> #{response.status}; #{statistics.inspect}"
+				@logger.info(request.authority) {"#{request.method} #{request.path} #{request.version} -> #{response.status}; #{statistics.inspect}"}
 				# @logger.info response.headers.inspect
-				@logger.error "#{error.class}: #{error.message}" if error
+				@logger.error(request.authority) {"#{error.class}: #{error.message}"} if error
 			end
 			
 			return response

@@ -18,10 +18,14 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
+require 'async/http/client'
+
+require 'pry'
+
 module Falcon
 	module BadRequest
 		def self.call(request, *)
-			return Async::HTTP::Response[400, [], {}]
+			return Async::HTTP::Response[400, {}, []]
 		end
 		
 		def self.close
@@ -59,7 +63,11 @@ module Falcon
 			if endpoint = lookup(request)
 				client = connect(endpoint)
 				
-				return client.call(request)
+				if request.body.nil?
+					request.body = Async::HTTP::Body::Buffered.wrap([])
+				end
+				
+				client.call(request)
 			else
 				super
 			end
