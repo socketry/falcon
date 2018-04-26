@@ -33,11 +33,13 @@ hosts.each do |name, host|
 	end
 end
 
-proxy = Falcon::Verbose.new(
+#proxy = Falcon::Verbose.new(
 	proxy = Falcon::Proxy.new(Falcon::BadRequest, hosts.client_endpoints)
-)
+#)
 
-controller << Async::Container::Forked.new do
+require 'ruby-prof'
+
+#controller << Async::Container::Forked.new do
 	Process.setproctitle("Falcon Proxy")
 	
 	server = Falcon::Server.new(proxy, Async::HTTP::URLEndpoint.parse(
@@ -45,8 +47,23 @@ controller << Async::Container::Forked.new do
 		reuse_address: true
 	))
 	
-	server.run
-end
+	# profile the code
+	profile = RubyProf::Profile.new(merge_fibers: true)
+	
+	begin
+		profile.start
+		
+		Async::Reactor.run do
+			server.run
+		end
+	ensure
+		profile.stop
+		
+		# print a flat profile to text
+		printer = RubyProf::FlatPrinter.new(profile)
+		printer.print($stdout)
+	end
+#end
 
-Process.setproctitle("Falcon Controller")
-controller.wait
+#Process.setproctitle("Falcon Controller")
+#controller.wait
