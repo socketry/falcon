@@ -53,8 +53,8 @@ module Falcon
 		end
 		
 		def lookup(request)
-			# Trailing dot is ignored/normalized.
-			if authority = request.authority.sub(/\.$/, '')
+			# Trailing dot and port is ignored/normalized.
+			if authority = request.authority.sub(/(\.)?(:\d+)?$/, '')
 				return @hosts[authority]
 			end
 		end
