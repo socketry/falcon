@@ -37,6 +37,8 @@ end
 	proxy = Falcon::Proxy.new(Falcon::BadRequest, hosts.client_endpoints)
 #)
 
+debug_trap = Async::IO::Trap.new(:USR1)
+
 require 'ruby-prof'
 
 #controller << Async::Container::Forked.new do
@@ -50,19 +52,29 @@ require 'ruby-prof'
 	# profile the code
 	profile = RubyProf::Profile.new(merge_fibers: true)
 	
-	begin
-		profile.start
+	# begin
+	# 	profile.start
 		
-		Async::Reactor.run do
+		Async::Reactor.run do |task|
+			task.async do
+				debug_trap.install!
+				$stderr.puts "Send `kill -USR1 #{Process.pid}` for detailed status :)"
+				
+				debug_trap.trap do
+					task.reactor.print_hierarchy($stderr)
+					Async.logger.level = Logger::DEBUG
+				end
+			end
+			
 			server.run
 		end
-	ensure
-		profile.stop
-		
-		# print a flat profile to text
-		printer = RubyProf::FlatPrinter.new(profile)
-		printer.print($stdout)
-	end
+	# ensure
+	# 	profile.stop
+	# 
+	# 	# print a flat profile to text
+	# 	printer = RubyProf::FlatPrinter.new(profile)
+	# 	printer.print($stdout)
+	# end
 #end
 
 #Process.setproctitle("Falcon Controller")
