@@ -20,8 +20,6 @@
 
 require 'async/http/client'
 
-require 'pry'
-
 module Falcon
 	module BadRequest
 		def self.call(request, *)
