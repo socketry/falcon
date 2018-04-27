@@ -61,10 +61,6 @@ module Falcon
 			if endpoint = lookup(request)
 				client = connect(endpoint)
 				
-				if request.body.nil?
-					request.body = Async::HTTP::Body::Buffered.wrap([])
-				end
-				
 				client.call(request)
 			else
 				super
