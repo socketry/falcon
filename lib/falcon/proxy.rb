@@ -38,7 +38,11 @@ module Falcon
 			
 			@hosts = hosts
 			@clients = {}
+			
+			@count = 0
 		end
+		
+		attr :count
 		
 		def close
 			@clients.each_value(&:close)
@@ -59,6 +63,8 @@ module Falcon
 		
 		def call(request, *)
 			if endpoint = lookup(request)
+				@count += 1
+				
 				client = connect(endpoint)
 				
 				client.call(request)

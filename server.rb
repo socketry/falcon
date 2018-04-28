@@ -7,6 +7,8 @@ require 'async/http/url_endpoint'
 require 'async/container/controller'
 require 'async/container/forked'
 
+require 'async/clock'
+
 Async.logger.level = Logger::INFO
 
 hosts = Falcon::Hosts.new
@@ -62,7 +64,17 @@ require 'ruby-prof'
 				
 				debug_trap.trap do
 					task.reactor.print_hierarchy($stderr)
-					Async.logger.level = Logger::DEBUG
+					# Async.logger.level = Logger::DEBUG
+				end
+			end
+			
+			task.async do |task|
+				start_time = Async::Clock.now
+				
+				while true
+					task.sleep(600)
+					duration = Async::Clock.now - start_time
+					puts "Handled #{proxy.count} requests; #{(proxy.count.to_f / duration.to_f).round(1)} requests per second."
 				end
 			end
 			
