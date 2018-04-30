@@ -27,6 +27,8 @@ module Falcon
 			@endpoint = nil
 			@ssl_certificate = nil
 			@ssl_key = nil
+			
+			@ssl_context = nil
 		end
 		
 		attr_accessor :app
@@ -35,6 +37,15 @@ module Falcon
 		
 		attr_accessor :ssl_certificate
 		attr_accessor :ssl_key
+		attr_accessor :ssl_context
+		
+		def freeze
+			return if frozen?
+			
+			ssl_context
+			
+			super
+		end
 		
 		def ssl_certificate_path= path
 			@ssl_certificate = OpenSSL::X509::Certificate.new(File.read(path))
@@ -45,13 +56,15 @@ module Falcon
 		end
 		
 		def ssl_context
-			if @ssl_key
-				OpenSSL::SSL::SSLContext.new.tap do |context|
-					context.cert = @ssl_certificate
-					context.key = @ssl_key
-					
-					context.set_params
-				end
+			@ssl_context ||= OpenSSL::SSL::SSLContext.new(:TLSv1).tap do |context|
+				context.cert = @ssl_certificate
+				context.key = @ssl_key
+				
+				context.session_id_context = "falcon"
+				
+				context.set_params
+				
+				context.freeze
 			end
 		end
 		
@@ -81,21 +94,25 @@ module Falcon
 		
 		def endpoint
 			@server_endpoint ||= Async::HTTP::URLEndpoint.parse(
-				'https://0.0.0.0',
+				'https://[::]',
 				ssl_context: self.ssl_context,
 				reuse_address: true
 			)
 		end
 		
 		def ssl_context
-			@server_context ||= OpenSSL::SSL::SSLContext.new.tap do |context|
+			@server_context ||= OpenSSL::SSL::SSLContext.new(:TLSv1).tap do |context|
 				context.servername_cb = Proc.new do |socket, hostname|
 					self.host_context(socket, hostname)
 				end
 				
+				context.session_id_context = "falcon"
+				
 				context.alpn_protocols = DEFAULT_ALPN_PROTOCOLS
 				
 				context.set_params
+				
+				context.freeze
 			end
 		end
 		
