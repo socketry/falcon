@@ -8,23 +8,24 @@ require 'async/container/controller'
 require 'async/container/forked'
 
 require 'async/clock'
+require 'ruby-prof'
 
 Async.logger.level = Logger::INFO
 
 hosts = Falcon::Hosts.new
 
-hosts.add('map.local') do |host|
+hosts.add('mc.oriontransfer.co.nz') do |host|
 	host.endpoint = Async::HTTP::URLEndpoint.parse('http://hana.local:8123')
 	
-	# host.ssl_certificate_path = '/etc/letsencrypt/live/mc.oriontransfer.co.nz/fullchain.pem'
-	# host.ssl_key_path = '/etc/letsencrypt/live/mc.oriontransfer.co.nz/privkey.pem'
+	host.ssl_certificate_path = '/etc/letsencrypt/live/mc.oriontransfer.co.nz/fullchain.pem'
+	host.ssl_key_path = '/etc/letsencrypt/live/mc.oriontransfer.co.nz/privkey.pem'
 end
 
-hosts.add('chick.local') do |host|
+hosts.add('chick.nz') do |host|
 	host.endpoint = Async::HTTP::URLEndpoint.parse('http://hana.local:8765')
 	
-	# host.ssl_certificate_path = '/etc/letsencrypt/live/chick.nz/fullchain.pem'
-	# host.ssl_key_path = '/etc/letsencrypt/live/chick.nz/privkey.pem'
+	host.ssl_certificate_path = '/etc/letsencrypt/live/chick.nz/fullchain.pem'
+	host.ssl_key_path = '/etc/letsencrypt/live/chick.nz/privkey.pem'
 end
 
 controller = Async::Container::Controller.new
@@ -35,59 +36,60 @@ hosts.each do |name, host|
 	end
 end
 
-#proxy = Falcon::Verbose.new(
-	proxy = Falcon::Proxy.new(Falcon::BadRequest, hosts.client_endpoints)
-#)
-
+proxy = Falcon::Proxy.new(Falcon::BadRequest, hosts.client_endpoints)
 debug_trap = Async::IO::Trap.new(:USR1)
 
-require 'ruby-prof'
+profile = RubyProf::Profile.new(merge_fibers: true)
 
-#controller << Async::Container::Forked.new do
+#controller << Async::Container::Forked.new do |task|
 	Process.setproctitle("Falcon Proxy")
 	
-	server = Falcon::Server.new(proxy, Async::HTTP::URLEndpoint.parse(
-		'http://0.0.0.0:4433',
-		reuse_address: true
-	))
+	server = Falcon::Server.new(
+		proxy,
+		Async::HTTP::URLEndpoint.parse(
+			'https://0.0.0.0',
+			reuse_address: true,
+			ssl_context: hosts.ssl_context
+		)
+	)
+
+begin
+	#profile.start
 	
-	# profile the code
-	profile = RubyProf::Profile.new(merge_fibers: true)
-	
-	# begin
-	# 	profile.start
-		
-		Async::Reactor.run do |task|
-			task.async do
-				debug_trap.install!
-				$stderr.puts "Send `kill -USR1 #{Process.pid}` for detailed status :)"
-				
-				debug_trap.trap do
-					task.reactor.print_hierarchy($stderr)
-					# Async.logger.level = Logger::DEBUG
-				end
-			end
+	Async::Reactor.run do |task|
+		task.async do
+			debug_trap.install!
+			$stderr.puts "Send `kill -USR1 #{Process.pid}` for detailed status :)"
 			
-			task.async do |task|
-				start_time = Async::Clock.now
-				
-				while true
-					task.sleep(600)
-					duration = Async::Clock.now - start_time
-					puts "Handled #{proxy.count} requests; #{(proxy.count.to_f / duration.to_f).round(1)} requests per second."
-				end
+			debug_trap.trap do
+				task.reactor.print_hierarchy($stderr)
+				# Async.logger.level = Logger::DEBUG
 			end
-			
-			server.run
 		end
-	# ensure
-	# 	profile.stop
-	# 
-	# 	# print a flat profile to text
-	# 	printer = RubyProf::FlatPrinter.new(profile)
-	# 	printer.print($stdout)
-	# end
-#end
+		
+		task.async do |task|
+			start_time = Async::Clock.now
+			
+			while true
+				task.sleep(600)
+				duration = Async::Clock.now - start_time
+				puts "Handled #{proxy.count} requests; #{(proxy.count.to_f / duration.to_f).round(1)} requests per second."
+			end
+		end
+		
+		$stderr.puts "Starting server"
+		server.run
+	end
+ensure
+	if profile.running?
+		profile.stop
+		
+		# print a flat profile to text
+		printer = RubyProf::FlatPrinter.new(profile)
+		printer.print($stdout)
+	end
+end
 
 #Process.setproctitle("Falcon Controller")
 #controller.wait
+
