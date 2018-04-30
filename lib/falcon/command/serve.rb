@@ -24,6 +24,7 @@ require_relative '../adapters/rack'
 
 require 'async/container'
 require 'async/io/trap'
+require 'async/io/host_endpoint'
 require 'async/io/shared_endpoint'
 
 require 'samovar'
@@ -78,7 +79,7 @@ module Falcon
 				
 				Async::Reactor.run do
 					endpoint = Async::IO::SharedEndpoint.bound(
-						Async::IO::Endpoint.parse(@options[:bind], reuse_address: true)
+						Async::IO::Endpoint.parse(@options[:bind], reuse_port: true)
 					)
 				end
 				
