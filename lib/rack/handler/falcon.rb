@@ -3,6 +3,8 @@ require 'rack/handler'
 
 require_relative '../../falcon'
 
+require 'async/io/host_endpoint'
+
 module Rack
 	module Handler
 		module Falcon

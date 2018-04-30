@@ -24,6 +24,7 @@ require_relative '../adapters/rack'
 
 require 'async/container'
 require 'async/io/trap'
+require 'async/io/shared_endpoint'
 
 require 'samovar'
 
@@ -73,7 +74,13 @@ module Falcon
 			def run(verbose)
 				app, options = load_app(verbose)
 				
-				endpoint = Async::IO::Endpoint.parse(@options[:bind], reuse_port: true)
+				endpoint = nil
+				
+				Async::Reactor.run do
+					endpoint = Async::IO::SharedEndpoint.bound(
+						Async::IO::Endpoint.parse(@options[:bind], reuse_address: true)
+					)
+				end
 				
 				Async.logger.info "Falcon taking flight! Binding to #{endpoint} [#{container_class} with concurrency: #{@options[:concurrency]}]"
 				
