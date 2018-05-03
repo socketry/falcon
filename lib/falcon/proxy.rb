@@ -31,6 +31,8 @@ module Falcon
 	end
 	
 	class Proxy < Async::HTTP::Middleware
+		X_FORWARDED_FOR = 'x-forwarded-for'.freeze
+		
 		def initialize(app, hosts)
 			super(app)
 			
@@ -61,9 +63,19 @@ module Falcon
 			end
 		end
 		
-		def call(request, *)
+		def call(request, peer: nil)
 			if endpoint = lookup(request)
 				@count += 1
+				
+				if peer and address = peer.remote_address and address.ip?
+					if forwarded = request.headers[X_FORWARDED_FOR]
+						forwarded = "#{forwarded}, #{address.ip_address}"
+					else
+						forwarded = address.ip_address
+					end
+					
+					request.headers[X_FORWARDED_FOR] = forwarded
+				end
 				
 				client = connect(endpoint)
 				

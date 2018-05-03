@@ -38,10 +38,15 @@ RSpec.describe Falcon::Proxy do
 			'accept' => '*/*',
 		}, Async::HTTP::Body::Buffered.wrap([]))
 		
-		response = subject.call(request)
+		peer = double("peer")
+		expect(peer).to receive(:remote_address).and_return(Addrinfo.ip("127.0.0.1"))
+		
+		response = subject.call(request, peer: peer)
 		response.finish
 		
 		expect(response).to_not be_failure
+		
+		expect(request.headers['x-forwarded-for']).to be == "127.0.0.1"
 		
 		subject.close
 	end
