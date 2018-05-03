@@ -33,10 +33,12 @@ RSpec.describe Falcon::Proxy do
 		})
 	end
 	
+	let(:headers) {Async::HTTP::Headers['accept' => '*/*']}
+	
 	it 'can select client based on authority' do
-		request = Async::HTTP::Request.new('www.google.com', 'GET', '/', nil, {
-			'accept' => '*/*',
-		}, Async::HTTP::Body::Buffered.wrap([]))
+
+		
+		request = Async::HTTP::Request.new('www.google.com', 'GET', '/', nil, headers, nil)
 		
 		peer = double("peer")
 		expect(peer).to receive(:remote_address).and_return(Addrinfo.ip("127.0.0.1"))
@@ -46,15 +48,13 @@ RSpec.describe Falcon::Proxy do
 		
 		expect(response).to_not be_failure
 		
-		expect(request.headers['x-forwarded-for']).to be == "127.0.0.1"
+		expect(request.headers['x-forwarded-for']).to be == ["127.0.0.1"]
 		
 		subject.close
 	end
 	
 	it 'defers if no host is available' do
-		request = Async::HTTP::Request.new('www.groogle.com', 'GET', '/', nil, {
-			'accept' => '*/*',
-		}, Async::HTTP::Body::Buffered.wrap([]))
+		request = Async::HTTP::Request.new('www.groogle.com', 'GET', '/', nil, headers, nil)
 		
 		response = subject.call(request)
 		response.finish

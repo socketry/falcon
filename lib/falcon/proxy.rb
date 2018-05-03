@@ -32,6 +32,17 @@ module Falcon
 	
 	class Proxy < Async::HTTP::Middleware
 		X_FORWARDED_FOR = 'x-forwarded-for'.freeze
+		VIA = 'via'.freeze
+		CONNECTION = Async::HTTP::Protocol::HTTP11::CONNECTION
+		
+		HOP_HEADERS = [
+			'connection',
+			'keep-alive',
+			'public',
+			'proxy-authenticate',
+			'transfer-encoding',
+			'upgrade',
+		]
 		
 		def initialize(app, hosts)
 			super(app)
@@ -63,22 +74,27 @@ module Falcon
 			end
 		end
 		
+		def prepare_headers(headers)
+			if connection = headers[CONNECTION]
+				headers.slice!(connection)
+			end
+			
+			headers.slice!(HOP_HEADERS)
+		end
+		
 		def call(request, peer: nil)
 			if endpoint = lookup(request)
 				@count += 1
 				
 				if peer and address = peer.remote_address and address.ip?
-					if forwarded = request.headers[X_FORWARDED_FOR]
-						forwarded = "#{forwarded}, #{address.ip_address}"
-					else
-						forwarded = address.ip_address
-					end
-					
-					request.headers[X_FORWARDED_FOR] = forwarded
+					request.headers.add(X_FORWARDED_FOR, address.ip_address)
 				end
+				
+				request.headers.add(VIA, "#{request.version} #{self.class}")
 				
 				client = connect(endpoint)
 				
+				prepare_headers(request.headers)
 				client.call(request)
 			else
 				super
