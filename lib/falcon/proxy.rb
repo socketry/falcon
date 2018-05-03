@@ -83,6 +83,9 @@ module Falcon
 			else
 				super
 			end
+		rescue
+			Async.logger.error(self) {$!}
+			return Async::HTTP::Response[502, {'content-type' => 'text/plain'}, ["#{$!.inspect}: #{$!.backtrace.join("\n")}"]]
 		end
 	end
 end
