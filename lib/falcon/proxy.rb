@@ -82,7 +82,7 @@ module Falcon
 			headers.slice!(HOP_HEADERS)
 		end
 		
-		def call(request, peer: nil)
+		def call(request, peer: nil, **options)
 			if endpoint = lookup(request)
 				@count += 1
 				
