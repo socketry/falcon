@@ -21,37 +21,65 @@
 require 'falcon/adapters/input'
 
 RSpec.describe Falcon::Adapters::Input do
-	let(:sample_data) {%w{The quick brown fox jumped over the lazy dog}}
-	let(:body) {Async::HTTP::Body::Buffered.new(sample_data)}
-	
-	subject {described_class.new(body)}
-	
-	context '#read' do
-		it "can read all input" do
-			expect(subject.read).to be == sample_data.join
-		end
+	context 'with body' do
+		let(:sample_data) {%w{The quick brown fox jumped over the lazy dog}}
+		let(:body) {Async::HTTP::Body::Buffered.new(sample_data)}
 		
-		it "can read partial input" do
-			2.times do
-				expect(subject.read(3)).to be == "The"
-				expect(subject.read(3)).to be == "qui"
-				expect(subject.read(3)).to be == "ckb"
-				expect(subject.read(3)).to be == "row"
-				
-				subject.rewind
+		subject {described_class.new(body)}
+		
+		context '#read' do
+			it "can read all input" do
+				expect(subject.read).to be == sample_data.join
 			end
 			
-			expect(subject.read(15)).to be == sample_data.join[0...15]
-			expect(subject.read).to be == sample_data.join[15..-1]
-			
-			expect(subject).to be_eof
+			it "can read partial input" do
+				2.times do
+					expect(subject.read(3)).to be == "The"
+					expect(subject.read(3)).to be == "qui"
+					expect(subject.read(3)).to be == "ckb"
+					expect(subject.read(3)).to be == "row"
+					
+					subject.rewind
+				end
+				
+				expect(subject.read(15)).to be == sample_data.join[0...15]
+				expect(subject.read).to be == sample_data.join[15..-1]
+				
+				expect(subject).to be_eof
+			end
+		end
+		
+		context '#each' do
+			it "can read chunks" do
+				subject.each.with_index do |chunk, index|
+					expect(chunk).to be == sample_data[index]
+				end
+			end
+		end
+		
+		context '#eof?' do
+			it "should not be at end of file" do
+				expect(subject).to_not be_eof
+			end
 		end
 	end
 	
-	context '#each' do
-		it "can read chunks" do
-			subject.each.with_index do |chunk, index|
-				expect(chunk).to be == sample_data[index]
+	context 'without body' do
+		subject {described_class.new(nil)}
+		
+		context '#read' do
+			it "can read all input" do
+				expect(subject.read).to be == ""
+			end
+			
+			it "can read partial input" do
+				expect(subject.read(2)).to be == ""
+			end
+		end
+		
+		context '#eof?' do
+			it "should be at end of file" do
+				expect(subject).to be_eof
 			end
 		end
 	end

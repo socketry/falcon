@@ -29,7 +29,7 @@ module Falcon
 				
 				@index = 0
 				@buffer = Async::IO::BinaryString.new
-				@finished = false
+				@finished = @body.nil?
 			end
 			
 			def each(&block)
