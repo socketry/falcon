@@ -48,24 +48,37 @@ module Falcon
 				@buffer.clear
 			end
 			
+			# Read some data from the underlying body. Similar to `IO#read`.
+			# @param length [Integer] the amount of data to read
+			# @param buffer [String] the buffer which will receive the data
+			# @return a buffer containing the data
 			def read(length = nil, buffer = nil)
-				buffer ||= Async::IO::BinaryString.new
-				buffer.clear
-				
 				if length
 					fill_buffer(length) if @buffer.bytesize <= length
 					
-					buffer << @buffer.slice!(0, length)
+					if buffer
+						buffer.replace(@buffer.slice!(0, length))
+					else
+						buffer = @buffer.slice!(0, length)
+					end
+					
+					if buffer.empty? and length > 0
+						return nil
+					else
+						return buffer
+					end
 				else
-					buffer << @buffer
+					buffer ||= Async::IO::BinaryString.new
+					
+					buffer.replace(@buffer)
 					@buffer.clear
 					
 					while chunk = read_next
 						buffer << chunk
 					end
+					
+					return buffer
 				end
-				
-				buffer unless length && length > 0 && buffer.empty?
 			end
 			
 			def eof?

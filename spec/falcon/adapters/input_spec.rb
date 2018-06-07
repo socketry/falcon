@@ -27,10 +27,37 @@ RSpec.describe Falcon::Adapters::Input do
 		
 		subject {described_class.new(body)}
 		
+		context '#read(buffer)' do
+			let(:buffer) {Async::IO::BinaryString.new}
+			let(:expected_output) {sample_data.join}
+			
+			it "can read partial input" do
+				expect(subject.read(3, buffer)).to be == "The"
+				expect(buffer).to be == "The"
+			end
+			
+			it "can read all input" do
+				expect(subject.read(expected_output.bytesize, buffer)).to be == expected_output
+				expect(buffer).to be == expected_output
+				
+				# Not sure about this. The next read will not produce any additional data, but we don't konw if we are at EOF yet.
+				expect(subject).to_not be_eof
+				
+				expect(subject.read(expected_output.bytesize, buffer)).to be == nil
+				expect(buffer).to be == ""
+				
+				expect(subject).to be_eof
+			end
+		end
+		
 		context '#read' do
 			it "can read all input" do
 				expect(subject.read).to be == sample_data.join
 				expect(subject.read).to be == ""
+			end
+			
+			it "can read no input" do
+				expect(subject.read(0)).to be == ""
 			end
 			
 			it "can read partial input" do
@@ -96,9 +123,27 @@ RSpec.describe Falcon::Adapters::Input do
 	context 'without body' do
 		subject {described_class.new(nil)}
 		
+		context '#read(buffer)' do
+			let(:buffer) {Async::IO::BinaryString.new}
+			
+			it "can read no input" do
+				expect(subject.read(0, buffer)).to be == ""
+				expect(buffer).to be == ""
+			end
+			
+			it "can read partial input" do
+				expect(subject.read(2, buffer)).to be == nil
+				expect(buffer).to be == ""
+			end
+		end
+		
 		context '#read' do
 			it "can read all input" do
 				expect(subject.read).to be == ""
+			end
+			
+			it "can read no input" do
+				expect(subject.read(0)).to be == ""
 			end
 			
 			it "can read partial input" do
