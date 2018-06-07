@@ -30,6 +30,7 @@ RSpec.describe Falcon::Adapters::Input do
 		context '#read' do
 			it "can read all input" do
 				expect(subject.read).to be == sample_data.join
+				expect(subject.read).to be == ""
 			end
 			
 			it "can read partial input" do
@@ -45,8 +46,36 @@ RSpec.describe Falcon::Adapters::Input do
 				expect(subject.read(15)).to be == sample_data.join[0...15]
 				expect(subject.read).to be == sample_data.join[15..-1]
 				
+				expect(subject.read(1)).to be == nil
 				expect(subject).to be_eof
 			end
+			
+			it "can read partial input with buffer" do
+				buffer = String.new
+				
+				2.times do
+					expect(subject.read(3, buffer)).to be == "The"
+					expect(subject.read(3, buffer)).to be == "qui"
+					expect(subject.read(3, buffer)).to be == "ckb"
+					expect(subject.read(3, buffer)).to be == "row"
+					
+					expect(buffer).to be == "row"
+					
+					subject.rewind
+				end
+				
+				data = subject.read(15, buffer)
+				expect(data).to be == sample_data.join[0...15]
+				expect(buffer).to equal(data)
+				
+				expect(subject.read).to be == sample_data.join[15..-1]
+				
+				expect(subject.read(1, buffer)).to be == nil
+				expect(buffer).to be == ""
+				
+				expect(subject).to be_eof
+			end
+		
 		end
 		
 		context '#each' do
@@ -73,7 +102,7 @@ RSpec.describe Falcon::Adapters::Input do
 			end
 			
 			it "can read partial input" do
-				expect(subject.read(2)).to be == ""
+				expect(subject.read(2)).to be == nil
 			end
 		end
 		

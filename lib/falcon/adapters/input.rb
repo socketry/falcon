@@ -49,22 +49,23 @@ module Falcon
 			end
 			
 			def read(length = nil, buffer = nil)
+				buffer ||= Async::IO::BinaryString.new
+				buffer.clear
+				
 				if length
 					fill_buffer(length) if @buffer.bytesize <= length
 					
-					return @buffer.slice!(0, length)
+					buffer << @buffer.slice!(0, length)
 				else
-					buffer ||= Async::IO::BinaryString.new
-					
 					buffer << @buffer
 					@buffer.clear
 					
 					while chunk = read_next
 						buffer << chunk
 					end
-					
-					return buffer
 				end
+				
+				buffer unless length && length > 0 && buffer.empty?
 			end
 			
 			def eof?
