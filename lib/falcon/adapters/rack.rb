@@ -39,6 +39,7 @@ module Falcon
 					'rack.version' => [2, 0, 0],
 					
 					'rack.input' => Input.new(request.body),
+					'rack.body' => request.body,
 					'rack.errors' => $stderr,
 					
 					'rack.multithread' => true,
