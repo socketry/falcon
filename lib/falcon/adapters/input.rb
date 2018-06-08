@@ -56,10 +56,13 @@ module Falcon
 				if length
 					fill_buffer(length) if @buffer.bytesize <= length
 					
+					chunk = @buffer.slice!(0, length)
+					
 					if buffer
-						buffer.replace(@buffer.slice!(0, length))
+						# TODO https://bugs.ruby-lang.org/issues/14745
+						buffer.replace(chunk)
 					else
-						buffer = @buffer.slice!(0, length)
+						buffer = chunk
 					end
 					
 					if buffer.empty? and length > 0
