@@ -28,7 +28,13 @@ Or install it yourself as:
 
 ## Usage
 
-You can run `falcon` directly, and it will load the `config.ru` and start serving on port 8080.
+You can run `falcon serve` directly, and it will load the `config.ru` and start serving on port 9292.
+
+### WebSockets
+
+Falcon supports `rack.hijack` for HTTP/1.x connections. You can thus use [async-websocket] in any controller layer to serve WebSocket connections.
+
+[async-websocket]: https://github.com/socketry/async-websocket
 
 ### Integration with Guard
 
