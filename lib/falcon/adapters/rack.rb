@@ -19,8 +19,8 @@
 # THE SOFTWARE.
 
 require_relative 'input'
+require_relative 'output'
 
-require 'async/http/body/buffered'
 require 'async/logger'
 
 module Falcon
