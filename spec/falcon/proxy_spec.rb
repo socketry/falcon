@@ -36,8 +36,6 @@ RSpec.describe Falcon::Proxy do
 	let(:headers) {Async::HTTP::Headers['accept' => '*/*']}
 	
 	it 'can select client based on authority' do
-
-		
 		request = Async::HTTP::Request.new('www.google.com', 'GET', '/', nil, headers, nil)
 		
 		peer = double("peer")
