@@ -1,5 +1,13 @@
 language: ruby
+sudo: required
+dist: xenial
 cache: bundler
+
+addons:
+  apt:
+    packages:
+    - wrk
+    - apache2-utils
 
 before_script:
   - gem update --system
@@ -10,6 +18,7 @@ matrix:
     - rvm: 2.3
     - rvm: 2.4
     - rvm: 2.5
+    - rvm: 2.6
     - rvm: jruby-head
       env: JRUBY_OPTS="--debug -X+O"
     - rvm: ruby-head
