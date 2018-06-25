@@ -47,7 +47,7 @@ RSpec.describe Falcon::Adapters::Rack do
 			}
 		end
 		
-		it "can send and receive messages using Async::WebSocket" do
+		it "can send and receive messages using websockets" do
 			socket = endpoint.connect
 			connection = Async::WebSocket::Client.new(socket, endpoint.url.to_s)
 			
