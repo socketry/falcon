@@ -32,6 +32,8 @@ module Falcon
 				@finished = @body.nil?
 			end
 			
+			attr :body
+			
 			def each(&block)
 				return to_enum unless block_given?
 				

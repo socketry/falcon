@@ -39,7 +39,6 @@ module Falcon
 					'rack.version' => [2, 0, 0],
 					
 					'rack.input' => Input.new(request.body),
-					'rack.body' => request.body,
 					'rack.errors' => $stderr,
 					
 					'rack.multithread' => true,
@@ -79,22 +78,23 @@ module Falcon
 					env["HTTP_#{key.upcase.tr('-', '_')}"] = value
 				end
 				
-				if peer
+				if peer and remote_address = peer.remote_address
+					env['REMOTE_ADDR'] = remote_address.ip_address if remote_address.ip?
+				end
+				
+				if request.hijack?
 					env['rack.hijack?'] = true
-					env['rack.hijack'] = lambda do
-						env['rack.hijack_io'] = peer
-					end
 					
-					if remote_address = peer.remote_address
-						env['REMOTE_ADDR'] = remote_address.ip_address if remote_address.ip?
+					env['rack.hijack'] = lambda do
+						env['rack.hijack_io'] = request.hijack
 					end
+				else
+					env['rack.hijack?'] = false
 				end
 				
 				status, headers, body = @app.call(env)
 				
-				if env['rack.hijack_io']
-					throw :hijack
-				else
+				unless env['rack.hijack_io']
 					# We normalize headers to be lower case.
 					headers = headers.map{|key, value| [key.downcase, value]}.to_h
 					
