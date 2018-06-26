@@ -135,26 +135,21 @@ RSpec.describe Falcon::Adapters::Input do
 			end
 		end
 		
-		context '#clear' do
-			it "clears cached chunks" do
+		context '#rewind' do
+			it "reads same chunk again" do
 				expect(subject.gets).to be == "The"
-				expect(subject.chunks).to_not be_empty
 				
-				subject.clear
-				expect(subject.chunks).to be_empty
-				
-				expect(subject.gets).to be == "quick"
-				expect(subject.chunks).to_not be_empty
+				subject.rewind
+				expect(subject.gets).to be == "The"
 			end
 			
-			it "doesn't clear unread buffer" do
+			it "clears unread buffer" do
 				expect(subject.gets).to be == "The"
-				
 				expect(subject.read(2)).to be == "qu"
 				
-				subject.clear
+				subject.rewind
 				
-				expect(subject.read(3)).to be == "ick"
+				expect(subject.read(3)).to be == "The"
 			end
 		end
 	end
