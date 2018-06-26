@@ -18,47 +18,16 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-require 'async/http/body/readable'
+require_relative 'output'
 
 module Falcon
 	module Adapters
-		class Output < Async::HTTP::Body::Readable
-			CONTENT_LENGTH = 'content-length'.freeze
-			
-			# Wraps an array into a buffered body.
-			def self.wrap(headers, body)
-				if body.is_a?(Async::HTTP::Body::Readable)
-					return body
-				# This needs more testing:
-				# elsif body.respond_to?(:to_path)
-				# 	return Async::HTTP::Body::File.new(body.to_path)
-				else
-					return self.new(headers, body)
-				end
-			end
-			
-			def initialize(headers, body)
-				# We don't trust the user to provide the right length to the transport.
-				@length = headers.delete(CONTENT_LENGTH)
+		class Response < Async::HTTP::Response
+			def initialize(status, headers, body)
+				# We normalize headers to be lower case:
+				headers = headers.map{|key, value| [key.downcase, value]}.to_h
 				
-				@body = body
-				@chunks = body.to_enum(:each)
-			end
-			
-			attr :length
-			
-			def empty?
-				@length == 0
-			end
-			
-			def read
-				@chunks.next
-			rescue StopIteration
-				nil
-			end
-			
-			def inspect
-				"\#<#{self.class} #{@body}>"
+				super(nil, status, nil, headers, Output.wrap(headers, body))
 			end
 		end
 	end

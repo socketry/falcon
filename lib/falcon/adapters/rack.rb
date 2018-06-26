@@ -19,7 +19,7 @@
 # THE SOFTWARE.
 
 require_relative 'input'
-require_relative 'output'
+require_relative 'response'
 
 require 'async/logger'
 
@@ -94,12 +94,20 @@ module Falcon
 				
 				status, headers, body = @app.call(env)
 				
-				unless env['rack.hijack_io']
-					# We normalize headers to be lower case.
-					headers = headers.map{|key, value| [key.downcase, value]}.to_h
-					
-					return Async::HTTP::Response[status, headers, Async::HTTP::Body::Buffered.wrap(body)]
+				# if hijack = headers.delete('rack.hijack')
+				# 	body = Async::HTTP::Body::Writable.new
+				# 
+				# 	Task.current.async do
+				# 		hijack.call(body)
+				# 	end
+				# 	return nil
+				# end
+				
+				if env['rack.hijack_io']
+					return nil
 				end
+				
+				return Response.new(status, headers, body)
 			rescue => exception
 				@logger.error "#{exception.class}: #{exception.message}\n\t#{$!.backtrace.join("\n\t")}"
 				
