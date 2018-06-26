@@ -39,6 +39,9 @@ module Falcon
 			
 			attr :body
 			
+			attr :chunks
+			attr :index
+			
 			# each must be called without arguments and only yield Strings.
 			def each(&block)
 				return to_enum unless block_given?
@@ -55,6 +58,18 @@ module Falcon
 				@index = 0
 				@finished = false
 				@buffer.clear
+			end
+			
+			# Clears all cached chunks.
+			def clear
+				@chunks.clear
+				
+				# The currently unread portion of the buffer becomes the first chunk.
+				unless @buffer.empty?
+					@chunks << @buffer.dup
+				end
+				
+				@index = 0
 			end
 			
 			# read behaves like IO#read. Its signature is read([length, [buffer]]). If given, length must be a non-negative Integer (>= 0) or nil, and buffer must be a String and may not be nil. If length is given and not nil, then this method reads at most length bytes from the input stream. If length is not given or nil, then this method reads all data until EOF. When EOF is reached, this method returns nil if length is given and not nil, or “” if length is not given or is nil. If buffer is given, then the read data will be placed into buffer instead of a newly created String object.
@@ -100,7 +115,14 @@ module Falcon
 			# gets must be called without arguments and return a string, or nil on EOF.
 			# @return [String, nil] The next chunk from the body.
 			def gets
-				read_next
+				if @buffer.empty?
+					read_next
+				else
+					buffer = @buffer.dup
+					@buffer.clear
+					
+					return buffer
+				end
 			end
 			
 			# close must never be called on the input stream. huh?

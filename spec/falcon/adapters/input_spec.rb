@@ -112,6 +112,13 @@ RSpec.describe Falcon::Adapters::Input do
 				
 				expect(subject.gets).to be == nil
 			end
+			
+			it "returns remainder after calling #read" do
+				expect(subject.read(4)).to be == "Theq"
+				expect(subject.gets).to be == "uick"
+				expect(subject.read(4)).to be == "brow"
+				expect(subject.gets).to be == "n"
+			end
 		end
 		
 		context '#each' do
@@ -125,6 +132,29 @@ RSpec.describe Falcon::Adapters::Input do
 		context '#eof?' do
 			it "should not be at end of file" do
 				expect(subject).to_not be_eof
+			end
+		end
+		
+		context '#clear' do
+			it "clears cached chunks" do
+				expect(subject.gets).to be == "The"
+				expect(subject.chunks).to_not be_empty
+				
+				subject.clear
+				expect(subject.chunks).to be_empty
+				
+				expect(subject.gets).to be == "quick"
+				expect(subject.chunks).to_not be_empty
+			end
+			
+			it "doesn't clear unread buffer" do
+				expect(subject.gets).to be == "The"
+				
+				expect(subject.read(2)).to be == "qu"
+				
+				subject.clear
+				
+				expect(subject.read(3)).to be == "ick"
 			end
 		end
 	end
