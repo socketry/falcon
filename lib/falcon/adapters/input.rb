@@ -22,18 +22,24 @@ require 'async/http/body'
 
 module Falcon
 	module Adapters
+		# The input stream is an IO-like object which contains the raw HTTP POST data. When applicable, its external encoding must be “ASCII-8BIT” and it must be opened in binary mode, for Ruby 1.9 compatibility. The input stream must respond to gets, each, read and rewind.
 		class Input
 			def initialize(body)
+				# The streaming input body.
 				@body = body
-				@chunks = []
 				
+				# A buffer of chunks, including an index to the current chunk for `#read_next`.
+				@chunks = []
 				@index = 0
+				
+				# The current buffer, which is extended by calling `#fill_buffer`.
 				@buffer = Async::IO::BinaryString.new
 				@finished = @body.nil?
 			end
 			
 			attr :body
 			
+			# each must be called without arguments and only yield Strings.
 			def each(&block)
 				return to_enum unless block_given?
 				
@@ -44,13 +50,14 @@ module Falcon
 				@closed = true
 			end
 			
+			# rewind must be called without arguments. It rewinds the input stream back to the beginning. It must not raise Errno::ESPIPE: that is, it may not be a pipe or a socket. Therefore, handler developers must buffer the input data into some rewindable object if the underlying input stream is not rewindable.
 			def rewind
 				@index = 0
 				@finished = false
 				@buffer.clear
 			end
 			
-			# Read some data from the underlying body. Similar to `IO#read`.
+			# read behaves like IO#read. Its signature is read([length, [buffer]]). If given, length must be a non-negative Integer (>= 0) or nil, and buffer must be a String and may not be nil. If length is given and not nil, then this method reads at most length bytes from the input stream. If length is not given or nil, then this method reads all data until EOF. When EOF is reached, this method returns nil if length is given and not nil, or “” if length is not given or is nil. If buffer is given, then the read data will be placed into buffer instead of a newly created String object.
 			# @param length [Integer] the amount of data to read
 			# @param buffer [String] the buffer which will receive the data
 			# @return a buffer containing the data
@@ -90,10 +97,13 @@ module Falcon
 				@finished and @buffer.empty?
 			end
 			
+			# gets must be called without arguments and return a string, or nil on EOF.
+			# @return [String, nil] The next chunk from the body.
 			def gets
-				read
+				read_next
 			end
 			
+			# close must never be called on the input stream. huh?
 			def close
 				@body.finish
 			end

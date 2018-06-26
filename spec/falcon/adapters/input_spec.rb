@@ -102,7 +102,16 @@ RSpec.describe Falcon::Adapters::Input do
 				
 				expect(subject).to be_eof
 			end
+		end
 		
+		context '#gets' do
+			it "can read chunks" do
+				sample_data.each do |chunk|
+					expect(subject.gets).to be == chunk
+				end
+				
+				expect(subject.gets).to be == nil
+			end
 		end
 		
 		context '#each' do
@@ -147,7 +156,13 @@ RSpec.describe Falcon::Adapters::Input do
 			end
 			
 			it "can read partial input" do
-				expect(subject.read(2)).to be == nil
+				expect(subject.read(2)).to be_nil
+			end
+		end
+		
+		context '#gets' do
+			it "can read chunks" do
+				expect(subject.gets).to be_nil
 			end
 		end
 		
