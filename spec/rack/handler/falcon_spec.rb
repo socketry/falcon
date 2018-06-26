@@ -43,7 +43,7 @@ RSpec.describe Falcon::Server do
 		sleep 1
 		
 		begin
-			response = client.get("/", {})
+			response = client.post("/", {}, ["Hello World"])
 		
 			expect(response).to be_success
 			expect(response.read).to be == "Hello World"

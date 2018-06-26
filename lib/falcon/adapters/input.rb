@@ -25,13 +25,8 @@ module Falcon
 	module Adapters
 		# The input stream is an IO-like object which contains the raw HTTP POST data. When applicable, its external encoding must be “ASCII-8BIT” and it must be opened in binary mode, for Ruby 1.9 compatibility. The input stream must respond to gets, each, read and rewind.
 		class Input
-			def initialize(body, rewindable = true)
-				# The streaming input body.
-				if body and rewindable
-					@body = Async::HTTP::Body::Rewindable.new(body)
-				else
-					@body = body
-				end
+			def initialize(body)
+				@body = body
 				
 				# The current buffer, which is extended by calling `#fill_buffer`.
 				@buffer = Async::IO::BinaryString.new
@@ -56,6 +51,14 @@ module Falcon
 					@body.rewind
 					@buffer.clear
 					@finished = false
+				end
+			end
+			
+			def respond_to?(name, *)
+				if name == :rewind
+					@body.respond_to?(:rewind)
+				else
+					super
 				end
 			end
 			

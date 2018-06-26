@@ -25,30 +25,11 @@ require 'async/rspec/reactor'
 require 'rack'
 
 RSpec.describe Falcon::Server do
-	include_context Async::RSpec::Reactor
-	
-	let(:endpoint) {Async::IO::Endpoint.tcp('127.0.0.1', 6264, reuse_port: true)}
-	
-	let(:protocol) {Async::HTTP::Protocol::HTTP1}
-	let(:server) {Falcon::Server.new(Falcon::Adapters::Rack.new(app), endpoint, protocol)}
-	let(:client) {Async::HTTP::Client.new(endpoint, protocol)}
-	after(:each) {client.close}
-	
-	around(:each) do |example|
-		server_task = reactor.async do
-			server.run
-		end
-		
-		begin
-			example.run
-		ensure
-			server_task.stop
-		end
-	end
+	include_context Falcon::Server
 	
 	context "http client" do
 		let(:app) do
-			app = lambda do |env|
+			lambda do |env|
 				request = Rack::Request.new(env)
 				
 				if request.post?
@@ -83,7 +64,7 @@ RSpec.describe Falcon::Server do
 	
 	context "broken middleware" do
 		let(:app) do
-			app = lambda do |env|
+			lambda do |env|
 				raise RuntimeError, "Middleware is broken"
 			end
 		end

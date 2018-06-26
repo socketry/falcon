@@ -31,7 +31,7 @@ module Falcon
 				@logger = logger
 			end
 			
-			def call(request, peer: nil, address: nil)
+			def call(request)
 				request_path, query_string = request.path.split('?', 2)
 				server_name, server_port = (request.authority || '').split(':', 2)
 				
@@ -78,7 +78,7 @@ module Falcon
 					env["HTTP_#{key.upcase.tr('-', '_')}"] = value
 				end
 				
-				if peer and remote_address = peer.remote_address
+				if remote_address = request.remote_address
 					env['REMOTE_ADDR'] = remote_address.ip_address if remote_address.ip?
 				end
 				

@@ -18,46 +18,46 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-require 'falcon/server'
-require 'async/websocket/server'
-require 'async/websocket/client'
+require 'async/http/body/rewindable'
 
-RSpec.describe Falcon::Adapters::Rack do
-	include_context Falcon::Server
-	
-	context 'websockets' do
-		let(:endpoint) {Async::HTTP::URLEndpoint.parse('ws://127.0.0.1:9294', reuse_port: true)}
-		
-		let(:app) do
-			lambda do |env|
-				Async::WebSocket::Server.open(env) do |connection|
-					while message = connection.next_message
-						connection.send_message(message)
-					end
+module Falcon
+	module Adapters
+		# Content type driven input buffering.
+		class Rewindable < Async::HTTP::Middleware
+			BUFFERED_MEDIA_TYPES = %r{
+				application/x-www-form-urlencoded|
+				multipart/form-data|
+				multipart/related|
+				multipart/mixed
+			}x
+			
+			POST = 'POST'.freeze
+			
+			def initialize(app)
+				super(app)
+			end
+			
+			def needs_rewind?(request)
+				content_type = request.headers['content-type']
+				
+				if request.method == POST and content_type.nil?
+					return true
 				end
 				
-				[200, {}, []]
+				if BUFFERED_MEDIA_TYPES =~ content_type
+					return true
+				end
+				
+				return false
 			end
-		end
-		
-		let(:test_message) do
-			{
-				"user" => "test",
-				"status" => "connected",
-			}
-		end
-		
-		it "can send and receive messages using websockets" do
-			socket = endpoint.connect
-			connection = Async::WebSocket::Client.new(socket, endpoint.url.to_s)
 			
-			connection.send_message(test_message)
-			
-			message = connection.next_message
-			expect(message).to be == test_message
-			
-			connection.close
-			socket.close
+			def call(request)
+				if body = request.body and needs_rewind?(request)
+					request.body = Async::HTTP::Body::Rewindable.new(body)
+				end
+				
+				response = super
+			end
 		end
 	end
 end

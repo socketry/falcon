@@ -18,7 +18,10 @@ module Rack
 			def self.run(app, **options)
 				endpoint = endpoint_for(**options)
 				
-				server = ::Falcon::Server.new(::Falcon::Adapters::Rack.new(app), endpoint)
+				app = ::Falcon::Adapters::Rack.new(app)
+				app = ::Falcon::Adapters::Rewindable.new(app)
+				
+				server = ::Falcon::Server.new(app, endpoint)
 				
 				Async::Reactor.run do
 					server.run

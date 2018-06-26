@@ -22,7 +22,7 @@ require 'async/http/client'
 
 module Falcon
 	module BadRequest
-		def self.call(request, *)
+		def self.call(request)
 			return Async::HTTP::Response[400, {}, []]
 		end
 		

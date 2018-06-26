@@ -40,11 +40,18 @@ RSpec.shared_context Falcon::Server do
 	end
 	
 	let(:app) do
-		Async::HTTP::Middleware::Okay
+		lambda do |env|
+			[200, {}, []]
+		end
 	end
 	
 	let(:server) do
-		Falcon::Server.new(app, endpoint, protocol)
+		Falcon::Server.new(
+			Falcon::Adapters::Rewindable.new(
+				Falcon::Adapters::Rack.new(app)
+			),
+			endpoint, protocol
+		)
 	end
 end
 

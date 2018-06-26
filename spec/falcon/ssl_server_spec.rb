@@ -55,7 +55,7 @@ RSpec.describe "Falcon::Server with SSL" do
 	
 	context "basic middleware" do
 		let(:app) do
-			app = lambda do |env|
+			lambda do |env|
 				[200, {}, ["Hello World"]]
 			end
 		end

@@ -60,10 +60,14 @@ module Falcon
 			def load_app(verbose)
 				app, options = Rack::Builder.parse_file(@options[:config])
 				
-				# We adapt the rack app to Async::HTTP::Middleware
+				# We adapt the rack app to `Async::HTTP::Middleware`:
 				app = Adapters::Rack.new(app)
 				
-				app =  Async::HTTP::ContentEncoding.new(app)
+				# We buffer the input body but only for specific kinds of requests:
+				app = Adapters::Rewindable.new(app)
+				
+				# We compress response bodies according to what the client expects:
+				app = Async::HTTP::ContentEncoding.new(app)
 				
 				if verbose
 					app = Verbose.new(app)

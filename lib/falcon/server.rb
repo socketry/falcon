@@ -21,16 +21,8 @@
 require 'async/http/server'
 require 'async/http/content_encoding'
 
+require_relative 'adapters/rewindable'
+
 module Falcon
-	class Server < Async::HTTP::Server
-		def initialize(app, *args)
-			super(*args)
-			
-			@app = app
-		end
-		
-		def handle_request(request, peer, address)
-			@app.call(request, peer: peer, address: address)
-		end
-	end
+	Server = Async::HTTP::Server
 end
