@@ -27,6 +27,8 @@ require 'async/io/trap'
 require 'async/io/host_endpoint'
 require 'async/io/shared_endpoint'
 
+require 'async/http/middleware/builder'
+
 require 'samovar'
 
 require 'rack/builder'
@@ -58,19 +60,18 @@ module Falcon
 			end
 			
 			def load_app(verbose)
-				app, options = Rack::Builder.parse_file(@options[:config])
+				rack_app, options = Rack::Builder.parse_file(@options[:config])
 				
-				# We adapt the rack app to `Async::HTTP::Middleware`:
-				app = Adapters::Rack.new(app)
-				
-				# We buffer the input body but only for specific kinds of requests:
-				app = Adapters::Rewindable.new(app)
-				
-				# We compress response bodies according to what the client expects:
-				app = Async::HTTP::ContentEncoding.new(app)
-				
-				if verbose
-					app = Verbose.new(app)
+				app = Async::HTTP::Middleware.build do
+					if verbose
+						use Verbose
+					end
+					
+					use Async::HTTP::ContentEncoding
+					use Adapters::Rewindable
+					use Adapters::Rack
+					
+					run rack_app
 				end
 				
 				return app, options
