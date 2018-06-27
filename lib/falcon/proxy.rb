@@ -82,11 +82,11 @@ module Falcon
 			headers.slice!(HOP_HEADERS)
 		end
 		
-		def call(request, peer: nil, **options)
+		def call(request)
 			if endpoint = lookup(request)
 				@count += 1
 				
-				if peer and address = peer.remote_address and address.ip?
+				if address = request.remote_address
 					request.headers.add(X_FORWARDED_FOR, address.ip_address)
 				end
 				

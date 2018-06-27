@@ -38,10 +38,9 @@ RSpec.describe Falcon::Proxy do
 	it 'can select client based on authority' do
 		request = Async::HTTP::Request.new('www.google.com', 'GET', '/', nil, headers, nil)
 		
-		peer = double("peer")
-		expect(peer).to receive(:remote_address).and_return(Addrinfo.ip("127.0.0.1"))
+		expect(request).to receive(:remote_address).and_return(Addrinfo.ip("127.0.0.1"))
 		
-		response = subject.call(request, peer: peer)
+		response = subject.call(request)
 		response.finish
 		
 		expect(response).to_not be_failure
