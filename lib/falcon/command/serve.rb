@@ -43,7 +43,7 @@ module Falcon
 				
 				option '-b/--bind <address>', "Bind to the given hostname/address", default: "tcp://localhost:9292"
 				
-				option '--forked | --threaded', "Select a specific concurrency model", key: :container, default: :threaded
+				option '--forked | --threaded', "Select a specific concurrency model", key: :container, default: :forked
 			end
 			
 			def container_class
