@@ -30,8 +30,8 @@ module Falcon
 				if body.is_a?(Async::HTTP::Body::Readable)
 					return body
 				# This needs more testing:
-				# elsif body.respond_to?(:to_path)
-				# 	return Async::HTTP::Body::File.new(body.to_path)
+				elsif body.respond_to?(:to_path)
+					return Async::HTTP::Body::File.open(body.to_path)
 				else
 					return self.new(headers, body)
 				end
