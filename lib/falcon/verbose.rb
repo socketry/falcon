@@ -29,17 +29,18 @@ module Falcon
 			@logger = logger
 		end
 		
-		def annotate(request, peer: nil, address: nil)
+		def annotate(request)
 			task = Async::Task.current
+			address = request.remote_address
 			
 			@logger.debug(request.authority) {"#{request.method} #{request.path} #{request.version} from #{address.inspect}"}
-			@logger.debug(request.authority) {request.headers.inspect}
+			# @logger.debug(request.authority) {request.headers.inspect}
 			
 			task.annotate("#{request.method} #{request.path} from #{address.inspect}")
 		end
 		
-		def call(request, **options)
-			annotate(request, **options)
+		def call(request)
+			annotate(request)
 			
 			statistics = Async::HTTP::Statistics.start
 			

@@ -19,6 +19,7 @@
 # THE SOFTWARE.
 
 require 'async/http/body/readable'
+require 'async/http/body/file'
 
 module Falcon
 	module Adapters
@@ -58,7 +59,7 @@ module Falcon
 			end
 			
 			def inspect
-				"\#<#{self.class} #{@body}>"
+				"\#<#{self.class} length=#{@length.inspect} body=#{@body.class}>"
 			end
 		end
 	end
