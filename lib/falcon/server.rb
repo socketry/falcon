@@ -19,10 +19,28 @@
 # THE SOFTWARE.
 
 require 'async/http/server'
+require 'async/http/middleware/builder'
+
 require 'async/http/content_encoding'
 
+require_relative 'verbose'
 require_relative 'adapters/rewindable'
+require_relative 'adapters/rack'
 
 module Falcon
-	Server = Async::HTTP::Server
+	class Server < Async::HTTP::Server
+		def self.middleware(rack_app, verbose: false)
+			Async::HTTP::Middleware.build do
+				if verbose
+					use Verbose
+				end
+				
+				use Async::HTTP::ContentEncoding
+				use Adapters::Rewindable
+				use Adapters::Rack
+				
+				run rack_app
+			end
+		end
+	end
 end

@@ -19,15 +19,11 @@
 # THE SOFTWARE.
 
 require_relative '../server'
-require_relative '../verbose'
-require_relative '../adapters/rack'
 
 require 'async/container'
 require 'async/io/trap'
 require 'async/io/host_endpoint'
 require 'async/io/shared_endpoint'
-
-require 'async/http/middleware/builder'
 
 require 'samovar'
 
@@ -62,19 +58,7 @@ module Falcon
 			def load_app(verbose)
 				rack_app, options = Rack::Builder.parse_file(@options[:config])
 				
-				app = Async::HTTP::Middleware.build do
-					if verbose
-						use Verbose
-					end
-					
-					use Async::HTTP::ContentEncoding
-					use Adapters::Rewindable
-					use Adapters::Rack
-					
-					run rack_app
-				end
-				
-				return app, options
+				return Server.middleware(rack_app, verbose: verbose), options
 			end
 			
 			def run(verbose)
