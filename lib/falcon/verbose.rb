@@ -34,7 +34,10 @@ module Falcon
 			address = request.remote_address
 			
 			@logger.debug(request.authority) {"#{request.method} #{request.path} #{request.version} from #{address.inspect}"}
-			# @logger.debug(request.authority) {request.headers.inspect}
+			
+			# if ENV['REQUEST_HEADERS']
+			# 	@logger.debug(request.authority) {request.headers.inspect}
+			# end
 			
 			task.annotate("#{request.method} #{request.path} from #{address.inspect}")
 		end
@@ -48,7 +51,11 @@ module Falcon
 			
 			statistics.wrap(response) do |statistics, error|
 				@logger.info(request.authority) {"#{request.method} #{request.path} #{request.version} -> #{response.status}; #{statistics.inspect}"}
-				# @logger.info response.headers.inspect
+				
+				# if ENV['RESPONSE_HEADERS']
+				# 	@logger.info response.headers.inspect
+				# end
+				
 				@logger.error(request.authority) {"#{error.class}: #{error.message}"} if error
 			end
 			

@@ -28,6 +28,7 @@ module Falcon
 		class Rack
 			def initialize(app, logger = Async.logger)
 				@app = app
+				
 				@logger = logger
 			end
 			
@@ -86,6 +87,7 @@ module Falcon
 					env['rack.hijack?'] = true
 					
 					env['rack.hijack'] = lambda do
+						@logger.debug(request) {"Hijacking request..."}
 						env['rack.hijack_io'] = request.hijack
 					end
 				else
@@ -107,6 +109,7 @@ module Falcon
 					return nil
 				end
 				
+				@logger.debug(request) {"Rack response: #{status} #{headers.inspect} #{body.class}"}
 				return Response.new(status, headers, body)
 			rescue => exception
 				@logger.error "#{exception.class}: #{exception.message}\n\t#{$!.backtrace.join("\n\t")}"
