@@ -105,9 +105,9 @@ module Falcon
 				# 	return nil
 				# end
 				
-				if env['rack.hijack_io']
-					return nil
-				end
+				# if env['rack.hijack_io']
+				# 	return nil
+				# end
 				
 				@logger.debug(request) {"Rack response: #{status} #{headers.inspect} #{body.class}"}
 				return Response.new(status, headers, body)
