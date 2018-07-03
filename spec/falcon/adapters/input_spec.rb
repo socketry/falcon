@@ -121,7 +121,7 @@ RSpec.describe Falcon::Adapters::Input do
 				it "allocates expected amount of memory" do
 					expect {
 						subject.read.clear
-					}.to limit_allocations(size: 10*1024)
+					}.to limit_allocations(size: 6*1024*1024)
 				end
 			end
 		end

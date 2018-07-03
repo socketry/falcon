@@ -81,7 +81,6 @@ module Falcon
 						@buffer = @buffer.byteslice(remaining_length..-1)
 					else
 						buffer << @buffer
-						@buffer.clear
 						@buffer = nil
 					end
 				end
