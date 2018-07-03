@@ -21,13 +21,15 @@
 require 'falcon/adapters/input'
 
 RSpec.describe Falcon::Adapters::Input do
+	include_context Async::RSpec::Memory
+
 	context 'with body' do
 		let(:sample_data) {%w{The quick brown fox jumped over the lazy dog}}
 		let(:body) {Async::HTTP::Body::Buffered.new(sample_data)}
 		
 		subject {described_class.new(body)}
 		
-		context '#read(buffer)' do
+		context '#read(length, buffer)' do
 			let(:buffer) {Async::IO::BinaryString.new}
 			let(:expected_output) {sample_data.join}
 			
@@ -47,6 +49,16 @@ RSpec.describe Falcon::Adapters::Input do
 				expect(buffer).to be == ""
 				
 				expect(subject).to be_eof
+			end
+			
+			context "with large body" do
+				let(:sample_data) { Array.new(5) { |i| "#{i}" * 1024*1024 } }
+				
+				it "allocates expected amount of memory" do
+					expect {
+						subject.read(10*1024, buffer) until subject.eof?
+					}.to limit_allocations(size: 11*1024*1024)
+				end
 			end
 		end
 		
@@ -101,6 +113,16 @@ RSpec.describe Falcon::Adapters::Input do
 				expect(buffer).to be == ""
 				
 				expect(subject).to be_eof
+			end
+			
+			context "with large body" do
+				let(:sample_data) { Array.new(5) { |i| "#{i}" * 1024*1024 } }
+				
+				it "allocates expected amount of memory" do
+					expect {
+						subject.read.clear
+					}.to limit_allocations(size: 10*1024)
+				end
 			end
 		end
 		
@@ -157,7 +179,7 @@ RSpec.describe Falcon::Adapters::Input do
 	context 'without body' do
 		subject {described_class.new(nil)}
 		
-		context '#read(buffer)' do
+		context '#read(length, buffer)' do
 			let(:buffer) {Async::IO::BinaryString.new}
 			
 			it "can read no input" do

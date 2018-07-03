@@ -28,8 +28,8 @@ module Falcon
 			def initialize(body)
 				@body = body
 				
-				# The current buffer, which is extended by calling `#fill_buffer`.
-				@buffer = Async::IO::BinaryString.new
+				# Will hold remaining data in `#read`.
+				@buffer = nil
 				@finished = @body.nil?
 			end
 			
@@ -49,7 +49,7 @@ module Falcon
 				if @body
 					# If the body is not rewindable, this will fail.
 					@body.rewind
-					@buffer.clear
+					@buffer = nil
 					@finished = false
 				end
 			end
@@ -67,49 +67,42 @@ module Falcon
 			# @param buffer [String] the buffer which will receive the data
 			# @return a buffer containing the data
 			def read(length = nil, buffer = nil)
-				if length
-					fill_buffer(length) if @buffer.bytesize <= length
+				buffer ||= Async::IO::BinaryString.new
+				buffer.clear
+				
+				until buffer.bytesize == length
+					@buffer = read_next if @buffer.nil?
+					break if @buffer.nil?
 					
-					chunk = @buffer.slice!(0, length)
+					remaining_length = length - buffer.bytesize if length
 					
-					if buffer
-						# TODO https://bugs.ruby-lang.org/issues/14745
-						buffer.replace(chunk)
+					if remaining_length && remaining_length < @buffer.bytesize
+						buffer << @buffer.byteslice(0, remaining_length)
+						@buffer = @buffer.byteslice(remaining_length..-1)
 					else
-						buffer = chunk
+						buffer << @buffer
+						@buffer.clear
+						@buffer = nil
 					end
-					
-					if buffer.empty? and length > 0
-						return nil
-					else
-						return buffer
-					end
-				else
-					buffer ||= Async::IO::BinaryString.new
-					
-					buffer.replace(@buffer)
-					@buffer.clear
-					
-					while chunk = read_next
-						buffer << chunk
-					end
-					
-					return buffer
 				end
+				
+				return nil if buffer.empty? && length && length > 0
+				
+				return buffer
 			end
 			
 			def eof?
-				@finished and @buffer.empty?
+				@finished and @buffer.nil?
 			end
 			
 			# gets must be called without arguments and return a string, or nil on EOF.
 			# @return [String, nil] The next chunk from the body.
 			def gets
-				if @buffer.empty?
+				if @buffer.nil?
 					return read_next
 				else
-					buffer = @buffer.dup
-					@buffer.clear
+					buffer = @buffer
+					@buffer = nil
 					return buffer
 				end
 			end
@@ -129,12 +122,6 @@ module Falcon
 				else
 					@finished = true
 					return nil
-				end
-			end
-			
-			def fill_buffer(length)
-				while @buffer.bytesize < length and chunk = read_next
-					@buffer << chunk
 				end
 			end
 		end
