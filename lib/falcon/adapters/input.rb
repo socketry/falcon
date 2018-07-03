@@ -73,8 +73,9 @@ module Falcon
 					chunk = @buffer.slice!(0, length)
 					
 					if buffer
-						# TODO https://bugs.ruby-lang.org/issues/14745
-						buffer.replace(chunk)
+						buffer.clear
+						buffer << chunk
+						chunk.clear
 					else
 						buffer = chunk
 					end
