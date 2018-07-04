@@ -87,8 +87,13 @@ module Falcon
 					env['rack.hijack?'] = true
 					
 					env['rack.hijack'] = lambda do
-						@logger.debug(request) {"Hijacking request..."}
-						env['rack.hijack_io'] = request.hijack
+						wrapper = request.hijack
+						
+						# We dup this as it might be taken out of the normal control flow, and the io will be closed shortly after returning from this method.
+						io = wrapper.io.dup
+						wrapper.close
+						
+						env['rack.hijack_io'] = io
 					end
 				else
 					env['rack.hijack?'] = false
