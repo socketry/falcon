@@ -18,52 +18,35 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-require 'async/http/body/readable'
-require 'async/http/body/file'
+require 'falcon/server'
+require 'async/websocket/server'
+require 'async/websocket/client'
 
-module Falcon
-	module Adapters
-		class Output < Async::HTTP::Body::Readable
-			CONTENT_LENGTH = 'content-length'.freeze
+RSpec.describe Falcon::Adapters::Response do
+	context 'with #to_path' do
+		let(:body) {double}
+		
+		it "should generate file body" do
+			expect(body).to receive(:to_path).and_return("/dev/null")
 			
-			# Wraps an array into a buffered body.
-			def self.wrap(status, headers, body)
-				# In no circumstance do we want this propagating up:
-				content_length = headers.delete(CONTENT_LENGTH)
-				
-				if body.is_a?(Async::HTTP::Body::Readable)
-					return body
-				elsif status == 200 and body.respond_to?(:to_path)
-					# Don't mangle partial responsese (206)
-					return Async::HTTP::Body::File.open(body.to_path)
-				else
-					return self.new(headers, body, (Integer(content_length) rescue nil))
-				end
-			end
+			response = described_class.new(200, {}, body)
 			
-			def initialize(headers, body, length)
-				# We don't trust the user to provide the right length to the transport.
-				@length = length
-				
-				@body = body
-				@chunks = body.to_enum(:each)
-			end
+			expect(response.body).to be_kind_of Async::HTTP::Body::File
+		end
+		
+		it "should not modify partial responses" do
+			response = described_class.new(206, {}, body)
 			
-			attr :length
+			expect(response.body).to be_kind_of Falcon::Adapters::Output
+		end
+	end
+	
+	context 'with content-length' do
+		it "should remove header" do
+			response = described_class.new(200, {'Content-Length' => '4'}, ["1234"])
 			
-			def empty?
-				@length == 0
-			end
-			
-			def read
-				@chunks.next
-			rescue StopIteration
-				nil
-			end
-			
-			def inspect
-				"\#<#{self.class} length=#{@length.inspect} body=#{@body.class}>"
-			end
+			expect(response.headers).to_not include('content-length')
+			expect(response.headers).to be_empty
 		end
 	end
 end

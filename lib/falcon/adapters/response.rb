@@ -27,7 +27,7 @@ module Falcon
 				# We normalize headers to be lower case:
 				headers = headers.map{|key, value| [key.downcase, value]}.to_h
 				
-				super(nil, status, nil, headers, Output.wrap(headers, body))
+				super(nil, status, nil, headers, Output.wrap(status, headers, body))
 			end
 		end
 	end
