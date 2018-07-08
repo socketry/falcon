@@ -77,6 +77,10 @@ module Falcon
 					remaining_length = length - buffer.bytesize if length
 					
 					if remaining_length && remaining_length < @buffer.bytesize
+						# We know that we are not going to reuse the original buffer.
+						# But byteslice will generate a hidden copy. So let's freeze it first:
+						@buffer.freeze
+						
 						buffer << @buffer.byteslice(0, remaining_length)
 						@buffer = @buffer.byteslice(remaining_length..-1)
 					else
