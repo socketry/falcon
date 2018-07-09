@@ -18,6 +18,8 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
+require 'async/io/buffer'
+
 require 'async/http/body'
 require 'async/http/body/rewindable'
 
@@ -67,7 +69,7 @@ module Falcon
 			# @param buffer [String] the buffer which will receive the data
 			# @return a buffer containing the data
 			def read(length = nil, buffer = nil)
-				buffer ||= Async::IO::BinaryString.new
+				buffer ||= Async::IO::Buffer.new
 				buffer.clear
 				
 				until buffer.bytesize == length

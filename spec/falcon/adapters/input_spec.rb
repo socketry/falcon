@@ -30,7 +30,7 @@ RSpec.describe Falcon::Adapters::Input do
 		subject {described_class.new(body)}
 		
 		context '#read(length, buffer)' do
-			let(:buffer) {Async::IO::BinaryString.new}
+			let(:buffer) {Async::IO::Buffer.new}
 			let(:expected_output) {sample_data.join}
 			
 			it "can read partial input" do
@@ -52,12 +52,15 @@ RSpec.describe Falcon::Adapters::Input do
 			end
 			
 			context "with large body" do
-				let(:sample_data) { Array.new(5) { |i| "#{i}" * 1024*1024 } }
+				# Allocate 5 chunks, each containing 1 MB of data.
+				let(:sample_data) {Array.new(5) {|i| "#{i}" * 1024*1024}}
 				
 				it "allocates expected amount of memory" do
-					expect {
-						subject.read(10*1024, buffer) until subject.eof?
-					}.to limit_allocations(size: 11*1024*1024)
+					subject
+					
+					expect do
+						subject.read(10*1024, buffer)
+					end.to limit_allocations.of(String, count: 1)
 				end
 			end
 		end
@@ -180,7 +183,7 @@ RSpec.describe Falcon::Adapters::Input do
 		subject {described_class.new(nil)}
 		
 		context '#read(length, buffer)' do
-			let(:buffer) {Async::IO::BinaryString.new}
+			let(:buffer) {Async::IO::Buffer.new}
 			
 			it "can read no input" do
 				expect(subject.read(0, buffer)).to be == ""
