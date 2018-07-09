@@ -60,7 +60,7 @@ RSpec.describe Falcon::Adapters::Input do
 					
 					expect do
 						subject.read(10*1024, buffer)
-					end.to limit_allocations.of(String, count: 5, size: 1071106)
+					end.to limit_allocations.of(String, count: 5, size: 1024*1024*0.9..1024*1024*1.1)
 				end
 			end
 		end
