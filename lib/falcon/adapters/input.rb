@@ -84,7 +84,7 @@ module Falcon
 						@buffer.freeze
 						
 						buffer << @buffer.byteslice(0, remaining_length)
-						@buffer = @buffer.byteslice(remaining_length..-1)
+						@buffer = @buffer.byteslice(remaining_length, @buffer.bytesize)
 					else
 						buffer << @buffer
 						@buffer = nil

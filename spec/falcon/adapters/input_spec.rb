@@ -60,7 +60,7 @@ RSpec.describe Falcon::Adapters::Input do
 					
 					expect do
 						subject.read(10*1024, buffer)
-					end.to limit_allocations.of(String, count: 1)
+					end.to limit_allocations.of(String, count: 5, size: 1071106)
 				end
 			end
 		end
@@ -122,9 +122,11 @@ RSpec.describe Falcon::Adapters::Input do
 				let(:sample_data) { Array.new(5) { |i| "#{i}" * 1024*1024 } }
 				
 				it "allocates expected amount of memory" do
+					subject
+					
 					expect {
 						subject.read.clear
-					}.to limit_allocations(size: 6*1024*1024)
+					}.to limit_allocations.of(String, count: 11, size: 5242885)
 				end
 			end
 		end
