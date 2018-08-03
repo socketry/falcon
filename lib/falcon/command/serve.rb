@@ -66,7 +66,13 @@ module Falcon
 					context.cert = authority.certificate
 					
 					context.alpn_select_cb = lambda do |protocols|
-						protocols.last
+						if protocols.include? "h2"
+							return "h2"
+						elsif protocols.include? "http/1.1"
+							return "http/1.1"
+						else
+							return nil
+						end
 					end
 					
 					context.key = authority.key
@@ -83,6 +89,7 @@ module Falcon
 				app, options = load_app(verbose)
 				
 				endpoint = nil
+				protocol = Async::HTTP::Protocol::HTTP1
 				
 				Async::Reactor.run do
 					endpoint = Async::IO::SharedEndpoint.bound(
@@ -95,6 +102,8 @@ module Falcon
 						endpoint,
 						ssl_context: ssl_context(hostname)
 					)
+					
+					protocol = Async::HTTP::Protocol::HTTPS
 				end
 				
 				Async.logger.info "Falcon taking flight! Binding to #{endpoint} [#{container_class} with concurrency: #{@options[:concurrency]}]"
@@ -111,7 +120,7 @@ module Falcon
 						end
 					end
 					
-					server = Falcon::Server.new(app, endpoint)
+					server = Falcon::Server.new(app, endpoint, protocol)
 					
 					server.run
 					
