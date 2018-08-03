@@ -19,11 +19,13 @@
 # THE SOFTWARE.
 
 require_relative '../server'
+require 'localhost/authority'
 
 require 'async/container'
 require 'async/io/trap'
 require 'async/io/host_endpoint'
 require 'async/io/shared_endpoint'
+require 'async/io/ssl_endpoint'
 
 require 'samovar'
 
@@ -36,6 +38,8 @@ module Falcon
 			self.description = "Run an HTTP server."
 			
 			options do
+				option '-a/--authority <hostname>', "Use SSL with a self signed certificate for the given hostname.", default: 'localhost'
+				
 				option '-c/--config <path>', "Rackup configuration file to load", default: 'config.ru'
 				option '-n/--concurrency <count>', "Number of processes to start", default: Async::Container.hardware_concurrency, type: Integer
 				
@@ -55,6 +59,20 @@ module Falcon
 				end
 			end
 			
+			def ssl_context(hostname)
+				authority = Localhost::Authority.fetch(hostname)
+				
+				OpenSSL::SSL::SSLContext.new.tap do |context|
+					context.cert = authority.certificate
+					
+					context.alpn_select_cb = lambda do |protocols|
+						protocols.last
+					end
+					
+					context.key = authority.key
+				end
+			end
+			
 			def load_app(verbose)
 				rack_app, options = Rack::Builder.parse_file(@options[:config])
 				
@@ -69,6 +87,13 @@ module Falcon
 				Async::Reactor.run do
 					endpoint = Async::IO::SharedEndpoint.bound(
 						Async::IO::Endpoint.parse(@options[:bind], reuse_port: true)
+					)
+				end
+				
+				if hostname = @options[:authority]
+					endpoint = Async::IO::SSLEndpoint.new(
+						endpoint,
+						ssl_context: ssl_context(hostname)
 					)
 				end
 				
