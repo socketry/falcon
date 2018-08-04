@@ -19,6 +19,8 @@
 # THE SOFTWARE.
 
 require_relative '../server'
+require_relative '../endpoint'
+
 require 'localhost/authority'
 
 require 'async/container'
@@ -38,12 +40,11 @@ module Falcon
 			self.description = "Run an HTTP server."
 			
 			options do
-				option '-a/--authority <hostname>', "Use SSL with a self signed certificate for the given hostname.", default: 'localhost'
+				option '-b/--bind <address>', "Bind to the given hostname/address", default: "https://localhost:9292"
+				option '-p/--port <number>', "Override the specified port", type: Integer
 				
 				option '-c/--config <path>', "Rackup configuration file to load", default: 'config.ru'
 				option '-n/--concurrency <count>', "Number of processes to start", default: Async::Container.hardware_concurrency, type: Integer
-				
-				option '-b/--bind <address>', "Bind to the given hostname/address", default: "tcp://localhost:9292"
 				
 				option '--forked | --threaded', "Select a specific concurrency model", key: :container, default: :forked
 			end
@@ -59,31 +60,6 @@ module Falcon
 				end
 			end
 			
-			def ssl_context(hostname)
-				authority = Localhost::Authority.fetch(hostname)
-				
-				OpenSSL::SSL::SSLContext.new.tap do |context|
-					context.cert = authority.certificate
-					context.key = authority.key
-					
-					context.alpn_select_cb = lambda do |protocols|
-						if protocols.include? "h2"
-							return "h2"
-						elsif protocols.include? "http/1.1"
-							return "http/1.1"
-						elsif protocols.include? "http/1.0"
-							return "http/1.0"
-						else
-							return nil
-						end
-					end
-					
-					context.session_id_context = "falcon"
-					context.set_params
-					context.freeze
-				end
-			end
-			
 			def load_app(verbose)
 				rack_app, options = Rack::Builder.parse_file(@options[:config])
 				
@@ -93,22 +69,12 @@ module Falcon
 			def run(verbose)
 				app, options = load_app(verbose)
 				
-				endpoint = nil
-				protocol = Async::HTTP::Protocol::HTTP1
+				endpoint = Endpoint.parse(@options[:bind], **@options)
 				
 				Async::Reactor.run do
 					endpoint = Async::IO::SharedEndpoint.bound(
 						Async::IO::Endpoint.parse(@options[:bind], reuse_port: true)
 					)
-				end
-				
-				if hostname = @options[:authority]
-					endpoint = Async::IO::SSLEndpoint.new(
-						endpoint,
-						ssl_context: ssl_context(hostname)
-					)
-					
-					protocol = Async::HTTP::Protocol::HTTPS
 				end
 				
 				Async.logger.info "Falcon taking flight! Binding to #{endpoint} [#{container_class} with concurrency: #{@options[:concurrency]}]"
