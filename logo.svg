@@ -1,8 +1,39 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <svg width="100%" height="100%" viewBox="0 0 600 220" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;">
-    <g transform="matrix(1,0,0,1,-194.308,98.7226)">
-        <g id="Name">
+    <g id="Name" transform="matrix(1,0,-0.176327,1,245.058,11.0473)">
+        <g transform="matrix(12.4689,0,0,1,2662.53,0)">
+            <g opacity="0.5">
+                <g id="a2YeZXbxK" transform="matrix(-1.71632,0,0,0.386532,-68.0238,97.1636)">
+                    <path d="M73.939,38.385L94.531,27.962L73.939,22.859L73.939,38.385Z" style="fill:rgb(86,86,86);fill-rule:nonzero;"/>
+                </g>
+                <g id="a2YeZXbxK1" serif:id="a2YeZXbxK" transform="matrix(-1.71632,0,0,0.386532,-68.0238,107.164)">
+                    <path d="M73.939,38.385L94.531,27.962L73.939,22.859L73.939,38.385Z" style="fill:rgb(86,86,86);fill-rule:nonzero;"/>
+                </g>
+                <g id="a2YeZXbxK2" serif:id="a2YeZXbxK" transform="matrix(-1.71632,0,0,0.386532,-68.0238,117.164)">
+                    <path d="M73.939,38.385L94.531,27.962L73.939,22.859L73.939,38.385Z" style="fill:rgb(86,86,86);fill-rule:nonzero;"/>
+                </g>
+                <g id="a2YeZXbxK3" serif:id="a2YeZXbxK" transform="matrix(-1.71632,0,0,0.386532,-68.0238,127.164)">
+                    <path d="M73.939,38.385L94.531,27.962L73.939,22.859L73.939,38.385Z" style="fill:rgb(86,86,86);fill-rule:nonzero;"/>
+                </g>
+                <g id="a2YeZXbxK4" serif:id="a2YeZXbxK" transform="matrix(-1.71632,0,0,0.386532,-68.0238,137.164)">
+                    <path d="M73.939,38.385L94.531,27.962L73.939,22.859L73.939,38.385Z" style="fill:rgb(86,86,86);fill-rule:nonzero;"/>
+                </g>
+                <g id="a2YeZXbxK5" serif:id="a2YeZXbxK" transform="matrix(-1.71632,0,0,0.386532,-68.0238,147.164)">
+                    <path d="M73.939,38.385L94.531,27.962L73.939,22.859L73.939,38.385Z" style="fill:rgb(86,86,86);fill-rule:nonzero;"/>
+                </g>
+                <g id="a2YeZXbxK6" serif:id="a2YeZXbxK" transform="matrix(-1.71632,0,0,0.386532,-68.0238,157.164)">
+                    <path d="M73.939,38.385L94.531,27.962L73.939,22.859L73.939,38.385Z" style="fill:rgb(86,86,86);fill-rule:nonzero;"/>
+                </g>
+                <g id="a2YeZXbxK7" serif:id="a2YeZXbxK" transform="matrix(-1.71632,0,0,0.386532,-68.0238,167.164)">
+                    <path d="M73.939,38.385L94.531,27.962L73.939,22.859L73.939,38.385Z" style="fill:rgb(86,86,86);fill-rule:nonzero;"/>
+                </g>
+                <g id="a2YeZXbxK8" serif:id="a2YeZXbxK" transform="matrix(-1.71632,0,0,0.386532,-68.0238,177.164)">
+                    <path d="M73.939,38.385L94.531,27.962L73.939,22.859L73.939,38.385Z" style="fill:rgb(86,86,86);fill-rule:nonzero;"/>
+                </g>
+            </g>
+        </g>
+        <g transform="matrix(1,0,0,1,-404.578,86.5424)">
             <text x="207.138px" y="105.168px" style="font-family:'Phosphate-Inline', 'Phosphate';font-size:130px;">F<tspan x="258.228px 339.608px 393.038px 465.058px 561.258px " y="105.168px 105.168px 105.168px 105.168px 105.168px ">ALCON</tspan></text>
         </g>
     </g>
@@ -18,7 +49,7 @@
             <path d="M107.112,106.033L73.806,75.082L67.438,113.958L107.112,106.033Z" style="fill:url(#_Linear1);fill-rule:nonzero;"/>
         </g>
         <g transform="matrix(1,0,0,1,-292.6,1.20888)">
-            <path id="a2YeZXbxK" d="M74.965,38.385L94.531,27.962L73.939,22.859L65.06,28.963L74.965,38.385Z" style="fill:rgb(243,242,182);fill-rule:nonzero;stroke:black;stroke-width:4.83px;"/>
+            <path id="a2YeZXbxK9" serif:id="a2YeZXbxK" d="M74.965,38.385L94.531,27.962L73.939,22.859L65.06,28.963L74.965,38.385Z" style="fill:rgb(243,242,182);fill-rule:nonzero;stroke:black;stroke-width:4.83px;"/>
         </g>
         <g transform="matrix(1,0,0,1,-292.6,1.20888)">
             <path id="bck4zTqCc" d="M31.138,70.92L66.327,70.003L66.665,53.621L34.89,25.682L4.551,43.331L20.728,83.297L31.138,70.92Z" style="fill:url(#_Linear2);fill-rule:nonzero;"/>
