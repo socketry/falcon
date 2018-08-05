@@ -33,10 +33,7 @@ module Falcon
 		def build_ssl_context(hostname = self.hostname)
 			authority = Localhost::Authority.fetch(hostname)
 			
-			OpenSSL::SSL::SSLContext.new.tap do |context|
-				context.cert = authority.certificate
-				context.key = authority.key
-				
+			authority.server_context.tap do |context|
 				context.alpn_select_cb = lambda do |protocols|
 					if protocols.include? "h2"
 						return "h2"

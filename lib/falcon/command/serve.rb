@@ -71,7 +71,7 @@ module Falcon
 			def run(verbose)
 				app, options = load_app(verbose)
 				
-				endpoint = Endpoint.parse(@options[:bind], reuse_port: true, **@options)
+				endpoint = Endpoint.parse(@options[:bind], reuse_port: true)
 				
 				bound_endpoint = Async::Reactor.run do
 					Async::IO::SharedEndpoint.bound(endpoint)
