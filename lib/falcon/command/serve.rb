@@ -41,7 +41,9 @@ module Falcon
 			
 			options do
 				option '-b/--bind <address>', "Bind to the given hostname/address", default: "https://localhost:9292"
+				
 				option '-p/--port <number>', "Override the specified port", type: Integer
+				option '-h/--hostname <hostname>', "Specify the hostname which would be used for certificates, etc."
 				
 				option '-c/--config <path>', "Rackup configuration file to load", default: 'config.ru'
 				option '-n/--concurrency <count>', "Number of processes to start", default: Async::Container.hardware_concurrency, type: Integer
@@ -69,13 +71,11 @@ module Falcon
 			def run(verbose)
 				app, options = load_app(verbose)
 				
-				endpoint = Endpoint.parse(@options[:bind], **@options)
+				endpoint = Endpoint.parse(@options[:bind], reuse_port: true, **@options)
 				
-				Async::Reactor.run do
-					endpoint = Async::IO::SharedEndpoint.bound(
-						Async::IO::Endpoint.parse(@options[:bind], reuse_port: true)
-					)
-				end
+				bound_endpoint = Async::Reactor.run do
+					Async::IO::SharedEndpoint.bound(endpoint)
+				end.result
 				
 				Async.logger.info "Falcon taking flight! Binding to #{endpoint} [#{container_class} with concurrency: #{@options[:concurrency]}]"
 				
@@ -91,7 +91,7 @@ module Falcon
 						end
 					end
 					
-					server = Falcon::Server.new(app, endpoint, protocol)
+					server = Falcon::Server.new(app, bound_endpoint, endpoint.protocol)
 					
 					server.run
 					
