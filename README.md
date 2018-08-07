@@ -31,6 +31,14 @@ Or install it yourself as:
 
 You can run `falcon serve` directly, and it will load the `config.ru` and start serving on https://localhost:9292.
 
+### Integration with Rails
+
+Falcon works perfectly with `rails` apps.
+
+Add `gem 'falcon'` to your `Gemfile` and perhaps remove `gem 'puma'` once you are satisified with the change.
+
+Run `RACK_HANDLER=falcon rails server` to start the server (at least, until [rack#181](https://github.com/rack/rack/pull/1181) is merged). Alternatively, if you want to use `HTTP/2`, run `falcon serve` directly.
+
 ### WebSockets
 
 Falcon supports `rack.hijack` for HTTP/1.x connections. You can thus use [async-websocket] in any controller layer to serve WebSocket connections.
@@ -49,7 +57,7 @@ Falcon can restart very quickly and is ideal for use with guard. See [guard-falc
 
 ### Integration with Capybara
 
-It's quick start up time is great for use with Capybara:
+It's quick start up time is great for use with Capybara. See [falcon-capybara] for more details.
 
 [falcon-capybara]: https://github.com/socketry/falcon-capybara
 

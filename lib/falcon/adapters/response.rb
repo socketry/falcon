@@ -19,6 +19,7 @@
 # THE SOFTWARE.
 
 require_relative 'output'
+require 'time'
 
 module Falcon
 	module Adapters
@@ -26,6 +27,9 @@ module Falcon
 			def initialize(status, headers, body)
 				# We normalize headers to be lower case:
 				headers = headers.map{|key, value| [key.downcase, value]}.to_h
+				
+				headers['server'] ||= "falcon/#{Falcon::VERSION}"
+				headers['date'] ||= Time.now.httpdate
 				
 				super(nil, status, nil, headers, Output.wrap(status, headers, body))
 			end

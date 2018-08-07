@@ -46,7 +46,6 @@ RSpec.describe Falcon::Adapters::Response do
 			response = described_class.new(200, {'Content-Length' => '4'}, ["1234"])
 			
 			expect(response.headers).to_not include('content-length')
-			expect(response.headers).to be_empty
 		end
 	end
 end

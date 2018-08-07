@@ -40,11 +40,19 @@ RSpec.describe Falcon::Server do
 			end
 		end
 		
-		it "can GET" do
-			response = client.get("/", {})
+		context "GET /" do
+			let(:response) {client.get("/")}
 			
-			expect(response).to be_success
-			expect(response.read).to be == "Hello World"
+			it "generates successful response" do
+				expect(response).to be_success
+				expect(response.read).to be == "Hello World"
+			end
+			
+			it "generates server and date headers" do
+				expect(response.headers).to include('date', 'server')
+				
+				expect(response.headers['server'].join).to include("falcon")
+			end
 		end
 		
 		it "can POST application/x-www-form-urlencoded" do
