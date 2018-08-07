@@ -1,6 +1,6 @@
 # ![Falcon](logo.svg)
 
-Falcon is a multi-process, multi-fiber Rack HTTP server built on top of [async], [async-io] and [async-http]. Each request is run within a light weight fiber and can block on up-stream requests without stalling the entire server process. Supports HTTP/1 and HTTP/2 natively.
+Falcon is a multi-process, multi-fiber Rack HTTP server built on top of [async], [async-io], [async-container] and [async-http]. Each request is run within a light weight fiber and can block on up-stream requests without stalling the entire server process. Supports HTTP/1 and HTTP/2 natively. [Paid business](#Business-Support) support is available.
 
 [![Build Status](https://secure.travis-ci.org/socketry/falcon.svg)](http://travis-ci.org/socketry/falcon)
 [![Code Climate](https://codeclimate.com/github/socketry/falcon.svg)](https://codeclimate.com/github/socketry/falcon)
@@ -8,6 +8,7 @@ Falcon is a multi-process, multi-fiber Rack HTTP server built on top of [async],
 
 [async]: https://github.com/socketry/async
 [async-io]: https://github.com/socketry/async-io
+[async-container]: https://github.com/socketry/async-container
 [async-http]: https://github.com/socketry/async-http
 
 ## Installation
@@ -28,7 +29,7 @@ Or install it yourself as:
 
 ## Usage
 
-You can run `falcon serve` directly, and it will load the `config.ru` and start serving on port 9292.
+You can run `falcon serve` directly, and it will load the `config.ru` and start serving on https://localhost:9292.
 
 ### WebSockets
 
@@ -48,7 +49,7 @@ Falcon can restart very quickly and is ideal for use with guard. See [guard-falc
 
 ### Integration with Capybara
 
-It is a very fast and light-weight implementation for Capybara:
+It's quick start up time is great for use with Capybara:
 
 [falcon-capybara]: https://github.com/socketry/falcon-capybara
 
@@ -66,11 +67,24 @@ Falcon is uses an asynchronous event-driven reactor to provide non-blocking IO. 
 
 It uses one Fiber per request, which yields in the presence of blocking IO.
 
+- [Improving Ruby Concurrency](https://www.codeotaku.com/journal/2018-06/improving-ruby-concurrency/index#performance) – Comparison of Falcon and Puma.
+
 ### Memory Usage
 
-Falcon uses a pre-fork model which loads the entire rack application before forking. This reduces per-process memory usage.
+Falcon uses a pre-fork model which loads the entire rack application before forking. This reduces per-process memory usage. 
 
-### Throughput
+[async-http] has been designed carefully to minimize IO related garbage. This avoids large per-request memory allocations or disk usage, provided that you use streaming IO.
+
+## Business Support
+
+If you use this software for business purposes, please consider purchasing Business Support. The agreement will give you:
+
+- Better software through funded development and testing.
+- Advance notification of bugs and security issues.
+- Priority consideration of feature requests and bug reports.
+- Priority support and assistance.
+
+The price for business support is $60.00 USD / instance / year. Please [contact us](mailto:context@oriontransfer.co.nz?subject=Falcon%20Business%20Support) for more details.
 
 ## Contributing
 
@@ -84,7 +98,7 @@ Falcon uses a pre-fork model which loads the entire rack application before fork
 
 Released under the MIT license.
 
-Copyright, 2017, by [Samuel G. D. Williams](http://www.codeotaku.com/samuel-williams).
+Copyright, 2018, by [Samuel G. D. Williams](http://www.codeotaku.com/samuel-williams).
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
