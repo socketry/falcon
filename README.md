@@ -1,6 +1,6 @@
 # ![Falcon](logo.svg)
 
-Falcon is a multi-process, multi-fiber Rack HTTP server built on top of [async], [async-io], [async-container] and [async-http]. Each request is run within a light weight fiber and can block on up-stream requests without stalling the entire server process. Supports HTTP/1 and HTTP/2 natively. [Paid business](#Business-Support) support is available.
+Falcon is a multi-process, multi-fiber Rack HTTP server built on top of [async], [async-io], [async-container] and [async-http]. Each request is run within a light weight fiber and can block on up-stream requests without stalling the entire server process. Supports HTTP/1 and HTTP/2 natively. [Paid business support](#Business-Support) is available.
 
 [![Build Status](https://secure.travis-ci.org/socketry/falcon.svg)](http://travis-ci.org/socketry/falcon)
 [![Code Climate](https://codeclimate.com/github/socketry/falcon.svg)](https://codeclimate.com/github/socketry/falcon)
@@ -90,9 +90,9 @@ If you use this software for business purposes, please consider purchasing Busin
 - Better software through funded development and testing.
 - Advance notification of bugs and security issues.
 - Priority consideration of feature requests and bug reports.
-- Priority support and assistance.
+- Private support and assistance via direct email.
 
-The price for business support is $60.00 USD / instance / year. Please [contact us](mailto:context@oriontransfer.co.nz?subject=Falcon%20Business%20Support) for more details.
+The price for business support is $60.00 USD / instance / year, invoiced on a yearly basis. Please [contact us](mailto:context@oriontransfer.co.nz?subject=Falcon%20Business%20Support) for more details.
 
 ## Contributing
 
