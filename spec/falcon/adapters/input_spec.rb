@@ -53,7 +53,7 @@ RSpec.describe Falcon::Adapters::Input do
 			
 			context "with large body" do
 				# Allocate 5 chunks, each containing 1 MB of data.
-				let(:sample_data) {Array.new(5) {|i| "#{i}" * 1024*1024}}
+				let(:sample_data) {Array.new(5) {|i| "#{i}".b * 1024*1024}}
 				
 				it "allocates expected amount of memory" do
 					subject
@@ -119,7 +119,7 @@ RSpec.describe Falcon::Adapters::Input do
 			end
 			
 			context "with large body" do
-				let(:sample_data) { Array.new(5) { |i| "#{i}" * 1024*1024 } }
+				let(:sample_data) { Array.new(5) { |i| "#{i}".b * 1024*1024 } }
 				
 				it "allocates expected amount of memory" do
 					subject
