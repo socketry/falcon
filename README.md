@@ -1,6 +1,6 @@
 # ![Falcon](logo.svg)
 
-Falcon is a multi-process, multi-fiber Rack HTTP server built on top of [async], [async-io], [async-container] and [async-http]. Each request is run within a light weight fiber and can block on up-stream requests without stalling the entire server process. Supports HTTP/1 and HTTP/2 natively. [Paid business support](#Business-Support) is available.
+Falcon is a multi-process, multi-fiber Rack HTTP server built on top of [async], [async-io], [async-container] and [async-http]. Each request is run within a light weight fiber and can block on up-stream requests without stalling the entire server process. Supports HTTP/1 and HTTP/2 natively. [Paid business support](#business-support) is available.
 
 [![Build Status](https://secure.travis-ci.org/socketry/falcon.svg)](http://travis-ci.org/socketry/falcon)
 [![Code Climate](https://codeclimate.com/github/socketry/falcon.svg)](https://codeclimate.com/github/socketry/falcon)
