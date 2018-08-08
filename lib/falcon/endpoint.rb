@@ -26,10 +26,6 @@ module Falcon
 			@options[:ssl_context] || build_ssl_context
 		end
 		
-		def build_endpoint(endpoint = nil)
-			super(@options.fetch(:bind, endpoint))
-		end
-		
 		def build_ssl_context(hostname = self.hostname)
 			authority = Localhost::Authority.fetch(hostname)
 			
