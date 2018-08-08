@@ -11,6 +11,12 @@ Falcon is a multi-process, multi-fiber Rack HTTP server built on top of [async],
 [async-container]: https://github.com/socketry/async-container
 [async-http]: https://github.com/socketry/async-http
 
+## Motivation
+
+I've set up plenty of development and production environments for Ruby where you use some combination of Linode, AWS, Nginx, Passenger, Puma, Unicorn, Rails, Sinatra, etc. Every layer you add increases deployment complexity, latency and additionally, almost none of these platforms really support the full scope of what HTTP is capable of. This is especially true when building an unholy alliance of any of the above technologies, since each part of the stack imposes it's own limitations.
+
+My goal for Falcon was to make a one-stop-shop of HTTP servers, using an asynchronous backend which can cover WebSockets, databases, and other sources of latency in the web stack. I wasn't too concerned with trying to solve all concurrency problems, but with time I hope to tackle many of them. I want the same environment in development as in testing, staging and production.
+
 ## Installation
 
 Add this line to your application's Gemfile:
@@ -88,6 +94,7 @@ Falcon uses a pre-fork model which loads the entire rack application before fork
 If you use this software for business purposes, please consider purchasing Business Support. The agreement will give you:
 
 - Better software through funded development and testing.
+- Access to advanced features including push promises and stream prioritization (in progress).
 - Advance notification of bugs and security issues.
 - Priority consideration of feature requests and bug reports.
 - Private support and assistance via direct email.
