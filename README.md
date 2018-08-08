@@ -92,7 +92,7 @@ If you use this software for business purposes, please consider purchasing Busin
 - Priority consideration of feature requests and bug reports.
 - Private support and assistance via direct email.
 
-The price for business support is $60.00 USD / instance / year, invoiced on a yearly basis. Please [contact us](mailto:context@oriontransfer.co.nz?subject=Falcon%20Business%20Support) for more details.
+The price for business support is $600.00 USD / project / year, invoiced on a yearly basis. Please [contact us](mailto:context@oriontransfer.co.nz?subject=Falcon%20Business%20Support) for more details.
 
 ## Contributing
 
