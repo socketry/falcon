@@ -15,7 +15,9 @@ Falcon is a multi-process, multi-fiber Rack HTTP server built on top of [async],
 
 I've set up plenty of development and production environments for Ruby where you use some combination of Linode, AWS, Nginx, Passenger, Puma, Unicorn, Rails, Sinatra, etc. Every layer you add increases deployment complexity, latency and additionally, almost none of these platforms really support the full scope of what HTTP is capable of. This is especially true when building an unholy alliance of any of the above technologies, since each part of the stack imposes it's own limitations.
 
-My goal for Falcon was to make a one-stop-shop of HTTP servers, using an asynchronous backend which can cover WebSockets, databases, and other sources of latency in the web stack. I wasn't too concerned with trying to solve all concurrency problems, but with time I hope to tackle many of them. I want the same environment in development as in testing, staging and production.
+I want the same environment for development, testing, staging and production, and I want it to be both simple, informative, and fast. Falcon can work in all these environments, and defaults to HTTP/2 over HTTPS for localhost development. Consistency in your stack helps to catch bugs before they reach production, and simplifies your production environment.
+
+Falcon is designed to be both a production quality front-end web server for Ruby applications, and an awesome development tool.
 
 ## Installation
 
@@ -94,12 +96,26 @@ Falcon uses a pre-fork model which loads the entire rack application before fork
 If you use this software for business purposes, please consider purchasing Business Support. The agreement will give you:
 
 - Better software through funded development and testing.
-- Access to advanced features including push promises and stream prioritization (in progress).
+- Access to advanced features (outlined below).
 - Advance notification of bugs and security issues.
 - Priority consideration of feature requests and bug reports.
 - Private support and assistance via direct email.
 
 The price for business support is $600.00 USD / project / year, invoiced on a yearly basis. Please [contact us](mailto:context@oriontransfer.co.nz?subject=Falcon%20Business%20Support) for more details.
+
+### "Stretch" Goals
+
+I would like to invest more time in business specific features. For each paying project as outlined above, one vote is available to prioritize the below work.
+
+- Add support for push promises and stream prioritization in [async-http].
+- Add support for rolling restarts in [async-container].
+- Add support for hybrid process/thread model in [async-container].
+- Asynchronous Postgres and MySQL database adapters for ActiveRecord in [async-postgres] and [async-mysql].
+
+[async-http]: https://github.com/socketry/async-http
+[async-container]: https://github.com/socketry/async-container
+[async-postgres]: https://github.com/socketry/async-postgres
+[async-mysql]: https://github.com/socketry/async-mysql
 
 ## Contributing
 
