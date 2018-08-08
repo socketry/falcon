@@ -57,7 +57,7 @@ Falcon can restart very quickly and is ideal for use with guard. See [guard-falc
 
 ### Integration with Capybara
 
-It's quick start up time is great for use with Capybara. See [falcon-capybara] for more details.
+Falcon can run in the same process on a different thread, so it's great for use with Capybara (and shared ActiveRecord transactions). See [falcon-capybara] for more details.
 
 [falcon-capybara]: https://github.com/socketry/falcon-capybara
 
