@@ -40,12 +40,8 @@ module Falcon
 			end
 			
 			nested '<command>',
-				'serve' => Serve
-				# 'get' => Get
-				# 'post' => Post
-				# 'head' => Head,
-				# 'put' => Put,
-				# 'delete' => Delete
+				'serve' => Serve,
+				default: 'serve'
 			
 			def verbose?
 				@options[:logging] == :verbose
