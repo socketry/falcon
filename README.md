@@ -1,6 +1,6 @@
 # ![Falcon](logo.svg)
 
-Falcon is a multi-process, multi-fiber Rack HTTP server built on top of [async], [async-io], [async-container] and [async-http]. Each request is run within a light weight fiber and can block on up-stream requests without stalling the entire server process. Supports HTTP/1 and HTTP/2 natively. [Paid business support](#business-support) is available.
+Falcon is a multi-process, multi-fiber rack-compatible HTTP server built on top of [async], [async-io], [async-container] and [async-http]. Each request is run within a light weight fiber and can block on up-stream requests without stalling the entire server process. Supports HTTP/1 and HTTP/2 natively. [Paid business support](#business-support) is available.
 
 [![Build Status](https://secure.travis-ci.org/socketry/falcon.svg)](http://travis-ci.org/socketry/falcon)
 [![Code Climate](https://codeclimate.com/github/socketry/falcon.svg)](https://codeclimate.com/github/socketry/falcon)
@@ -13,11 +13,11 @@ Falcon is a multi-process, multi-fiber Rack HTTP server built on top of [async],
 
 ## Motivation
 
-I've set up plenty of development and production environments for Ruby where you use some combination of Linode, AWS, Nginx, Passenger, Puma, Unicorn, Rails, Sinatra, etc. Every layer you add increases deployment complexity, latency and additionally, almost none of these platforms really support the full scope of what HTTP is capable of. This is especially true when building an unholy alliance of any of the above technologies, since each part of the stack imposes it's own limitations.
+When I initially built [async], I saw an opportunity to build [async-http], which provides both client and server components. After toying with these ideas, I decided to build an actual web server, primarily out of interest to compare and validate performance. Falcon grew out of those experiments, and allowed me to test existing real-world code on top of [async].
 
-I want the same environment for development, testing, staging and production, and I want it to be both simple, informative, and fast. Falcon can work in all these environments, and defaults to HTTP/2 over HTTPS for localhost development. Consistency in your stack helps to catch bugs before they reach production, and simplifies your production environment.
+Once I had something working, I saw an opportunity to simplify my development, testing and production environments, replacing production (Nginx+Passenger) and development (Puma) with Falcon. Not only does this simplify deployment, it helps minimize environment-specific bugs.
 
-Falcon is designed to be both a production quality front-end web server for Ruby applications, and an awesome development tool.
+As web development is something I'm passionate about, having a server like Falcon is empowering.
 
 ## Installation
 
