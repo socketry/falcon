@@ -19,6 +19,8 @@
 # THE SOFTWARE.
 
 require_relative 'output'
+require_relative '../version'
+
 require 'time'
 
 module Falcon
