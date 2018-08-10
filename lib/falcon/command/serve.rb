@@ -68,10 +68,25 @@ module Falcon
 				return Server.middleware(rack_app, verbose: verbose), options
 			end
 			
+			def endpoint_options
+				# Oh, for Hash#slice(keys...)
+				options = {}
+				
+				if @options[:hostname]
+					options[:hostname] = @options[:hostname]
+				end
+				
+				if @options[:port]
+					options[:port] = @options[:port]
+				end
+				
+				return options
+			end
+			
 			def run(verbose)
 				app, options = load_app(verbose)
 				
-				endpoint = Endpoint.parse(@options[:bind], reuse_port: true)
+				endpoint = Endpoint.parse(@options[:bind], **endpoint_options)
 				
 				bound_endpoint = Async::Reactor.run do
 					Async::IO::SharedEndpoint.bound(endpoint)
