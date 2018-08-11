@@ -47,21 +47,18 @@ module Falcon
 			end
 			
 			# rewind must be called without arguments. It rewinds the input stream back to the beginning. It must not raise Errno::ESPIPE: that is, it may not be a pipe or a socket. Therefore, handler developers must buffer the input data into some rewindable object if the underlying input stream is not rewindable.
+			# @return [Boolean] whether the body could be rewound.
 			def rewind
-				if @body
+				if @body and @body.respond_to? :rewind
 					# If the body is not rewindable, this will fail.
 					@body.rewind
 					@buffer = nil
 					@finished = false
+					
+					return true
 				end
-			end
-			
-			def respond_to?(name, *)
-				if name == :rewind
-					@body.respond_to?(:rewind)
-				else
-					super
-				end
+				
+				return false
 			end
 			
 			# read behaves like IO#read. Its signature is read([length, [buffer]]). If given, length must be a non-negative Integer (>= 0) or nil, and buffer must be a String and may not be nil. If length is given and not nil, then this method reads at most length bytes from the input stream. If length is not given or nil, then this method reads all data until EOF. When EOF is reached, this method returns nil if length is given and not nil, or “” if length is not given or is nil. If buffer is given, then the read data will be placed into buffer instead of a newly created String object.
