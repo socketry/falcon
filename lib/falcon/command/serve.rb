@@ -83,7 +83,15 @@ module Falcon
 				return options
 			end
 			
-			def run(verbose)
+			def client_endpoint
+				Async::HTTP::URLEndpoint.parse(@options[:bind], **endpoint_options)
+			end
+			
+			def client
+				Async::HTTP::Client.new(client_endpoint)
+			end
+			
+			def run(verbose = false)
 				app, options = load_app(verbose)
 				
 				endpoint = Endpoint.parse(@options[:bind], **endpoint_options)
