@@ -43,8 +43,6 @@ module Falcon
 				end
 				
 				context.session_id_context = "falcon"
-				context.set_params
-				context.freeze
 			end
 		end
 	end
