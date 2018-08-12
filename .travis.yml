@@ -1,5 +1,4 @@
 language: ruby
-sudo: required
 dist: xenial
 cache: bundler
 
@@ -8,10 +7,6 @@ addons:
     packages:
     - wrk
     - apache2-utils
-
-before_script:
-  - gem update --system
-  - gem install bundler
 
 matrix:
   include:
