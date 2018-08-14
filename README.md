@@ -81,7 +81,7 @@ This will run a single-threaded instance of Falcon.
 
 ## Performance
 
-Falcon is uses an asynchronous event-driven reactor to provide non-blocking IO. It can handle an arbitrary number of in-flight requests with minimal overhead per request.
+Falcon uses an asynchronous event-driven reactor to provide non-blocking IO. It can handle an arbitrary number of in-flight requests with minimal overhead per request.
 
 It uses one Fiber per request, which yields in the presence of blocking IO.
 
