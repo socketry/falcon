@@ -18,6 +18,7 @@ end
 
 require "bundler/setup"
 require "falcon"
+
 require "async/rspec"
 require "async/http/url_endpoint"
 

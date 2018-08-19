@@ -20,7 +20,8 @@
 
 require 'falcon/server'
 require 'async/http/client'
-require 'async/rspec/reactor'
+
+require 'async/process'
 
 RSpec.describe Falcon::Server do
 	include_context Async::RSpec::Reactor
@@ -35,21 +36,19 @@ RSpec.describe Falcon::Server do
 	let(:endpoint) {Async::IO::Endpoint.tcp(host, port)}
 	let(:client) {Async::HTTP::Client.new(endpoint, protocol)}
 	
-	after(:each) {client.close}
-	
 	it "can start server" do
-		pid = Process.spawn("rackup", "--server", server, "--host", host, "--port", String(port), config_path)
-		
-		sleep 1
-		
-		begin
-			response = client.post("/", {}, ["Hello World"])
-		
-			expect(response).to be_success
-			expect(response.read).to be == "Hello World"
-		ensure
-			Process.kill :INT, pid
-			Process.wait pid
+		server_task = reactor.async do
+			status = Async::Process.spawn("rackup", "--server", server, "--host", host, "--port", port.to_s, config_path)
 		end
+		
+		Async::Task.current.sleep 1
+		
+		response = client.post("/", {}, ["Hello World"])
+	
+		expect(response).to be_success
+		expect(response.read).to be == "Hello World"
+		
+		client.close
+		server_task.stop
 	end
 end
