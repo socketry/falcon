@@ -56,7 +56,7 @@ module Falcon
 		end
 		
 		def ssl_context
-			@ssl_context ||= OpenSSL::SSL::SSLContext.new(:TLSv1).tap do |context|
+			@ssl_context ||= OpenSSL::SSL::SSLContext.new.tap do |context|
 				context.cert = @ssl_certificate
 				context.key = @ssl_key
 				
@@ -64,7 +64,7 @@ module Falcon
 				
 				context.set_params
 				
-				context.freeze
+				context.setup
 			end
 		end
 		
@@ -101,7 +101,7 @@ module Falcon
 		end
 		
 		def ssl_context
-			@server_context ||= OpenSSL::SSL::SSLContext.new(:TLSv1).tap do |context|
+			@server_context ||= OpenSSL::SSL::SSLContext.new.tap do |context|
 				context.servername_cb = Proc.new do |socket, hostname|
 					self.host_context(socket, hostname)
 				end
@@ -112,7 +112,7 @@ module Falcon
 				
 				context.set_params
 				
-				context.freeze
+				context.setup
 			end
 		end
 		
