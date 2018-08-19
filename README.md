@@ -45,9 +45,11 @@ You can run `falcon serve` directly, and it will load the `config.ru` and start 
 
 Falcon works perfectly with `rails` apps.
 
-Add `gem 'falcon'` to your `Gemfile` and perhaps remove `gem 'puma'` once you are satisified with the change.
+1. Add `gem 'falcon'` to your `Gemfile` and perhaps remove `gem 'puma'` once you are satisfied with the change.
 
-Run `RACK_HANDLER=falcon rails server` to start the server (at least, until [rack#181](https://github.com/rack/rack/pull/1181) is merged). Alternatively, if you want to use `HTTP/2`, run `falcon serve` directly.
+2. Run `falcon serve` to start a local development server.
+
+Alternatively run `RACK_HANDLER=falcon rails server` to start the server (at least, until [rack#181](https://github.com/rack/rack/pull/1181) is merged).
 
 ### WebSockets
 
