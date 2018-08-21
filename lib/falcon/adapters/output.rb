@@ -28,8 +28,10 @@ module Falcon
 			
 			# Wraps an array into a buffered body.
 			def self.wrap(status, headers, body)
-				# In no circumstance do we want this propagating up:
-				content_length = headers.delete(CONTENT_LENGTH)
+				# In no circumstance do we want this header propagating out:
+				if content_length = headers.delete(CONTENT_LENGTH)
+					content_length = Integer(content_length)
+				end
 				
 				if body.is_a?(Async::HTTP::Body::Readable)
 					return body
@@ -37,7 +39,7 @@ module Falcon
 					# Don't mangle partial responsese (206)
 					return Async::HTTP::Body::File.open(body.to_path)
 				else
-					return self.new(headers, body, (Integer(content_length) rescue nil))
+					return self.new(headers, body, content_length)
 				end
 			end
 			
