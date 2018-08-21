@@ -25,6 +25,7 @@ module Falcon
 		def initialize
 			@app = nil
 			@endpoint = nil
+			
 			@ssl_certificate = nil
 			@ssl_key = nil
 			
@@ -37,6 +38,7 @@ module Falcon
 		
 		attr_accessor :ssl_certificate
 		attr_accessor :ssl_key
+		
 		attr_accessor :ssl_context
 		
 		def freeze
@@ -136,6 +138,10 @@ module Falcon
 			Hash[
 				@named.collect{|name, host| [name, host.endpoint]}
 			]
+		end
+		
+		def proxy
+			Proxy.new(Falcon::BadRequest, self.client_endpoints)
 		end
 	end
 end

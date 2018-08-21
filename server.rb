@@ -36,7 +36,7 @@ hosts.each do |name, host|
 	end
 end
 
-proxy = Falcon::Proxy.new(Falcon::BadRequest, hosts.client_endpoints)
+proxy = hosts.proxy
 debug_trap = Async::IO::Trap.new(:USR1)
 
 profile = RubyProf::Profile.new(merge_fibers: true)
