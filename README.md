@@ -96,7 +96,7 @@ You can invoke Falcon via `rackup`:
 
 	rackup --server falcon
 
-This will run a single-threaded instance of Falcon.
+This will run a single-threaded instance of Falcon using `http/1`. While it works fine, it's not recommended to use `rackup` with `falcon`, because performance will be limited.
 
 ## Performance
 
