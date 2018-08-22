@@ -53,7 +53,7 @@ Alternatively run `RACK_HANDLER=falcon rails server` to start the server (at lea
 
 #### Thread Safety (Rails < 5.x)
 
-With older versons of Rails, the `Rack::Lock` middleware is inserted into your app unless you add `config.threadsafe!`. This will cause both poor performance and dead-locks as Falcon serves multiple requests from the same thread. Therefore, please ensure you specify `config.threadsafe!` in your `config/application.rb`:
+With older versons of Rails, the `Rack::Lock` middleware is inserted into your app unless you explicitly add `config.threadsafe!`. `Rack::Lock` will cause both poor performance and deadlocks due to the highly concurrent nature of `falcon`. Therefore, please ensure you specify `config.threadsafe!` in your `config/application.rb`:
 
 ```ruby
 module MySite
@@ -66,7 +66,7 @@ module MySite
 end
 ```
 
-This became the default in Rails 5.
+This became the default in Rails 5 so no change is necessary in this version.
 
 ### WebSockets
 
