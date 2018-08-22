@@ -51,6 +51,23 @@ Falcon works perfectly with `rails` apps.
 
 Alternatively run `RACK_HANDLER=falcon rails server` to start the server (at least, until [rack#181](https://github.com/rack/rack/pull/1181) is merged).
 
+#### Thread Safety (Rails < 5.x)
+
+With older versons of Rails, the `Rack::Lock` middleware is inserted into your app unless you add `config.threadsafe!`. This will cause both poor performance and dead-locks as Falcon serves multiple requests from the same thread. Therefore, please ensure you specify `config.threadsafe!` in your `config/application.rb`:
+
+```ruby
+module MySite
+	class Application < Rails::Application
+		# ...
+		
+		# Enable threaded mode
+		config.threadsafe!
+	end
+end
+```
+
+This became the default in Rails 5.
+
 ### WebSockets
 
 Falcon supports `rack.hijack` for HTTP/1.x connections. You can thus use [async-websocket] in any controller layer to serve WebSocket connections.
