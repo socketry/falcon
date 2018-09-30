@@ -21,8 +21,6 @@
 require_relative '../server'
 require_relative '../endpoint'
 
-require 'localhost/authority'
-
 require 'async/container'
 require 'async/io/trap'
 require 'async/io/host_endpoint'

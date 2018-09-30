@@ -19,6 +19,7 @@
 # THE SOFTWARE.
 
 require 'async/http/url_endpoint'
+require 'localhost/authority'
 
 module Falcon
 	class Endpoint < Async::HTTP::URLEndpoint
