@@ -19,6 +19,7 @@
 # THE SOFTWARE.
 
 require 'async/http/client'
+require 'http/protocol/headers'
 
 module Falcon
 	module BadRequest
@@ -33,7 +34,7 @@ module Falcon
 	class Proxy < Async::HTTP::Middleware
 		X_FORWARDED_FOR = 'x-forwarded-for'.freeze
 		VIA = 'via'.freeze
-		CONNECTION = Async::HTTP::Protocol::HTTP11::CONNECTION
+		CONNECTION = ::HTTP::Protocol::CONNECTION
 		
 		HOP_HEADERS = [
 			'connection',
