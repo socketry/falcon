@@ -33,6 +33,9 @@ module Falcon
 				fields.each do |key, value|
 					next if key.start_with? 'rack.'
 					
+					# This is a quick fix, but perhaps it should be part of the protocol, because it IS valid for HTTP/1.
+					key = key.downcase
+					
 					value.to_s.split("\n").each do |part|
 						headers.add(key, part)
 					end

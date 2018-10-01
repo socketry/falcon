@@ -24,7 +24,7 @@ require 'async/websocket/client'
 
 RSpec.describe Falcon::Adapters::Response do
 	context 'with multiple set-cookie headers' do
-		subject {described_class.wrap(200, {'set-cookie' => "a\nb"}, [])}
+		subject {described_class.wrap(200, {'Set-Cookie' => "a\nb"}, [])}
 		
 		let(:fields) {subject.headers.fields}
 		
