@@ -36,6 +36,23 @@ RSpec.describe Falcon::Adapters::Rack do
 		end
 	end
 	
+	context 'HTTP_HOST' do
+		include_context Falcon::Server
+		let(:protocol) {Async::HTTP::Protocol::HTTP2}
+		
+		let(:app) do
+			lambda do |env|
+				[200, {}, ["HTTP_HOST: #{env['HTTP_HOST']}"]]
+			end
+		end
+		
+		let(:response) {client.get("/")}
+		
+		it "get valid HTTP_HOST" do
+			expect(response.read).to be == "HTTP_HOST: 127.0.0.1"
+		end
+	end
+	
 	context 'websockets' do
 		include_context Falcon::Server
 		

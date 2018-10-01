@@ -90,6 +90,9 @@ module Falcon
 				
 				self.unwrap_headers(request.headers, env)
 				
+				# HTTP/2 prefers `:authority` over `host`, so we do this for backwards compatibility.
+				env['HTTP_HOST'] ||= request.authority
+				
 				if remote_address = request.remote_address
 					env['REMOTE_ADDR'] = remote_address.ip_address if remote_address.ip?
 				end
