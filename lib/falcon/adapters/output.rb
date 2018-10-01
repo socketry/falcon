@@ -54,7 +54,7 @@ module Falcon
 			attr :length
 			
 			def empty?
-				@length == 0
+				@length == 0 or (@body.respond_to?(:empty?) and @body.empty?)
 			end
 			
 			def read
