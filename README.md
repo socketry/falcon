@@ -66,7 +66,7 @@ module MySite
 end
 ```
 
-This became the default in Rails 5 so no change is necessary in this version.
+This became the default in Rails 5 so no change is necessary in this version. Other web frameworks are generally unaffected.
 
 ### WebSockets
 
