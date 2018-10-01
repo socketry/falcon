@@ -32,6 +32,19 @@ module Falcon
 				@logger = logger
 			end
 			
+			# Rack separates multiple headers with the same key, into a single field with multiple "lines".
+			def unwrap_headers(headers, env)
+				headers.each do |key, value|
+					http_key = "HTTP_#{key.upcase.tr('-', '_')}"
+					
+					if current_value = env[http_key]
+						env[http_key] = "#{current_value}\n#{value}"
+					else
+						env[http_key] = value
+					end
+				end
+			end
+			
 			def call(request)
 				request_path, query_string = request.path.split('?', 2)
 				server_name, server_port = (request.authority || '').split(':', 2)
@@ -75,9 +88,7 @@ module Falcon
 					env['CONTENT_LENGTH'] = content_length
 				end
 				
-				request.headers.each do |key, value|
-					env["HTTP_#{key.upcase.tr('-', '_')}"] = value
-				end
+				self.unwrap_headers(request.headers, env)
 				
 				if remote_address = request.remote_address
 					env['REMOTE_ADDR'] = remote_address.ip_address if remote_address.ip?
@@ -115,7 +126,7 @@ module Falcon
 				# end
 				
 				@logger.debug(request) {"Rack response: #{status} #{headers.inspect} #{body.class}"}
-				return Response.new(status, headers, body)
+				return Response.wrap(status, headers, body)
 			rescue => exception
 				@logger.error "#{exception.class}: #{exception.message}\n\t#{$!.backtrace.join("\n\t")}"
 				

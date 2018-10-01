@@ -26,14 +26,34 @@ require 'time'
 module Falcon
 	module Adapters
 		class Response < Async::HTTP::Response
+			# Append a list of newline encoded headers.
+			def self.wrap_headers(fields)
+				headers = ::HTTP::Protocol::Headers.new
+				
+				fields.each do |key, value|
+					next if key.start_with? 'rack.'
+					
+					value.to_s.split("\n").each do |part|
+						headers.add(key, part)
+					end
+				end
+				
+				return headers
+			end
+			
+			def self.wrap(status, headers, body)
+				headers = wrap_headers(headers)
+				
+				headers.add('server', "falcon/#{Falcon::VERSION}")
+				headers.add('date', Time.now.httpdate)
+				
+				body = Output.wrap(status, headers, body)
+				
+				return self.new(status, headers, body)
+			end
+			
 			def initialize(status, headers, body)
-				# We normalize headers to be lower case:
-				headers = headers.map{|key, value| [key.downcase, value]}.to_h
-				
-				headers['server'] ||= "falcon/#{Falcon::VERSION}"
-				headers['date'] ||= Time.now.httpdate
-				
-				super(nil, status, nil, headers, Output.wrap(status, headers, body))
+				super(nil, status, nil, headers, body)
 			end
 		end
 	end

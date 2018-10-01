@@ -23,9 +23,22 @@ require 'async/websocket/server'
 require 'async/websocket/client'
 
 RSpec.describe Falcon::Adapters::Rack do
-	include_context Falcon::Server
+	context '#unwrap_headers' do
+		subject {described_class.new(nil)}
+		
+		let(:fields) {[['cookie', 'a=b'], ['cookie', 'x=y']]}
+		let(:env) {Hash.new}
+		
+		it "should merge duplicate headers" do
+			subject.unwrap_headers(fields, env)
+			
+			expect(env).to be == {'HTTP_COOKIE' => "a=b\nx=y"}
+		end
+	end
 	
 	context 'websockets' do
+		include_context Falcon::Server
+		
 		let(:endpoint) {Async::HTTP::URLEndpoint.parse('ws://127.0.0.1:9294', reuse_port: true)}
 		
 		let(:app) do

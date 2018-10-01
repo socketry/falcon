@@ -23,19 +23,30 @@ require 'async/websocket/server'
 require 'async/websocket/client'
 
 RSpec.describe Falcon::Adapters::Response do
+	context 'with multiple set-cookie headers' do
+		subject {described_class.wrap(200, {'set-cookie' => "a\nb"}, [])}
+		
+		let(:fields) {subject.headers.fields}
+		
+		it "should generate multiple headers" do
+			expect(fields).to include(['set-cookie', 'a'])
+			expect(fields).to include(['set-cookie', 'b'])
+		end
+	end
+	
 	context 'with #to_path' do
 		let(:body) {double}
 		
 		it "should generate file body" do
 			expect(body).to receive(:to_path).and_return("/dev/null")
 			
-			response = described_class.new(200, {}, body)
+			response = described_class.wrap(200, {}, body)
 			
 			expect(response.body).to be_kind_of Async::HTTP::Body::File
 		end
 		
 		it "should not modify partial responses" do
-			response = described_class.new(206, {}, body)
+			response = described_class.wrap(206, {}, body)
 			
 			expect(response.body).to be_kind_of Falcon::Adapters::Output
 		end
@@ -43,7 +54,7 @@ RSpec.describe Falcon::Adapters::Response do
 	
 	context 'with content-length' do
 		it "should remove header" do
-			response = described_class.new(200, {'Content-Length' => '4'}, ["1234"])
+			response = described_class.wrap(200, {'Content-Length' => '4'}, ["1234"])
 			
 			expect(response.headers).to_not include('content-length')
 		end
