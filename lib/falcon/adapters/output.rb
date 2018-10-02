@@ -23,6 +23,8 @@ require 'async/http/body/file'
 
 module Falcon
 	module Adapters
+		# Wraps the rack response body.
+		# The Body must respond to each and must only yield String values. The Body itself should not be an instance of String, as this will break in Ruby 1.9. If the Body responds to close, it will be called after iteration. If the body is replaced by a middleware after action, the original body must be closed first, if it responds to close. If the Body responds to to_path, it must return a String identifying the location of a file whose contents are identical to that produced by calling each; this may be used by the server as an alternative, possibly more efficient way to transport the response. The Body commonly is an Array of Strings, the application instance itself, or a File-like object.
 		class Output < Async::HTTP::Body::Readable
 			CONTENT_LENGTH = 'content-length'.freeze
 			
@@ -30,6 +32,7 @@ module Falcon
 			def self.wrap(status, headers, body)
 				# In no circumstance do we want this header propagating out:
 				if content_length = headers.delete(CONTENT_LENGTH)
+					# We don't really trust the user to provide the right length to the transport.
 					content_length = Integer(content_length)
 				end
 				
@@ -44,21 +47,38 @@ module Falcon
 			end
 			
 			def initialize(headers, body, length)
-				# We don't trust the user to provide the right length to the transport.
 				@length = length
-				
 				@body = body
+				
+				# An enumerator over the rack response body:
 				@chunks = body.to_enum(:each)
 			end
 			
+			# The rack response body.
+			attr :body
+			
+			# The content length of the rack response body.
 			attr :length
 			
 			def empty?
 				@length == 0 or (@body.respond_to?(:empty?) and @body.empty?)
 			end
 			
+			def close(error = nil)
+				if @body and @body.respond_to?(:close)
+					@body.close
+					@body = nil
+				end
+				
+				@chunks = nil
+				
+				super
+			end
+			
 			def read
-				@chunks.next
+				if @chunks
+					return @chunks.next
+				end
 			rescue StopIteration
 				nil
 			end
