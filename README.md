@@ -122,7 +122,7 @@ Falcon can be an important part of your business or project, both improving perf
 - Priority consideration of feature requests and bug reports.
 - Private support and assistance via direct email.
 
-The standard price for business support is $120.00 USD / year / production instance (including reserve instances). Please [contact us](mailto:context@oriontransfer.co.nz?subject=Falcon%20Business%20Support) for more details.
+The standard price for business support is $120.00 USD / year / production instance (including reserve instances). Please [contact us](mailto:context@oriontransfer.net?subject=Falcon%20Business%20Support) for more details.
 
 ### "Stretch" Goals
 
@@ -145,6 +145,14 @@ Each paying business customer is entitled to one vote to prioritize the below wo
 3. Commit your changes (`git commit -am 'Add some feature'`)
 4. Push to the branch (`git push origin my-new-feature`)
 5. Create new Pull Request
+
+### Donations
+
+If you want to donate to this project, you may do so using [BitCoin](https://www.blockchain.com/btc/payment_request?address=1BU3RnjB7fS9XmiTHgbmLKL36S5kccovs8). All money donated this way will be used to further development of this and related open source projects.
+
+### Responsible Disclosure
+
+We take the security of our systems seriously, and we value input from the security community. The disclosure of security vulnerabilities helps us ensure the security and privacy of our users. If you believe you've found a security vulnerability in one of our products or platforms please [tell us via email](mailto:security@oriontransfer.net).
 
 ## License
 
