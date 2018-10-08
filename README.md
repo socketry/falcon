@@ -114,19 +114,19 @@ Falcon uses a pre-fork model which loads the entire rack application before fork
 
 ## Business Support
 
-If you use this software for business purposes, please consider purchasing Business Support. The agreement will give you:
+Falcon can be an important part of your business or project, both improving performance and saving money. As such, paid business support is available to make every project a success. The agreement will give you:
 
-- Better software through funded development and testing.
-- Access to advanced features (outlined below).
+- Better software by funding development and testing.
+- Access to "Stretch" goals as outlined below.
 - Advance notification of bugs and security issues.
 - Priority consideration of feature requests and bug reports.
 - Private support and assistance via direct email.
 
-The price for business support is $600.00 USD / project / year. Please [contact us](mailto:context@oriontransfer.co.nz?subject=Falcon%20Business%20Support) for more details.
+The standard price for business support is $120.00 USD / year / production instance (including reserve instances). Please [contact us](mailto:context@oriontransfer.co.nz?subject=Falcon%20Business%20Support) for more details.
 
 ### "Stretch" Goals
 
-I would like to invest more time in business specific features. For each paying project as outlined above, one vote is available to prioritize the below work.
+Each paying business customer is entitled to one vote to prioritize the below work.
 
 - Add support for push promises and stream prioritization in [async-http].
 - Add support for rolling restarts in [async-container].
