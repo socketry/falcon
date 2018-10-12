@@ -10,7 +10,7 @@ addons:
     - apache2-utils
 
 after_success:
-  - rake benchmark:compare
+  - bundle exec rake benchmark:compare
 
 matrix:
   include:
