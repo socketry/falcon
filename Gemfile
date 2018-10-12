@@ -11,4 +11,6 @@ group :test do
 	gem 'coveralls', require: false
 	
 	gem 'async-process', '~> 1.1.0'
+	
+	gem 'puma'
 end

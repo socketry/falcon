@@ -5,6 +5,9 @@ RSpec::Core::RakeTask.new(:test)
 
 task :default => :test
 
+# Load all rake tasks:
+import(*Dir.glob('tasks/**/*.rake'))
+
 task :server do
 	require 'async/reactor'
 	require 'async/http/server'
@@ -69,3 +72,4 @@ task :wrk do
 		Process.wait pid
 	end
 end
+

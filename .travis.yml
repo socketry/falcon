@@ -9,6 +9,9 @@ addons:
     - wrk
     - apache2-utils
 
+after_success:
+  - rake benchmark:compare
+
 matrix:
   include:
     - rvm: 2.3
