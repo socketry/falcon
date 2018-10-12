@@ -10,7 +10,7 @@ namespace :benchmark do
 		require 'async/http/url_endpoint'
 		
 		host = "http://127.0.0.1:9292"
-		config_path = File.expand_path("../examples/hello/config.ru", __dir__)
+		config_path = File.expand_path("../examples/benchmark/config.ru", __dir__)
 		
 		servers = [
 			["puma", "--bind", host.gsub("http", "tcp")],
@@ -64,7 +64,7 @@ namespace :benchmark do
 						c = (2**n).to_s
 						puts "Running with #{c} concurrent connections..."
 						
-						status = Async::Process.spawn("wrk", "-c", c.to_s, "-t", (n+1).to_s, "-d", "1", host)
+						status = Async::Process.spawn("wrk", "-c", c.to_s, "-t", (n+1).to_s, "-d", "1", "#{host}/big")
 					end
 				ensure
 					server_task.stop
