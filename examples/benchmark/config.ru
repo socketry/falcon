@@ -7,19 +7,25 @@ class Benchmark
 	
 	PATH_INFO = 'PATH_INFO'.freeze
 	
+	SMALL = [200, {}, ["Hello World\n" * 10] * 10].freeze
+	
 	def small(env)
-		[200, {}, ["Hello World"]]
+		SMALL
 	end
 	
+	BIG = [200, {}, ["Hello World\n" * 100] * 100].freeze
+	
 	def big(env)
-		[200, {}, ["Hello World\n" * 1000]]
+		BIG
 	end
 	
 	def call(env)
-		path = env[PATH_INFO].split("/").last.to_sym
+		_, name, *path = env[PATH_INFO].split("/")
 		
-		if respond_to? path
-			self.send(path, env)
+		method = name&.to_sym
+		
+		if method and self.respond_to?(method)
+			self.send(method, env)
 		else
 			@app.call(env)
 		end

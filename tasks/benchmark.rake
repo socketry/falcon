@@ -39,13 +39,13 @@ namespace :benchmark do
 						
 						socket = endpoint.connect
 						
-						request = Async::HTTP::Request.new("localhost", "GET", "/")
+						request = Async::HTTP::Request.new("localhost", "GET", "/small")
 						stream = Async::IO::Stream.new(socket)
 						protocol = Async::HTTP::Protocol::HTTP1.client(stream)
 						
 						response = protocol.call(request)
 						
-						# puts response.inspect
+						response.close
 						
 						socket.close
 					rescue Errno::ECONNREFUSED
@@ -56,13 +56,13 @@ namespace :benchmark do
 					
 					end_time = Async::Clock.now
 					
-					$stderr.puts "** Took #{end_time - start_time}s to start."
+					$stderr.puts "** Took #{end_time - start_time}s to start #{command.first}."
 					
 					threads = Etc.nprocessors
 					
 					threads.times do |n|
 						c = (2**n).to_s
-						puts "Running with #{c} concurrent connections..."
+						puts "Running #{command.first} with #{c} concurrent connections..."
 						
 						status = Async::Process.spawn("wrk", "-c", c.to_s, "-t", (n+1).to_s, "-d", "1", "#{host}/big")
 					end
