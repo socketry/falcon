@@ -12,8 +12,11 @@ namespace :benchmark do
 		host = "http://127.0.0.1:9292"
 		config_path = File.expand_path("../examples/benchmark/config.ru", __dir__)
 		
+		threads = Etc.nprocessors
+		
 		servers = [
 			["puma", "--bind", host.gsub("http", "tcp")],
+			["puma", "--workers", threads.to_s, "--bind", host.gsub("http", "tcp")],
 			["falcon", "--bind", host, "--config"]
 		]
 		
@@ -57,8 +60,6 @@ namespace :benchmark do
 					end_time = Async::Clock.now
 					
 					$stderr.puts "** Took #{end_time - start_time}s to start #{command.first}."
-					
-					threads = Etc.nprocessors
 					
 					threads.times do |n|
 						c = (2**n).to_s
