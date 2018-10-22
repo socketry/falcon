@@ -52,9 +52,13 @@ Falcon works perfectly with `rails` apps.
 
 Alternatively run `RACK_HANDLER=falcon rails server` to start the server (at least, until [rack#181](https://github.com/rack/rack/pull/1181) is merged).
 
-#### Thread Safety (Rails < 5.x)
+#### Thread Safety
 
-With older versons of Rails, the `Rack::Lock` middleware is inserted into your app unless you explicitly add `config.threadsafe!`. `Rack::Lock` will cause both poor performance and deadlocks due to the highly concurrent nature of `falcon`. Therefore, please ensure you specify `config.threadsafe!` in your `config/application.rb`:
+With older versions of Rails, the `Rack::Lock` middleware can be inserted into your app by Rails. `Rack::Lock` will cause both poor performance and deadlocks due to the highly concurrent nature of `falcon`. Other web frameworks are generally unaffected.
+
+##### Rails 3.x (and older)
+
+Please ensure you specify `config.threadsafe!` in your `config/application.rb`:
 
 ```ruby
 module MySite
@@ -66,8 +70,13 @@ module MySite
 	end
 end
 ```
+##### Rails 4.x
 
-This became the default in Rails 5 so no change is necessary in this version. Other web frameworks are generally unaffected.
+Please ensure you have `config.allow_concurrency = true` in your configuration.
+
+##### Rails 5.x+
+
+This became the default in Rails 5 so no change is necessary unless you explicitly disabled concurrency, in which case you should remove that configuration.
 
 ### WebSockets
 
