@@ -90,7 +90,7 @@ module Falcon
 			end
 			
 			def run(verbose = false)
-				app, options = load_app(verbose)
+				app, _ = load_app(verbose)
 				
 				endpoint = Endpoint.parse(@options[:bind], **endpoint_options)
 				

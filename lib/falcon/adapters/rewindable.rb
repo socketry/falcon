@@ -56,7 +56,7 @@ module Falcon
 					request.body = Async::HTTP::Body::Rewindable.new(body)
 				end
 				
-				response = super
+				_response = super
 			end
 		end
 	end

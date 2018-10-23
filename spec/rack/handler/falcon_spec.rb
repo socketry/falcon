@@ -38,7 +38,7 @@ RSpec.describe Falcon::Server do
 	
 	it "can start server" do
 		server_task = reactor.async do
-			status = Async::Process.spawn("rackup", "--server", server, "--host", host, "--port", port.to_s, config_path)
+			Async::Process.spawn("rackup", "--server", server, "--host", host, "--port", port.to_s, config_path)
 		end
 		
 		Async::Task.current.sleep 1
