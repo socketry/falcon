@@ -30,66 +30,7 @@ end
 
 controller = Async::Container::Controller.new
 
-hosts.each do |name, host|
-	if container = host.start
-		controller << container
-	end
-end
+hosts.call(controller)
 
-proxy = hosts.proxy
-debug_trap = Async::IO::Trap.new(:USR1)
-
-profile = RubyProf::Profile.new(merge_fibers: true)
-
-#controller << Async::Container::Forked.new do |task|
-	Process.setproctitle("Falcon Proxy")
-	
-	server = Falcon::Server.new(
-		proxy,
-		Async::HTTP::URLEndpoint.parse(
-			'https://0.0.0.0',
-			reuse_address: true,
-			ssl_context: hosts.ssl_context
-		)
-	)
-
-begin
-	#profile.start
-	
-	Async::Reactor.run do |task|
-		task.async do
-			debug_trap.install!
-			$stderr.puts "Send `kill -USR1 #{Process.pid}` for detailed status :)"
-			
-			debug_trap.trap do
-				task.reactor.print_hierarchy($stderr)
-				# Async.logger.level = Logger::DEBUG
-			end
-		end
-		
-		task.async do |task|
-			start_time = Async::Clock.now
-			
-			while true
-				task.sleep(600)
-				duration = Async::Clock.now - start_time
-				puts "Handled #{proxy.count} requests; #{(proxy.count.to_f / duration.to_f).round(1)} requests per second."
-			end
-		end
-		
-		$stderr.puts "Starting server"
-		server.run
-	end
-ensure
-	if profile.running?
-		profile.stop
-		
-		# print a flat profile to text
-		printer = RubyProf::FlatPrinter.new(profile)
-		printer.print($stdout)
-	end
-end
-
-#Process.setproctitle("Falcon Controller")
-#controller.wait
-
+Process.setproctitle("Falcon Controller")
+controller.wait

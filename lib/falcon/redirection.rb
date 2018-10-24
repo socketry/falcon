@@ -1,4 +1,4 @@
-# Copyright, 2017, by Samuel G. D. Williams. <http://www.codeotaku.com>
+# Copyright, 2018, by Samuel G. D. Williams. <http://www.codeotaku.com>
 # 
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -18,6 +18,41 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
+require 'async/http/client'
+require 'http/protocol/headers'
+
 module Falcon
-	VERSION = "0.19.0"
+	module NotFound
+		def self.call(request)
+			return Async::HTTP::Response[404, {}, []]
+		end
+		
+		def self.close
+		end
+	end
+	
+	class Redirection < Async::HTTP::Middleware
+		def initialize(app, hosts)
+			super(app)
+			
+			@hosts = hosts
+		end
+		
+		def lookup(request)
+			# Trailing dot and port is ignored/normalized.
+			if authority = request.authority.sub(/(\.)?(:\d+)?$/, '')
+				return @hosts[authority]
+			end
+		end
+		
+		def call(request)
+			if endpoint = lookup(request)
+				location = "https://#{request.authority}#{request.path}"
+				
+				return Async::HTTP::Response[301, {'location' => location}, []]
+			else
+				super
+			end
+		end
+	end
 end

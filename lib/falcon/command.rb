@@ -19,6 +19,7 @@
 # THE SOFTWARE.
 
 require_relative 'command/serve'
+require_relative 'command/virtual'
 
 require_relative 'version'
 
@@ -41,6 +42,7 @@ module Falcon
 			
 			nested '<command>',
 				'serve' => Serve,
+				'virtual' => Virtual,
 				default: 'serve'
 			
 			def verbose?
