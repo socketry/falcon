@@ -21,7 +21,7 @@ module Rack
 				app = ::Falcon::Adapters::Rack.new(app)
 				app = ::Falcon::Adapters::Rewindable.new(app)
 				
-				server = ::Falcon::Server.new(app, endpoint)
+				server = ::Falcon::Server.new(app, endpoint, Async::HTTP::Protocol::HTTP1)
 				
 				Async::Reactor.run do
 					server.run
