@@ -41,8 +41,10 @@ module Falcon
 			end
 			
 			nested '<command>',
-				'serve' => Serve,
-				'virtual' => Virtual,
+				{
+					'serve' => Serve,
+					'virtual' => Virtual
+				},
 				default: 'serve'
 			
 			def verbose?
