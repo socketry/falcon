@@ -32,11 +32,11 @@ gem 'falcon'
 
 And then execute:
 
-	$ bundle
+	bundle
 
 Or install it yourself as:
 
-	$ gem install falcon
+	gem install falcon
 
 ## Usage
 
