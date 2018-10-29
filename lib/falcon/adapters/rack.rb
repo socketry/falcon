@@ -45,6 +45,39 @@ module Falcon
 				end
 			end
 			
+			# Process the incoming request into a valid rack env.
+			def unwrap_request(request, env)
+				if content_type = request.headers.delete('content-type')
+					env['CONTENT_TYPE'] = content_type
+				end
+				
+				# In some situations we don't know the content length, e.g. when using chunked encoding, or when decompressing the body.
+				if body = request.body and length = body.length
+					env['CONTENT_LENGTH'] = length.to_s
+				end
+				
+				self.unwrap_headers(request.headers, env)
+				
+				# HTTP/2 prefers `:authority` over `host`, so we do this for backwards compatibility.
+				env['HTTP_HOST'] ||= request.authority
+				
+				# This is the HTTP/1 header for the scheme of the request and is used by Rack.
+				# Technically it should use the Forwarded header but this is not common yet.
+				# https://tools.ietf.org/html/rfc7239#section-5.4
+				# https://github.com/rack/rack/issues/1310
+				env['HTTP_X_FORWARDED_PROTO'] ||= request.scheme
+				
+				if remote_address = request.remote_address
+					env['REMOTE_ADDR'] = remote_address.ip_address if remote_address.ip?
+				end
+			end
+			
+			def make_response(request, status, headers, body)
+				@logger.debug(request) {"Rack response: #{status} #{headers.inspect} #{body.class}"}
+				
+				return Response.wrap(status, headers, body)
+			end
+			
 			def call(request)
 				request_path, query_string = request.path.split('?', 2)
 				server_name, server_port = (request.authority || '').split(':', 2)
@@ -80,22 +113,7 @@ module Falcon
 					'SERVER_PORT' => server_port || '',
 				}
 				
-				if content_type = request.headers.delete('content-type')
-					env['CONTENT_TYPE'] = content_type
-				end
-				
-				if content_length = request.headers.delete('content-length')
-					env['CONTENT_LENGTH'] = content_length
-				end
-				
-				self.unwrap_headers(request.headers, env)
-				
-				# HTTP/2 prefers `:authority` over `host`, so we do this for backwards compatibility.
-				env['HTTP_HOST'] ||= request.authority
-				
-				if remote_address = request.remote_address
-					env['REMOTE_ADDR'] = remote_address.ip_address if remote_address.ip?
-				end
+				self.unwrap_request(request, env)
 				
 				if request.hijack?
 					env['rack.hijack?'] = true
@@ -128,8 +146,7 @@ module Falcon
 				# 	return nil
 				# end
 				
-				@logger.debug(request) {"Rack response: #{status} #{headers.inspect} #{body.class}"}
-				return Response.wrap(status, headers, body)
+				return make_response(request, status, headers, body)
 			rescue => exception
 				@logger.error "#{exception.class}: #{exception.message}\n\t#{$!.backtrace.join("\n\t")}"
 				

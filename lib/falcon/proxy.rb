@@ -32,7 +32,10 @@ module Falcon
 	end
 	
 	class Proxy < Async::HTTP::Middleware
+		FORWARDED = 'forwarded'.freeze
 		X_FORWARDED_FOR = 'x-forwarded-for'.freeze
+		X_FORWARDED_PROTO = 'x-forwarded-proto'.freeze
+		
 		VIA = 'via'.freeze
 		CONNECTION = ::HTTP::Protocol::CONNECTION
 		
@@ -83,19 +86,38 @@ module Falcon
 			headers.slice!(HOP_HEADERS)
 		end
 		
+		def prepare_request(request)
+			forwarded = []
+			
+			if address = request.remote_address
+				request.headers.add(X_FORWARDED_FOR, address.ip_address)
+				forwarded << "for=#{address.ip_address}"
+			end
+			
+			if scheme = request.scheme
+				request.headers.add(X_FORWARDED_PROTO, scheme)
+				forwarded << "proto=#{scheme}"
+			end
+			
+			unless forwarded.empty?
+				request.headers.add(FORWARDED, forwarded.join(';'))
+			end
+			
+			request.headers.add(VIA, "#{request.version} #{self.class}")
+			
+			self.prepare_headers(request.headers)
+			
+			return request
+		end
+		
 		def call(request)
 			if endpoint = lookup(request)
 				@count += 1
 				
-				if address = request.remote_address
-					request.headers.add(X_FORWARDED_FOR, address.ip_address)
-				end
-				
-				request.headers.add(VIA, "#{request.version} #{self.class}")
+				request = self.prepare_request(request)
 				
 				client = connect(endpoint)
 				
-				prepare_headers(request.headers)
 				client.call(request)
 			else
 				super
