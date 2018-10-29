@@ -8,6 +8,8 @@ require 'async/io/host_endpoint'
 module Rack
 	module Handler
 		module Falcon
+			SCHEME = "http".freeze
+			
 			def self.endpoint_for(**options)
 				host = options[:Host] || 'localhost'
 				port = Integer(options[:Port] || 9292)
@@ -21,7 +23,7 @@ module Rack
 				app = ::Falcon::Adapters::Rack.new(app)
 				app = ::Falcon::Adapters::Rewindable.new(app)
 				
-				server = ::Falcon::Server.new(app, endpoint, Async::HTTP::Protocol::HTTP1)
+				server = ::Falcon::Server.new(app, endpoint, Async::HTTP::Protocol::HTTP1, SCHEME)
 				
 				Async::Reactor.run do
 					server.run

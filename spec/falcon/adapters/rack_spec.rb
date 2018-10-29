@@ -49,7 +49,7 @@ RSpec.describe Falcon::Adapters::Rack do
 		let(:response) {client.get("/")}
 		
 		it "get valid HTTP_HOST" do
-			expect(response.read).to be == "HTTP_HOST: 127.0.0.1"
+			expect(response.read).to be == "HTTP_HOST: 127.0.0.1:9294"
 		end
 	end
 	

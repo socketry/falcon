@@ -42,7 +42,7 @@ namespace :benchmark do
 						
 						socket = endpoint.connect
 						
-						request = Async::HTTP::Request.new("localhost", "GET", "/small")
+						request = Async::HTTP::Request.new("http", "localhost", "GET", "/small")
 						stream = Async::IO::Stream.new(socket)
 						protocol = Async::HTTP::Protocol::HTTP1.client(stream)
 						

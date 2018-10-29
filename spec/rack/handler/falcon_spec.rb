@@ -29,19 +29,16 @@ RSpec.describe Falcon::Server do
 	let(:config_path) {File.join(__dir__, "config.ru")}
 	
 	let(:server) {'falcon'} # of course :)
-	let(:host) {'127.0.0.1'}
-	let(:port) {9290}
 	
-	let(:protocol) {Async::HTTP::Protocol::HTTP1}
-	let(:endpoint) {Async::IO::Endpoint.tcp(host, port)}
-	let(:client) {Async::HTTP::Client.new(endpoint, protocol)}
+	let(:endpoint) {Async::HTTP::URLEndpoint.parse("http://localhost:9290")}
+	let(:client) {Async::HTTP::Client.new(endpoint)}
 	
 	it "can start server" do
 		server_task = reactor.async do
-			Async::Process.spawn("rackup", "--server", server, "--host", host, "--port", port.to_s, config_path)
+			Async::Process.spawn("rackup", "--server", server, "--host", endpoint.hostname, "--port", endpoint.port.to_s, config_path)
 		end
 		
-		Async::Task.current.sleep 1
+		Async::Task.current.sleep 2
 		
 		response = client.post("/", {}, ["Hello World"])
 	

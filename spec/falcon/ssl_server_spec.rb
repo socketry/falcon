@@ -33,9 +33,8 @@ RSpec.describe "Falcon::Server with SSL" do
 	
 	let(:protocol) {Async::HTTP::Protocol::HTTPS}
 	
-	let(:endpoint) {Async::IO::Endpoint.tcp("localhost", 6365, reuse_port: true)}
-	let(:server_endpoint) {Async::IO::SecureEndpoint.new(endpoint, ssl_context: server_context)}
-	let(:client_endpoint) {Async::IO::SecureEndpoint.new(endpoint, ssl_context: client_context)}
+	let(:server_endpoint) {Async::HTTP::URLEndpoint.parse("https://localhost:6365", ssl_context: server_context)}
+	let(:client_endpoint) {Async::HTTP::URLEndpoint.parse("https://localhost:6365", ssl_context: client_context)}
 	
 	let(:server) {Falcon::Server.new(Falcon::Adapters::Rack.new(app), server_endpoint, protocol)}
 	let(:client) {Async::HTTP::Client.new(client_endpoint, protocol)}

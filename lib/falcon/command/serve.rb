@@ -112,7 +112,7 @@ module Falcon
 						end
 					end
 					
-					server = Falcon::Server.new(app, bound_endpoint, endpoint.protocol)
+					server = Falcon::Server.new(app, bound_endpoint, endpoint.protocol, endpoint.scheme)
 					
 					server.run
 					
