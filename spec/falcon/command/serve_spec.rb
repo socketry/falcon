@@ -22,7 +22,11 @@ require 'falcon/command/serve'
 
 RSpec.describe Falcon::Command::Serve do
 	it "can listen on specified port" do
-		command = described_class["--port", 8090, "--config", File.expand_path("config.ru", __dir__)]
+		command = described_class[
+			# "--bind", "http://localhost",
+			"--port", 8090,
+			"--config", File.expand_path("config.ru", __dir__),
+		]
 		
 		container = command.run
 		
