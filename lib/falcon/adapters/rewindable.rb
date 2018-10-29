@@ -51,12 +51,14 @@ module Falcon
 				return false
 			end
 			
+			# Wrap the request body in a rewindable buffer.
+			# @return [Async::HTTP::Response] the response.
 			def call(request)
 				if body = request.body and needs_rewind?(request)
 					request.body = Async::HTTP::Body::Rewindable.new(body)
 				end
 				
-				_response = super
+				return super
 			end
 		end
 	end
