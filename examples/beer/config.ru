@@ -41,7 +41,7 @@ run lambda {|env|
 	rescue
 		puts "Remote end closed connection: #{$!}"
 	ensure
-		body.finish
+		body.close
 	end
 	
 	[200, {'content-type' => 'text/html; charset=utf-8'}, body]
