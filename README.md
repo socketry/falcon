@@ -1,6 +1,8 @@
 # ![Falcon](logo.svg)
 
-Falcon is a multi-process, multi-fiber rack-compatible HTTP server built on top of [async], [async-io], [async-container] and [async-http]. Each request is run within a lightweight fiber and can block on up-stream requests without stalling the entire server process. Supports HTTP/1 and HTTP/2 natively. [Priority Business Support](#priority-business-support) is available.
+Falcon is a multi-process, multi-fiber rack-compatible HTTP server built on top of [async], [async-io], [async-container] and [async-http]. Each request is executed within a lightweight fiber and can block on up-stream requests without stalling the entire server process. Falcon supports HTTP/1 and HTTP/2 natively.
+
+[Priority Business Support](#priority-business-support) is available.
 
 [![Build Status](https://secure.travis-ci.org/socketry/falcon.svg)](http://travis-ci.org/socketry/falcon)
 [![Code Climate](https://codeclimate.com/github/socketry/falcon.svg)](https://codeclimate.com/github/socketry/falcon)
@@ -14,11 +16,12 @@ Falcon is a multi-process, multi-fiber rack-compatible HTTP server built on top 
 
 ## Motivation
 
-When I initially built [async], I saw an opportunity to build [async-http], which provides both client and server components. After toying with these ideas, I decided to build an actual web server, primarily out of interest to compare and validate performance. Falcon grew out of those experiments, and allowed me to test existing real-world code on top of [async].
+Initially, when I developed [async], I saw an opportunity to implement [async-http]: providing both client and server components. After experimenting with these ideas, I decided to build an actual web server
+for comparing and validating performance primarily out of interest. Falcon grew out of those experiments and permitted the ability to test existing real-world code on top of [async].
 
 Once I had something working, I saw an opportunity to simplify my development, testing and production environments, replacing production (Nginx+Passenger) and development (Puma) with Falcon. Not only does this simplify deployment, it helps minimize environment-specific bugs.
 
-My long term vision for Falcon is to make a web application platform which trivializes server deployment. Ideally, a web application can fully describe all it's components: HTTP servers, databases, periodic jobs, background jobs, remote management, etc. Currently, it is not uncommon for all these facets to be handled independently, in platform specific ways, which can make it difficult both to set up new instances, as well as make changes to underlying infrastructure. I hope Falcon can address some of these issues in a platform agnostic way.
+My long term vision for Falcon is to make a web application platform which trivializes server deployment. Ideally, a web application can fully describe all it's components: HTTP servers, databases, periodic jobs, background jobs, remote management, etc. Currently, it is not uncommon for all these facets to be handled independently in platform specific ways. This can make it difficult to set up new instances as well as make changes to underlying infrastructure. I hope Falcon can address some of these issues in a platform agnostic way.
 
 As web development is something I'm passionate about, having a server like Falcon is empowering.
 
@@ -34,13 +37,13 @@ And then execute:
 
 	$ bundle
 
-Or install it yourself as:
+Alternatively, install in terminal:
 
 	$ gem install falcon
 
 ## Usage
 
-You can run `falcon serve` directly, and it will load the `config.ru` and start serving on https://localhost:9292.
+You can run `falcon serve` directly. It will load the `config.ru` and start serving on https://localhost:9292.
 
 ### Integration with Rails
 
@@ -54,7 +57,7 @@ Alternatively run `RACK_HANDLER=falcon rails server` to start the server (at lea
 
 #### Thread Safety
 
-With older versions of Rails, the `Rack::Lock` middleware can be inserted into your app by Rails. `Rack::Lock` will cause both poor performance and deadlocks due to the highly concurrent nature of `falcon`. Other web frameworks are generally unaffected.
+With older versions of Rails, the `Rack::Lock` middleware can be inserted into your app by Rails. `Rack::Lock`will cause both poor performance and deadlocks due to the highly concurrent nature of `falcon`. Other web frameworks are generally unaffected.
 
 ##### Rails 3.x (and older)
 
