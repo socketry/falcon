@@ -26,6 +26,12 @@ require 'async/logger'
 module Falcon
 	module Adapters
 		class Rack
+			HTTP_X_FORWARDED_PROTO = 'HTTP_X_FORWARDED_PROTO'.freeze
+			REMOTE_ADDR = 'REMOTE_ADDR'.freeze
+			
+			CONTENT_TYPE = 'CONTENT_TYPE'.freeze
+			CONTENT_LENGTH = 'CONTENT_LENGTH'.freeze
+			
 			def initialize(app, logger = Async.logger)
 				@app = app
 				
@@ -48,27 +54,27 @@ module Falcon
 			# Process the incoming request into a valid rack env.
 			def unwrap_request(request, env)
 				if content_type = request.headers.delete('content-type')
-					env['CONTENT_TYPE'] = content_type
+					env[CONTENT_TYPE] = content_type
 				end
 				
 				# In some situations we don't know the content length, e.g. when using chunked encoding, or when decompressing the body.
 				if body = request.body and length = body.length
-					env['CONTENT_LENGTH'] = length.to_s
+					env[CONTENT_LENGTH] = length.to_s
 				end
 				
 				self.unwrap_headers(request.headers, env)
 				
 				# HTTP/2 prefers `:authority` over `host`, so we do this for backwards compatibility.
-				env['HTTP_HOST'] ||= request.authority
+				env[::Rack::HTTP_HOST] ||= request.authority
 				
 				# This is the HTTP/1 header for the scheme of the request and is used by Rack.
 				# Technically it should use the Forwarded header but this is not common yet.
 				# https://tools.ietf.org/html/rfc7239#section-5.4
 				# https://github.com/rack/rack/issues/1310
-				env['HTTP_X_FORWARDED_PROTO'] ||= request.scheme
+				env[HTTP_X_FORWARDED_PROTO] ||= request.scheme
 				
 				if remote_address = request.remote_address
-					env['REMOTE_ADDR'] = remote_address.ip_address if remote_address.ip?
+					env[REMOTE_ADDR] = remote_address.ip_address if remote_address.ip?
 				end
 			end
 			
@@ -83,52 +89,55 @@ module Falcon
 				server_name, server_port = (request.authority || '').split(':', 2)
 				
 				env = {
-					'rack.version' => [2, 0, 0],
+					::Rack::RACK_VERSION => [2, 0, 0],
 					
-					'rack.input' => Input.new(request.body),
-					'rack.errors' => $stderr,
+					::Rack::RACK_INPUT => Input.new(request.body),
+					::Rack::RACK_ERRORS => $stderr,
 					
-					'rack.multithread' => true,
-					'rack.multiprocess' => true,
-					'rack.run_once' => false,
+					::Rack::RACK_MULTITHREAD => true,
+					::Rack::RACK_MULTIPROCESS => true,
+					::Rack::RACK_RUNONCE => false,
 					
 					# The HTTP request method, such as “GET” or “POST”. This cannot ever be an empty string, and so is always required.
-					'REQUEST_METHOD' => request.method,
+					::Rack::REQUEST_METHOD => request.method,
 					
 					# The initial portion of the request URL's “path” that corresponds to the application object, so that the application knows its virtual “location”. This may be an empty string, if the application corresponds to the “root” of the server.
-					'SCRIPT_NAME' => '',
+					::Rack::SCRIPT_NAME => '',
 					
 					# The remainder of the request URL's “path”, designating the virtual “location” of the request's target within the application. This may be an empty string, if the request URL targets the application root and does not have a trailing slash. This value may be percent-encoded when originating from a URL.
-					'PATH_INFO' => request_path,
+					::Rack::PATH_INFO => request_path,
 					
 					# The portion of the request URL that follows the ?, if any. May be empty, but is always required!
-					'QUERY_STRING' => query_string || '',
+					::Rack::QUERY_STRING => query_string || '',
 					
-					# The server protocol, e.g. HTTP/1.1
-					'SERVER_PROTOCOL' => request.version,
-					'rack.url_scheme' => 'http',
+					# The server protocol (e.g. HTTP/1.1):
+					::Rack::SERVER_PROTOCOL => request.version,
+					
+					# The request scheme:
+					::Rack::RACK_URL_SCHEME => request.scheme,
 					
 					# I'm not sure what sane defaults should be here:
-					'SERVER_NAME' => server_name || '',
-					'SERVER_PORT' => server_port || '',
+					::Rack::SERVER_NAME => server_name || '',
+					::Rack::SERVER_PORT => server_port || '',
 				}
 				
 				self.unwrap_request(request, env)
 				
 				if request.hijack?
-					env['rack.hijack?'] = true
+					env[::Rack::RACK_IS_HIJACK] = true
 					
-					env['rack.hijack'] = lambda do
+					env[::Rack::RACK_HIJACK] = lambda do
 						wrapper = request.hijack
 						
 						# We dup this as it might be taken out of the normal control flow, and the io will be closed shortly after returning from this method.
 						io = wrapper.io.dup
 						wrapper.close
 						
-						env['rack.hijack_io'] = io
+						# This is implicitly returned:
+						env[::Rack::RACK_HIJACK_IO] = io
 					end
 				else
-					env['rack.hijack?'] = false
+					env[::Rack::RACK_IS_HIJACK] = false
 				end
 				
 				status, headers, body = @app.call(env)
