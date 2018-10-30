@@ -40,12 +40,10 @@ module Falcon
 				option '-v/--version', "Print out the application version."
 			end
 			
-			nested '<command>',
-				{
-					'serve' => Serve,
-					'virtual' => Virtual
-				},
-				default: 'serve'
+			nested '<command>', {
+				'serve' => Serve,
+				'virtual' => Virtual
+			}, default: 'serve'
 			
 			def verbose?
 				@options[:logging] == :verbose
