@@ -102,7 +102,7 @@ module Falcon
 				
 				debug_trap = Async::IO::Trap.new(:USR1)
 				
-				container_class.new(concurrency: @options[:concurrency]) do |task|
+				container_class.new(concurrency: @options[:concurrency], name: "Falcon Server") do |task, instance|
 					task.async do
 						debug_trap.install!
 						Async.logger.info "Send `kill -USR1 #{Process.pid}` for detailed status :)"
