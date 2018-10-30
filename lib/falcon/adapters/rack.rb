@@ -142,6 +142,7 @@ module Falcon
 				
 				status, headers, body = @app.call(env)
 				
+				# Partial hijack is not supported/tested.
 				# if hijack = headers.delete('rack.hijack')
 				# 	body = Async::HTTP::Body::Writable.new
 				# 
