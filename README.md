@@ -16,8 +16,7 @@ Falcon is a multi-process, multi-fiber rack-compatible HTTP server built on top 
 
 ## Motivation
 
-Initially, when I developed [async], I saw an opportunity to implement [async-http]: providing both client and server components. After experimenting with these ideas, I decided to build an actual web server
-for comparing and validating performance primarily out of interest. Falcon grew out of those experiments and permitted the ability to test existing real-world code on top of [async].
+Initially, when I developed [async], I saw an opportunity to implement [async-http]: providing both client and server components. After experimenting with these ideas, I decided to build an actual web server for comparing and validating performance primarily out of interest. Falcon grew out of those experiments and permitted the ability to test existing real-world code on top of [async].
 
 Once I had something working, I saw an opportunity to simplify my development, testing and production environments, replacing production (Nginx+Passenger) and development (Puma) with Falcon. Not only does this simplify deployment, it helps minimize environment-specific bugs.
 
