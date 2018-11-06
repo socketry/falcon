@@ -24,7 +24,7 @@ require 'async/websocket/client'
 
 RSpec.describe Falcon::Adapters::Rack do
 	context '#unwrap_headers' do
-		subject {described_class.new(nil)}
+		subject {described_class.new(lambda{})}
 		
 		let(:fields) {[['cookie', 'a=b'], ['cookie', 'x=y']]}
 		let(:env) {Hash.new}
