@@ -36,7 +36,7 @@ RSpec.describe Falcon::Adapters::Rack do
 		end
 	end
 	
-	context 'HTTP_HOST' do
+	context 'HTTP_HOST', timeout: 1 do
 		include_context Falcon::Server
 		let(:protocol) {Async::HTTP::Protocol::HTTP2}
 		
@@ -53,7 +53,7 @@ RSpec.describe Falcon::Adapters::Rack do
 		end
 	end
 	
-	context 'websockets' do
+	context 'websockets', timeout: 1 do
 		include_context Falcon::Server
 		
 		let(:endpoint) {Async::HTTP::URLEndpoint.parse('ws://127.0.0.1:9294', reuse_port: true)}

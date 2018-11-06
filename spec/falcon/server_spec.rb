@@ -24,7 +24,7 @@ require 'async/rspec/reactor'
 
 require 'rack'
 
-RSpec.describe Falcon::Server do
+RSpec.describe Falcon::Server, timeout: 1 do
 	include_context Falcon::Server
 	
 	context "http client" do
