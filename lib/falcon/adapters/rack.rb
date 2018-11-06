@@ -37,6 +37,8 @@ module Falcon
 			def initialize(app, logger = Async.logger)
 				@app = app
 				
+				raise ArgumentError, "App must be callable!" unless @app.respond_to?(:call)
+				
 				@logger = logger
 			end
 			
