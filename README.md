@@ -43,21 +43,35 @@ Alternatively, install in terminal:
 ## Usage
 
 You can run `falcon serve` directly. It will load the `config.ru` and start serving on https://localhost:9292.
-'serve' command has the following options for you to use:
 
-`-b/--bind <address>, "Bind to the given hostname/address", default: "https://localhost:9292"`
+The `falcon serve` command has the following options for you to use:
 
-`-p/--port <number>, "Override the specified port"`
+```
+$ falcon --help
+falcon [--verbose | --quiet] [-h/--help] [-v/--version] <command>
+	An asynchronous HTTP client/server toolset.
 
-`-h/--hostname <hostname>, "Specify the hostname which would be used for certificates, etc."`
+	[--verbose | --quiet]  Verbosity of output for debugging.
+	[-h/--help]            Print out help information.
+	[-v/--version]         Print out the application version.
+	<command>              One of: serve, virtual.             Default: serve
 
+	serve [-b/--bind <address>] [-p/--port <number>] [-h/--hostname <hostname>] [-c/--config <path>] [-n/--concurrency <count>] [--forked | --threaded]
+		Run an HTTP server.
 
-`-c/--config <path>, "Rackup configuration file to load", default: 'config.ru`
+		[-b/--bind <address>]       Bind to the given hostname/address                               Default: https://localhost:9292
+		[-p/--port <number>]        Override the specified port 
+		[-h/--hostname <hostname>]  Specify the hostname which would be used for certificates, etc.
+		[-c/--config <path>]        Rackup configuration file to load                                Default: config.ru 
+		[-n/--concurrency <count>]  Number of processes to start                                     Default: 8 
+		[--forked | --threaded]     Select a specific concurrency model                              Default: forked
+```
 
-`-n/--concurrency <count>', "Number of processes to start", default: Async::Container.hardware_concurrency, type: Integer`
+To run on a different port:
 
-`--forked | --threaded', "Select a specific concurrency model", key: :container, default: :forked`
-
+```
+$ falcon serve --port 3000
+```
 
 ### Integration with Rails
 
