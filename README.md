@@ -43,6 +43,21 @@ Alternatively, install in terminal:
 ## Usage
 
 You can run `falcon serve` directly. It will load the `config.ru` and start serving on https://localhost:9292.
+`serve` command has the following options that you have use it:
+
+`-b/--bind <address>, "Bind to the given hostname/address", default: "https://localhost:9292"`
+
+`-p/--port <number>, "Override the specified port"`
+
+`-h/--hostname <hostname>, "Specify the hostname which would be used for certificates, etc."`
+
+
+`-c/--config <path>, "Rackup configuration file to load", default: 'config.ru`
+
+`-n/--concurrency <count>', "Number of processes to start", default: Async::Container.hardware_concurrency, type: Integer`
+
+`--forked | --threaded', "Select a specific concurrency model", key: :container, default: :forked`
+
 
 ### Integration with Rails
 
