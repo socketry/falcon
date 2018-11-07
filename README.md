@@ -43,7 +43,7 @@ Alternatively, install in terminal:
 ## Usage
 
 You can run `falcon serve` directly. It will load the `config.ru` and start serving on https://localhost:9292.
-`serve` command has the following options that you have use it:
+'serve' command has the following options for you to use:
 
 `-b/--bind <address>, "Bind to the given hostname/address", default: "https://localhost:9292"`
 
