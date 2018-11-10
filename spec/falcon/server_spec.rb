@@ -70,6 +70,33 @@ RSpec.describe Falcon::Server, timeout: 1 do
 		end
 	end
 	
+	context ::Rack::BodyProxy do
+		let(:callback) {Proc.new{}}
+		let(:content) {Array.new}
+		
+		let(:app) do
+			lambda do |env|
+				body = ::Rack::BodyProxy.new(content, &callback)
+				
+				[200, {}, body]
+			end
+		end
+		
+		it "should close non-empty body" do
+			content << "Hello World"
+			
+			expect(callback).to receive(:call).and_call_original
+			
+			expect(client.get("/", {}).read).to be == "Hello World"
+		end
+		
+		it "should close empty body" do
+			expect(callback).to receive(:call)
+			
+			expect(client.get("/", {}).read).to be nil
+		end
+	end
+	
 	context "broken middleware" do
 		let(:app) do
 			lambda do |env|
