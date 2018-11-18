@@ -33,6 +33,11 @@ RSpec.describe Falcon::Adapters::Input do
 			let(:buffer) {Async::IO::Buffer.new}
 			let(:expected_output) {sample_data.join}
 			
+			it "can close input" do
+				expect(body).to receive(:close).and_call_original
+				subject.close
+			end
+			
 			it "can read partial input" do
 				expect(subject.read(3, buffer)).to be == "The"
 				expect(buffer).to be == "The"
