@@ -111,7 +111,7 @@ module Falcon
 			
 			# close must never be called on the input stream. huh?
 			def close
-				@body.finish
+				@body&.close
 			end
 			
 			private
