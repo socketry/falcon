@@ -25,6 +25,8 @@ run lambda {|env|
 		body.write(COMMENT)
 		
 		count.downto(1) do |i|
+			task.annotate "bottles of beer #{i}"
+			
 			puts "#{bottles(i)} of beer on the wall..."
 			body.write("<p>#{bottles(i)} of beer on the wall, ")
 			task.sleep(0.1)
