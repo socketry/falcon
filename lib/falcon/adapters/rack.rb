@@ -83,7 +83,7 @@ module Falcon
 			end
 			
 			def make_response(request, status, headers, body)
-				@logger.debug(request) {"Rack response: #{status} #{headers.inspect} #{body.class}"}
+				# @logger.debug(request) {"Rack response: #{status} #{headers.inspect} #{body.class}"}
 				
 				return Response.wrap(status, headers, body)
 			end
