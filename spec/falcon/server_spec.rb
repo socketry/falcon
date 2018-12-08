@@ -48,7 +48,7 @@ RSpec.describe Falcon::Server, timeout: 1 do
 				expect(response.read).to be == "Hello World"
 			end
 			
-			it "generates server and date headers" do
+			xit "generates server and date headers" do
 				expect(response.headers).to include('date', 'server')
 				
 				expect(response.headers['server'].join).to include("falcon")
