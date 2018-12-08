@@ -47,8 +47,11 @@ module Falcon
 			def self.wrap(status, headers, body)
 				headers = wrap_headers(headers)
 				
-				headers.add('server', "falcon/#{Falcon::VERSION}")
-				headers.add('date', Time.now.httpdate)
+				# https://tools.ietf.org/html/rfc7231#section-7.4.2
+				# headers.add('server', "falcon/#{Falcon::VERSION}")
+				
+				# https://tools.ietf.org/html/rfc7231#section-7.1.1.2
+				# headers.add('date', Time.now.httpdate)
 				
 				body = Output.wrap(status, headers, body)
 				
