@@ -22,6 +22,8 @@ require 'falcon/server'
 require 'async/websocket/server'
 require 'async/websocket/client'
 
+require_relative '../server_context'
+
 RSpec.describe Falcon::Adapters::Rack do
 	context '#unwrap_headers' do
 		subject {described_class.new(lambda{})}
