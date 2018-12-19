@@ -17,7 +17,7 @@ namespace :benchmark do
 		servers = [
 			["puma", "--bind", host.gsub("http", "tcp")],
 			["puma", "--workers", threads.to_s, "--bind", host.gsub("http", "tcp")],
-			["falcon", "--bind", host, "--config"]
+			["falcon", "serve", "--bind", host, "--config"]
 		]
 		
 		endpoint = Async::HTTP::URLEndpoint.parse(host)
@@ -51,7 +51,7 @@ namespace :benchmark do
 						response.close
 						
 						socket.close
-					rescue Errno::ECONNREFUSED
+					rescue Errno::ECONNREFUSED, Errno::ECONNRESET
 						task.sleep 0.01
 						
 						retry
