@@ -7,8 +7,8 @@ group :development do
 end
 
 group :test do
-	gem 'simplecov'
-	gem 'coveralls', require: false
+	gem 'pry'
+	gem 'covered', require: 'covered/rspec' if RUBY_VERSION >= "2.6.0"
 	
 	gem 'async-process', '~> 1.1.0'
 	
