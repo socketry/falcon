@@ -21,7 +21,6 @@ matrix:
     - rvm: jruby-head
       env: JRUBY_OPTS="--debug -X+O"
     - rvm: ruby-head
-    - rvm: truffleruby
     - rvm: rbx-3
   allow_failures:
     - rvm: truffleruby
