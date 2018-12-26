@@ -1,0 +1,8 @@
+
+# A sample Gemfile
+source "https://rubygems.org"
+
+gem "sinatra"
+gem "falcon"
+
+gem "async-redis", ">= 0.3.1"
