@@ -96,7 +96,7 @@ module Falcon
 				
 				bound_endpoint = Async::Reactor.run do
 					Async::IO::SharedEndpoint.bound(endpoint)
-				end.result
+				end.wait
 				
 				Async.logger.info "Falcon taking flight! Binding to #{endpoint} [#{container_class} with concurrency: #{@options[:concurrency]}]"
 				
