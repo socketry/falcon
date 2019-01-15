@@ -33,7 +33,7 @@ RSpec.describe Falcon::Command::Top do
 			serve = top.command
 			container = serve.run
 			
-			Async::Reactor.run do
+			Async do
 				client = serve.client
 				
 				response = client.get("/")

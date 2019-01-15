@@ -2,6 +2,7 @@
 require "bundler/setup"
 Bundler.require(:test)
 
+require "async"
 require "async/rspec"
 
 RSpec.configure do |config|

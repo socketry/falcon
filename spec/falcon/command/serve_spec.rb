@@ -26,11 +26,12 @@ RSpec.describe Falcon::Command::Serve do
 			# "--bind", "http://localhost",
 			"--port", 8090,
 			"--config", File.expand_path("config.ru", __dir__),
+			"--concurrency", 1
 		]
 		
-		container = command.run
+		container = command.run(true)
 		
-		Async::Reactor.run do
+		Async do
 			client = command.client
 			
 			response = client.get("/")
