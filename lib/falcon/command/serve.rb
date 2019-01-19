@@ -103,7 +103,9 @@ module Falcon
 					Async::IO::SharedEndpoint.bound(endpoint)
 				end.wait
 				
-				Async.logger.info "Falcon taking flight! Binding to #{endpoint} [#{container_class} with concurrency: #{@options[:concurrency]}]"
+				Async.logger.info(endpoint) do
+					"Falcon taking flight! Using #{container_class} with concurrency: #{@options[:concurrency]}"
+				end
 				
 				debug_trap = Async::IO::Trap.new(:USR1)
 				
