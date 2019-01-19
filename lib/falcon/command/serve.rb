@@ -42,6 +42,7 @@ module Falcon
 				
 				option '-p/--port <number>', "Override the specified port", type: Integer
 				option '-h/--hostname <hostname>', "Specify the hostname which would be used for certificates, etc."
+				option '-t/--timeout <duration>', "Specify the maximum time to wait for blocking operations.", type: Float, default: 60
 				
 				option '-c/--config <path>', "Rackup configuration file to load", default: 'config.ru'
 				option '-n/--concurrency <count>', "Number of processes to start", default: Async::Container.hardware_concurrency, type: Integer
@@ -76,6 +77,10 @@ module Falcon
 				
 				if @options[:port]
 					options[:port] = @options[:port]
+				end
+				
+				if duration = @options[:timeout] and !duration.zero?
+					options[:timeout] = duration
 				end
 				
 				return options
