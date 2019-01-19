@@ -24,6 +24,7 @@ require_relative 'command/virtual'
 require_relative 'version'
 
 require 'samovar'
+require 'logger'
 
 module Falcon
 	module Command
