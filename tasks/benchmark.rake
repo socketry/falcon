@@ -14,11 +14,16 @@ namespace :benchmark do
 		
 		threads = Etc.nprocessors
 		
+		perf = ["perf", "record", "-F", "max", "-a", "--"]
+		
 		servers = [
-			["puma", "--bind", host.gsub("http", "tcp")],
+			# ["puma", "--bind", host.gsub("http", "tcp")],
 			["puma", "--workers", threads.to_s, "--bind", host.gsub("http", "tcp")],
+			# ["rbspy", "record", "--", "falcon", "serve", "--threaded", "--bind", host, "--config"]
 			["falcon", "serve", "--bind", host, "--config"]
 		]
+		
+		Async.logger.info!
 		
 		endpoint = Async::HTTP::URLEndpoint.parse(host)
 		
@@ -42,11 +47,13 @@ namespace :benchmark do
 						
 						socket = endpoint.connect
 						
-						request = Async::HTTP::Request.new("http", "localhost", "GET", "/small")
+						request = Async::HTTP::Request.new("http", "localhost", "GET", "/big")
 						stream = Async::IO::Stream.new(socket)
 						protocol = Async::HTTP::Protocol::HTTP1.client(stream)
 						
 						response = protocol.call(request)
+						
+						Async.logger.info(response, "Headers:", response.headers.to_h) {"Response body size: #{response.read.bytesize}"}
 						
 						response.close
 						
@@ -59,13 +66,17 @@ namespace :benchmark do
 					
 					end_time = Async::Clock.now
 					
-					$stderr.puts "** Took #{end_time - start_time}s to start #{command.first}."
+					Async.logger.info(command) {"** Took #{end_time - start_time}s to first response."}
 					
 					threads.times do |n|
 						c = (2**n).to_s
 						puts "Running #{command.first} with #{c} concurrent connections..."
 						
-						status = Async::Process.spawn("wrk", "-c", c.to_s, "-t", (n+1).to_s, "-d", "1", "#{host}/big")
+						# Async::Process.spawn("curl", "-v", "#{host}/small")
+						
+						# Async::Process.spawn("ab", "-n", "2000", "#{host}/small")
+						
+						Async::Process.spawn("wrk", "-c", c.to_s, "-t", (n+1).to_s, "-d", "2", "#{host}/big")
 					end
 				ensure
 					server_task.stop
