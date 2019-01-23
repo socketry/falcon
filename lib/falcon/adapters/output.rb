@@ -31,9 +31,9 @@ module Falcon
 			# Wraps an array into a buffered body.
 			def self.wrap(status, headers, body)
 				# In no circumstance do we want this header propagating out:
-				if content_length = headers.delete(CONTENT_LENGTH)
+				if length = headers.delete(CONTENT_LENGTH)
 					# We don't really trust the user to provide the right length to the transport.
-					content_length = Integer(content_length)
+					length = Integer(length)
 				end
 				
 				if body.is_a?(Async::HTTP::Body::Readable)
@@ -41,8 +41,11 @@ module Falcon
 				elsif status == 200 and body.respond_to?(:to_path)
 					# Don't mangle partial responsese (206)
 					return Async::HTTP::Body::File.open(body.to_path)
+				elsif body.is_a? Array
+					length ||= body.sum{|chunk| chunk.bytesize}
+					return self.new(headers, body, length)
 				else
-					return self.new(headers, body, content_length)
+					return self.new(headers, body, length)
 				end
 			end
 			
@@ -50,8 +53,7 @@ module Falcon
 				@length = length
 				@body = body
 				
-				# An enumerator over the rack response body:
-				@chunks = body.to_enum(:each)
+				@chunks = nil
 			end
 			
 			# The rack response body.
@@ -67,20 +69,26 @@ module Falcon
 			def close(error = nil)
 				if @body and @body.respond_to?(:close)
 					@body.close
-					@body = nil
 				end
 				
+				@body = nil
 				@chunks = nil
 				
 				super
 			end
 			
+			def each(&block)
+				@body.each(&block)
+			ensure
+				self.close($!)
+			end
+			
 			def read
-				if @chunks
-					return @chunks.next
-				end
+				@chunks ||= @body.to_enum(:each)
+				
+				return @chunks.next
 			rescue StopIteration
-				nil
+				return nil
 			end
 			
 			def inspect
