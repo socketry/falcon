@@ -42,7 +42,8 @@ module Falcon
 					# Don't mangle partial responsese (206)
 					return Async::HTTP::Body::File.open(body.to_path)
 				elsif body.is_a? Array
-					length ||= body.sum{|chunk| chunk.bytesize}
+					# TODO after dropping 2.3, change to #sum
+					length ||= body.inject(0){|sum, chunk| sum + chunk.bytesize}
 					return self.new(headers, body, length)
 				else
 					return self.new(headers, body, length)
