@@ -89,13 +89,13 @@ RSpec.describe Falcon::Server, timeout: 1 do
 			
 			expect(callback).to receive(:call).and_call_original
 			
-			expect(client.get("/", {}).read).to be == "Hello World"
+			expect(client.get("/").read).to be == "Hello World"
 		end
 		
 		it "should close empty body" do
 			expect(callback).to receive(:call)
 			
-			expect(client.get("/", {}).read).to be nil
+			expect(client.get("/").read).to be nil
 		end
 	end
 	
