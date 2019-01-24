@@ -87,18 +87,18 @@ Falcon can replace Nginx as a virtual server for Ruby applications. **This is an
 /--------------------\
 |   Client Browser   |
 \--------------------/
-          ||          
+          ||
   (TLS + HTTP/2 TCP)
-          ||          
+          ||
 /--------------------\
 | Falcon Proxy (SNI) |
 \--------------------/
-          ||          
+          ||
   (HTTP/2 UNIX PIPE)
-          ||          
+          ||
 /--------------------\
 | Application Server |   (Rack Compatible)
-\--------------------/	
+\--------------------/
 ```
 
 You need to create a `falcon.rb` configuration in the root of your application, and start the virtual host:
@@ -126,8 +126,6 @@ Falcon works perfectly with `rails` apps.
 
 2. Run `falcon serve` to start a local development server.
 
-Alternatively run `RACK_HANDLER=falcon rails server` to start the server (at least, until [rack#1181](https://github.com/rack/rack/pull/1181) is merged).
-
 #### Thread Safety
 
 With older versions of Rails, the `Rack::Lock` middleware can be inserted into your app by Rails. `Rack::Lock`will cause both poor performance and deadlocks due to the highly concurrent nature of `falcon`. Other web frameworks are generally unaffected.
@@ -140,7 +138,7 @@ Please ensure you specify `config.threadsafe!` in your `config/application.rb`:
 module MySite
 	class Application < Rails::Application
 		# ...
-		
+
 		# Enable threaded mode
 		config.threadsafe!
 	end
@@ -229,12 +227,12 @@ In order to use `curl` with self-signed localhost certificates, you need to spec
 > Host: localhost:9292
 > User-Agent: curl/7.63.0
 > Accept: */*
-> 
+>
 < HTTP/1.1 301
 < location: /index
 < cache-control: max-age=86400
 < content-length: 0
-< 
+<
 * Connection #0 to host localhost left intact
 ```
 
@@ -248,7 +246,7 @@ It uses one Fiber per request, which yields in the presence of blocking IO.
 
 ### Memory Usage
 
-Falcon uses a pre-fork model which loads the entire rack application before forking. This reduces per-process memory usage. 
+Falcon uses a pre-fork model which loads the entire rack application before forking. This reduces per-process memory usage.
 
 [async-http] has been designed carefully to minimize IO related garbage. This avoids large per-request memory allocations or disk usage, provided that you use streaming IO.
 
