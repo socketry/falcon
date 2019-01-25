@@ -28,11 +28,36 @@ require 'async/logger'
 module Falcon
 	module Adapters
 		class Rack
-			HTTP_X_FORWARDED_PROTO = 'HTTP_X_FORWARDED_PROTO'.freeze
+			# CGI constants
+			HTTP_HOST = 'HTTP_HOST'.freeze
+			HTTP_VERSION = 'HTTP_VERSION'.freeze
+			PATH_INFO = 'PATH_INFO'.freeze
+			REQUEST_METHOD = 'REQUEST_METHOD'.freeze
+			REQUEST_PATH = 'REQUEST_PATH'.freeze
+			SCRIPT_NAME = 'SCRIPT_NAME'.freeze
+			QUERY_STRING = 'QUERY_STRING'.freeze
+			SERVER_PROTOCOL = 'SERVER_PROTOCOL'.freeze
+			SERVER_NAME = 'SERVER_NAME'.freeze
+			SERVER_PORT = 'SERVER_PORT'.freeze
 			REMOTE_ADDR = 'REMOTE_ADDR'.freeze
-			
 			CONTENT_TYPE = 'CONTENT_TYPE'.freeze
 			CONTENT_LENGTH = 'CONTENT_LENGTH'.freeze
+			
+			# Rack environment variables
+			RACK_VERSION = 'rack.version'.freeze
+			RACK_ERRORS = 'rack.errors'.freeze
+			RACK_LOGGER = 'rack.logger'.freeze
+			RACK_INPUT = 'rack.input'.freeze
+			RACK_MULTITHREAD = 'rack.multithread'.freeze
+			RACK_MULTIPROCESS = 'rack.multiprocess'.freeze
+			RACK_RUNONCE = 'rack.run_once'.freeze
+			RACK_URL_SCHEME = 'rack.url_scheme'.freeze
+			RACK_HIJACK = 'rack.hijack'.freeze
+			RACK_IS_HIJACK = 'rack.hijack?'.freeze
+			RACK_HIJACK_IO = 'rack.hijack_io'.freeze
+			
+			# Header constants
+			HTTP_X_FORWARDED_PROTO = 'HTTP_X_FORWARDED_PROTO'.freeze
 			
 			def initialize(app, logger = Async.logger)
 				@app = app
@@ -69,7 +94,8 @@ module Falcon
 				self.unwrap_headers(request.headers, env)
 				
 				# HTTP/2 prefers `:authority` over `host`, so we do this for backwards compatibility.
-				env[::Rack::HTTP_HOST] ||= request.authority
+				env[HTTP_HOST] ||= request.authority
+				env[HTTP_VERSION] ||= request.version
 				
 				# This is the HTTP/1 header for the scheme of the request and is used by Rack.
 				# Technically it should use the Forwarded header but this is not common yet.
@@ -93,44 +119,46 @@ module Falcon
 				server_name, server_port = (request.authority || '').split(':', 2)
 				
 				env = {
-					::Rack::RACK_VERSION => [2, 0, 0],
+					RACK_VERSION => [2, 0, 0],
 					
-					::Rack::RACK_INPUT => Input.new(request.body),
-					::Rack::RACK_ERRORS => $stderr,
+					RACK_INPUT => Input.new(request.body),
+					RACK_ERRORS => $stderr,
+					RACK_LOGGER => Async.logger,
 					
-					::Rack::RACK_MULTITHREAD => true,
-					::Rack::RACK_MULTIPROCESS => true,
-					::Rack::RACK_RUNONCE => false,
+					RACK_MULTITHREAD => true,
+					RACK_MULTIPROCESS => true,
+					RACK_RUNONCE => false,
 					
 					# The HTTP request method, such as “GET” or “POST”. This cannot ever be an empty string, and so is always required.
-					::Rack::REQUEST_METHOD => request.method,
+					REQUEST_METHOD => request.method,
 					
 					# The initial portion of the request URL's “path” that corresponds to the application object, so that the application knows its virtual “location”. This may be an empty string, if the application corresponds to the “root” of the server.
-					::Rack::SCRIPT_NAME => '',
+					SCRIPT_NAME => '',
 					
 					# The remainder of the request URL's “path”, designating the virtual “location” of the request's target within the application. This may be an empty string, if the request URL targets the application root and does not have a trailing slash. This value may be percent-encoded when originating from a URL.
-					::Rack::PATH_INFO => request_path,
+					PATH_INFO => request_path,
+					REQUEST_PATH => request_path,
 					
 					# The portion of the request URL that follows the ?, if any. May be empty, but is always required!
-					::Rack::QUERY_STRING => query_string || '',
+					QUERY_STRING => query_string || '',
 					
 					# The server protocol (e.g. HTTP/1.1):
-					::Rack::SERVER_PROTOCOL => request.version,
+					SERVER_PROTOCOL => request.version,
 					
 					# The request scheme:
-					::Rack::RACK_URL_SCHEME => request.scheme,
+					RACK_URL_SCHEME => request.scheme,
 					
 					# I'm not sure what sane defaults should be here:
-					::Rack::SERVER_NAME => server_name || '',
-					::Rack::SERVER_PORT => server_port || '',
+					SERVER_NAME => server_name || '',
+					SERVER_PORT => server_port || '',
 				}
 				
 				self.unwrap_request(request, env)
 				
 				if request.hijack?
-					env[::Rack::RACK_IS_HIJACK] = true
+					env[RACK_IS_HIJACK] = true
 					
-					env[::Rack::RACK_HIJACK] = lambda do
+					env[RACK_HIJACK] = lambda do
 						wrapper = request.hijack
 						
 						# We dup this as it might be taken out of the normal control flow, and the io will be closed shortly after returning from this method.
@@ -138,10 +166,10 @@ module Falcon
 						wrapper.close
 						
 						# This is implicitly returned:
-						env[::Rack::RACK_HIJACK_IO] = io
+						env[RACK_HIJACK_IO] = io
 					end
 				else
-					env[::Rack::RACK_IS_HIJACK] = false
+					env[RACK_IS_HIJACK] = false
 				end
 				
 				status, headers, body = @app.call(env)
