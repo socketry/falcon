@@ -30,7 +30,6 @@ module Falcon
 		class Rack
 			# CGI constants
 			HTTP_HOST = 'HTTP_HOST'.freeze
-			HTTP_VERSION = 'HTTP_VERSION'.freeze
 			PATH_INFO = 'PATH_INFO'.freeze
 			REQUEST_METHOD = 'REQUEST_METHOD'.freeze
 			REQUEST_PATH = 'REQUEST_PATH'.freeze
@@ -95,7 +94,6 @@ module Falcon
 				
 				# HTTP/2 prefers `:authority` over `host`, so we do this for backwards compatibility.
 				env[HTTP_HOST] ||= request.authority
-				env[HTTP_VERSION] ||= request.version
 				
 				# This is the HTTP/1 header for the scheme of the request and is used by Rack.
 				# Technically it should use the Forwarded header but this is not common yet.
