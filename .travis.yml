@@ -19,6 +19,8 @@ matrix:
     - rvm: 2.6
     - rvm: 2.6
       gemfile: gems/rack1.gemfile
+    - rvm: 2.6
+      gemfile: gems/rack3.gemfile
     - rvm: truffleruby
     - rvm: jruby-head
       env: JRUBY_OPTS="--debug -X+O"
@@ -30,3 +32,4 @@ matrix:
     - rvm: jruby-head
     - rvm: truffleruby
     - rvm: rbx-3
+    - gemfile: gems/rack3.gemfile
