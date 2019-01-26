@@ -139,20 +139,6 @@ You can invoke Falcon via `rackup`:
 
 This will run a single-threaded instance of Falcon using `http/1`. While it works fine, it's not recommended to use `rackup` with `falcon`, because performance will be limited.
 
-## Performance
-
-Falcon uses an asynchronous event-driven reactor to provide non-blocking IO. It can handle an arbitrary number of in-flight requests with minimal overhead per request.
-
-It uses one Fiber per request, which yields in the presence of blocking IO.
-
-- [Improving Ruby Concurrency](https://www.codeotaku.com/journal/2018-06/improving-ruby-concurrency/index#performance) – Comparison of Falcon and Puma.
-
-### Memory Usage
-
-Falcon uses a pre-fork model which loads the entire rack application before forking. This reduces per-process memory usage. 
-
-[async-http] has been designed carefully to minimize IO related garbage. This avoids large per-request memory allocations or disk usage, provided that you use streaming IO.
-
 ### Self-Signed TLS with Curl
 
 In order to use `curl` with self-signed localhost certificates, you need to specify `--insecure` or the path of the certificate to validate the request:
@@ -201,6 +187,20 @@ In order to use `curl` with self-signed localhost certificates, you need to spec
 < 
 * Connection #0 to host localhost left intact
 ```
+
+## Performance
+
+Falcon uses an asynchronous event-driven reactor to provide non-blocking IO. It can handle an arbitrary number of in-flight requests with minimal overhead per request.
+
+It uses one Fiber per request, which yields in the presence of blocking IO.
+
+- [Improving Ruby Concurrency](https://www.codeotaku.com/journal/2018-06/improving-ruby-concurrency/index#performance) – Comparison of Falcon and Puma.
+
+### Memory Usage
+
+Falcon uses a pre-fork model which loads the entire rack application before forking. This reduces per-process memory usage. 
+
+[async-http] has been designed carefully to minimize IO related garbage. This avoids large per-request memory allocations or disk usage, provided that you use streaming IO.
 
 ## Priority Business Support
 
