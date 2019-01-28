@@ -44,6 +44,8 @@ module Falcon
 				option '-h/--hostname <hostname>', "Specify the hostname which would be used for certificates, etc."
 				option '-t/--timeout <duration>', "Specify the maximum time to wait for blocking operations.", type: Float, default: 60
 				
+				option '--reuse-port', "Enable SO_REUSEPORT if possible.", default: false
+				
 				option '-c/--config <path>', "Rackup configuration file to load", default: 'config.ru'
 				option '-n/--concurrency <count>', "Number of processes to start", default: Async::Container.hardware_concurrency, type: Integer
 				
@@ -71,12 +73,16 @@ module Falcon
 				# Oh, for Hash#slice(keys...)
 				options = {}
 				
-				if @options[:hostname]
+				if @options.key? :hostname
 					options[:hostname] = @options[:hostname]
 				end
 				
-				if @options[:port]
+				if @options.key? :port
 					options[:port] = @options[:port]
+				end
+				
+				if @options.key? :reuse_port
+					options[:reuse_port] = @options[:reuse_port]
 				end
 				
 				if duration = @options[:timeout] and !duration.zero?
