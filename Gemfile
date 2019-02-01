@@ -8,7 +8,5 @@ end
 
 group :test do
 	gem 'pry'
-	gem 'covered', require: 'covered/rspec' if RUBY_VERSION >= "2.6.0"
-	
 	gem 'puma'
 end
