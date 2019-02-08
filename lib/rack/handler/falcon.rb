@@ -24,7 +24,8 @@ module Rack
 				app = ::Falcon::Adapters::Rewindable.new(app)
 				
 				server = ::Falcon::Server.new(app, endpoint, Async::HTTP::Protocol::HTTP1, SCHEME)
-				
+				yield server if block_given?
+
 				Async::Reactor.run do
 					server.run
 				end

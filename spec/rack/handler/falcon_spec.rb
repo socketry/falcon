@@ -49,3 +49,29 @@ RSpec.describe Falcon::Server do
 		server_task.stop
 	end
 end
+
+require 'rack/handler/falcon'
+RSpec.describe Rack::Handler::Falcon do
+	let(:server_double) {instance_double(Falcon::Server)}
+
+	before do
+		allow(Async::Reactor).to receive(:run)
+		allow(Falcon::Server).to receive(:new).and_return(server_double)
+	end
+
+	context 'block is given' do
+		it 'yields server' do
+			expect { |block|
+				described_class.run(double(call: true), &block)
+			}.to yield_with_args(server_double)
+		end
+	end
+
+	context 'block is not given' do
+		it 'does not fail' do
+			expect { |block|
+				described_class.run(double(call: true), &block)
+			}.not_to raise_error
+		end
+	end
+end
