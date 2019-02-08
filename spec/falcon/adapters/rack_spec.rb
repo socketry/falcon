@@ -54,7 +54,24 @@ RSpec.describe Falcon::Adapters::Rack do
 			expect(response.read).to be == "HTTP_HOST: 127.0.0.1:9294"
 		end
 	end
-	
+
+	context 'REQUEST_URI', timeout: 1 do
+		include_context Falcon::Server
+		let(:protocol) {Async::HTTP::Protocol::HTTP2}
+
+		let(:app) do
+			lambda do |env|
+				[200, {}, ["REQUEST_URI: #{env['REQUEST_URI']}"]]
+			end
+		end
+
+		let(:response) {client.get("/?foo=bar")}
+
+		it "get valid REQUEST_URI" do
+			expect(response.read).to be == "REQUEST_URI: /?foo=bar"
+		end
+	end
+
 	context 'websockets', timeout: 1 do
 		include_context Falcon::Server
 		
