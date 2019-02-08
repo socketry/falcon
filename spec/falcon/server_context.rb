@@ -10,7 +10,7 @@ RSpec.shared_context Falcon::Server do
 	let!(:client) {Async::HTTP::Client.new(endpoint, protocol)}
 	
 	let!(:server_task) do
-		server_task = reactor.async do
+		reactor.async do
 			server.run
 		end
 	end

@@ -1,4 +1,4 @@
-# Copyright, 2017, by Samuel G. D. Williams. <http://www.codeotaku.com>
+# Copyright, 2019, by Samuel G. D. Williams. <http://www.codeotaku.com>
 # 
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -18,32 +18,31 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-require_relative 'shared_examples'
-require 'rack/handler/falcon'
+require 'falcon/server'
+require 'async/http/client'
+require 'async/process'
 
-RSpec.describe Rack::Handler::Falcon do
-	it_behaves_like Rack::Handler, 'falcon'
+RSpec.shared_examples_for Rack::Handler do |server_name|
+	include_context Async::RSpec::Reactor
 	
-	let(:server_double) {instance_double(Falcon::Server)}
-
-	before do
-		allow(Async::Reactor).to receive(:run)
-		allow(Falcon::Server).to receive(:new).and_return(server_double)
-	end
-
-	context 'block is given' do
-		it 'yields server' do
-			expect do |block|
-				described_class.run(double(call: true), &block)
-			end.to yield_with_args(server_double)
+	let(:config_path) {File.join(__dir__, "config.ru")}
+	
+	let(:endpoint) {Async::HTTP::URLEndpoint.parse("http://localhost:9290")}
+	let(:client) {Async::HTTP::Client.new(endpoint)}
+	
+	it "can start rackup --server #{server_name}" do
+		server_task = reactor.async do
+			Async::Process.spawn("rackup", "--server", server_name, "--host", endpoint.hostname, "--port", endpoint.port.to_s, config_path)
 		end
-	end
-
-	context 'block is not given' do
-		it 'does not fail' do
-			expect do |block|
-				described_class.run(double(call: true), &block)
-			end.not_to raise_error
-		end
+		
+		Async::Task.current.sleep 2
+		
+		response = client.post("/", {}, ["Hello World"])
+	
+		expect(response).to be_success
+		expect(response.read).to be == "Hello World"
+		
+		client.close
+		server_task.stop
 	end
 end

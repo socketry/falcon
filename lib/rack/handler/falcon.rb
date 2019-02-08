@@ -9,6 +9,7 @@ module Rack
 	module Handler
 		module Falcon
 			SCHEME = "http".freeze
+			NAME = :falcon
 			
 			def self.endpoint_for(**options)
 				host = options[:Host] || 'localhost'
@@ -32,6 +33,6 @@ module Rack
 			end
 		end
 		
-		register :falcon, Falcon
+		register Falcon::NAME, Falcon
 	end
 end
