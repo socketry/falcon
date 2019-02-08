@@ -1,4 +1,5 @@
 
+require "async/http/client"
 require "async/http/url_endpoint"
 
 RSpec.shared_context Falcon::Server do
