@@ -33,6 +33,7 @@ module Falcon
 			PATH_INFO = 'PATH_INFO'.freeze
 			REQUEST_METHOD = 'REQUEST_METHOD'.freeze
 			REQUEST_PATH = 'REQUEST_PATH'.freeze
+			REQUEST_URI = 'REQUEST_URI'.freeze
 			SCRIPT_NAME = 'SCRIPT_NAME'.freeze
 			QUERY_STRING = 'QUERY_STRING'.freeze
 			SERVER_PROTOCOL = 'SERVER_PROTOCOL'.freeze
@@ -136,7 +137,8 @@ module Falcon
 					# The remainder of the request URL's “path”, designating the virtual “location” of the request's target within the application. This may be an empty string, if the request URL targets the application root and does not have a trailing slash. This value may be percent-encoded when originating from a URL.
 					PATH_INFO => request_path,
 					REQUEST_PATH => request_path,
-					
+					REQUEST_URI => request.path,
+
 					# The portion of the request URL that follows the ?, if any. May be empty, but is always required!
 					QUERY_STRING => query_string || '',
 					
