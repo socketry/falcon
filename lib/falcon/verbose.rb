@@ -33,7 +33,7 @@ module Falcon
 			task = Async::Task.current
 			address = request.remote_address
 			
-			@logger.info(request.authority) {"#{request.method} #{request.path} #{request.version} #{request.headers.to_h} from #{address.inspect}"}
+			@logger.info(request) {"Headers: #{request.headers.to_h} from #{address.inspect}"}
 			
 			task.annotate("#{request.method} #{request.path} from #{address.inspect}")
 		end
@@ -46,9 +46,9 @@ module Falcon
 			response = super
 			
 			statistics.wrap(response) do |statistics, error|
-				@logger.info(request.authority) {"#{request.method} #{request.path} #{request.version} -> #{response.status} #{response.headers.to_h}; #{statistics.inspect}"}
+				@logger.info(request) {"Responding with: #{response.status} #{response.headers.to_h}; #{statistics.inspect}"}
 				
-				@logger.error(request.authority) {"#{error.class}: #{error.message}"} if error
+				@logger.error(request) {"#{error.class}: #{error.message}"} if error
 			end
 			
 			return response
