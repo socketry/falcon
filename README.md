@@ -101,6 +101,7 @@ module MySite
 	end
 end
 ```
+
 ##### Rails 4.x
 
 Please ensure you have `config.allow_concurrency = true` in your configuration.
@@ -118,6 +119,10 @@ Falcon supports `rack.hijack` for HTTP/1.x connections. You can thus use [async-
 #### ActionCable
 
 The `rack.hijack` functionality is compatible with ActionCable. If you use the `async` adapter, you should run falcon in threaded mode, or in forked mode with `--concurrency 1`. Otherwise, your messaging system will be distributed over several processes with no IPC mechanism. You might like to try out [async-redis](https://github.com/socketry/async-redis) as an asynchronous message bus.
+
+### Early Hints
+
+Falcon supports the `rack.early_hints` API when running over HTTP/2.
 
 ### Integration with Guard
 
@@ -218,7 +223,7 @@ The standard price for business support is $120.00 USD / year / production insta
 
 Each paying business customer is entitled to one vote to prioritize the below work.
 
-- Add support for push promises and stream prioritization in [async-http].
+- Add support stream prioritization in [async-http].
 - Add support for rolling restarts in [async-container].
 - Add support for hybrid process/thread model in [async-container].
 - Asynchronous Postgres and MySQL database adapters for ActiveRecord in [async-postgres] and [async-mysql].
