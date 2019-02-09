@@ -27,12 +27,28 @@ module Falcon
 		class Push < Async::HTTP::Middleware
 			PRELOAD = /<(?<path>.*?)>;.*?rel=preload/
 			
+			def self.early_hints(headers)
+				headers.each do |key, value|
+					if key.casecmp("link").zero? and match = PRELOAD.match(value)
+						yield match[:path]
+					else
+						Async.logger.warn(request) {"Unsure how to handle early hints header: #{key}"}
+					end
+				end
+			end
+			
 			def call(request)
 				response = super
 				
-				response.headers['link'].each do |link|
-					if match = link.match(PRELOAD)
-						request.send_push(match[:path])
+				Async.logger.debug(self) {response}
+				
+				if request.push?
+					Async.logger.debug(self) {response.headers['link']}
+					
+					response.headers['link']&.each do |link|
+						if match = link.match(PRELOAD)
+							request.push(match[:path])
+						end
 					end
 				end
 				

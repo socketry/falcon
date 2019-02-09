@@ -1,4 +1,8 @@
 
+require 'falcon/server'
+require 'async/http/client'
+require 'async/rspec/reactor'
+
 require "async/http/client"
 require "async/http/url_endpoint"
 
@@ -26,12 +30,11 @@ RSpec.shared_context Falcon::Server do
 		end
 	end
 	
+	let(:middleware) do
+		Falcon::Server.middleware(app)
+	end
+	
 	let(:server) do
-		Falcon::Server.new(
-			Falcon::Adapters::Rewindable.new(
-				Falcon::Adapters::Rack.new(app)
-			),
-			endpoint, protocol
-		)
+		Falcon::Server.new(middleware, endpoint, protocol)
 	end
 end

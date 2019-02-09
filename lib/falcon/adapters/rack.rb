@@ -55,6 +55,9 @@ module Falcon
 			RACK_HIJACK = 'rack.hijack'.freeze
 			RACK_IS_HIJACK = 'rack.hijack?'.freeze
 			RACK_HIJACK_IO = 'rack.hijack_io'.freeze
+			RACK_EARLY_HINTS = "rack.early_hints".freeze
+			
+			ASYNC_HTTP_REQUEST = "async.http.request".freeze
 			
 			# Header constants
 			HTTP_X_FORWARDED_PROTO = 'HTTP_X_FORWARDED_PROTO'.freeze
@@ -120,6 +123,8 @@ module Falcon
 				env = {
 					RACK_VERSION => [2, 0, 0],
 					
+					ASYNC_HTTP_REQUEST => request,
+					
 					RACK_INPUT => Input.new(request.body),
 					RACK_ERRORS => $stderr,
 					RACK_LOGGER => Async.logger,
@@ -154,6 +159,14 @@ module Falcon
 				}
 				
 				self.unwrap_request(request, env)
+				
+				if request.push?
+					env[RACK_EARLY_HINTS] = lambda do |headers|
+						Falcon::Adapters::Push.early_hints(headers) do |path|
+							request.push(path)
+						end
+					end
+				end
 				
 				if request.hijack?
 					env[RACK_IS_HIJACK] = true

@@ -1,4 +1,4 @@
-# Copyright, 2017, by Samuel G. D. Williams. <http://www.codeotaku.com>
+# Copyright, 2019, by Samuel G. D. Williams. <http://www.codeotaku.com>
 # 
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -18,31 +18,39 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-require 'async/http/server'
-require 'async/http/middleware/builder'
+require_relative '../server_context'
 
-require 'async/http/content_encoding'
-
-require_relative 'verbose'
-require_relative 'adapters/rewindable'
-require_relative 'adapters/rack'
-require_relative 'adapters/push'
-
-module Falcon
-	class Server < Async::HTTP::Server
-		def self.middleware(rack_app, verbose: false)
-			Async::HTTP::Middleware.build do
-				if verbose
-					use Verbose
-				end
-				
-				use Async::HTTP::ContentEncoding
-				use Adapters::Push
-				use Adapters::Rewindable
-				use Adapters::Rack
-				
-				run rack_app
+RSpec.shared_examples_for Falcon::Adapters::Push do
+	include_context Falcon::Server
+	
+	let(:protocol) {Async::HTTP::Protocol::HTTP2::WithPush}
+	
+	let(:text) {"Hello World!"}
+	let(:css) {"all {your: base are belong to us;}"}
+	let(:links) {[["link", "</index.css>; rel=preload"]]}
+	
+	let(:app) do
+		lambda do |env|
+			request = Rack::Request.new(env)
+			
+			if request.path == "/index.css"
+				[200, {}, [css]]
+			else
+				[200, {"link" => "</index.css>; rel=preload"}, [text]]
 			end
 		end
+	end
+	
+	let(:response) {client.get("/")}
+	
+	it "generates successful response and promise" do
+		expect(response).to be_success
+		expect(response.read).to be == text
+		
+		promise = response.promises.dequeue
+		promise.wait
+		
+		expect(promise).to be_success
+		expect(promise.read).to be == css
 	end
 end

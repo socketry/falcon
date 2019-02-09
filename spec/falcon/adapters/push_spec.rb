@@ -1,4 +1,4 @@
-# Copyright, 2017, by Samuel G. D. Williams. <http://www.codeotaku.com>
+# Copyright, 2018, by Samuel G. D. Williams. <http://www.codeotaku.com>
 # 
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -18,31 +18,8 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-require 'async/http/server'
-require 'async/http/middleware/builder'
+require_relative 'push_examples'
 
-require 'async/http/content_encoding'
-
-require_relative 'verbose'
-require_relative 'adapters/rewindable'
-require_relative 'adapters/rack'
-require_relative 'adapters/push'
-
-module Falcon
-	class Server < Async::HTTP::Server
-		def self.middleware(rack_app, verbose: false)
-			Async::HTTP::Middleware.build do
-				if verbose
-					use Verbose
-				end
-				
-				use Async::HTTP::ContentEncoding
-				use Adapters::Push
-				use Adapters::Rewindable
-				use Adapters::Rack
-				
-				run rack_app
-			end
-		end
-	end
+RSpec.describe Falcon::Adapters::Push do
+	it_behaves_like Falcon::Adapters::Push
 end

@@ -18,10 +18,6 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-require 'falcon/server'
-require 'async/http/client'
-require 'async/rspec/reactor'
-
 require 'rack'
 
 require_relative 'server_context'
@@ -30,6 +26,8 @@ RSpec.describe Falcon::Server, timeout: 1 do
 	include_context Falcon::Server
 	
 	context "http client" do
+		let(:protocol) {Async::HTTP::Protocol::HTTP2}
+		
 		let(:app) do
 			lambda do |env|
 				request = Rack::Request.new(env)
