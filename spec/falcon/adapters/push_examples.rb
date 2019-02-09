@@ -29,6 +29,17 @@ RSpec.shared_examples_for Falcon::Adapters::Push do
 	let(:css) {"all {your: base are belong to us;}"}
 	let(:links) {[["link", "</index.css>; rel=preload"]]}
 	
+	let(:middleware) do
+		rack_app = app
+		
+		Async::HTTP::Middleware.build do
+			use Falcon::Adapters::Push
+			use Falcon::Adapters::Rack
+			
+			run rack_app
+		end
+	end
+	
 	let(:app) do
 		lambda do |env|
 			request = Rack::Request.new(env)

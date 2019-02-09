@@ -37,7 +37,6 @@ module Falcon
 				end
 				
 				use Async::HTTP::ContentEncoding
-				use Adapters::Push
 				use Adapters::Rewindable
 				use Adapters::Rack
 				
