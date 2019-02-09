@@ -1,6 +1,21 @@
 
 namespace :benchmark do
-	task :compare do
+	task :hello do
+		@config_path = File.expand_path("../examples/hello/config.ru", __dir__)
+		@request_path = "/"
+	end
+
+	task :small do
+		@config_path = File.expand_path("../examples/benchmark/config.ru", __dir__)
+		@request_path = "/small"
+	end
+
+	task :big do
+		@config_path ||= File.expand_path("../examples/benchmark/config.ru", __dir__)
+		@request_path ||= "/big"
+	end
+
+	task :compare => :big do
 		require 'etc'
 		
 		require 'async/reactor'
@@ -10,8 +25,7 @@ namespace :benchmark do
 		require 'async/http/url_endpoint'
 		
 		host = "http://127.0.0.1:9292"
-		config_path = File.expand_path("../examples/benchmark/config.ru", __dir__)
-		
+
 		threads = Etc.nprocessors
 		
 		perf = ["perf", "record", "-F", "max", "-a", "--"]
@@ -20,7 +34,8 @@ namespace :benchmark do
 			# ["puma", "--bind", host.gsub("http", "tcp")],
 			["puma", "--workers", threads.to_s, "--bind", host.gsub("http", "tcp")],
 			# ["rbspy", "record", "--", "falcon", "serve", "--threaded", "--bind", host, "--config"]
-			["falcon", "serve", "--bind", host, "--config"]
+			["falcon", "serve", "--bind", host, "--config"],
+			# ["falcon", "serve", "--reuse-port", "--bind", host, "--config"],
 		]
 		
 		Async.logger.info!
@@ -37,7 +52,7 @@ namespace :benchmark do
 					
 					server_task = task.async do
 						$stderr.puts "Starting #{command.first}"
-						server_status = Async::Process.spawn(*command, config_path)
+						server_status = Async::Process.spawn(*command, @config_path)
 					end
 					
 					begin
@@ -47,7 +62,7 @@ namespace :benchmark do
 						
 						socket = endpoint.connect
 						
-						request = Async::HTTP::Request.new("http", "localhost", "GET", "/big")
+						request = Async::HTTP::Request.new("http", "localhost", "GET", @request_path)
 						stream = Async::IO::Stream.new(socket)
 						protocol = Async::HTTP::Protocol::HTTP1.client(stream)
 						
@@ -76,7 +91,7 @@ namespace :benchmark do
 						
 						# Async::Process.spawn("ab", "-n", "2000", "#{host}/small")
 						
-						Async::Process.spawn("wrk", "-c", c.to_s, "-t", (n+1).to_s, "-d", "2", "#{host}/big")
+						Async::Process.spawn("wrk", "-c", c.to_s, "-t", (n+1).to_s, "-d", "2", "#{host}#{@request_path}")
 					end
 				ensure
 					server_task.stop
