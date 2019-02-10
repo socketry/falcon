@@ -26,7 +26,6 @@ require 'async/http/content_encoding'
 require_relative 'verbose'
 require_relative 'adapters/rewindable'
 require_relative 'adapters/rack'
-require_relative 'adapters/push'
 
 module Falcon
 	class Server < Async::HTTP::Server

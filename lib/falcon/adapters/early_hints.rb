@@ -22,37 +22,25 @@ require 'async/http/middleware'
 
 module Falcon
 	module Adapters
-		# Interprets link headers to implement server push.
-		# https://tools.ietf.org/html/rfc8288
-		class Push < Async::HTTP::Middleware
+		class EarlyHints
 			PRELOAD = /<(?<path>.*?)>;.*?rel=preload/
 			
-			def self.early_hints(headers)
-				headers.each do |key, value|
-					if key.casecmp("link").zero? and match = PRELOAD.match(value)
-						yield match[:path]
-					else
-						Async.logger.warn(request) {"Unsure how to handle early hints header: #{key}"}
-					end
-				end
+			def initialize(request)
+				@request = request
 			end
 			
-			def call(request)
-				response = super
-				
-				Async.logger.debug(self) {response}
-				
-				if request.push?
-					Async.logger.debug(self) {response.headers['link']}
-					
-					response.headers['link']&.each do |link|
-						if match = link.match(PRELOAD)
-							request.push(match[:path])
-						end
+			def push(path, preload: true, **options)
+				@request.push(path)
+			end
+			
+			def call(headers)
+				headers.each do |key, value|
+					if key.casecmp("link").zero? and match = PRELOAD.match(value)
+						@request.push(match[:path])
+					else
+						Async.logger.warn(@request) {"Unsure how to handle early hints header: #{key}"}
 					end
 				end
-				
-				return response
 			end
 		end
 	end

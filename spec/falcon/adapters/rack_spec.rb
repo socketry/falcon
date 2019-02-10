@@ -22,7 +22,7 @@ require 'falcon/server'
 require 'async/websocket/server'
 require 'async/websocket/client'
 
-require_relative 'push_examples'
+require_relative 'early_hints_examples'
 require_relative '../server_context'
 
 RSpec.describe Falcon::Adapters::Rack do
@@ -74,23 +74,7 @@ RSpec.describe Falcon::Adapters::Rack do
 	end
 
 	context "early hints" do
-		it_behaves_like Falcon::Adapters::Push do
-			let(:app) do
-				lambda do |env|
-					request = Rack::Request.new(env)
-					
-					if request.path == "/index.css"
-						[200, {}, [css]]
-					else
-						if early_hints = env['rack.early_hints']
-							early_hints.call(links)
-						end
-						
-						[200, {}, [text]]
-					end
-				end
-			end
-		end
+		it_behaves_like Falcon::Adapters::EarlyHints
 	end
 
 	context 'websockets', timeout: 1 do

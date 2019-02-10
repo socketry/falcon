@@ -20,7 +20,7 @@
 
 require_relative '../server_context'
 
-RSpec.shared_examples_for Falcon::Adapters::Push do
+RSpec.shared_examples_for Falcon::Adapters::EarlyHints do
 	include_context Falcon::Server
 	
 	let(:protocol) {Async::HTTP::Protocol::HTTP2::WithPush}
@@ -29,17 +29,6 @@ RSpec.shared_examples_for Falcon::Adapters::Push do
 	let(:css) {"all {your: base are belong to us;}"}
 	let(:links) {[["link", "</index.css>; rel=preload"]]}
 	
-	let(:middleware) do
-		rack_app = app
-		
-		Async::HTTP::Middleware.build do
-			use Falcon::Adapters::Push
-			use Falcon::Adapters::Rack
-			
-			run rack_app
-		end
-	end
-	
 	let(:app) do
 		lambda do |env|
 			request = Rack::Request.new(env)
@@ -47,7 +36,11 @@ RSpec.shared_examples_for Falcon::Adapters::Push do
 			if request.path == "/index.css"
 				[200, {}, [css]]
 			else
-				[200, {"link" => "</index.css>; rel=preload"}, [text]]
+				if early_hints = env['rack.early_hints']
+					early_hints.call(links)
+				end
+				
+				[200, {}, [text]]
 			end
 		end
 	end

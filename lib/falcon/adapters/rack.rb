@@ -22,6 +22,7 @@ require 'rack'
 
 require_relative 'input'
 require_relative 'response'
+require_relative 'early_hints'
 
 require 'async/logger'
 
@@ -161,11 +162,7 @@ module Falcon
 				self.unwrap_request(request, env)
 				
 				if request.push?
-					env[RACK_EARLY_HINTS] = lambda do |headers|
-						Falcon::Adapters::Push.early_hints(headers) do |path|
-							request.push(path)
-						end
-					end
+					env[RACK_EARLY_HINTS] = EarlyHints.new(request)
 				end
 				
 				if request.hijack?

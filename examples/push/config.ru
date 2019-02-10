@@ -1,6 +1,4 @@
 
-Async.logger.debug!
-
 class EarlyHints
 	def initialize(app)
 		@app = app
@@ -8,10 +6,8 @@ class EarlyHints
 	
 	def call(env)
 		if env['PATH_INFO'] == "/index.html" and early_hints = env['rack.early_hints']
-			early_hints.call([
-				["link", "</style.css>; rel=preload; as=style"],
-				["link", "</script.js>; rel=preload; as=script"],
-			])
+			early_hints.push("/style.css")
+			early_hints.push("/script.js")
 		end
 		
 		@app.call(env)
