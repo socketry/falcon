@@ -56,6 +56,24 @@ RSpec.describe Falcon::Adapters::Rack do
 		end
 	end
 
+	context 'Connection: close', timeout: 1 do
+		include_context Falcon::Server
+		let(:protocol) {Async::HTTP::Protocol::HTTP1}
+		
+		let(:app) do
+			lambda do |env|
+				[200, {'Connection' => 'close'}, ["Hello World!"]]
+			end
+		end
+		
+		let(:response) {client.get("/")}
+		
+		it "get valid response" do
+			expect(response.headers).to be_empty
+			expect(response.read).to be == "Hello World!"
+		end
+	end
+
 	context 'REQUEST_URI', timeout: 1 do
 		include_context Falcon::Server
 		let(:protocol) {Async::HTTP::Protocol::HTTP2}
