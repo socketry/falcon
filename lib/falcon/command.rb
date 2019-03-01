@@ -33,7 +33,7 @@ module Falcon
 		end
 		
 		class Top < Samovar::Command
-			self.description = "An asynchronous HTTP client/server toolset."
+			self.description = "An asynchronous HTTP server."
 			
 			options do
 				option '--verbose | --quiet', "Verbosity of output for debugging.", key: :logging

@@ -21,7 +21,7 @@ use MyApp # Then, it will get to Sinatra.
 run lambda {|env| [404, {}, []]} # Bottom of the stack, give 404.
 
 # Start server like this:
-# falcon --verbose serve --threaded --concurrency 1 --bind http://localhost:9292
+# falcon --verbose serve --threaded --count 1 --bind http://localhost:9292
 
 # Test server, e.g.:
 # time ab -n 64 -c 64 http://localhost:9292/

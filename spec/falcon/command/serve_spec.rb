@@ -23,23 +23,24 @@ require 'falcon/command/serve'
 RSpec.describe Falcon::Command::Serve do
 	it "can listen on specified port" do
 		command = described_class[
-			# "--bind", "http://localhost",
 			"--port", 8090,
 			"--config", File.expand_path("config.ru", __dir__),
-			"--concurrency", 1
+			"--threaded", "--count", 1
 		]
 		
 		container = command.run(true)
 		
-		Async do
-			client = command.client
+		container.wait do
+			Async do
+				client = command.client
+				
+				response = client.get("/")
+				expect(response).to be_success
+				
+				client.close
+			end
 			
-			response = client.get("/")
-			expect(response).to be_success
-			
-			client.close
+			container.stop
 		end
-		
-		container.stop
 	end
 end

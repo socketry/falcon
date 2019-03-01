@@ -42,24 +42,28 @@ module Falcon
 				
 				option '-p/--port <number>', "Override the specified port", type: Integer
 				option '-h/--hostname <hostname>', "Specify the hostname which would be used for certificates, etc."
-				option '-t/--timeout <duration>', "Specify the maximum time to wait for blocking operations.", type: Float, default: 60
+				option '-t/--timeout <duration>', "Specify the maximum time to wait for blocking operations.", type: Float, default: 60*10
 				
 				option '--reuse-port', "Enable SO_REUSEPORT if possible.", default: false
 				
 				option '-c/--config <path>', "Rackup configuration file to load", default: 'config.ru'
-				option '-n/--concurrency <count>', "Number of processes to start", default: Async::Container.hardware_concurrency, type: Integer
 				
-				option '--forked | --threaded', "Select a specific concurrency model", key: :container, default: :forked
+				option '--forked | --threaded | --hybrid', "Select a specific parallelism model", key: :container, default: :forked
+				
+				option '-n/--count <count>', "Number of instances to start.", default: Async::Container.processor_count, type: Integer
+				
+				option '--forks <count>', "Number of forks (hybrid only).", type: Integer
+				option '--threads <count>', "Number of threads (hybrid only).", type: Integer
 			end
 			
 			def container_class
 				case @options[:container]
 				when :threaded
-					require 'async/container/threaded'
 					return Async::Container::Threaded
 				when :forked
-					require 'async/container/forked'
 					return Async::Container::Forked
+				when :hybrid
+					return Async::Container::Hybrid
 				end
 			end
 			
@@ -69,27 +73,25 @@ module Falcon
 				return Server.middleware(rack_app, verbose: verbose), options
 			end
 			
-			def endpoint_options
-				# Oh, for Hash#slice(keys...)
+			def slice_options(*keys)
+				# TODO: Ruby 2.5 introduced Hash#slice
 				options = {}
 				
-				if @options.key? :hostname
-					options[:hostname] = @options[:hostname]
-				end
-				
-				if @options.key? :port
-					options[:port] = @options[:port]
-				end
-				
-				if @options.key? :reuse_port
-					options[:reuse_port] = @options[:reuse_port]
-				end
-				
-				if duration = @options[:timeout] and !duration.zero?
-					options[:timeout] = duration
+				keys.each do |key|
+					if @options.key?(key)
+						options[key] = @options[key]
+					end
 				end
 				
 				return options
+			end
+			
+			def container_options
+				slice_options(:count, :forks, :threads)
+			end
+			
+			def endpoint_options
+				slice_options(:hostname, :port, :reuse_port, :timeout)
 			end
 			
 			def client_endpoint
@@ -109,22 +111,22 @@ module Falcon
 					Async::IO::SharedEndpoint.bound(endpoint)
 				end.wait
 				
-				Async.logger.info(endpoint) do
-					"Falcon taking flight! Using #{container_class} with concurrency: #{@options[:concurrency]}"
+				Async.logger.info(endpoint) do |buffer|
+					buffer.puts "Falcon taking flight! Using #{container_class} #{container_options}"
+					buffer.puts "- To terminate: Ctrl-C or kill #{Process.pid}"
 				end
 				
 				debug_trap = Async::IO::Trap.new(:USR1)
-				
 				debug_trap.ignore!
 				
-				if container_class.multiprocess?
-					Async.logger.info "Full status: kill -USR1 #{-Process.pid}"
-				end
+				container = container_class.new
 				
-				container_class.new(concurrency: @options[:concurrency], name: "Falcon Server") do |task, instance|
+				container.run(name: "Falcon Server", restart: true, **container_options) do |task, instance|
 					task.async do
 						if debug_trap.install!
-							Async.logger.info "Per-process status: kill -USR1 #{Process.pid}"
+							Async.logger.info(instance) do
+								"- Per-process status: kill -USR1 #{Process.pid}"
+							end
 						end
 						
 						debug_trap.trap do
@@ -140,6 +142,8 @@ module Falcon
 					
 					task.children.each(&:wait)
 				end
+				
+				return container
 			end
 			
 			def invoke(parent)

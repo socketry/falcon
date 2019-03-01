@@ -49,23 +49,26 @@ The `falcon serve` command has the following options for you to use:
 ```
 $ falcon --help
 falcon [--verbose | --quiet] [-h/--help] [-v/--version] <command>
-	An asynchronous HTTP client/server toolset.
+	An asynchronous HTTP server.
 
 	[--verbose | --quiet]  Verbosity of output for debugging.
-	[-h/--help]            Print out help information.
+	[-h/--help]            Print out help information.       
 	[-v/--version]         Print out the application version.
 	<command>              One of: serve, virtual.             Default: serve
 
-	serve [-b/--bind <address>] [-p/--port <number>] [-h/--hostname <hostname>] [-c/--config <path>] [-n/--concurrency <count>] [--forked | --threaded]
+	serve [-b/--bind <address>] [-p/--port <number>] [-h/--hostname <hostname>] [-t/--timeout <duration>] [--reuse-port] [-c/--config <path>] [--forked | --threaded | --hybrid] [-n/--count <count>] [--forks <count>] [--threads <count>]
 		Run an HTTP server.
 
-		[-b/--bind <address>]       Bind to the given hostname/address                               Default: https://localhost:9292
-		[-p/--port <number>]        Override the specified port 
-		[-h/--hostname <hostname>]  Specify the hostname which would be used for certificates, etc.
-		[-c/--config <path>]        Rackup configuration file to load                                Default: config.ru 
-		[-n/--concurrency <count>]  Number of processes to start                                     Default: 8 
-		[--forked | --threaded]     Select a specific concurrency model                              Default: forked
-```
+		[-b/--bind <address>]               Bind to the given hostname/address                               Default: https://localhost:9292
+		[-p/--port <number>]                Override the specified port                                    
+		[-h/--hostname <hostname>]          Specify the hostname which would be used for certificates, etc.
+		[-t/--timeout <duration>]           Specify the maximum time to wait for blocking operations.        Default: 60                    
+		[--reuse-port]                      Enable SO_REUSEPORT if possible.                                 Default: false                 
+		[-c/--config <path>]                Rackup configuration file to load                                Default: config.ru             
+		[--forked | --threaded | --hybrid]  Select a specific parallelism model                              Default: forked                
+		[-n/--count <count>]                Number of instances to start.                                    Default: 8                     
+		[--forks <count>]                   Number of forks (hybrid only).                                 
+		[--threads <count>]                 Number of threads (hybrid only). ```
 
 To run on a different port:
 
@@ -118,7 +121,7 @@ Falcon supports `rack.hijack` for HTTP/1.x connections. You can thus use [async-
 
 #### ActionCable
 
-The `rack.hijack` functionality is compatible with ActionCable. If you use the `async` adapter, you should run falcon in threaded mode, or in forked mode with `--concurrency 1`. Otherwise, your messaging system will be distributed over several processes with no IPC mechanism. You might like to try out [async-redis](https://github.com/socketry/async-redis) as an asynchronous message bus.
+The `rack.hijack` functionality is compatible with ActionCable. If you use the `async` adapter, you should run falcon in threaded mode, or in forked mode with `--count 1`. Otherwise, your messaging system will be distributed over several processes with no IPC mechanism. You might like to try out [async-redis](https://github.com/socketry/async-redis) as an asynchronous message bus.
 
 ### Early Hints
 
