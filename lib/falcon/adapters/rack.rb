@@ -200,7 +200,7 @@ module Falcon
 				
 				return make_response(request, status, headers, body)
 			rescue => exception
-				@logger.error "#{exception.class}: #{exception.message}\n\t#{$!.backtrace.join("\n\t")}"
+				@logger.error(self) {exception}
 				
 				return failure_response(exception)
 			end
