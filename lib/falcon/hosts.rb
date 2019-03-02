@@ -51,6 +51,7 @@ module Falcon
 		end
 		
 		def run(container)
+			pp "Trying to run #{@environment}"
 			return unless @environment.include?(:server)
 			
 			container.run(name: @name) do |task, instance|

@@ -21,6 +21,7 @@
 require_relative '../server'
 require_relative '../endpoint'
 require_relative '../hosts'
+require_relative '../configuration'
 
 require 'async/container'
 require 'async/container/controller'
@@ -55,7 +56,7 @@ module Falcon
 				
 				hosts = Hosts.new(configuration)
 				
-				return hosts.container
+				return hosts.run(@options)
 			end
 			
 			def invoke(parent)

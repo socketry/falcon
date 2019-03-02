@@ -78,8 +78,10 @@ module Falcon
 			
 			add(:rack, :host) do
 				config_path {::File.expand_path("config.ru", root)}
-				application {::Rack::Builder.parse_file(config_path)}
-				middleware {::Falcon::Server.middleware(*application)}
+				application {::Rack::Builder.parse_file(config_path).first}
+				middleware {::Falcon::Server.middleware(application, verbose: true)}
+				
+				server {::Falcon::Server.new(middleware, endpoint)}
 				
 				endpoint {::Async::HTTP::URLEndpoint.parse(url)}
 			end
@@ -96,23 +98,29 @@ module Falcon
 		def each
 			return to_enum unless block_given?
 			
-			@environments.each do |environment|
+			@environments.each do |name, environment|
 				if environment.include?(:hostname)
 					yield environment
 				end
 			end
 		end
 		
-		def host(name, &block)
-			add(name, :host, &block)
+		def host(name, parent = :host, &block)
+			add(name, parent, &block).tap do |environment|
+				environment[:hostname] = name
+			end
 		end
 		
-		def proxy(name, &block)
-			add(name, :proxy, &block)
+		def proxy(name, parent = :proxy, &block)
+			add(name, parent, &block).tap do |environment|
+				environment[:hostname] = name
+			end
 		end
 		
-		def rack(name, &block)
-			add(name, :rack, &block)
+		def rack(name, parent = :rack, &block)
+			add(name, parent, &block).tap do |environment|
+				environment[:hostname] = name
+			end
 		end
 		
 		def load_file(path)
