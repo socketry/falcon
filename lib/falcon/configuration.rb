@@ -36,7 +36,6 @@ module Falcon
 				ssl_private_key_path {File.expand_path("ssl/private.key", root)}
 				ssl_private_key {OpenSSL::PKey::RSA.new(File.read(ssl_private_key_path))}
 				
-				
 				ssl_context do
 					OpenSSL::SSL::SSLContext.new.tap do |context|
 						context.cert = ssl_certificate
@@ -52,8 +51,6 @@ module Falcon
 			end
 			
 			add(:self_signed, :ssl) do
-				ssl_session_id {"falcon"}
-				
 				ssl_context do
 					authority = Localhost::Authority.fetch(hostname)
 					
@@ -93,7 +90,7 @@ module Falcon
 		def add(name, parent = nil, &block)
 			parent = @environments.fetch(parent, parent)
 			
-			@environments[name] = Build::Environment.new(parent, {hostname: name}, name: name, &block)
+			@environments[name] = Build::Environment.new(parent, name: name, &block)
 		end
 		
 		def each
