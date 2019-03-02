@@ -16,21 +16,21 @@ Gem::Specification.new do |spec|
 	spec.executables   = spec.files.grep(%r{^bin/}) { |f| File.basename(f) }
 	spec.require_paths = ["lib"]
 
-	spec.add_dependency("http-protocol", "~> 0.15")
+	spec.add_dependency "http-protocol", "~> 0.15"
 	
-	spec.add_dependency("async", "~> 1.13")
-	spec.add_dependency("async-io", "~> 1.18")
-	spec.add_dependency("async-http", "~> 0.38.0")
-	spec.add_dependency("async-container", "~> 0.10.0")
+	spec.add_dependency "async", "~> 1.13"
+	spec.add_dependency "async-io", "~> 1.18"
+	spec.add_dependency "async-http", "~> 0.38.0"
+	spec.add_dependency "async-container", "~> 0.10.0"
 	
-	spec.add_dependency("rack", ">= 1.0")
+	spec.add_dependency "rack", ">= 1.0"
 	
-	spec.add_dependency('samovar', "~> 1.3")
-	spec.add_dependency('localhost', "~> 1.1")
+	spec.add_dependency 'samovar', "~> 1.3"
+	spec.add_dependency 'localhost', "~> 1.1"
+	spec.add_dependency 'build-environment', '~> 1.3'
 	
 	spec.add_development_dependency "async-rspec", "~> 1.7"
 	spec.add_development_dependency "async-websocket", "~> 0.6.0"
-	
 	spec.add_development_dependency "async-process", "~> 1.1"
 	
 	spec.add_development_dependency "covered", "~> 0.10"
