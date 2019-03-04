@@ -86,8 +86,17 @@ module Falcon
 			headers.slice!(HOP_HEADERS)
 		end
 		
-		def prepare_request(request)
+		def prepare_request(request, host)
 			forwarded = []
+			
+			# Async.logger.info(self) do |buffer|
+			# 	buffer.puts "Request authority: #{request.authority}"
+			# 	buffer.puts "Host authority: #{host.authority}"
+			# 	buffer.puts "Endpoint authority: #{host.endpoint.authority}"
+			# end
+			
+			# The authority of the request must match the authority of the endpoint we are proxying to, otherwise SNI and other things won't work correctly.
+			request.authority = host.endpoint.authority
 			
 			if address = request.remote_address
 				request.headers.add(X_FORWARDED_FOR, address.ip_address)
@@ -114,7 +123,7 @@ module Falcon
 			if host = lookup(request)
 				@count += 1
 				
-				request = self.prepare_request(request)
+				request = self.prepare_request(request, host)
 				
 				client = connect(host.endpoint)
 				

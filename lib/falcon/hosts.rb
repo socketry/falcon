@@ -63,10 +63,10 @@ module Falcon
 		end
 		
 		def run(container)
-			Async.logger.info(self) {"Starting server..."}
-			
 			if @environment.include?(:server)
 				bound_endpoint = self.bound_endpoint
+				
+				Async.logger.info(self) {"Starting server..."}
 				
 				container.run(count: 1, name: self.name) do |task, instance|
 					if root = self.root
@@ -79,8 +79,6 @@ module Falcon
 					
 					task.children.each(&:wait)
 				end
-			else
-				pp "Could not run host: #{@environment.name} no server found"
 			end
 		end
 	end

@@ -14,3 +14,7 @@ end
 rack 'hello.localhost', :self_signed do
 	root File.expand_path("examples/hello/", __dir__)
 end
+
+proxy 'codeotaku.localhost', :self_signed do
+	url 'https://www.codeotaku.com'
+end
