@@ -111,12 +111,12 @@ module Falcon
 		end
 		
 		def call(request)
-			if endpoint = lookup(request)
+			if host = lookup(request)
 				@count += 1
 				
 				request = self.prepare_request(request)
 				
-				client = connect(endpoint)
+				client = connect(host.endpoint)
 				
 				client.call(request)
 			else

@@ -142,14 +142,8 @@ module Falcon
 			@named[host.authority] = host
 		end
 		
-		def client_endpoints
-			Hash[
-				@named.collect{|name, host| [name, host.endpoint]}
-			]
-		end
-		
 		def proxy
-			Proxy.new(Falcon::BadRequest, self.client_endpoints)
+			Proxy.new(Falcon::BadRequest, @named)
 		end
 		
 		def redirection(secure_endpoint)
