@@ -19,7 +19,7 @@
 # THE SOFTWARE.
 
 require 'build/environment'
-require 'async/io/address_endpoint'
+require 'async/io/unix_endpoint'
 
 module Falcon
 	class ProxyEndpoint < Async::IO::Endpoint
@@ -60,7 +60,7 @@ module Falcon
 		end
 		
 		def self.unix(path, **options)
-			self.new(::Async::IO::Endpoint.unix(path), reuse_address: true, **options)
+			self.new(::Async::IO::Endpoint.unix(path), **options)
 		end
 	end
 	
@@ -133,18 +133,12 @@ module Falcon
 				endpoint {ProxyEndpoint.unix(ipc_path, protocol: protocol, scheme: scheme, authority: authority)}
 				
 				bound_endpoint do
-					if File.exist?(ipc_path)
-						Async.logger.warn("Unlinking existing ipc: #{ipc_path}...")
-						File.unlink(ipc_path)
-					end
-					
 					Async::Reactor.run do
 						Async::IO::SharedEndpoint.bound(endpoint)
 					end.wait
 				end
 				
 				server {::Falcon::Server.new(middleware, bound_endpoint, protocol, scheme)}
-				# client {::Async::HTTP::Client.new(endpoint, protocol, scheme, authority)}
 			end
 		end
 		
