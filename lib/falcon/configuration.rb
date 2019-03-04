@@ -122,8 +122,12 @@ module Falcon
 			
 			add(:rack, :host) do
 				config_path {::File.expand_path("config.ru", root)}
-				application {::Rack::Builder.parse_file(config_path).first}
-				middleware {::Falcon::Server.middleware(application, verbose: verbose)}
+				
+				middleware do
+					::Falcon::Server.middleware(
+						::Rack::Builder.parse_file(config_path).first, verbose: verbose
+					)
+				end
 				
 				authority 'localhost'
 				scheme 'https'
@@ -138,7 +142,9 @@ module Falcon
 					end.wait
 				end
 				
-				server {::Falcon::Server.new(middleware, bound_endpoint, protocol, scheme)}
+				server do
+					::Falcon::Server.new(middleware, bound_endpoint, protocol, scheme)
+				end
 			end
 		end
 		
