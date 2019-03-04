@@ -32,10 +32,11 @@ module Falcon
 	end
 	
 	class Redirection < Async::HTTP::Middleware
-		def initialize(app, hosts)
+		def initialize(app, hosts, endpoint)
 			super(app)
 			
 			@hosts = hosts
+			@endpoint = endpoint
 		end
 		
 		def lookup(request)
@@ -46,10 +47,14 @@ module Falcon
 		end
 		
 		def call(request)
-			if endpoint = lookup(request)
-				location = "https://#{request.authority}#{request.path}"
+			if host = lookup(request)
+				if @endpoint.default_port?
+					location = "#{@endpoint.scheme}://#{host.authority}#{request.path}"
+				else
+					location = "#{@endpoint.scheme}://#{host.authority}:#{@endpoint.port}#{request.path}"
+				end
 				
-				return Async::HTTP::Response[301, {'location' => location}, []]
+				return Async::HTTP::Response[301, [['location', location]], []]
 			else
 				super
 			end

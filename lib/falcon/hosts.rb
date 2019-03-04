@@ -30,40 +30,57 @@ require 'async/http/url_endpoint'
 module Falcon
 	class Host
 		def initialize(environment)
-			@environment = environment
-			@evaluator = environment.evaluator
+			@environment = environment.flatten
+			@evaluator = @environment.evaluator
 		end
 		
 		def name
-			@environment.name
+			"Falcon Host for #{self.authority}"
+		end
+		
+		def authority
+			@evaluator.authority
 		end
 		
 		def endpoint
-			@endpoint ||= @evaluator.endpoint
+			@evaluator.endpoint
 		end
 		
 		def ssl_context
-			@ssl_context ||= @evaluator.ssl_context
+			@evaluator.ssl_context
 		end
 		
 		def root
-			@root ||= @evaluator.root
+			@evaluator.root
+		end
+		
+		def bound_endpoint
+			@evaluator.bound_endpoint
+		end
+		
+		def to_s
+			"\#<#{self.class} #{@evaluator.authority}>"
 		end
 		
 		def run(container)
-			pp "Trying to run #{@environment}"
-			return unless @environment.include?(:server)
+			Async.logger.info(self) {"Starting server..."}
 			
-			container.run(name: @name) do |task, instance|
-				if root = self.root
-					Dir.chdir(root)
+			if @environment.include?(:server)
+				bound_endpoint = self.bound_endpoint
+				
+				container.run(count: 1, name: self.name) do |task, instance|
+					if root = self.root
+						Dir.chdir(root)
+					end
+					
+					server = @evaluator.server
+					
+					server.run
+					
+					task.children.each(&:wait)
 				end
-				
-				server = @evaluator.server
-				
-				server.run
-				
-				task.children.each(&:wait)
+			else
+				pp "Could not run host: #{@environment.name} no server found"
 			end
 		end
 	end
@@ -109,14 +126,20 @@ module Falcon
 		
 		def host_context(socket, hostname)
 			if host = @named[hostname]
+				Async.logger.debug(self) {"Resolving #{hostname} -> #{host}"}
+				
 				socket.hostname = hostname
 				
-				return host[:ssl_context]
+				return host.ssl_context
+			else
+				Async.logger.warn(self) {"Unable to resolve #{hostname}!"}
+				
+				return nil
 			end
 		end
 		
 		def add(host)
-			@named[host.name] = host
+			@named[host.authority] = host
 		end
 		
 		def client_endpoints
@@ -129,8 +152,8 @@ module Falcon
 			Proxy.new(Falcon::BadRequest, self.client_endpoints)
 		end
 		
-		def redirection
-			Redirection.new(Falcon::BadRequest, self.client_endpoints)
+		def redirection(secure_endpoint)
+			Redirection.new(Falcon::BadRequest, @named, secure_endpoint)
 		end
 		
 		def run(container = Async::Container::Forked.new, **options)
@@ -138,9 +161,11 @@ module Falcon
 				host.run(container)
 			end
 			
+			secure_endpoint = Async::HTTP::URLEndpoint.parse(options[:bind_secure], ssl_context: self.ssl_context)
+			insecure_endpoint = Async::HTTP::URLEndpoint.parse(options[:bind_insecure])
+			
 			container.run(count: 1, name: "Falcon Proxy") do |task, instance|
 				proxy = self.proxy
-				secure_endpoint = Async::HTTP::URLEndpoint.parse(options[:bind_secure], ssl_context: self.ssl_context)
 				
 				proxy_server = Falcon::Server.new(proxy, secure_endpoint)
 				
@@ -148,8 +173,7 @@ module Falcon
 			end
 			
 			container.run(count: 1, name: "Falcon Redirector") do |task, instance|
-				redirection = self.redirection
-				insecure_endpoint = Async::HTTP::URLEndpoint.parse(options[:bind_insecure])
+				redirection = self.redirection(secure_endpoint)
 				
 				redirection_server = Falcon::Server.new(redirection, insecure_endpoint)
 				

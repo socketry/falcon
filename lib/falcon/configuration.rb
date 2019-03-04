@@ -19,11 +19,55 @@
 # THE SOFTWARE.
 
 require 'build/environment'
+require 'async/io/address_endpoint'
 
 module Falcon
+	class ProxyEndpoint < Async::IO::Endpoint
+		def initialize(endpoint, **options)
+			super(**options)
+			
+			@endpoint = endpoint
+		end
+		
+		attr :endpoint
+		
+		def protocol
+			@options[:protocol]
+		end
+		
+		def scheme
+			@options[:scheme]
+		end
+		
+		def authority
+			@options[:authority]
+		end
+		
+		def connect(&block)
+			@endpoint.connect(&block)
+		end
+		
+		def bind(&block)
+			@endpoint.bind(&block)
+		end
+		
+		def each
+			return to_enum unless block_given?
+			
+			@endpoint.each do |endpoint|
+				yield self.class.new(endpoint, @options)
+			end
+		end
+		
+		def self.unix(path, **options)
+			self.new(::Async::IO::Endpoint.unix(path), reuse_address: true, **options)
+		end
+	end
+	
 	class Configuration
-		def initialize
+		def initialize(verbose = false)
 			@environments = {}
+			@verbose = verbose
 			
 			add(:ssl) do
 				ssl_session_id {"falcon"}
@@ -52,9 +96,9 @@ module Falcon
 			
 			add(:self_signed, :ssl) do
 				ssl_context do
-					authority = Localhost::Authority.fetch(hostname)
+					contexts = Localhost::Authority.fetch(authority)
 					
-					authority.server_context.tap do |context|
+					contexts.server_context.tap do |context|
 						context.alpn_select_cb = lambda do |protocols|
 							if protocols.include? "h2"
 								return "h2"
@@ -79,18 +123,39 @@ module Falcon
 			add(:rack, :host) do
 				config_path {::File.expand_path("config.ru", root)}
 				application {::Rack::Builder.parse_file(config_path).first}
-				middleware {::Falcon::Server.middleware(application, verbose: true)}
+				middleware {::Falcon::Server.middleware(application, verbose: verbose)}
 				
-				server {::Falcon::Server.new(middleware, endpoint)}
+				authority 'localhost'
+				scheme 'https'
+				protocol {::Async::HTTP::Protocol::HTTP2}
+				ipc_path {::File.expand_path("server.ipc", root)}
 				
-				endpoint {::Async::HTTP::URLEndpoint.parse(url)}
+				endpoint {ProxyEndpoint.unix(ipc_path, protocol: protocol, scheme: scheme, authority: authority)}
+				
+				bound_endpoint do
+					if File.exist?(ipc_path)
+						Async.logger.warn("Unlinking existing ipc: #{ipc_path}...")
+						File.unlink(ipc_path)
+					end
+					
+					Async::Reactor.run do
+						Async::IO::SharedEndpoint.bound(endpoint)
+					end.wait
+				end
+				
+				server {::Falcon::Server.new(middleware, bound_endpoint, protocol, scheme)}
+				# client {::Async::HTTP::Client.new(endpoint, protocol, scheme, authority)}
 			end
 		end
 		
 		attr :environments
 		
-		def add(name, parent = nil, &block)
-			parent = @environments.fetch(parent, parent)
+		def add(name, *parents, &block)
+			raise KeyError.new("#{name} is already set", key: name) if @environments.key?(name)
+			
+			environments = parents.map{|name| @environments.fetch(name)}
+			
+			parent = Build::Environment.combine(*environments)
 			
 			@environments[name] = Build::Environment.new(parent, name: name, &block)
 		end
@@ -99,27 +164,27 @@ module Falcon
 			return to_enum unless block_given?
 			
 			@environments.each do |name, environment|
-				if environment.include?(:hostname)
+				if environment.include?(:authority)
 					yield environment
 				end
 			end
 		end
 		
-		def host(name, parent = :host, &block)
-			add(name, parent, &block).tap do |environment|
-				environment[:hostname] = name
+		def host(name, *parents, &block)
+			add(name, :host, *parents, &block).tap do |environment|
+				environment[:authority] = name
 			end
 		end
 		
-		def proxy(name, parent = :proxy, &block)
-			add(name, parent, &block).tap do |environment|
-				environment[:hostname] = name
+		def proxy(name, *parents, &block)
+			add(name, :proxy, *parents, &block).tap do |environment|
+				environment[:authority] = name
 			end
 		end
 		
-		def rack(name, parent = :rack, &block)
-			add(name, parent, &block).tap do |environment|
-				environment[:hostname] = name
+		def rack(name, *parents, &block)
+			add(name, :rack, *parents, &block).tap do |environment|
+				environment[:authority] = name
 			end
 		end
 		

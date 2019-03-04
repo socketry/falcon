@@ -48,7 +48,7 @@ module Falcon
 			many :paths
 			
 			def run(verbose = false)
-				configuration = Configuration.new
+				configuration = Configuration.new(verbose)
 				
 				@paths.each do |path|
 					configuration.load_file(path)
