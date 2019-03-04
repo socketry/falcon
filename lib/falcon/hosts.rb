@@ -62,18 +62,28 @@ module Falcon
 			"\#<#{self.class} #{@evaluator.authority}>"
 		end
 		
+		def assume_privileges(path)
+			stat = File.stat(path)
+			
+			Process::GID.change_privilege(stat.gid)
+			Process::UID.change_privilege(stat.uid)
+		end
+		
 		def run(container)
 			if @environment.include?(:server)
 				bound_endpoint = self.bound_endpoint
 				
-				Async.logger.info(self) {"Starting server..."}
-				
 				container.run(count: 1, name: self.name) do |task, instance|
+					Async.logger.info(self) {"Starting application server..."}
+					
 					if root = self.root
 						Dir.chdir(root)
 					end
 					
 					server = @evaluator.server
+					
+					# Drop root privileges:
+					assume_privileges(root)
 					
 					server.run
 					
