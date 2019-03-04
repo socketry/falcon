@@ -27,7 +27,7 @@ run lambda {|env|
 		count.downto(1) do |i|
 			task.annotate "bottles of beer #{i}"
 			
-			puts "#{bottles(i)} of beer on the wall..."
+			Async.logger.info(body) {"#{bottles(i)} of beer on the wall..."}
 			body.write("<p>#{bottles(i)} of beer on the wall, ")
 			task.sleep(0.1)
 			body.write("#{bottles(i)} of beer, ")
