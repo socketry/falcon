@@ -52,7 +52,7 @@ falcon [--verbose | --quiet] [-h/--help] [-v/--version] <command>
 	An asynchronous HTTP server.
 
 	[--verbose | --quiet]  Verbosity of output for debugging.
-	[-h/--help]            Print out help information.       
+	[-h/--help]            Print out help information.
 	[-v/--version]         Print out the application version.
 	<command>              One of: serve, virtual.             Default: serve
 
@@ -60,15 +60,16 @@ falcon [--verbose | --quiet] [-h/--help] [-v/--version] <command>
 		Run an HTTP server.
 
 		[-b/--bind <address>]               Bind to the given hostname/address                               Default: https://localhost:9292
-		[-p/--port <number>]                Override the specified port                                    
+		[-p/--port <number>]                Override the specified port
 		[-h/--hostname <hostname>]          Specify the hostname which would be used for certificates, etc.
-		[-t/--timeout <duration>]           Specify the maximum time to wait for blocking operations.        Default: 60                    
-		[--reuse-port]                      Enable SO_REUSEPORT if possible.                                 Default: false                 
-		[-c/--config <path>]                Rackup configuration file to load                                Default: config.ru             
-		[--forked | --threaded | --hybrid]  Select a specific parallelism model                              Default: forked                
-		[-n/--count <count>]                Number of instances to start.                                    Default: 8                     
-		[--forks <count>]                   Number of forks (hybrid only).                                 
-		[--threads <count>]                 Number of threads (hybrid only). ```
+		[-t/--timeout <duration>]           Specify the maximum time to wait for blocking operations.        Default: 60
+		[--reuse-port]                      Enable SO_REUSEPORT if possible.                                 Default: false
+		[-c/--config <path>]                Rackup configuration file to load                                Default: config.ru
+		[--forked | --threaded | --hybrid]  Select a specific parallelism model                              Default: forked
+		[-n/--count <count>]                Number of instances to start.                                    Default: 8
+		[--forks <count>]                   Number of forks (hybrid only).
+		[--threads <count>]                 Number of threads (hybrid only).
+```
 
 To run on a different port:
 
