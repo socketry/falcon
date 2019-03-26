@@ -94,6 +94,12 @@ module Falcon
 				end
 			end
 			
+			add(:lets_encrypt, :ssl) do
+				lets_encrypt_root '/etc/letsencrypt/live'
+				ssl_certificate_path {File.join(lets_encrypt_root, authority, "fullchain.pem")}
+				ssl_private_key_path {File.join(lets_encrypt_root, authority, "privkey.pem")}
+			end
+			
 			add(:self_signed, :ssl) do
 				ssl_context do
 					contexts = Localhost::Authority.fetch(authority)
