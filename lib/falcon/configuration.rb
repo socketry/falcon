@@ -189,7 +189,7 @@ module Falcon
 		end
 		
 		def load_file(path)
-			self.instance_eval(File.read(path), path)
+			self.instance_eval(File.read(path), File.realpath(path))
 		end
 	end
 end
