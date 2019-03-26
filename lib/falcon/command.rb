@@ -68,7 +68,7 @@ module Falcon
 				elsif @options[:help]
 					self.print_usage
 				else
-					@command.invoke
+					@command.call
 				end
 			end
 		end
