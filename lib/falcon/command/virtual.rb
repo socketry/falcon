@@ -59,7 +59,7 @@ module Falcon
 				return hosts.run(@options)
 			end
 			
-			def invoke(parent)
+			def call
 				container = run(parent.verbose?)
 				
 				container.wait

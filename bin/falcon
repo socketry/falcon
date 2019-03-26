@@ -23,6 +23,6 @@
 require_relative '../lib/falcon'
 
 begin
-	Falcon::Command.parse(ARGV).invoke
+	Falcon::Command.call
 rescue Interrupt
 end

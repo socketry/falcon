@@ -146,7 +146,7 @@ module Falcon
 				return container
 			end
 			
-			def invoke(parent)
+			def call
 				container = run(parent.verbose?)
 				
 				container.wait

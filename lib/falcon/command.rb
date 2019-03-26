@@ -28,8 +28,8 @@ require 'logger'
 
 module Falcon
 	module Command
-		def self.parse(*args)
-			Top.parse(*args)
+		def self.call(*args)
+			Top.call(*args)
 		end
 		
 		class Top < Samovar::Command
@@ -41,7 +41,7 @@ module Falcon
 				option '-v/--version', "Print out the application version."
 			end
 			
-			nested '<command>', {
+			nested :command, {
 				'serve' => Serve,
 				'virtual' => Virtual
 			}, default: 'serve'
@@ -54,7 +54,7 @@ module Falcon
 				@options[:logging] == :quiet
 			end
 			
-			def invoke(program_name: File.basename($0))
+			def call
 				if verbose?
 					Async.logger.level = Logger::DEBUG
 				elsif quiet?
@@ -64,11 +64,11 @@ module Falcon
 				end
 				
 				if @options[:version]
-					puts "falcon v#{Falcon::VERSION}"
-				elsif @options[:help] or @command.nil?
-					print_usage(program_name)
+					puts "#{self.name} v#{Falcon::VERSION}"
+				elsif @options[:help]
+					self.print_usage
 				else
-					@command.invoke(self)
+					@command.invoke
 				end
 			end
 		end

@@ -25,7 +25,7 @@ Gem::Specification.new do |spec|
 	
 	spec.add_dependency "rack", ">= 1.0"
 	
-	spec.add_dependency 'samovar', "~> 1.3"
+	spec.add_dependency 'samovar', "~> 2.1"
 	spec.add_dependency 'localhost', "~> 1.1"
 	spec.add_dependency 'build-environment', '~> 1.6'
 	
