@@ -42,7 +42,7 @@ Alternatively, install in terminal:
 
 ## Usage
 
-You can run `falcon serve` directly. It will load the `config.ru` and start serving on https://localhost:9292.
+You can run `falcon serve` directly. It will load the `config.ru` and start serving on https://localhost:9292. Please [try the interactive online tutorial](https://katacoda.com/ioquatix/scenarios/falcon-introduction).
 
 The `falcon serve` command has the following options for you to use:
 
