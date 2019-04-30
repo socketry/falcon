@@ -23,6 +23,7 @@ require 'rack'
 require_relative 'input'
 require_relative 'response'
 require_relative 'early_hints'
+require_relative 'hijack'
 
 require 'async/logger'
 
@@ -157,6 +158,9 @@ module Falcon
 					# I'm not sure what sane defaults should be here:
 					SERVER_NAME => server_name || '',
 					SERVER_PORT => server_port || '',
+					
+					# We support both request and response hijack.
+					RACK_IS_HIJACK => true,
 				}
 				
 				self.unwrap_request(request, env)
@@ -166,8 +170,6 @@ module Falcon
 				end
 				
 				if request.hijack?
-					env[RACK_IS_HIJACK] = true
-					
 					env[RACK_HIJACK] = lambda do
 						wrapper = request.hijack
 						
@@ -178,25 +180,23 @@ module Falcon
 						# This is implicitly returned:
 						env[RACK_HIJACK_IO] = io
 					end
-				else
-					env[RACK_IS_HIJACK] = false
 				end
 				
 				status, headers, body = @app.call(env)
 				
-				# Partial hijack is not supported/tested.
-				# if hijack = headers.delete('rack.hijack')
-				# 	body = Async::HTTP::Body::Writable.new
-				# 
-				# 	Task.current.async do
-				# 		hijack.call(body)
-				# 	end
-				# 	return nil
-				# end
+				if hijack = headers.delete(RACK_HIJACK)
+					if request.hijack?
+						wrapper = request.hijack
+						
+						body = Hijack.for(env, hijack, wrapper)
+					else
+						body = Hijack.for(env, hijack)
+					end
+				end
 				
-				# if env['rack.hijack_io']
-				# 	return nil
-				# end
+				if env['rack.hijack_io']
+					return nil
+				end
 				
 				return make_response(request, status, headers, body)
 			rescue => exception
