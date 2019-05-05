@@ -54,7 +54,7 @@ module Falcon
 				headers, meta = wrap_headers(headers)
 				
 				if block = meta['rack.hijack'] and request and env
-					body = Hijack.for(env, block, request.hijack? ? request.hijack : nil)
+					body = Hijack.for(env, block, request.hijack? ? request.hijack! : nil)
 				else
 					sliced = headers.slice!(IGNORE_HEADERS)
 					

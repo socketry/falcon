@@ -167,7 +167,7 @@ module Falcon
 				
 				if request.hijack?
 					env[RACK_HIJACK] = lambda do
-						wrapper = request.hijack
+						wrapper = request.hijack!
 						full_hijack = true
 						
 						# We dup this as it might be taken out of the normal control flow, and the io will be closed shortly after returning from this method.
