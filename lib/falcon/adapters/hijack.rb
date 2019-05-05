@@ -26,10 +26,10 @@ module Falcon
 		# This is used for implementing partial hijack.
 		class Hijack
 			def self.for(env, block, socket = nil, task: Async::Task.current)
-				input = env[Rack::RACK_INPUT]
+				input = socket || env[Rack::RACK_INPUT]
 				output = Async::HTTP::Body::Writable.new
 				
-				stream = Hijack.new(input, output, socket)
+				stream = Hijack.new(input, output)
 				
 				task.async do
 					begin
@@ -42,10 +42,9 @@ module Falcon
 				return output
 			end
 			
-			def initialize(input, output, socket)
+			def initialize(input, output)
 				@input = input
 				@output = output
-				@socket = socket
 				@closed = false
 			end
 			
