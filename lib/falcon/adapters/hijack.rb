@@ -35,7 +35,7 @@ module Falcon
 					begin
 						block.call(stream)
 					ensure
-						stream.close
+						output.close
 					end
 				end
 				
@@ -45,7 +45,6 @@ module Falcon
 			def initialize(input, output)
 				@input = input
 				@output = output
-				@closed = false
 			end
 			
 			def read(length = nil, buffer = nil)
@@ -66,23 +65,19 @@ module Falcon
 			end
 			
 			def close
-				return if @closed
-				
-				@input.close
 				@output.close
-				@closed = true
 			end
 			
 			def close_read
-				@input.close
+				if @input.respond_to?(:close_read)
+					@input.close_read
+				else
+					@input.close
+				end
 			end
 			
 			def close_write
 				@output.close
-			end
-			
-			def closed?
-				@closed
 			end
 		end
 	end
