@@ -112,12 +112,6 @@ module Falcon
 				end
 			end
 			
-			def make_response(request, status, headers, body)
-				# @logger.debug(request) {"Rack response: #{status} #{headers.inspect} #{body.class}"}
-				
-				return Response.wrap(status, headers, body)
-			end
-			
 			def call(request)
 				request_path, query_string = request.path.split('?', 2)
 				server_name, server_port = (request.authority || '').split(':', 2)
@@ -169,9 +163,12 @@ module Falcon
 					env[RACK_EARLY_HINTS] = EarlyHints.new(request)
 				end
 				
+				full_hijack = false
+				
 				if request.hijack?
 					env[RACK_HIJACK] = lambda do
 						wrapper = request.hijack
+						full_hijack = true
 						
 						# We dup this as it might be taken out of the normal control flow, and the io will be closed shortly after returning from this method.
 						io = wrapper.io.dup
@@ -184,21 +181,12 @@ module Falcon
 				
 				status, headers, body = @app.call(env)
 				
-				if hijack = headers.delete(RACK_HIJACK)
-					if request.hijack?
-						wrapper = request.hijack
-						
-						body = Hijack.for(env, hijack, wrapper)
-					else
-						body = Hijack.for(env, hijack)
-					end
-				end
-				
-				if env['rack.hijack_io']
+				# If there was a full hijack:
+				if full_hijack
 					return nil
+				else
+					return Response.wrap(status, headers, body, request, env)
 				end
-				
-				return make_response(request, status, headers, body)
 			rescue => exception
 				@logger.error(self) {exception}
 				

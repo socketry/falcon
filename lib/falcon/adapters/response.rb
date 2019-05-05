@@ -19,6 +19,7 @@
 # THE SOFTWARE.
 
 require_relative 'output'
+require_relative 'hijack'
 require_relative '../version'
 require_relative '../proxy'
 
@@ -27,20 +28,18 @@ require 'time'
 module Falcon
 	module Adapters
 		class Response < Async::HTTP::Response
-			IGNORE_HEADERS = Set.new(Proxy::HOP_HEADERS)
+			IGNORE_HEADERS = Proxy::HOP_HEADERS
 			
 			# Append a list of newline encoded headers.
 			def self.wrap_headers(fields)
 				headers = ::HTTP::Protocol::Headers.new
+				meta = {}
 				
 				fields.each do |key, value|
-					next if key.start_with? 'rack.'
-					
-					# This is a quick fix, but perhaps it should be part of the protocol, because it IS valid for HTTP/1.
 					key = key.downcase
 					
-					if IGNORE_HEADERS.include? key
-						Async.logger.warn("Ignoring protocol-level header: #{key}: #{value}!")
+					if key.start_with?('rack.')
+						meta[key] = value
 					else
 						value.to_s.split("\n").each do |part|
 							headers.add(key, part)
@@ -48,19 +47,29 @@ module Falcon
 					end
 				end
 				
-				return headers
+				return headers, meta
 			end
 			
-			def self.wrap(status, headers, body)
-				headers = wrap_headers(headers)
+			def self.wrap(status, headers, body, request = nil, env = nil)
+				headers, meta = wrap_headers(headers)
+				
+				if block = meta['rack.hijack'] and request and env
+					body = Hijack.for(env, block, request.hijack? ? request.hijack : nil)
+				else
+					sliced = headers.slice!(IGNORE_HEADERS)
+					
+					unless sliced.empty?
+						Async.logger.warn("Ignoring protocol-level headers: #{sliced.inspect}")
+					end
+					
+					body = Output.wrap(status, headers, body)
+				end
 				
 				# https://tools.ietf.org/html/rfc7231#section-7.4.2
 				# headers.add('server', "falcon/#{Falcon::VERSION}")
 				
 				# https://tools.ietf.org/html/rfc7231#section-7.1.1.2
 				# headers.add('date', Time.now.httpdate)
-				
-				body = Output.wrap(status, headers, body)
 				
 				return self.new(status, headers, body)
 			end
