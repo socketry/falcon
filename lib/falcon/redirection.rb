@@ -19,7 +19,6 @@
 # THE SOFTWARE.
 
 require 'async/http/client'
-require 'http/protocol/headers'
 
 module Falcon
 	module NotFound

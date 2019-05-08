@@ -32,7 +32,7 @@ module Falcon
 			
 			# Append a list of newline encoded headers.
 			def self.wrap_headers(fields)
-				headers = ::HTTP::Protocol::Headers.new
+				headers = ::Protocol::HTTP::Headers.new
 				meta = {}
 				
 				fields.each do |key, value|
