@@ -23,7 +23,6 @@ require 'rack'
 require_relative 'input'
 require_relative 'response'
 require_relative 'early_hints'
-require_relative 'hijack'
 
 require 'async/logger'
 
@@ -185,7 +184,7 @@ module Falcon
 				if full_hijack
 					return nil
 				else
-					return Response.wrap(status, headers, body, request, env)
+					return Response.wrap(status, headers, body, request)
 				end
 			rescue => exception
 				@logger.error(self) {exception}

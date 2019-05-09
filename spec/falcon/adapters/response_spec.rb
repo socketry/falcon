@@ -18,6 +18,8 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
+require_relative '../server_context'
+
 require 'falcon/server'
 require 'async/websocket/server'
 require 'async/websocket/client'
@@ -57,6 +59,29 @@ RSpec.describe Falcon::Adapters::Response do
 			response = described_class.wrap(200, {'Content-Length' => '4'}, ["1234"])
 			
 			expect(response.headers).to_not include('content-length')
+		end
+	end
+	
+	context 'with rack.hijack' do
+		include_context Falcon::Server
+		
+		let(:text) {"Hello World!"}
+		
+		let(:app) do
+			lambda do |env|
+				response = lambda do |stream|
+					stream.write(text)
+				end
+				
+				[200, {'rack.hijack' => response}, nil]
+			end
+		end
+		
+		let(:response) {client.get("/")}
+		
+		it "generates successful response and promise" do
+			expect(response).to be_success
+			expect(response.read).to be == text
 		end
 	end
 end

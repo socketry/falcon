@@ -19,7 +19,7 @@
 # THE SOFTWARE.
 
 require 'falcon/server'
-require 'async/websocket/server'
+require 'async/websocket/server/rack'
 require 'async/websocket/client'
 
 require_relative 'early_hints_examples'
@@ -98,17 +98,17 @@ RSpec.describe Falcon::Adapters::Rack do
 	context 'websockets', timeout: 1 do
 		include_context Falcon::Server
 		
-		let(:endpoint) {Async::HTTP::URLEndpoint.parse('ws://127.0.0.1:9294', reuse_port: true)}
+		let(:endpoint) {Async::HTTP::URLEndpoint.parse('http://127.0.0.1:9294', reuse_port: true)}
 		
 		let(:app) do
 			lambda do |env|
-				Async::WebSocket::Server.open(env) do |connection|
+				Async::WebSocket::Server::Rack.open(env) do |connection|
 					while message = connection.next_message
 						connection.send_message(message)
 					end
-				end
-				
-				[200, {}, []]
+					
+					connection.close
+				end or [200, {}, []]
 			end
 		end
 		
@@ -120,8 +120,8 @@ RSpec.describe Falcon::Adapters::Rack do
 		end
 		
 		it "can send and receive messages using websockets" do
-			socket = endpoint.connect
-			connection = Async::WebSocket::Client.new(socket, endpoint.url.to_s)
+			client = Async::WebSocket::Client.new(endpoint)
+			connection = client.get
 			
 			connection.send_message(test_message)
 			
@@ -129,7 +129,6 @@ RSpec.describe Falcon::Adapters::Rack do
 			expect(message).to be == test_message
 			
 			connection.close
-			socket.close
 		end
 	end
 end

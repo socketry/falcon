@@ -19,10 +19,10 @@
 # THE SOFTWARE.
 
 require_relative 'output'
-require_relative 'hijack'
 require_relative '../version'
 require_relative '../proxy'
 
+require 'async/http/body/hijack'
 require 'time'
 
 module Falcon
@@ -50,11 +50,11 @@ module Falcon
 				return headers, meta
 			end
 			
-			def self.wrap(status, headers, body, request = nil, env = nil)
+			def self.wrap(status, headers, body, request = nil)
 				headers, meta = wrap_headers(headers)
 				
-				if block = meta['rack.hijack'] and request and env
-					body = Hijack.for(env, block, request.hijack? ? request.hijack! : nil)
+				if block = meta['rack.hijack']
+					body = Async::HTTP::Body::Hijack.wrap(request, &block)
 				else
 					sliced = headers.slice!(IGNORE_HEADERS)
 					
