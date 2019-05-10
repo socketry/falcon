@@ -116,7 +116,7 @@ This became the default in Rails 5 so no change is necessary unless you explicit
 
 ### WebSockets
 
-Falcon supports `rack.hijack` for HTTP/1.x connections. You can thus use [async-websocket] in any controller layer to serve WebSocket connections.
+Falcon supports (partial and full) `rack.hijack` for both for HTTP/1 and HTTP/2 connections. You can thus use [async-websocket] in any controller layer to serve WebSocket connections.
 
 [async-websocket]: https://github.com/socketry/async-websocket
 
