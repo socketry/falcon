@@ -56,10 +56,10 @@ module Falcon
 				if block = meta['rack.hijack']
 					body = Async::HTTP::Body::Hijack.wrap(request, &block)
 				else
-					sliced = headers.slice!(IGNORE_HEADERS)
+					ignored = headers.extract(IGNORE_HEADERS)
 					
-					unless sliced.empty?
-						Async.logger.warn("Ignoring protocol-level headers: #{sliced.inspect}")
+					unless ignored.empty?
+						Async.logger.warn("Ignoring protocol-level headers: #{ignored.inspect}")
 					end
 					
 					body = Output.wrap(status, headers, body)

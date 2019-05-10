@@ -80,10 +80,10 @@ module Falcon
 		
 		def prepare_headers(headers)
 			if connection = headers[CONNECTION]
-				headers.slice!(connection)
+				headers.extract(connection)
 			end
 			
-			headers.slice!(HOP_HEADERS)
+			headers.extract(HOP_HEADERS)
 		end
 		
 		def prepare_request(request, host)
