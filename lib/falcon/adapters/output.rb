@@ -18,14 +18,14 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-require 'async/http/body/readable'
-require 'async/http/body/file'
+require 'protocol/http/body/readable'
+require 'protocol/http/body/file'
 
 module Falcon
 	module Adapters
 		# Wraps the rack response body.
 		# The Body must respond to each and must only yield String values. The Body itself should not be an instance of String, as this will break in Ruby 1.9. If the Body responds to close, it will be called after iteration. If the body is replaced by a middleware after action, the original body must be closed first, if it responds to close. If the Body responds to to_path, it must return a String identifying the location of a file whose contents are identical to that produced by calling each; this may be used by the server as an alternative, possibly more efficient way to transport the response. The Body commonly is an Array of Strings, the application instance itself, or a File-like object.
-		class Output < Async::HTTP::Body::Readable
+		class Output < ::Protocol::HTTP::Body::Readable
 			CONTENT_LENGTH = 'content-length'.freeze
 			
 			# Wraps an array into a buffered body.
@@ -36,11 +36,11 @@ module Falcon
 					length = Integer(length)
 				end
 				
-				if body.is_a?(Async::HTTP::Body::Readable)
+				if body.is_a?(::Protocol::HTTP::Body::Readable)
 					return body
 				elsif status == 200 and body.respond_to?(:to_path)
 					# Don't mangle partial responsese (206)
-					return Async::HTTP::Body::File.open(body.to_path)
+					return ::Protocol::HTTP::Body::File.open(body.to_path)
 				elsif body.is_a? Array
 					# TODO after dropping 2.3, change to #sum
 					length ||= body.inject(0){|sum, chunk| sum + chunk.bytesize}

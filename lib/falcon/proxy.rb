@@ -20,6 +20,7 @@
 
 require 'async/http/client'
 require 'protocol/http/headers'
+require 'protocol/http/middleware'
 
 module Falcon
 	module BadRequest

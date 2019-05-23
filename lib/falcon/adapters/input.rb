@@ -19,9 +19,7 @@
 # THE SOFTWARE.
 
 require 'async/io/buffer'
-
-require 'async/http/body'
-require 'async/http/body/rewindable'
+require 'protocol/http/body/rewindable'
 
 module Falcon
 	module Adapters

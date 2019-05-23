@@ -18,12 +18,12 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-require 'async/http/body/rewindable'
+require 'protocol/http/body/rewindable'
 
 module Falcon
 	module Adapters
 		# Content type driven input buffering.
-		class Rewindable < Protocol::HTTP::Middleware
+		class Rewindable < ::Protocol::HTTP::Middleware
 			BUFFERED_MEDIA_TYPES = %r{
 				application/x-www-form-urlencoded|
 				multipart/form-data|

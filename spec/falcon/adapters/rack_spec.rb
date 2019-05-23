@@ -19,7 +19,7 @@
 # THE SOFTWARE.
 
 require 'falcon/server'
-require 'async/websocket/server/rack'
+require 'async/websocket/adapters/rack'
 require 'async/websocket/client'
 
 require_relative 'early_hints_examples'
@@ -102,9 +102,9 @@ RSpec.describe Falcon::Adapters::Rack do
 		
 		let(:app) do
 			lambda do |env|
-				Async::WebSocket::Server::Rack.open(env) do |connection|
-					while message = connection.next_message
-						connection.send_message(message)
+				Async::WebSocket::Adapters::Rack.open(env) do |connection|
+					while message = connection.read
+						connection.write(message)
 					end
 					
 					connection.close
@@ -114,18 +114,18 @@ RSpec.describe Falcon::Adapters::Rack do
 		
 		let(:test_message) do
 			{
-				"user" => "test",
-				"status" => "connected",
+				user: "test",
+				status: "connected",
 			}
 		end
 		
 		it "can send and receive messages using websockets" do
-			client = Async::WebSocket::Client.new(endpoint)
-			connection = client.get
+			client = Async::WebSocket::Client.open(endpoint)
+			connection = client.connect(endpoint.path)
 			
-			connection.send_message(test_message)
+			connection.write(test_message)
 			
-			message = connection.next_message
+			message = connection.read
 			expect(message).to be == test_message
 			
 			connection.close

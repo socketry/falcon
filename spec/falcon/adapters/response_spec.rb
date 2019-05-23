@@ -71,6 +71,7 @@ RSpec.describe Falcon::Adapters::Response do
 			lambda do |env|
 				response = lambda do |stream|
 					stream.write(text)
+					stream.close
 				end
 				
 				[200, {'rack.hijack' => response}, nil]

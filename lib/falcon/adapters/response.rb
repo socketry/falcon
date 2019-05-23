@@ -27,7 +27,7 @@ require 'time'
 
 module Falcon
 	module Adapters
-		class Response < Protocol::HTTP::Response
+		class Response < ::Protocol::HTTP::Response
 			IGNORE_HEADERS = Proxy::HOP_HEADERS
 			
 			# Append a list of newline encoded headers.
