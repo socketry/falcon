@@ -12,3 +12,4 @@
 
 # rspec failure tracking
 .rspec_status
+.covered.db
