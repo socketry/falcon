@@ -29,7 +29,7 @@ require 'async/logger'
 module Falcon
 	module Adapters
 		class Rack
-			# CGI constants
+			# CGI keys (https://tools.ietf.org/html/rfc3875#section-4.1)
 			HTTP_HOST = 'HTTP_HOST'.freeze
 			PATH_INFO = 'PATH_INFO'.freeze
 			REQUEST_METHOD = 'REQUEST_METHOD'.freeze
@@ -193,7 +193,7 @@ module Falcon
 			end
 			
 			def failure_response(exception)
-				Async::HTTP::Response.for_exception(exception)
+				Protocol::HTTP::Response.for_exception(exception)
 			end
 		end
 	end

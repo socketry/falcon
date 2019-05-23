@@ -23,14 +23,14 @@ require 'async/http/client'
 module Falcon
 	module NotFound
 		def self.call(request)
-			return Async::HTTP::Response[404, {}, []]
+			return Protocol::HTTP::Response[404, {}, []]
 		end
 		
 		def self.close
 		end
 	end
 	
-	class Redirection < Async::HTTP::Middleware
+	class Redirection < Protocol::HTTP::Middleware
 		def initialize(app, hosts, endpoint)
 			super(app)
 			
@@ -53,7 +53,7 @@ module Falcon
 					location = "#{@endpoint.scheme}://#{host.authority}:#{@endpoint.port}#{request.path}"
 				end
 				
-				return Async::HTTP::Response[301, [['location', location]], []]
+				return Protocol::HTTP::Response[301, [['location', location]], []]
 			else
 				super
 			end

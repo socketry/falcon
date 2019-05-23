@@ -1,11 +1,11 @@
 #!/usr/bin/env ruby
 
 require 'async'
-require 'async/http/url_endpoint'
+require 'async/http/endpoint'
 require 'async/http/client'
 
 Async do
-	endpoint = Async::HTTP::URLEndpoint.parse("https://localhost:9292")
+	endpoint = Async::HTTP::Endpoint.parse("https://localhost:9292")
 	client = Async::HTTP::Client.new(endpoint, Async::HTTP::Protocol::HTTP2::WithPush)
 	
 	response = client.get("/index.html")

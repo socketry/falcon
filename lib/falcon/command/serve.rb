@@ -95,7 +95,7 @@ module Falcon
 			end
 			
 			def client_endpoint
-				Async::HTTP::URLEndpoint.parse(@options[:bind], **endpoint_options)
+				Async::HTTP::Endpoint.parse(@options[:bind], **endpoint_options)
 			end
 			
 			def client

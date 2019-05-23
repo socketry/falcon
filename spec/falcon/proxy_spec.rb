@@ -21,22 +21,22 @@
 require 'falcon/proxy'
 
 require 'async/http/client'
-require 'async/http/url_endpoint'
+require 'async/http/endpoint'
 
 RSpec.describe Falcon::Proxy do
 	include_context Async::RSpec::Reactor
 	
 	subject do
 		described_class.new(Falcon::BadRequest, {
-			'www.google.com' => double(endpoint: Async::HTTP::URLEndpoint.parse('https://www.google.com')),
-			'www.yahoo.com' => double(endpoint: Async::HTTP::URLEndpoint.parse('https://www.yahoo.com')),
+			'www.google.com' => double(endpoint: Async::HTTP::Endpoint.parse('https://www.google.com')),
+			'www.yahoo.com' => double(endpoint: Async::HTTP::Endpoint.parse('https://www.yahoo.com')),
 		})
 	end
 	
 	let(:headers) {Async::HTTP::Headers['accept' => '*/*']}
 	
 	it 'can select client based on authority' do
-		request = Async::HTTP::Request.new('https', 'www.google.com', 'GET', '/', nil, headers, nil)
+		request = Protocol::HTTP::Request.new('https', 'www.google.com', 'GET', '/', nil, headers, nil)
 		
 		expect(request).to receive(:remote_address).and_return(Addrinfo.ip("127.0.0.1"))
 		
@@ -51,7 +51,7 @@ RSpec.describe Falcon::Proxy do
 	end
 	
 	it 'defers if no host is available' do
-		request = Async::HTTP::Request.new('www.groogle.com', 'GET', '/', nil, headers, nil)
+		request = Protocol::HTTP::Request.new('www.groogle.com', 'GET', '/', nil, headers, nil)
 		
 		response = subject.call(request)
 		response.finish

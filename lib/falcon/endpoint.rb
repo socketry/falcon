@@ -18,11 +18,11 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-require 'async/http/url_endpoint'
+require 'async/http/endpoint'
 require 'localhost/authority'
 
 module Falcon
-	class Endpoint < Async::HTTP::URLEndpoint
+	class Endpoint < Async::HTTP::Endpoint
 		def ssl_context
 			@options[:ssl_context] || build_ssl_context
 		end

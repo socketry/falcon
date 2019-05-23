@@ -27,7 +27,7 @@ RSpec.shared_examples_for Rack::Handler do |server_name|
 	
 	let(:config_path) {File.join(__dir__, "config.ru")}
 	
-	let(:endpoint) {Async::HTTP::URLEndpoint.parse("http://localhost:9290")}
+	let(:endpoint) {Async::HTTP::Endpoint.parse("http://localhost:9290")}
 	let(:client) {Async::HTTP::Client.new(endpoint)}
 	
 	it "can start rackup --server #{server_name}" do

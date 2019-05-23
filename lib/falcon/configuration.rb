@@ -123,7 +123,7 @@ module Falcon
 			end
 			
 			add(:proxy, :host) do
-				endpoint {::Async::HTTP::URLEndpoint.parse(url)}
+				endpoint {::Async::HTTP::Endpoint.parse(url)}
 			end
 			
 			add(:rack, :host) do

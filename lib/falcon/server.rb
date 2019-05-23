@@ -30,7 +30,7 @@ require_relative 'adapters/rack'
 module Falcon
 	class Server < Async::HTTP::Server
 		def self.middleware(rack_app, verbose: false)
-			Async::HTTP::Middleware.build do
+			Protocol::HTTP::Middleware.build do
 				if verbose
 					use Verbose
 				end

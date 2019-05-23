@@ -25,7 +25,7 @@ require_relative 'redirection'
 
 require 'async/container'
 require 'async/container/controller'
-require 'async/http/url_endpoint'
+require 'async/http/endpoint'
 
 module Falcon
 	class Host
@@ -111,7 +111,7 @@ module Falcon
 		end
 		
 		def endpoint
-			@server_endpoint ||= Async::HTTP::URLEndpoint.parse(
+			@server_endpoint ||= Async::HTTP::Endpoint.parse(
 				'https://[::]',
 				ssl_context: self.ssl_context,
 				reuse_address: true
@@ -163,8 +163,8 @@ module Falcon
 				host.run(container)
 			end
 			
-			secure_endpoint = Async::HTTP::URLEndpoint.parse(options[:bind_secure], ssl_context: self.ssl_context)
-			insecure_endpoint = Async::HTTP::URLEndpoint.parse(options[:bind_insecure])
+			secure_endpoint = Async::HTTP::Endpoint.parse(options[:bind_secure], ssl_context: self.ssl_context)
+			insecure_endpoint = Async::HTTP::Endpoint.parse(options[:bind_insecure])
 			
 			container.run(count: 1, name: "Falcon Proxy") do |task, instance|
 				proxy = self.proxy

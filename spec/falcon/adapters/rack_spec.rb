@@ -98,7 +98,7 @@ RSpec.describe Falcon::Adapters::Rack do
 	context 'websockets', timeout: 1 do
 		include_context Falcon::Server
 		
-		let(:endpoint) {Async::HTTP::URLEndpoint.parse('http://127.0.0.1:9294', reuse_port: true)}
+		let(:endpoint) {Async::HTTP::Endpoint.parse('http://127.0.0.1:9294', reuse_port: true)}
 		
 		let(:app) do
 			lambda do |env|

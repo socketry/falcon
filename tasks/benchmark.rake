@@ -22,7 +22,7 @@ namespace :benchmark do
 		require 'async/process'
 		require 'async/clock'
 		require 'async/io/stream'
-		require 'async/http/url_endpoint'
+		require 'async/http/endpoint'
 		
 		host = "http://127.0.0.1:9292"
 
@@ -40,7 +40,7 @@ namespace :benchmark do
 		
 		Async.logger.info!
 		
-		endpoint = Async::HTTP::URLEndpoint.parse(host)
+		endpoint = Async::HTTP::Endpoint.parse(host)
 		
 		servers.each do |command|
 			::Async::Reactor.run do |task|
@@ -62,7 +62,7 @@ namespace :benchmark do
 						
 						socket = endpoint.connect
 						
-						request = Async::HTTP::Request.new("http", "localhost", "GET", @request_path)
+						request = Protocol::HTTP::Request.new("http", "localhost", "GET", @request_path)
 						stream = Async::IO::Stream.new(socket)
 						protocol = Async::HTTP::Protocol::HTTP1.client(stream)
 						

@@ -23,7 +23,7 @@ require 'async/http/body/rewindable'
 module Falcon
 	module Adapters
 		# Content type driven input buffering.
-		class Rewindable < Async::HTTP::Middleware
+		class Rewindable < Protocol::HTTP::Middleware
 			BUFFERED_MEDIA_TYPES = %r{
 				application/x-www-form-urlencoded|
 				multipart/form-data|
@@ -52,7 +52,7 @@ module Falcon
 			end
 			
 			# Wrap the request body in a rewindable buffer.
-			# @return [Async::HTTP::Response] the response.
+			# @return [Protocol::HTTP::Response] the response.
 			def call(request)
 				if body = request.body and needs_rewind?(request)
 					request.body = Async::HTTP::Body::Rewindable.new(body)

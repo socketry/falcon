@@ -4,13 +4,13 @@ require 'async/http/client'
 require 'async/rspec/reactor'
 
 require "async/http/client"
-require "async/http/url_endpoint"
+require "async/http/endpoint"
 
 RSpec.shared_context Falcon::Server do
 	include_context Async::RSpec::Reactor
 	
 	let(:protocol) {Async::HTTP::Protocol::HTTP1}
-	let(:endpoint) {Async::HTTP::URLEndpoint.parse('http://127.0.0.1:9294', reuse_port: true)}
+	let(:endpoint) {Async::HTTP::Endpoint.parse('http://127.0.0.1:9294', reuse_port: true)}
 	let!(:client) {Async::HTTP::Client.new(endpoint, protocol)}
 	
 	let!(:server_task) do

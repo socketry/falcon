@@ -27,7 +27,7 @@ require 'time'
 
 module Falcon
 	module Adapters
-		class Response < Async::HTTP::Response
+		class Response < Protocol::HTTP::Response
 			IGNORE_HEADERS = Proxy::HOP_HEADERS
 			
 			# Append a list of newline encoded headers.
@@ -65,17 +65,19 @@ module Falcon
 					body = Output.wrap(status, headers, body)
 				end
 				
+				protocol = meta['rack.protocol']
+				
 				# https://tools.ietf.org/html/rfc7231#section-7.4.2
 				# headers.add('server', "falcon/#{Falcon::VERSION}")
 				
 				# https://tools.ietf.org/html/rfc7231#section-7.1.1.2
 				# headers.add('date', Time.now.httpdate)
 				
-				return self.new(status, headers, body)
+				return self.new(status, headers, body, protocol)
 			end
 			
-			def initialize(status, headers, body)
-				super(nil, status, nil, headers, body)
+			def initialize(status, headers, body, protocol = nil)
+				super(nil, status, nil, headers, body, protocol)
 			end
 		end
 	end

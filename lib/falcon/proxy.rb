@@ -24,14 +24,14 @@ require 'protocol/http/headers'
 module Falcon
 	module BadRequest
 		def self.call(request)
-			return Async::HTTP::Response[400, {}, []]
+			return Protocol::HTTP::Response[400, {}, []]
 		end
 		
 		def self.close
 		end
 	end
 	
-	class Proxy < Async::HTTP::Middleware
+	class Proxy < Protocol::HTTP::Middleware
 		FORWARDED = 'forwarded'.freeze
 		X_FORWARDED_FOR = 'x-forwarded-for'.freeze
 		X_FORWARDED_PROTO = 'x-forwarded-proto'.freeze
@@ -133,7 +133,7 @@ module Falcon
 			end
 		rescue
 			Async.logger.error(self) {$!}
-			return Async::HTTP::Response[502, {'content-type' => 'text/plain'}, ["#{$!.inspect}: #{$!.backtrace.join("\n")}"]]
+			return Protocol::HTTP::Response[502, {'content-type' => 'text/plain'}, ["#{$!.inspect}: #{$!.backtrace.join("\n")}"]]
 		end
 	end
 end

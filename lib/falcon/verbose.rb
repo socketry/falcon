@@ -22,7 +22,7 @@ require 'async/logger'
 require 'async/http/statistics'
 
 module Falcon
-	class Verbose < Async::HTTP::Middleware
+	class Verbose < Protocol::HTTP::Middleware
 		def initialize(app, logger = Async.logger)
 			super(app)
 			
