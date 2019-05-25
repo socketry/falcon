@@ -1,4 +1,4 @@
-# Copyright, 2017, by Samuel G. D. Williams. <http://www.codeotaku.com>
+# Copyright, 2018, by Samuel G. D. Williams. <http://www.codeotaku.com>
 # 
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -18,60 +18,50 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-require_relative 'command/serve'
-require_relative 'command/virtual'
-require_relative 'command/host'
+require_relative '../server'
+require_relative '../endpoint'
+require_relative '../hosts'
+require_relative '../configuration'
 
-require_relative 'version'
+require 'async/container'
+require 'async/container/controller'
+
+require 'async/io/host_endpoint'
+require 'async/io/shared_endpoint'
+require 'async/io/ssl_endpoint'
 
 require 'samovar'
-require 'logger'
+
+require 'rack/builder'
+require 'rack/server'
 
 module Falcon
 	module Command
-		def self.call(*args)
-			Top.call(*args)
-		end
-		
-		class Top < Samovar::Command
-			self.description = "An asynchronous HTTP server."
+		class Host < Samovar::Command
+			self.description = "Run a specific virtual host."
 			
 			options do
-				option '--verbose | --quiet', "Verbosity of output for debugging.", key: :logging
-				option '-h/--help', "Print out help information."
-				option '-v/--version', "Print out the application version."
+				option '--bind-insecure <address>', "Bind redirection to the given hostname/address", default: "http://[::]"
+				option '--bind-secure <address>', "Bind proxy to the given hostname/address", default: "https://[::]"
 			end
 			
-			nested :command, {
-				'serve' => Serve,
-				'virtual' => Virtual,
-				'host', => Host,
-			}, default: 'serve'
+			many :paths
 			
-			def verbose?
-				@options[:logging] == :verbose
-			end
-			
-			def quiet?
-				@options[:logging] == :quiet
+			def run(verbose = false)
+				pp @paths
+				# configuration = Configuration.new(verbose)
+				# 
+				# @paths.each do |path|
+				# 	configuration.load_file(path)
+				# end
+				# 
+				# hosts = Hosts.new(configuration)
+				# 
+				# return hosts.run(@options)
 			end
 			
 			def call
-				if verbose?
-					Async.logger.level = Logger::DEBUG
-				elsif quiet?
-					Async.logger.level = Logger::WARN
-				else
-					Async.logger.level = Logger::INFO
-				end
-				
-				if @options[:version]
-					puts "#{self.name} v#{Falcon::VERSION}"
-				elsif @options[:help]
-					self.print_usage
-				else
-					@command.call
-				end
+				run(parent.verbose?)
 			end
 		end
 	end
