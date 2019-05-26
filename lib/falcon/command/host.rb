@@ -40,33 +40,37 @@ module Falcon
 		class Host < Samovar::Command
 			self.description = "Run a specific virtual host."
 			
-			one :path, "A path specified if running from a script.", required: false
+			one :path, "A path specified if running from a script."
 			
-			options do
-				option '--bind-insecure <address>', "Bind redirection to the given hostname/address", default: "http://[::]"
-				option '--bind-secure <address>', "Bind proxy to the given hostname/address", default: "https://[::]"
+			def assume_privileges(path)
+				stat = File.stat(path)
+				
+				Process::GID.change_privilege(stat.gid)
+				Process::UID.change_privilege(stat.uid)
 			end
 			
-			many :paths
-			
-			def run(verbose = false)
+			def run(container, verbose = false)
 				configuration = Configuration.new(verbose)
+				configuration.load_file(@path)
 				
-				if @path
-					configuration.load_file(@path)
+				bound_endpoint = self.bound_endpoint
+				
+				Async.logger.info(self) {"Starting services described by #{@path}..."}
+				container = Async::Container.new
+				
+				assume_privileges(@path)
+				
+				configuration.each do |host|
+					host.run(container)
 				end
 				
-				@paths&.each do |path|
-					configuration.load_file(path)
-				end
-				
-				hosts = Hosts.new(configuration)
-				
-				return hosts.run(@options)
+				return container
 			end
 			
 			def call
-				container = run(parent.verbose?)
+				container = Async::Container::Forked.new
+				
+				container = run(container, parent.verbose?)
 				
 				container.wait
 			end

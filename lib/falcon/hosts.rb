@@ -62,13 +62,6 @@ module Falcon
 			"\#<#{self.class} #{@evaluator.authority}>"
 		end
 		
-		def assume_privileges(path)
-			stat = File.stat(path)
-			
-			Process::GID.change_privilege(stat.gid)
-			Process::UID.change_privilege(stat.uid)
-		end
-		
 		def run(container)
 			if @environment.include?(:server)
 				bound_endpoint = self.bound_endpoint
