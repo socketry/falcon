@@ -40,6 +40,8 @@ module Falcon
 		class Host < Samovar::Command
 			self.description = "Run a specific virtual host."
 			
+			one :path, "A path specified if running from a script.", required: false
+			
 			options do
 				option '--bind-insecure <address>', "Bind redirection to the given hostname/address", default: "http://[::]"
 				option '--bind-secure <address>', "Bind proxy to the given hostname/address", default: "https://[::]"
@@ -48,20 +50,25 @@ module Falcon
 			many :paths
 			
 			def run(verbose = false)
-				pp @paths
-				# configuration = Configuration.new(verbose)
-				# 
-				# @paths.each do |path|
-				# 	configuration.load_file(path)
-				# end
-				# 
-				# hosts = Hosts.new(configuration)
-				# 
-				# return hosts.run(@options)
+				configuration = Configuration.new(verbose)
+				
+				if @path
+					configuration.load_file(@path)
+				end
+				
+				@paths&.each do |path|
+					configuration.load_file(path)
+				end
+				
+				hosts = Hosts.new(configuration)
+				
+				return hosts.run(@options)
 			end
 			
 			def call
-				run(parent.verbose?)
+				container = run(parent.verbose?)
+				
+				container.wait
 			end
 		end
 	end

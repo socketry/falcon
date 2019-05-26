@@ -97,7 +97,7 @@ module Falcon
 			# end
 			
 			# The authority of the request must match the authority of the endpoint we are proxying to, otherwise SNI and other things won't work correctly.
-			request.authority = host.endpoint.authority
+			request.authority = host.authority
 			
 			if address = request.remote_address
 				request.headers.add(X_FORWARDED_FOR, address.ip_address)

@@ -45,7 +45,7 @@ module Falcon
 			nested :command, {
 				'serve' => Serve,
 				'virtual' => Virtual,
-				'host', => Host,
+				'host' => Host,
 			}, default: 'serve'
 			
 			def verbose?

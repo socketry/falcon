@@ -78,12 +78,12 @@ module Falcon
 					
 					if root = self.root
 						Dir.chdir(root)
+						
+						# Drop root privileges:
+						assume_privileges(root)
 					end
 					
 					server = @evaluator.server
-					
-					# Drop root privileges:
-					assume_privileges(root)
 					
 					server.run
 					
@@ -95,6 +95,7 @@ module Falcon
 	
 	class Hosts
 		DEFAULT_ALPN_PROTOCOLS = ['h2', 'http/1.1'].freeze
+		SERVER_CIPHERS = "EECDH+CHACHA20:EECDH+AES128:RSA+AES128:EECDH+AES256:RSA+AES256:EECDH+3DES:RSA+3DES:!MD5".freeze
 		
 		def initialize(configuration)
 			@named = {}
@@ -126,7 +127,11 @@ module Falcon
 				
 				context.session_id_context = "falcon"
 				context.alpn_protocols = DEFAULT_ALPN_PROTOCOLS
-				context.set_params
+				
+				context.set_params(
+					ciphers: SERVER_CIPHERS,
+					verify_mode: OpenSSL::SSL::VERIFY_NONE,
+				)
 				
 				context.setup
 			end

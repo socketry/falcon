@@ -44,8 +44,6 @@ module Falcon
 				option '-h/--hostname <hostname>', "Specify the hostname which would be used for certificates, etc."
 				option '-t/--timeout <duration>', "Specify the maximum time to wait for blocking operations.", type: Float, default: 60*10
 				
-				option '--reuse-port', "Enable SO_REUSEPORT if possible.", default: false
-				
 				option '-c/--config <path>', "Rackup configuration file to load", default: 'config.ru'
 				
 				option '--forked | --threaded | --hybrid', "Select a specific parallelism model", key: :container, default: :forked

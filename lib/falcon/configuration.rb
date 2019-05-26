@@ -87,7 +87,9 @@ module Falcon
 						
 						context.session_id_context = ssl_session_id
 						
-						context.set_params
+						context.set_params(
+							verify_mode: OpenSSL::SSL::VERIFY_NONE,
+						)
 						
 						context.setup
 					end
