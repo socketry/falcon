@@ -28,17 +28,18 @@ RSpec.shared_examples_for Falcon::Command::Serve do
 		
 		container = command.run(true)
 		
-		Async do
-			client = command.client
-			
-			response = client.get("/")
-			expect(response).to be_success
-			
-			client.close
+		begin
+			Async do
+				client = command.client
+				
+				response = client.get("/")
+				expect(response).to be_success
+				
+				client.close
+			end
+		ensure
+			container.stop(false)
 		end
-		
-	ensure
-		container&.stop(false)
 	end
 end
 
