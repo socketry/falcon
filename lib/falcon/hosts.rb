@@ -66,15 +66,10 @@ module Falcon
 			if @environment.include?(:server)
 				bound_endpoint = self.bound_endpoint
 				
-				container.run(count: 1, name: self.name) do |task, instance|
+				container.run(name: self.name) do |task, instance|
+					Async.logger.verbose!
+					Async.logger.debug!
 					Async.logger.info(self) {"Starting application server..."}
-					
-					if root = self.root
-						Dir.chdir(root)
-						
-						# Drop root privileges:
-						assume_privileges(root)
-					end
 					
 					server = @evaluator.server
 					

@@ -20,27 +20,46 @@
 
 require 'falcon/command/serve'
 
-RSpec.describe Falcon::Command::Serve do
+RSpec.shared_examples_for Falcon::Command::Serve do
 	it "can listen on specified port" do
 		command = described_class[
-			"--port", 8090,
-			"--config", File.expand_path("config.ru", __dir__),
-			"--threaded", "--count", 1
+			"--config", File.expand_path("config.ru", __dir__), *options
 		]
 		
 		container = command.run(true)
 		
-		container.wait do
-			Async do
-				client = command.client
-				
-				response = client.get("/")
-				expect(response).to be_success
-				
-				client.close
-			end
+		Async do
+			client = command.client
 			
-			container.stop
+			response = client.get("/")
+			expect(response).to be_success
+			
+			client.close
 		end
+		
+	ensure
+		container&.stop(false)
+	end
+end
+
+RSpec.describe Falcon::Command::Serve do
+	context "with custom port" do
+		let(:options) {["--port", 8090]}
+		include_examples Falcon::Command::Serve
+	end
+	
+	context "with one instance" do
+		let(:options) {["--port", 8091, "--count", 1]}
+		include_examples Falcon::Command::Serve
+	end
+	
+	context "with threaded container" do
+		let(:options) {["--port", 8092, "--count", 8, "--threaded"]}
+		include_examples Falcon::Command::Serve
+	end
+	
+	context "with forked container", if: Process.respond_to?(:fork) do
+		let(:options) {["--port", 8093, "--count", 8, "--forked"]}
+		include_examples Falcon::Command::Serve
 	end
 end

@@ -139,10 +139,10 @@ module Falcon
 				
 				authority 'localhost'
 				scheme 'https'
-				protocol {::Async::HTTP::Protocol::HTTP2}
 				ipc_path {::File.expand_path("server.ipc", root)}
 				
-				endpoint {ProxyEndpoint.unix(ipc_path, protocol: protocol, scheme: scheme, authority: authority)}
+				endpoint {ProxyEndpoint.unix(ipc_path, protocol: Async::HTTP::Protocol::HTTP2, scheme: scheme, authority: authority)}
+				protocol {endpoint.protocol}
 				
 				bound_endpoint do
 					Async::Reactor.run do

@@ -53,15 +53,12 @@ module Falcon
 				configuration = Configuration.new(verbose)
 				configuration.load_file(@path)
 				
-				bound_endpoint = self.bound_endpoint
-				
 				Async.logger.info(self) {"Starting services described by #{@path}..."}
-				container = Async::Container.new
 				
 				assume_privileges(@path)
 				
-				configuration.each do |host|
-					host.run(container)
+				configuration.each do |environment|
+					Falcon::Host.new(environment).run(container)
 				end
 				
 				return container

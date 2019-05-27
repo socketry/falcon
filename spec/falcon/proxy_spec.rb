@@ -28,8 +28,8 @@ RSpec.describe Falcon::Proxy do
 	
 	subject do
 		described_class.new(Falcon::BadRequest, {
-			'www.google.com' => double(endpoint: Async::HTTP::Endpoint.parse('https://www.google.com')),
-			'www.yahoo.com' => double(endpoint: Async::HTTP::Endpoint.parse('https://www.yahoo.com')),
+			'www.google.com' => double(authority: "www.google.com", endpoint: Async::HTTP::Endpoint.parse('https://www.google.com')),
+			'www.yahoo.com' => double(authority: "www.yahoo.com", endpoint: Async::HTTP::Endpoint.parse('https://www.yahoo.com')),
 		})
 	end
 	
