@@ -174,18 +174,23 @@ module Falcon
 			secure_endpoint = Async::HTTP::Endpoint.parse(options[:bind_secure], ssl_context: self.ssl_context)
 			insecure_endpoint = Async::HTTP::Endpoint.parse(options[:bind_insecure])
 			
-			container.run(count: 1, name: "Falcon Proxy", restart: true) do |task, instance|
+			Async::Reactor.run do
+				secure_endpoint_bound = Async::IO::SharedEndpoint.bound(secure_endpoint)
+				insecure_endpoint_bound = Async::IO::SharedEndpoint.bound(insecure_endpoint)
+			end.wait
+			
+			container.run(name: "Falcon Proxy", restart: true) do |task, instance|
 				proxy = self.proxy
 				
-				proxy_server = Falcon::Server.new(proxy, secure_endpoint)
+				proxy_server = Falcon::Server.new(proxy, secure_endpoint_bound, secure_endpoint.protocol, secure_endpoint.scheme)
 				
 				proxy_server.run
 			end
 			
-			container.run(count: 1, name: "Falcon Redirector", restart: true) do |task, instance|
+			container.run(name: "Falcon Redirector", restart: true) do |task, instance|
 				redirection = self.redirection(secure_endpoint)
 				
-				redirection_server = Falcon::Server.new(redirection, insecure_endpoint)
+				redirection_server = Falcon::Server.new(redirection, insecure_endpoint_bound, insecure_endpoint.protocol, insecure_endpoint.scheme)
 				
 				redirection_server.run
 			end
