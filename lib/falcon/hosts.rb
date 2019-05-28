@@ -62,13 +62,28 @@ module Falcon
 			"\#<#{self.class} #{@evaluator.authority}>"
 		end
 		
+		def assume_privileges(path)
+			stat = File.stat(path)
+			
+			Process::GID.change_privilege(stat.gid)
+			Process::UID.change_privilege(stat.uid)
+		end
+		
+		def spawn(container)
+			container.spawn(name: self.name, restart: true) do |instance|
+				path = File.join(self.root, "falcon.rb")
+				
+				assume_privileges(path)
+				
+				instance.exec("bundle", "exec", path)
+			end
+		end
+		
 		def run(container)
 			if @environment.include?(:server)
 				bound_endpoint = self.bound_endpoint
 				
-				container.run(name: self.name) do |task, instance|
-					Async.logger.verbose!
-					Async.logger.debug!
+				container.run(name: self.name, restart: true) do |task, instance|
 					Async.logger.info(self) {"Starting application server..."}
 					
 					server = @evaluator.server
@@ -153,13 +168,13 @@ module Falcon
 		
 		def run(container = Async::Container::Forked.new, **options)
 			@named.each do |name, host|
-				host.run(container)
+				host.spawn(container)
 			end
 			
 			secure_endpoint = Async::HTTP::Endpoint.parse(options[:bind_secure], ssl_context: self.ssl_context)
 			insecure_endpoint = Async::HTTP::Endpoint.parse(options[:bind_insecure])
 			
-			container.run(count: 1, name: "Falcon Proxy") do |task, instance|
+			container.run(count: 1, name: "Falcon Proxy", restart: true) do |task, instance|
 				proxy = self.proxy
 				
 				proxy_server = Falcon::Server.new(proxy, secure_endpoint)
@@ -167,7 +182,7 @@ module Falcon
 				proxy_server.run
 			end
 			
-			container.run(count: 1, name: "Falcon Redirector") do |task, instance|
+			container.run(count: 1, name: "Falcon Redirector", restart: true) do |task, instance|
 				redirection = self.redirection(secure_endpoint)
 				
 				redirection_server = Falcon::Server.new(redirection, insecure_endpoint)

@@ -1,3 +1,5 @@
-#!/usr/bin/env -S ./bin/falcon virtual
+#!/usr/bin/env -S falcon host
 
-host 'beer.local', :self_signed
+host 'beer.localhost', :rack, :self_signed do
+	root __dir__
+end
