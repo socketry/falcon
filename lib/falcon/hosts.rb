@@ -174,6 +174,8 @@ module Falcon
 			secure_endpoint = Async::HTTP::Endpoint.parse(options[:bind_secure], ssl_context: self.ssl_context)
 			insecure_endpoint = Async::HTTP::Endpoint.parse(options[:bind_insecure])
 			
+			secure_endpoint_bound = insecure_endpoint_bound = nil
+			
 			Async::Reactor.run do
 				secure_endpoint_bound = Async::IO::SharedEndpoint.bound(secure_endpoint)
 				insecure_endpoint_bound = Async::IO::SharedEndpoint.bound(insecure_endpoint)

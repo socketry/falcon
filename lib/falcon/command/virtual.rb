@@ -38,7 +38,7 @@ require 'rack/server'
 module Falcon
 	module Command
 		class Virtual < Samovar::Command
-			self.description = "Run an HTTP server with one or more virtual hosts."
+			self.description = "Run one or more virtual hosts with a front-end proxy."
 			
 			options do
 				option '--bind-insecure <address>', "Bind redirection to the given hostname/address", default: "http://[::]"
@@ -63,6 +63,14 @@ module Falcon
 				container = run(parent.verbose?)
 				
 				container.wait
+			end
+			
+			def insecure_endpoint
+				Async::HTTP::Endpoint.parse(@options[:bind_insecure])
+			end
+			
+			def secure_endpoint
+				Async::HTTP::Endpoint.parse(@options[:bind_secure])
 			end
 		end
 	end
