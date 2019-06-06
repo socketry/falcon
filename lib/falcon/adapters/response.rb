@@ -77,7 +77,7 @@ module Falcon
 			end
 			
 			def initialize(status, headers, body, protocol = nil)
-				super(nil, status, nil, headers, body, protocol)
+				super(nil, status, headers, body, protocol)
 			end
 		end
 	end

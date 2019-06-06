@@ -21,7 +21,7 @@ Gem::Specification.new do |spec|
 		
 	spec.add_dependency "async", "~> 1.13"
 	spec.add_dependency "async-io", "~> 1.22"
-	spec.add_dependency "async-http", "~> 0.41.0"
+	spec.add_dependency "async-http", "~> 0.43.0"
 	spec.add_dependency "async-container", "~> 0.12.0"
 	
 	spec.add_dependency "rack", ">= 1.0"
@@ -32,7 +32,7 @@ Gem::Specification.new do |spec|
 	
 	spec.add_development_dependency "trenni"
 	spec.add_development_dependency "async-rspec", "~> 1.7"
-	spec.add_development_dependency "async-websocket", "~> 0.11.0"
+	spec.add_development_dependency "async-websocket", "~> 0.12.0"
 	spec.add_development_dependency "async-process", "~> 1.1"
 	
 	spec.add_development_dependency "covered", "~> 0.10"
