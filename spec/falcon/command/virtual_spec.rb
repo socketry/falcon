@@ -26,7 +26,7 @@ RSpec.shared_context Falcon::Command::Virtual do
 	let(:command) {
 		described_class[
 			"--bind-insecure", "http://localhost:8080",
-			"--bind-secure", "httpa://localhost:8443",
+			"--bind-secure", "https://localhost:8443",
 			*options,
 		]
 	}
@@ -51,12 +51,29 @@ RSpec.describe Falcon::Command::Virtual do
 		include_context Falcon::Command::Virtual
 		
 		it "gets redirected from insecure to secure endpoint" do
-			request = Protocol::HTTP::Request.new("http", "hello.localhost", "GET", "/")
+			request = Protocol::HTTP::Request.new("http", "hello.localhost", "GET", "/index")
 			
 			Async do
 				response = insecure_client.call(request)
 				
 				expect(response).to be_redirection
+				expect(response.headers['location']).to be == "https://hello.localhost:8443/index"
+				
+				response.close
+			end
+		end
+		
+		it "gets valid response from secure endpoint" do
+			request = Protocol::HTTP::Request.new("http", "hello.localhost", "GET", "/index")
+			
+			expect(request.authority).to be == "hello.localhost"
+			
+			Async do
+				response = secure_client.call(request)
+				
+				expect(response).to be_success
+				expect(response.read).to be == "Hello World"
+				
 				response.close
 			end
 		end
