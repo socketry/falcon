@@ -166,7 +166,7 @@ module Falcon
 			Redirection.new(Falcon::BadRequest, @named, secure_endpoint)
 		end
 		
-		def run(container = Async::Container::Forked.new, **options)
+		def run(container = Async::Container.new, **options)
 			@named.each do |name, host|
 				host.spawn(container)
 			end
@@ -195,6 +195,11 @@ module Falcon
 				redirection_server = Falcon::Server.new(redirection, insecure_endpoint_bound, insecure_endpoint.protocol, insecure_endpoint.scheme)
 				
 				redirection_server.run
+			end
+			
+			container.attach do
+				secure_endpoint_bound.close
+				insecure_endpoint_bound.close
 			end
 			
 			return container

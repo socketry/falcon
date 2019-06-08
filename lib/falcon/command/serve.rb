@@ -119,6 +119,10 @@ module Falcon
 				
 				container = container_class.new
 				
+				container.attach do
+					bound_endpoint.close
+				end
+				
 				container.run(name: "Falcon Server", restart: true, **container_options) do |task, instance|
 					task.async do
 						if debug_trap.install!

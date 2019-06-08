@@ -33,12 +33,16 @@ RSpec.shared_context Falcon::Command::Virtual do
 	
 	let!(:container) {command.run(true)}
 	
-	after do
-		container.stop(false)
+	around do |example|
+		begin
+			example.run
+		ensure
+			container.stop(false)
+		end
 	end
 	
-	let(:insecure_client) {Async::HTTP::Client.new(command.insecure_endpoint)}
-	let(:secure_client) {Async::HTTP::Client.new(command.secure_endpoint)}
+	let(:insecure_client) {Async::HTTP::Client.new(command.insecure_endpoint, retries: 0)}
+	let(:secure_client) {Async::HTTP::Client.new(command.secure_endpoint, retries: 0)}
 end
 
 RSpec.describe Falcon::Command::Virtual do
