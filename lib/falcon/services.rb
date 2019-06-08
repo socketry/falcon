@@ -18,64 +18,32 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-require 'async/io/endpoint'
-
-require_relative 'proxy'
-require_relative 'redirection'
-
-require 'async/container'
-require 'async/container/controller'
-require 'async/http/endpoint'
+require_relative 'service'
 
 module Falcon
-	class Host
-		def initialize(environment)
-			@environment = environment.flatten
-			@evaluator = @environment.evaluator
-		end
-		
-		def name
-			"Falcon Host for #{self.authority}"
-		end
-		
-		def authority
-			@evaluator.authority
-		end
-		
-		def endpoint
-			@evaluator.endpoint
-		end
-		
-		def ssl_context
-			@evaluator.ssl_context
-		end
-		
-		def root
-			@evaluator.root
-		end
-		
-		def bound_endpoint
-			@evaluator.bound_endpoint
-		end
-		
-		def to_s
-			"\#<#{self.class} #{@evaluator.authority}>"
-		end
-		
-		def run(container)
-			if @environment.include?(:server)
-				bound_endpoint = self.bound_endpoint
-				
-				container.run(name: self.name, restart: true) do |task, instance|
-					Async.logger.info(self) {"Starting application server..."}
-					
-					server = @evaluator.server
-					
-					server.run
-					
-					task.children.each(&:wait)
-				end
+	class Services
+		def initialize(configuration)
+			@named = {}
+			
+			configuration.each(:start) do |environment|
+				add(Service.new(environment))
 			end
+		end
+		
+		def each(&block)
+			@named.each_value(&block)
+		end
+		
+		def add(service)
+			@named[service.name] = service
+		end
+		
+		def run(container = Async::Container.new, **options)
+			@named.each do |name, service|
+				service.spawn(container)
+			end
+			
+			return container
 		end
 	end
 end

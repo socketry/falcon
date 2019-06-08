@@ -38,13 +38,13 @@ module Falcon
 			@server_context = nil
 			@server_endpoint = nil
 			
-			configuration.each do |environment|
+			configuration.each(:authority) do |environment|
 				add(Host.new(environment))
 			end
 		end
 		
 		def each(&block)
-			@named.each(&block)
+			@named.each_value(&block)
 		end
 		
 		def endpoint
@@ -100,10 +100,6 @@ module Falcon
 		end
 		
 		def run(container = Async::Container.new, **options)
-			@named.each do |name, host|
-				host.spawn(container)
-			end
-			
 			secure_endpoint = Async::HTTP::Endpoint.parse(options[:bind_secure], ssl_context: self.ssl_context)
 			insecure_endpoint = Async::HTTP::Endpoint.parse(options[:bind_insecure])
 			

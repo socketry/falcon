@@ -21,6 +21,9 @@
 require 'build/environment'
 require 'async/io/unix_endpoint'
 
+require_relative 'server'
+require_relative 'supervisor'
+
 module Falcon
 	class ProxyEndpoint < Async::IO::Endpoint
 		def initialize(endpoint, **options)
@@ -154,6 +157,22 @@ module Falcon
 					::Falcon::Server.new(middleware, bound_endpoint, protocol, scheme)
 				end
 			end
+			
+			add(:service).tap do |environment|
+				environment[:start] = true
+			end
+			
+			add(:supervisor, :service) do
+				name "supervisor"
+				
+				ipc_path {::File.expand_path("supervisor.ipc", root)}
+				
+				endpoint {Async::IO::Endpoint.unix(ipc_path)}
+				
+				service do
+					::Falcon::Supervisor.new(endpoint)
+				end
+			end
 		end
 		
 		attr :environments
@@ -168,36 +187,51 @@ module Falcon
 			@environments[name] = Build::Environment.new(parent, name: name, &block)
 		end
 		
-		def each
-			return to_enum unless block_given?
+		def each(key = :authority)
+			return to_enum(key) unless block_given?
 			
 			@environments.each do |name, environment|
-				if environment.include?(:authority)
+				if name == key or environment.include?(key)
 					yield environment
 				end
 			end
 		end
 		
-		def host(name, *parents, &block)
-			add(name, :host, *parents, &block).tap do |environment|
-				environment[:authority] = name
+		class Loader
+			def initialize(configuration, path)
+				@configuration = configuration
+				@path = File.realpath(path)
+				@root = File.dirname(@path)
 			end
-		end
-		
-		def proxy(name, *parents, &block)
-			add(name, :proxy, *parents, &block).tap do |environment|
-				environment[:authority] = name
+			
+			def load!
+				self.instance_eval(File.read(@path), @path)
 			end
-		end
-		
-		def rack(name, *parents, &block)
-			add(name, :rack, *parents, &block).tap do |environment|
-				environment[:authority] = name
+				
+			def host(name, *parents, &block)
+				@configuration.add(name, :host, *parents, &block).tap do |environment|
+					environment[:root] = @root
+					environment[:authority] = name
+				end
+			end
+			
+			def proxy(name, *parents, &block)
+				@configuration.add(name, :proxy, *parents, &block).tap do |environment|
+					environment[:root] = @root
+					environment[:authority] = name
+				end
+			end
+			
+			def rack(name, *parents, &block)
+				@configuration.add(name, :rack, *parents, &block).tap do |environment|
+					environment[:root] = @root
+					environment[:authority] = name
+				end
 			end
 		end
 		
 		def load_file(path)
-			self.instance_eval(File.read(path), File.realpath(path))
+			Loader.new(self, path).load!
 		end
 	end
 end

@@ -47,16 +47,34 @@ module Falcon
 			
 			many :paths
 			
+			def assume_privileges(path)
+				stat = File.stat(path)
+				
+				Process::GID.change_privilege(stat.gid)
+				Process::UID.change_privilege(stat.uid)
+			end
+			
+			def spawn(path, container)
+				container.spawn(name: self.name, restart: true) do |instance|
+					assume_privileges(path)
+					
+					instance.exec("bundle", "exec", path)
+				end
+			end
+			
 			def run(verbose = false)
 				configuration = Configuration.new(verbose)
+				container = Async::Container.new
 				
 				@paths.each do |path|
 					configuration.load_file(path)
+					spawn(path, container)
 				end
 				
 				hosts = Hosts.new(configuration)
+				hosts.run(container, **@options)
 				
-				return hosts.run(@options)
+				return container
 			end
 			
 			def call

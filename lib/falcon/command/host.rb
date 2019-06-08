@@ -20,8 +20,9 @@
 
 require_relative '../server'
 require_relative '../endpoint'
-require_relative '../hosts'
 require_relative '../configuration'
+require_relative '../hosts'
+require_relative '../services'
 
 require 'async/container'
 require 'async/container/controller'
@@ -57,8 +58,14 @@ module Falcon
 				
 				assume_privileges(@path)
 				
-				configuration.each do |environment|
-					Falcon::Host.new(environment).run(container)
+				hosts = Hosts.new(configuration)
+				hosts.each do |host|
+					host.run(container)
+				end
+				
+				services = Services.new(configuration)
+				services.each do |service|
+					service.run(container)
 				end
 				
 				return container

@@ -28,67 +28,39 @@ require 'async/container/controller'
 require 'async/http/endpoint'
 
 module Falcon
-	class Control
-		def initialize(environment)
-			@environment = environment.flatten
-			@evaluator = @environment.evaluator
+	class Supervisor
+		def initialize(endpoint)
+			@endpoint = endpoint
 		end
 		
-		def name
-			"Falcon Host for #{self.authority}"
-		end
-		
-		def authority
-			@evaluator.authority
-		end
-		
-		def endpoint
-			@evaluator.endpoint
-		end
-		
-		def ssl_context
-			@evaluator.ssl_context
-		end
-		
-		def root
-			@evaluator.root
-		end
-		
-		def bound_endpoint
-			@evaluator.bound_endpoint
-		end
-		
-		def to_s
-			"\#<#{self.class} #{@evaluator.authority}>"
-		end
-		
-		def assume_privileges(path)
-			stat = File.stat(path)
+		def restart(message)
+			signal = message[:signal] || :INT
 			
-			Process::GID.change_privilege(stat.gid)
-			Process::UID.change_privilege(stat.uid)
+			# Sepukku:
+			Process.kill(signal, -Process.getpgrp)
 		end
 		
-		def spawn(container)
-			container.spawn(name: self.name, restart: true) do |instance|
-				path = File.join(self.root, "falcon.rb")
-				
-				assume_privileges(path)
-				
-				instance.exec("bundle", "exec", path)
+		def statistics(message)
+			"You wish there were statistics!".split(/\s+/)
+		end
+		
+		def handle(message)
+			case message[:please]
+			when 'restart'
+				self.restart(message)
+			when 'statistics'
+				self.statistics(message)
 			end
 		end
 		
-		def run(container)
-			if @environment.include?(:server)
-				container.run(name: self.name, count: 1, restart: true) do |task, instance|
-					Async.logger.info(self) {"Starting host controller..."}
-					
-					server = @evaluator.server
-					
-					server.run
-					
-					task.children.each(&:wait)
+		def run
+			Async.logger.info("Binding to #{@endpoint}")
+			@endpoint.accept do |peer|
+				stream = Async::IO::Stream.new(peer)
+				
+				while message = stream.gets(separator: "\0")
+					response = handle(JSON.parse(message, symbolize_names: true))
+					stream.puts(response.to_json, separator: "\0")
 				end
 			end
 		end

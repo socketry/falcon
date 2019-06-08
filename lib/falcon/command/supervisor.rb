@@ -1,4 +1,4 @@
-# Copyright, 2017, by Samuel G. D. Williams. <http://www.codeotaku.com>
+# Copyright, 2018, by Samuel G. D. Williams. <http://www.codeotaku.com>
 # 
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -18,61 +18,44 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-require_relative 'command/serve'
-require_relative 'command/virtual'
-require_relative 'command/host'
-require_relative 'command/supervisor'
-
-require_relative 'version'
-
 require 'samovar'
-require 'logger'
 
 module Falcon
 	module Command
-		def self.call(*args)
-			Top.call(*args)
-		end
-		
-		class Top < Samovar::Command
-			self.description = "An asynchronous HTTP server."
+		class Supervisor < Samovar::Command
+			self.description = "Control and query a specific host."
 			
 			options do
-				option '--verbose | --quiet', "Verbosity of output for debugging.", key: :logging
-				option '-h/--help', "Print out help information."
-				option '-v/--version', "Print out the application version."
+				option "--path <path>", "The control IPC path.", default: "control.ipc"
+			end
+			
+			class Restart
+				def call(stream)
+					stream.puts({please: 'restart'}.to_json, separator: "\0")
+				end
+			end
+			
+			class Statistics
+				def call(stream)
+					stream.puts({please: 'statistics'}.to_json, separator: "\0")
+					resposne = JSON.parse(stream.gets(separator: "\0"))
+				end
 			end
 			
 			nested :command, {
-				'serve' => Serve,
-				'virtual' => Virtual,
-				'host' => Host,
-				'supervisor' => Supervisor
-			}, default: 'serve'
+				'restart' => Restart,
+				'statistics' => Statistics,
+			}, default: 'statistics'
 			
-			def verbose?
-				@options[:logging] == :verbose
-			end
-			
-			def quiet?
-				@options[:logging] == :quiet
+			def endpoint
+				Async::IO::Endpoint.unix(@options[:path])
 			end
 			
 			def call
-				if verbose?
-					Async.logger.level = Logger::DEBUG
-				elsif quiet?
-					Async.logger.level = Logger::WARN
-				else
-					Async.logger.level = Logger::INFO
-				end
-				
-				if @options[:version]
-					puts "#{self.name} v#{Falcon::VERSION}"
-				elsif @options[:help]
-					self.print_usage
-				else
-					@command.call
+				endpoint.connect do |socket|
+					stream = Async::IO::Stream.new(socket)
+					
+					@command.call(stream)
 				end
 			end
 		end

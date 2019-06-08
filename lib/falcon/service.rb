@@ -18,28 +18,36 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-require 'samovar'
+require 'async/io/endpoint'
+
+require_relative 'proxy'
+require_relative 'redirection'
+
+require 'async/container'
+require 'async/container/controller'
+require 'async/http/endpoint'
 
 module Falcon
-	module Command
-		class Control < Samovar::Command
-			self.description = "Control and query a specific host."
-			
-			options do
-				option "--path <path>", "The control path.", default: "control.ipc"
-			end
-			
-			nested :command, {
-				'restart' => Restart,
-				'statistics' => Statistics,
-			}, default: 'statistics'
-			
-			def endpoint
-				Async::IO::Endpoint.unix(@options[:path])
-			end
-			
-			def call
-				@command.call(self.endpoint)
+	class Service
+		def initialize(environment)
+			@environment = environment.flatten
+			@evaluator = @environment.evaluator
+		end
+		
+		def name
+			@evaluator.name
+		end
+		
+		def run(container)
+			container.run(name: self.name, count: 1, restart: true) do |task, instance|
+				Async.logger.info(self) {"Starting supervisor..."}
+				
+				if service = @evaluator.service
+					service.run
+				else
+					Async.logger.error(self) {"Could not determine how to start service: #{@environment.inspect}"}
+					sleep #hack
+				end
 			end
 		end
 	end
