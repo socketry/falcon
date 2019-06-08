@@ -20,6 +20,7 @@
 
 require 'async/io/endpoint'
 
+require_relative 'host'
 require_relative 'proxy'
 require_relative 'redirection'
 
@@ -28,74 +29,6 @@ require 'async/container/controller'
 require 'async/http/endpoint'
 
 module Falcon
-	class Host
-		def initialize(environment)
-			@environment = environment.flatten
-			@evaluator = @environment.evaluator
-		end
-		
-		def name
-			"Falcon Host for #{self.authority}"
-		end
-		
-		def authority
-			@evaluator.authority
-		end
-		
-		def endpoint
-			@evaluator.endpoint
-		end
-		
-		def ssl_context
-			@evaluator.ssl_context
-		end
-		
-		def root
-			@evaluator.root
-		end
-		
-		def bound_endpoint
-			@evaluator.bound_endpoint
-		end
-		
-		def to_s
-			"\#<#{self.class} #{@evaluator.authority}>"
-		end
-		
-		def assume_privileges(path)
-			stat = File.stat(path)
-			
-			Process::GID.change_privilege(stat.gid)
-			Process::UID.change_privilege(stat.uid)
-		end
-		
-		def spawn(container)
-			container.spawn(name: self.name, restart: true) do |instance|
-				path = File.join(self.root, "falcon.rb")
-				
-				assume_privileges(path)
-				
-				instance.exec("bundle", "exec", path)
-			end
-		end
-		
-		def run(container)
-			if @environment.include?(:server)
-				bound_endpoint = self.bound_endpoint
-				
-				container.run(name: self.name, restart: true) do |task, instance|
-					Async.logger.info(self) {"Starting application server..."}
-					
-					server = @evaluator.server
-					
-					server.run
-					
-					task.children.each(&:wait)
-				end
-			end
-		end
-	end
-	
 	class Hosts
 		DEFAULT_ALPN_PROTOCOLS = ['h2', 'http/1.1'].freeze
 		SERVER_CIPHERS = "EECDH+CHACHA20:EECDH+AES128:RSA+AES128:EECDH+AES256:RSA+AES256:EECDH+3DES:RSA+3DES:!MD5".freeze
