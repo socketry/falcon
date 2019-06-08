@@ -69,7 +69,7 @@ module Falcon
 				
 				container = run(container, parent.verbose?)
 				
-				container.wait
+				container.wait(true)
 			end
 		end
 	end
