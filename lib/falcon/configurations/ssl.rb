@@ -18,30 +18,6 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-require 'localhost/authority'
-
 add(:ssl) do
 	ssl_session_id {"falcon"}
-end
-
-add(:self_signed, :ssl) do
-	ssl_context do
-		contexts = Localhost::Authority.fetch(authority)
-		
-		contexts.server_context.tap do |context|
-			context.alpn_select_cb = lambda do |protocols|
-				if protocols.include? "h2"
-					return "h2"
-				elsif protocols.include? "http/1.1"
-					return "http/1.1"
-				elsif protocols.include? "http/1.0"
-					return "http/1.0"
-				else
-					return nil
-				end
-			end
-			
-			context.session_id_context = "falcon"
-		end
-	end
 end

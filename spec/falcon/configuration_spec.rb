@@ -22,8 +22,8 @@ require 'falcon/configuration'
 
 RSpec.describe Falcon::Configuration do
 	it "can configurure proxy" do
-		subject.proxy 'localhost' do
-			url 'https://www.google.com'
-		end
+		subject.load_file(File.expand_path("configuration_spec/proxy.rb", __dir__))
+		
+		expect(subject.environments).to include('localhost')
 	end
 end

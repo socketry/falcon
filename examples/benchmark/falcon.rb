@@ -1,3 +1,5 @@
 #!/usr/bin/env -S ./bin/falcon virtual
 
-host 'benchmark.local', :self_signed
+load :rack, :self_signed, :supervisor
+
+host 'benchmark.local', :rack, :self_signed

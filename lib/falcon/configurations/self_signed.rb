@@ -18,8 +18,28 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-load(:host)
+require 'localhost/authority'
 
-add(:proxy, :host) do
-	endpoint {::Async::HTTP::Endpoint.parse(url)}
+load(:ssl)
+
+add(:self_signed, :ssl) do
+	ssl_context do
+		contexts = Localhost::Authority.fetch(authority)
+		
+		contexts.server_context.tap do |context|
+			context.alpn_select_cb = lambda do |protocols|
+				if protocols.include? "h2"
+					return "h2"
+				elsif protocols.include? "http/1.1"
+					return "http/1.1"
+				elsif protocols.include? "http/1.0"
+					return "http/1.0"
+				else
+					return nil
+				end
+			end
+			
+			context.session_id_context = ssl_session_id
+		end
+	end
 end

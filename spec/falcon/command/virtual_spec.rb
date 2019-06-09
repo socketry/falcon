@@ -31,13 +31,13 @@ RSpec.shared_context Falcon::Command::Virtual do
 		]
 	}
 	
-	let!(:container) {command.run(true)}
+	let!(:container) {@container = command.run(true)}
 	
 	around do |example|
 		begin
 			example.run
 		ensure
-			container.stop(false)
+			@container&.stop(false)
 		end
 	end
 	

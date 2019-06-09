@@ -21,6 +21,8 @@
 require_relative '../proxy_endpoint'
 require_relative '../server'
 
+load(:host)
+
 add(:rack, :host) do
 	config_path {::File.expand_path("config.ru", root)}
 	

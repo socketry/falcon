@@ -1,5 +1,5 @@
 #!/usr/bin/env -S falcon host
 
-host 'beer.localhost', :rack, :self_signed do
-	root __dir__
-end
+load :rack, :self_signed, :supervisor
+
+host 'beer.localhost', :rack, :self_signed
