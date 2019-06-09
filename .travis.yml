@@ -24,7 +24,7 @@ matrix:
     - rvm: 2.6
       gemfile: gems/rack3.gemfile
     - rvm: 2.6
-      env: COVERAGE=BriefSummary,Coveralls
+      env: COVERAGE=Summary,Coveralls
     - rvm: truffleruby
     - rvm: jruby-head
       env: JRUBY_OPTS="--debug -X+O"
