@@ -63,6 +63,10 @@ module Falcon
 					
 					task.children.each(&:wait)
 				end
+				
+				container.attach do
+					bound_endpoint.close
+				end
 			end
 		end
 	end
