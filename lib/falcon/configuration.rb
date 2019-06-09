@@ -75,7 +75,7 @@ module Falcon
 				
 				loader = self.new(configuration, root)
 				
-				loader.instance_eval(File.read(path), root)
+				loader.instance_eval(File.read(path), path)
 			end
 			
 			def load(*features)
