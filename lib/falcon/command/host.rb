@@ -71,9 +71,7 @@ module Falcon
 				return container
 			end
 			
-			def call
-				container = Async::Container::Forked.new
-				
+			def call(container = Async::Container.new)
 				container = run(container, parent.verbose?)
 				
 				container.wait(true)
