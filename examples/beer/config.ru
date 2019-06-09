@@ -1,7 +1,7 @@
 #!/usr/bin/env falcon --verbose serve -c
 
 require 'rack'
-require 'trenni'
+require 'cgi'
 
 def bottles(n)
 	n == 1 ? "#{n} bottle" : "#{n} bottles"
@@ -42,7 +42,7 @@ run lambda {|env|
 		
 		code = File.read(__FILE__)
 		body.write("<h1>Source Code</h1>")
-		body.write("<pre><code>#{Trenni::Markup.escape_string code}</code></pre>")
+		body.write("<pre><code>#{CGI.escapeHTML code}</code></pre>")
 		body.write("</body></html>")
 	rescue
 		puts "Remote end closed connection: #{$!}"
