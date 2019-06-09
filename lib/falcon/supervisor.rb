@@ -29,6 +29,42 @@ require 'async/http/endpoint'
 
 module Falcon
 	class Supervisor
+		class Statistics
+			PS = "ps"
+			
+			def initialize(pgid: Process.getpgrp, ps: PS)
+				@pgid = pgid
+				@ps = ps
+			end
+			
+			# pid: Process Identifier
+			# pmem: Percentage Memory used.
+			# pcpu: Percentage Processor used.
+			# time: The process time used (executing on CPU).
+			# vsz: Virtual Size in kilobytes
+			# rss: Resident Set Size in kilobytes
+			# etime: The process elapsed time.
+			# command: The name of the process.
+			COLUMNS = "pid,pmem,pcpu,time,vsz,rss,etime,command"
+			
+			def capture
+				input, output = IO.pipe
+				
+				system(@ps, "-g", @pgid.to_s, "-o", COLUMNS, out: output, pgroup: true)
+				output.close
+				
+				header, *lines = input.readlines.map(&:strip)
+				
+				keys = header.split(/\s+/).map(&:downcase)
+				
+				processes = lines.map do |line|
+					keys.zip(line.split(/\s+/, keys.count)).to_h
+				end
+				
+				return processes
+			end
+		end
+		
 		def initialize(endpoint)
 			@endpoint = endpoint
 		end
@@ -41,7 +77,9 @@ module Falcon
 		end
 		
 		def statistics(message)
-			"You wish there were statistics!".split(/\s+/)
+			statistics = Statistics.new
+			
+			statistics.capture
 		end
 		
 		def handle(message)
