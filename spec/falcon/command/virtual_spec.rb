@@ -38,6 +38,7 @@ RSpec.shared_context Falcon::Command::Virtual do
 			example.run
 		ensure
 			@container&.stop(false)
+			sleep 10
 		end
 	end
 	
