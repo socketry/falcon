@@ -1,4 +1,4 @@
-# Copyright, 2018, by Samuel G. D. Williams. <http://www.codeotaku.com>
+# Copyright, 2019, by Samuel G. D. Williams. <http://www.codeotaku.com>
 # 
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -18,52 +18,10 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-require_relative 'service'
+load(:ssl)
 
-module Falcon
-	class Host < Service
-		def name
-			"Falcon Host for #{self.authority}"
-		end
-		
-		def authority
-			@evaluator.authority
-		end
-		
-		def endpoint
-			@evaluator.endpoint
-		end
-		
-		def ssl_context
-			@evaluator.ssl_context
-		end
-		
-		def root
-			@evaluator.root
-		end
-		
-		def bound_endpoint
-			@evaluator.bound_endpoint
-		end
-		
-		def to_s
-			"\#<#{self.class} #{@evaluator.authority}>"
-		end
-		
-		def run(container)
-			if @environment.include?(:server)
-				bound_endpoint = self.bound_endpoint
-				
-				container.run(name: self.name, restart: true) do |task, instance|
-					Async.logger.info(self) {"Starting application server..."}
-					
-					server = @evaluator.server
-					
-					server.run
-					
-					task.children.each(&:wait)
-				end
-			end
-		end
-	end
+add(:lets_encrypt, :ssl) do
+	lets_encrypt_root '/etc/letsencrypt/live'
+	ssl_certificate_path {File.join(lets_encrypt_root, authority, "fullchain.pem")}
+	ssl_private_key_path {File.join(lets_encrypt_root, authority, "privkey.pem")}
 end

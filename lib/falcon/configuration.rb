@@ -19,219 +19,131 @@
 # THE SOFTWARE.
 
 require 'build/environment'
-require 'async/io/unix_endpoint'
-
-require_relative 'server'
-require_relative 'supervisor'
 
 module Falcon
-	class ProxyEndpoint < Async::IO::Endpoint
-		def initialize(endpoint, **options)
-			super(**options)
-			
-			@endpoint = endpoint
-		end
-		
-		attr :endpoint
-		
-		def protocol
-			@options[:protocol]
-		end
-		
-		def scheme
-			@options[:scheme]
-		end
-		
-		def authority
-			@options[:authority]
-		end
-		
-		def connect(&block)
-			@endpoint.connect(&block)
-		end
-		
-		def bind(&block)
-			@endpoint.bind(&block)
-		end
-		
-		def each
-			return to_enum unless block_given?
-			
-			@endpoint.each do |endpoint|
-				yield self.class.new(endpoint, @options)
-			end
-		end
-		
-		def self.unix(path, **options)
-			self.new(::Async::IO::Endpoint.unix(path), **options)
-		end
-	end
-	
 	class Configuration
 		def initialize(verbose = false)
 			@environments = {}
-			@verbose = verbose
-			
-			add(:ssl) do
-				ssl_session_id {"falcon"}
-			end
-			
-			add(:host, :ssl) do
-				ssl_certificate_path {File.expand_path("ssl/certificate.pem", root)}
-				ssl_certificate {OpenSSL::X509::Certificate.new(File.read(ssl_certificate_path))}
-				
-				ssl_private_key_path {File.expand_path("ssl/private.key", root)}
-				ssl_private_key {OpenSSL::PKey::RSA.new(File.read(ssl_private_key_path))}
-				
-				ssl_context do
-					OpenSSL::SSL::SSLContext.new.tap do |context|
-						context.cert = ssl_certificate
-						context.key = ssl_private_key
-						
-						context.session_id_context = ssl_session_id
-						
-						context.set_params(
-							verify_mode: OpenSSL::SSL::VERIFY_NONE,
-						)
-						
-						context.setup
-					end
-				end
-			end
-			
-			add(:lets_encrypt, :ssl) do
-				lets_encrypt_root '/etc/letsencrypt/live'
-				ssl_certificate_path {File.join(lets_encrypt_root, authority, "fullchain.pem")}
-				ssl_private_key_path {File.join(lets_encrypt_root, authority, "privkey.pem")}
-			end
-			
-			add(:self_signed, :ssl) do
-				ssl_context do
-					contexts = Localhost::Authority.fetch(authority)
-					
-					contexts.server_context.tap do |context|
-						context.alpn_select_cb = lambda do |protocols|
-							if protocols.include? "h2"
-								return "h2"
-							elsif protocols.include? "http/1.1"
-								return "http/1.1"
-							elsif protocols.include? "http/1.0"
-								return "http/1.0"
-							else
-								return nil
-							end
-						end
-						
-						context.session_id_context = "falcon"
-					end
-				end
-			end
-			
-			add(:proxy, :host) do
-				endpoint {::Async::HTTP::Endpoint.parse(url)}
-			end
-			
-			add(:rack, :host) do
-				config_path {::File.expand_path("config.ru", root)}
-				
-				middleware do
-					::Falcon::Server.middleware(
-						::Rack::Builder.parse_file(config_path).first, verbose: verbose
-					)
-				end
-				
-				authority 'localhost'
-				scheme 'https'
-				ipc_path {::File.expand_path("server.ipc", root)}
-				
-				endpoint {ProxyEndpoint.unix(ipc_path, protocol: Async::HTTP::Protocol::HTTP2, scheme: scheme, authority: authority)}
-				protocol {endpoint.protocol}
-				
-				bound_endpoint do
-					Async::Reactor.run do
-						Async::IO::SharedEndpoint.bound(endpoint)
-					end.wait
-				end
-				
-				server do
-					::Falcon::Server.new(middleware, bound_endpoint, protocol, scheme)
-				end
-			end
-			
-			add(:service).tap do |environment|
-				environment[:start] = true
-			end
-			
-			add(:supervisor, :service) do
-				name "supervisor"
-				
-				ipc_path {::File.expand_path("supervisor.ipc", root)}
-				
-				endpoint {Async::IO::Endpoint.unix(ipc_path)}
-				
-				service do
-					::Falcon::Supervisor.new(endpoint)
-				end
-			end
 		end
 		
 		attr :environments
-		
-		def add(name, *parents, &block)
-			raise KeyError.new("#{name} is already set", key: name) if @environments.key?(name)
-			
-			environments = parents.map{|name| @environments.fetch(name)}
-			
-			parent = Build::Environment.combine(*environments)
-			
-			@environments[name] = Build::Environment.new(parent, name: name, &block)
-		end
 		
 		def each(key = :authority)
 			return to_enum(key) unless block_given?
 			
 			@environments.each do |name, environment|
-				if name == key or environment.include?(key)
+				environment = environment.flatten
+				
+				if environment.include?(key)
 					yield environment
 				end
 			end
 		end
 		
-		class Loader
-			def initialize(configuration, path)
-				@configuration = configuration
-				@path = File.realpath(path)
-				@root = File.dirname(@path)
+		def add(environment)
+			name = environment.name
+			
+			unless name
+				raise ArgumentError, "Environment name is nil #{environment.inspect}"
 			end
 			
-			def load!
-				self.instance_eval(File.read(@path), @path)
-			end
-				
-			def host(name, *parents, &block)
-				@configuration.add(name, :host, *parents, &block).tap do |environment|
-					environment[:root] = @root
-					environment[:authority] = name
-				end
-			end
+			environment = environment.flatten
 			
-			def proxy(name, *parents, &block)
-				@configuration.add(name, :proxy, *parents, &block).tap do |environment|
-					environment[:root] = @root
-					environment[:authority] = name
-				end
-			end
+			raise KeyError.new("#{name.inspect} is already set", key: name) if @environments.key?(name)
 			
-			def rack(name, *parents, &block)
-				@configuration.add(name, :rack, *parents, &block).tap do |environment|
-					environment[:root] = @root
-					environment[:authority] = name
-				end
-			end
+			@environments[name] = environment
 		end
 		
 		def load_file(path)
-			Loader.new(self, path).load!
+			Loader.load_file(self, path)
+		end
+		
+		class Loader
+			def initialize(configuration, root = nil)
+				@loaded = {}
+				@configuration = configuration
+				@environments = {}
+				@root = root
+			end
+			
+			attr :path
+			attr :configuration
+			
+			def self.load_file(configuration, path)
+				path = File.realpath(path)
+				root = File.dirname(path)
+				
+				loader = self.new(configuration, root)
+				
+				loader.instance_eval(File.read(path), root)
+			end
+			
+			def load(*features)
+				features.each do |feature|
+					next if @loaded.include?(feature)
+					
+					relative_path = File.join(__dir__, "configurations", "#{feature}.rb")
+					
+					self.instance_eval(File.read(relative_path), relative_path)
+					
+					@loaded[feature] = relative_path
+				end
+			end
+			
+			def add(name, *parents, &block)
+				raise KeyError.new("#{name} is already set", key: name) if @environments.key?(name)
+				
+				environments = parents.map{|name| @environments.fetch(name)}
+				
+				parent = Build::Environment.combine(*environments)
+				
+				@environments[name] = merge(name, *parents, &block)
+			end
+				
+			def host(name, *parents, &block)
+				environment = merge(name, :host, *parents, &block)
+				
+				environment[:root] = @root
+				environment[:authority] = name
+				
+				@configuration.add(environment.flatten)
+			end
+			
+			def proxy(name, *parents, &block)
+				environment = merge(name, :proxy, *parents, &block)
+				
+				environment[:root] = @root
+				environment[:authority] = name
+				
+				@configuration.add(environment.flatten)
+			end
+			
+			def rack(name, *parents, &block)
+				environment = merge(name, :rack, *parents, &block)
+				
+				environment[:root] = @root
+				environment[:authority] = name
+				
+				@confguration.add(environment.flatten)
+			end
+			
+			def supervisor
+				environment = merge(:supervisor, :supervisor)
+				
+				environment[:root] = @root
+				
+				@configuration.add(environment.flatten)
+			end
+				
+			private
+			
+			def merge(name, *parents, &block)
+				environments = parents.map{|name| @environments.fetch(name)}
+				
+				parent = Build::Environment.combine(*environments)
+				
+				return Build::Environment.new(parent, name: name, &block)
+			end
 		end
 	end
 end

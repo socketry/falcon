@@ -1,8 +1,10 @@
 #!/usr/bin/env -S falcon host
 
-host 'hello.localhost', :rack, :self_signed do
-	root __dir__
-end
+load :host, :lets_encrypt, :rack, :supervisor
+
+host 'hello.localhost', :rack, :self_signed
+
+supervisor
 
 # service 'jobs' do
 # 	shell ['rake', 'background:jobs:process']

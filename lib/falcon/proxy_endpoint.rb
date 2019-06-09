@@ -18,52 +18,48 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-require_relative 'service'
+require 'async/io/unix_endpoint'
 
 module Falcon
-	class Host < Service
-		def name
-			"Falcon Host for #{self.authority}"
+	class ProxyEndpoint < Async::IO::Endpoint
+		def initialize(endpoint, **options)
+			super(**options)
+			
+			@endpoint = endpoint
+		end
+		
+		attr :endpoint
+		
+		def protocol
+			@options[:protocol]
+		end
+		
+		def scheme
+			@options[:scheme]
 		end
 		
 		def authority
-			@evaluator.authority
+			@options[:authority]
 		end
 		
-		def endpoint
-			@evaluator.endpoint
+		def connect(&block)
+			@endpoint.connect(&block)
 		end
 		
-		def ssl_context
-			@evaluator.ssl_context
+		def bind(&block)
+			@endpoint.bind(&block)
 		end
 		
-		def root
-			@evaluator.root
-		end
-		
-		def bound_endpoint
-			@evaluator.bound_endpoint
-		end
-		
-		def to_s
-			"\#<#{self.class} #{@evaluator.authority}>"
-		end
-		
-		def run(container)
-			if @environment.include?(:server)
-				bound_endpoint = self.bound_endpoint
-				
-				container.run(name: self.name, restart: true) do |task, instance|
-					Async.logger.info(self) {"Starting application server..."}
-					
-					server = @evaluator.server
-					
-					server.run
-					
-					task.children.each(&:wait)
-				end
+		def each
+			return to_enum unless block_given?
+			
+			@endpoint.each do |endpoint|
+				yield self.class.new(endpoint, @options)
 			end
+		end
+		
+		def self.unix(path, **options)
+			self.new(::Async::IO::Endpoint.unix(path), **options)
 		end
 	end
 end

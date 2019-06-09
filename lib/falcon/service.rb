@@ -30,7 +30,7 @@ require 'async/http/endpoint'
 module Falcon
 	class Service
 		def initialize(environment)
-			@environment = environment.flatten
+			@environment = environment
 			@evaluator = @environment.evaluator
 		end
 		
@@ -40,13 +40,12 @@ module Falcon
 		
 		def run(container)
 			container.run(name: self.name, count: 1, restart: true) do |task, instance|
-				Async.logger.info(self) {"Starting supervisor..."}
+				Async.logger.info(self) {"Starting #{self.name}..."}
 				
 				if service = @evaluator.service
 					service.run
 				else
 					Async.logger.error(self) {"Could not determine how to start service: #{@environment.inspect}"}
-					sleep #hack
 				end
 			end
 		end

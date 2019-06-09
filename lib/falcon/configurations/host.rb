@@ -1,4 +1,4 @@
-# Copyright, 2018, by Samuel G. D. Williams. <http://www.codeotaku.com>
+# Copyright, 2019, by Samuel G. D. Williams. <http://www.codeotaku.com>
 # 
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -18,52 +18,27 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-require_relative 'service'
+load(:ssl)
 
-module Falcon
-	class Host < Service
-		def name
-			"Falcon Host for #{self.authority}"
-		end
-		
-		def authority
-			@evaluator.authority
-		end
-		
-		def endpoint
-			@evaluator.endpoint
-		end
-		
-		def ssl_context
-			@evaluator.ssl_context
-		end
-		
-		def root
-			@evaluator.root
-		end
-		
-		def bound_endpoint
-			@evaluator.bound_endpoint
-		end
-		
-		def to_s
-			"\#<#{self.class} #{@evaluator.authority}>"
-		end
-		
-		def run(container)
-			if @environment.include?(:server)
-				bound_endpoint = self.bound_endpoint
-				
-				container.run(name: self.name, restart: true) do |task, instance|
-					Async.logger.info(self) {"Starting application server..."}
-					
-					server = @evaluator.server
-					
-					server.run
-					
-					task.children.each(&:wait)
-				end
-			end
+add(:host, :ssl) do
+	ssl_certificate_path {File.expand_path("ssl/certificate.pem", root)}
+	ssl_certificate {OpenSSL::X509::Certificate.new(File.read(ssl_certificate_path))}
+	
+	ssl_private_key_path {File.expand_path("ssl/private.key", root)}
+	ssl_private_key {OpenSSL::PKey::RSA.new(File.read(ssl_private_key_path))}
+	
+	ssl_context do
+		OpenSSL::SSL::SSLContext.new.tap do |context|
+			context.cert = ssl_certificate
+			context.key = ssl_private_key
+			
+			context.session_id_context = ssl_session_id
+			
+			context.set_params(
+				verify_mode: OpenSSL::SSL::VERIFY_NONE,
+			)
+			
+			context.setup
 		end
 	end
 end
