@@ -128,7 +128,8 @@ module Falcon
 			end
 			
 			def supervisor
-				environment = merge(:supervisor, :supervisor)
+				name = File.join(@root, "supervisor")
+				environment = merge(name, :supervisor)
 				
 				environment[:root] = @root
 				
