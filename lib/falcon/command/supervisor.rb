@@ -29,7 +29,7 @@ module Falcon
 			self.description = "Control and query a specific host."
 			
 			options do
-				option "--path <path>", "The control IPC path.", default: "control.ipc"
+				option "--path <path>", "The control IPC path.", default: "supervisor.ipc"
 			end
 			
 			class Restart < Samovar::Command
