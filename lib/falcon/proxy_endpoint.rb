@@ -28,6 +28,10 @@ module Falcon
 			@endpoint = endpoint
 		end
 		
+		def to_s
+			"\#<#{self.class} endpoint=#{@endpoint}>"
+		end
+		
 		attr :endpoint
 		
 		def protocol

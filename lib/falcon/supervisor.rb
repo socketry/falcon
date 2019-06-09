@@ -58,7 +58,7 @@ module Falcon
 			@endpoint.accept do |peer|
 				stream = Async::IO::Stream.new(peer)
 				
-				while message = stream.gets(separator: "\0")
+				while message = stream.gets("\0")
 					response = handle(JSON.parse(message, symbolize_names: true))
 					stream.puts(response.to_json, separator: "\0")
 				end

@@ -55,7 +55,7 @@ module Falcon
 				bound_endpoint = self.bound_endpoint
 				
 				container.run(name: self.name, restart: true) do |task, instance|
-					Async.logger.info(self) {"Starting application server..."}
+					Async.logger.info(self) {"Starting application server, binding to #{self.endpoint}..."}
 					
 					server = @evaluator.server
 					

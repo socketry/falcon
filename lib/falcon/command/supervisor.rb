@@ -19,6 +19,9 @@
 # THE SOFTWARE.
 
 require 'samovar'
+require 'async'
+require 'json'
+require 'async/io/unix_endpoint'
 
 module Falcon
 	module Command
@@ -29,16 +32,22 @@ module Falcon
 				option "--path <path>", "The control IPC path.", default: "control.ipc"
 			end
 			
-			class Restart
+			class Restart < Samovar::Command
+				self.description = "Restart the process group."
+				
 				def call(stream)
 					stream.puts({please: 'restart'}.to_json, separator: "\0")
 				end
 			end
 			
-			class Statistics
+			class Statistics < Samovar::Command
+				self.description = "Show statistics about the process group."
+				
 				def call(stream)
 					stream.puts({please: 'statistics'}.to_json, separator: "\0")
-					resposne = JSON.parse(stream.gets(separator: "\0"))
+					response = JSON.parse(stream.gets("\0"))
+					
+					pp response
 				end
 			end
 			
@@ -52,10 +61,12 @@ module Falcon
 			end
 			
 			def call
-				endpoint.connect do |socket|
-					stream = Async::IO::Stream.new(socket)
-					
-					@command.call(stream)
+				Async do
+					endpoint.connect do |socket|
+						stream = Async::IO::Stream.new(socket)
+						
+						@command.call(stream)
+					end
 				end
 			end
 		end
