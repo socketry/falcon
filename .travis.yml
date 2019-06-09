@@ -7,6 +7,9 @@ addons:
     packages:
     - wrk
     - apache2-utils
+  homebrew:
+    packages:
+    - wrk
 
 after_success:
   - bundle exec rake benchmark:compare
@@ -26,6 +29,8 @@ matrix:
     - rvm: jruby-head
       env: JRUBY_OPTS="--debug -X+O"
     - rvm: ruby-head
+    - rvm: 2.6
+      os: osx
   allow_failures:
     - rvm: truffleruby
     - rvm: ruby-head
