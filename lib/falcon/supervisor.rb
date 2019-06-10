@@ -32,8 +32,8 @@ module Falcon
 		class Statistics
 			PS = "ps"
 			
-			def initialize(pgid: Process.getpgrp, ps: PS)
-				@pgid = pgid
+			def initialize(pgid: Process.ppid, ps: PS)
+				@ppid = pgid
 				@ps = ps
 			end
 			
@@ -50,7 +50,7 @@ module Falcon
 			def capture
 				input, output = IO.pipe
 				
-				system(@ps, "-g", @pgid.to_s, "-o", COLUMNS, out: output, pgroup: true)
+				system(@ps, "--ppid", @ppid.to_s, "-o", COLUMNS, out: output, pgroup: true)
 				output.close
 				
 				header, *lines = input.readlines.map(&:strip)

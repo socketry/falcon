@@ -47,9 +47,7 @@ module Falcon
 					stream.puts({please: 'statistics'}.to_json, separator: "\0")
 					response = JSON.parse(stream.gets("\0"), symbolize_names: true)
 					
-					response.each do |process|
-						pp process
-					end
+					pp response
 				end
 			end
 			
