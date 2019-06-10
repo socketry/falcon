@@ -18,6 +18,27 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-add(:ssl) do
+add(:tls) do
 	ssl_session_id {"falcon"}
+	
+	ssl_certificate_path {File.expand_path("ssl/certificate.pem", root)}
+	ssl_certificate {OpenSSL::X509::Certificate.new(File.read(ssl_certificate_path))}
+	
+	ssl_private_key_path {File.expand_path("ssl/private.key", root)}
+	ssl_private_key {OpenSSL::PKey::RSA.new(File.read(ssl_private_key_path))}
+	
+	ssl_context do
+		OpenSSL::SSL::SSLContext.new.tap do |context|
+			context.cert = ssl_certificate
+			context.key = ssl_private_key
+			
+			context.session_id_context = ssl_session_id
+			
+			context.set_params(
+				verify_mode: OpenSSL::SSL::VERIFY_NONE,
+			)
+			
+			context.setup
+		end
+	end
 end

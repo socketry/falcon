@@ -33,5 +33,3 @@ add(:supervisor) do
 		::Falcon::Supervisor.new(endpoint)
 	end
 end
-
-supervisor

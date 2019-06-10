@@ -18,10 +18,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-require_relative '../proxy_endpoint'
-require_relative '../server'
-
-load(:host)
+load :host
 
 add(:rack, :host) do
 	config_path {::File.expand_path("config.ru", root)}
@@ -30,21 +27,5 @@ add(:rack, :host) do
 		::Falcon::Server.middleware(
 			::Rack::Builder.parse_file(config_path).first, verbose: verbose
 		)
-	end
-	
-	scheme 'https'
-	ipc_path {::File.expand_path("server.ipc", root)}
-	
-	endpoint {::Falcon::ProxyEndpoint.unix(ipc_path, protocol: Async::HTTP::Protocol::HTTP2, scheme: scheme, authority: authority)}
-	protocol {endpoint.protocol}
-	
-	bound_endpoint do
-		Async::Reactor.run do
-			Async::IO::SharedEndpoint.bound(endpoint)
-		end.wait
-	end
-	
-	server do
-		::Falcon::Server.new(middleware, bound_endpoint, protocol, scheme)
 	end
 end

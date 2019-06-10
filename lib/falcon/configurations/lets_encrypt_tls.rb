@@ -18,28 +18,11 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-require 'localhost/authority'
+load(:tls)
 
-load(:ssl)
-
-add(:self_signed, :ssl) do
-	ssl_context do
-		contexts = Localhost::Authority.fetch(authority)
-		
-		contexts.server_context.tap do |context|
-			context.alpn_select_cb = lambda do |protocols|
-				if protocols.include? "h2"
-					return "h2"
-				elsif protocols.include? "http/1.1"
-					return "http/1.1"
-				elsif protocols.include? "http/1.0"
-					return "http/1.0"
-				else
-					return nil
-				end
-			end
-			
-			context.session_id_context = ssl_session_id
-		end
-	end
+add(:lets_encrypt_tls, :tls) do
+	lets_encrypt_root '/etc/letsencrypt/live'
+	
+	ssl_certificate_path {File.join(lets_encrypt_root, authority, "fullchain.pem")}
+	ssl_private_key_path {File.join(lets_encrypt_root, authority, "privkey.pem")}
 end

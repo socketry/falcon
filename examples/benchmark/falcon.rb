@@ -1,5 +1,5 @@
 #!/usr/bin/env -S ./bin/falcon virtual
 
-load :rack, :self_signed, :supervisor
+load :rack, :self_signed_tls, :supervisor
 
-host 'benchmark.local', :rack, :self_signed
+rack 'benchmark.local', :self_signed_tls

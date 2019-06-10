@@ -18,27 +18,27 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-load(:ssl)
+require_relative '../proxy_endpoint'
+require_relative '../server'
 
-add(:host, :ssl) do
-	ssl_certificate_path {File.expand_path("ssl/certificate.pem", root)}
-	ssl_certificate {OpenSSL::X509::Certificate.new(File.read(ssl_certificate_path))}
+add(:host) do
+	middleware do
+		::Protocol::HTTP::Middleware::HelloWorld
+	end
 	
-	ssl_private_key_path {File.expand_path("ssl/private.key", root)}
-	ssl_private_key {OpenSSL::PKey::RSA.new(File.read(ssl_private_key_path))}
+	ipc_path {::File.expand_path("server.ipc", root)}
+	protocol {Async::HTTP::Protocol::HTTP2}
+	scheme 'https'
 	
-	ssl_context do
-		OpenSSL::SSL::SSLContext.new.tap do |context|
-			context.cert = ssl_certificate
-			context.key = ssl_private_key
-			
-			context.session_id_context = ssl_session_id
-			
-			context.set_params(
-				verify_mode: OpenSSL::SSL::VERIFY_NONE,
-			)
-			
-			context.setup
-		end
+	endpoint {::Falcon::ProxyEndpoint.unix(ipc_path, protocol: protocol, scheme: scheme, authority: authority)}
+	
+	bound_endpoint do
+		Async::Reactor.run do
+			Async::IO::SharedEndpoint.bound(endpoint)
+		end.wait
+	end
+	
+	server do
+		::Falcon::Server.new(middleware, bound_endpoint, protocol, scheme)
 	end
 end

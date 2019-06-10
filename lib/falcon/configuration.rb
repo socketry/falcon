@@ -124,7 +124,7 @@ module Falcon
 				environment[:root] = @root
 				environment[:authority] = name
 				
-				@confguration.add(environment.flatten)
+				@configuration.add(environment.flatten)
 			end
 			
 			def supervisor
