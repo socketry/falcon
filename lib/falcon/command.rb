@@ -26,7 +26,6 @@ require_relative 'command/supervisor'
 require_relative 'version'
 
 require 'samovar'
-require 'logger'
 
 module Falcon
 	module Command
@@ -60,11 +59,11 @@ module Falcon
 			
 			def call
 				if verbose?
-					Async.logger.level = Logger::DEBUG
+					Async.logger.debug!
 				elsif quiet?
-					Async.logger.level = Logger::WARN
+					Async.logger.warn!
 				else
-					Async.logger.level = Logger::INFO
+					Async.logger.info!
 				end
 				
 				if @options[:version]
