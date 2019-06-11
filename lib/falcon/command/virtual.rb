@@ -52,13 +52,19 @@ module Falcon
 				
 				Process::GID.change_privilege(stat.gid)
 				Process::UID.change_privilege(stat.uid)
+				
+				home = Etc.getpwuid(stat.uid).dir
+				
+				return {
+					HOME: home,
+				}
 			end
 			
 			def spawn(path, container, **options)
 				container.spawn(name: self.name, restart: true) do |instance|
-					assume_privileges(path)
+					env = assume_privileges(path)
 					
-					instance.exec("bundle", "exec", path, **options)
+					instance.exec(env, "bundle", "exec", path, **options)
 				end
 			end
 			
