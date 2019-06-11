@@ -34,6 +34,18 @@ add(:tls) do
 			
 			context.session_id_context = ssl_session_id
 			
+			context.alpn_select_cb = lambda do |protocols|
+				if protocols.include? "h2"
+					return "h2"
+				elsif protocols.include? "http/1.1"
+					return "http/1.1"
+				elsif protocols.include? "http/1.0"
+					return "http/1.0"
+				else
+					return nil
+				end
+			end
+			
 			context.set_params(
 				verify_mode: OpenSSL::SSL::VERIFY_NONE,
 			)
