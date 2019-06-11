@@ -54,11 +54,11 @@ module Falcon
 				Process::UID.change_privilege(stat.uid)
 			end
 			
-			def spawn(path, container)
+			def spawn(path, container, **options)
 				container.spawn(name: self.name, restart: true) do |instance|
 					assume_privileges(path)
 					
-					instance.exec("bundle", "exec", path)
+					instance.exec("bundle", "exec", path, **options)
 				end
 			end
 			
@@ -67,8 +67,12 @@ module Falcon
 				container = Async::Container.new
 				
 				@paths.each do |path|
+					path = File.expand_path(path)
+					root = File.dirname(path)
+					
 					configuration.load_file(path)
-					spawn(path, container)
+					
+					spawn(path, container, chdir: root)
 				end
 				
 				hosts = Hosts.new(configuration)
