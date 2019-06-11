@@ -56,7 +56,7 @@ module Falcon
 				home = Etc.getpwuid(stat.uid).dir
 				
 				return {
-					HOME: home,
+					'HOME' => home,
 				}
 			end
 			
