@@ -42,6 +42,8 @@ Alternatively, install in terminal:
 
 ## Usage
 
+### Development
+
 You can run `falcon serve` directly. It will load the `config.ru` and start serving on https://localhost:9292. Please [try the interactive online tutorial](https://katacoda.com/ioquatix/scenarios/falcon-introduction).
 
 The `falcon serve` command has the following options for you to use:
@@ -76,6 +78,45 @@ To run on a different port:
 ```
 $ falcon serve --port 3000
 ```
+
+### Virtual Hosts
+
+Falcon can replace Nginx as a virtual server for Ruby applications. **This is an experimental feature**.
+
+```
+/--------------------\
+|   Client Browser   |
+\--------------------/
+          ||          
+  (TLS + HTTP/2 TCP)
+          ||          
+/--------------------\
+| Falcon Proxy (SNI) |
+\--------------------/
+          ||          
+  (HTTP/2 UNIX PIPE)
+          ||          
+/--------------------\
+| Application Server |   (Rack Compatible)
+\--------------------/	
+```
+
+You need to create a `falcon.rb` configuration in the root of your application, and start the virtual host:
+
+```
+$ cat /srv/http/example.com/falcon.rb
+#!/usr/bin/env -S falcon host
+
+load :rack, :lets_encrypt_tls, :supervisor
+
+rack 'hello.localhost', :lets_encrypt_tls
+
+supervisor
+
+% falcon virtual /srv/http/example.com/falcon.rb
+```
+
+The falcon virtual server is hard coded to redirect http traffic to https, and will serve each application using an internal SNI-based proxy.
 
 ### Integration with Rails
 
