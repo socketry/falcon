@@ -18,19 +18,23 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
+require_relative '../extensions/openssl'
+
 add(:tls) do
 	ssl_session_id {"falcon"}
 	
 	ssl_certificate_path {File.expand_path("ssl/certificate.pem", root)}
-	ssl_certificate {OpenSSL::X509::Certificate.new(File.read(ssl_certificate_path))}
+	ssl_certificates {OpenSSL::X509.load_certificates(ssl_certificate_path)}
+	
+	ssl_certificate {ssl_certificates[0]}
+	ssl_certificate_chain {ssl_certificates[1..-1]}
 	
 	ssl_private_key_path {File.expand_path("ssl/private.key", root)}
 	ssl_private_key {OpenSSL::PKey::RSA.new(File.read(ssl_private_key_path))}
 	
 	ssl_context do
 		OpenSSL::SSL::SSLContext.new.tap do |context|
-			context.cert = ssl_certificate
-			context.key = ssl_private_key
+			context.add_certificate(ssl_certificate, ssl_private_key, ssl_certificate_chain)
 			
 			context.session_id_context = ssl_session_id
 			
