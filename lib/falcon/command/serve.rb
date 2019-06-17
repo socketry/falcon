@@ -110,7 +110,7 @@ module Falcon
 				end.wait
 				
 				Async.logger.info(endpoint) do |buffer|
-					buffer.puts "Falcon taking flight! Using #{container_class} #{container_options}"
+					buffer.puts "Falcon v#{VERSION} taking flight! Using #{container_class} #{container_options}"
 					buffer.puts "- To terminate: Ctrl-C or kill #{Process.pid}"
 				end
 				
