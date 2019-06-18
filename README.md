@@ -126,7 +126,7 @@ Falcon works perfectly with `rails` apps.
 
 2. Run `falcon serve` to start a local development server.
 
-Alternatively run `RACK_HANDLER=falcon rails server` to start the server (at least, until [rack#181](https://github.com/rack/rack/pull/1181) is merged).
+Alternatively run `RACK_HANDLER=falcon rails server` to start the server (at least, until [rack#1181](https://github.com/rack/rack/pull/1181) is merged).
 
 #### Thread Safety
 
