@@ -90,11 +90,12 @@ module Falcon
 		def prepare_request(request, host)
 			forwarded = []
 			
-			# Async.logger.info(self) do |buffer|
-			# 	buffer.puts "Request authority: #{request.authority}"
-			# 	buffer.puts "Host authority: #{host.authority}"
-			# 	buffer.puts "Endpoint authority: #{host.endpoint.authority}"
-			# end
+			Async.logger.debug(self) do |buffer|
+				buffer.puts "Request authority: #{request.authority}"
+				buffer.puts "Host authority: #{host.authority}"
+				buffer.puts "Endpoint authority: #{host.endpoint.authority}"
+				buffer.puts "Headers: #{request.headers.inspect}"
+			end
 			
 			# The authority of the request must match the authority of the endpoint we are proxying to, otherwise SNI and other things won't work correctly.
 			request.authority = host.authority
