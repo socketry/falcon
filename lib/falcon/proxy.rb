@@ -93,8 +93,8 @@ module Falcon
 			Async.logger.debug(self) do |buffer|
 				buffer.puts "Request authority: #{request.authority}"
 				buffer.puts "Host authority: #{host.authority}"
-				buffer.puts "Endpoint authority: #{host.endpoint.authority}"
-				buffer.puts "Headers: #{request.headers.inspect}"
+				buffer.puts "Request: #{request.method} #{request.path} #{request.version}"
+				buffer.puts "Request headers: #{request.headers.inspect}"
 			end
 			
 			# The authority of the request must match the authority of the endpoint we are proxying to, otherwise SNI and other things won't work correctly.
