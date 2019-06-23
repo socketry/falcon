@@ -25,8 +25,8 @@ RSpec.shared_context Falcon::Command::Virtual do
 	
 	let(:command) {
 		described_class[
-			"--bind-insecure", "http://127.0.0.1:8080",
-			"--bind-secure", "https://127.0.0.1:8443",
+			"--bind-insecure", "http://localhost:8080",
+			"--bind-secure", "https://localhost:8443",
 			*options,
 		]
 	}
@@ -38,7 +38,8 @@ RSpec.shared_context Falcon::Command::Virtual do
 		container
 		
 		# TODO some kind of more reliable synchronisation:
-		sleep(1)
+		# until File.exist? "server.ipc"
+		sleep(4)
 		
 		begin
 			example.run
@@ -73,8 +74,8 @@ RSpec.describe Falcon::Command::Virtual do
 		end
 		
 		shared_examples_for Falcon::Command::Virtual do
-			let(:secure_endpoint) {command.secure_endpoint(hostname: "hello.localhost", protocol: protocol)}
-			let(:secure_client) {Async::HTTP::Client.new(secure_endpoint, retries: 0)}
+			let(:host_endpoint) {command.host_endpoint("hello.localhost")}
+			let(:secure_client) {Async::HTTP::Client.new(host_endpoint, retries: 0)}
 			
 			it "gets valid response from secure endpoint" do
 				request = Protocol::HTTP::Request.new("https", "hello.localhost", "GET", "/index")
