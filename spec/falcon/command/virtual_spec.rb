@@ -25,8 +25,8 @@ RSpec.shared_context Falcon::Command::Virtual do
 	
 	let(:command) {
 		described_class[
-			"--bind-insecure", "http://localhost:8080",
-			"--bind-secure", "https://localhost:8443",
+			"--bind-insecure", "http://127.0.0.1:8080",
+			"--bind-secure", "https://127.0.0.1:8443",
 			*options,
 		]
 	}
