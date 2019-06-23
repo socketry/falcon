@@ -4,6 +4,8 @@ require "covered/rspec"
 require "async"
 require "async/rspec"
 
+ENV['PATH'] = [File.expand_path('../bin', __dir__), ENV['PATH']].join(':')
+
 RSpec.configure do |config|
 	# Enable flags like --only-failures and --next-failure
 	config.example_status_persistence_file_path = ".rspec_status"

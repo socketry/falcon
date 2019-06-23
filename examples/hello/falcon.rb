@@ -1,4 +1,4 @@
-#!/usr/bin/env falcon host
+#!/usr/bin/env falcon-host
 
 load :rack, :self_signed_tls, :supervisor
 

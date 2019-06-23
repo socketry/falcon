@@ -72,7 +72,7 @@ module Falcon
 			end
 			
 			def call(container = Async::Container.new)
-				container = run(container, parent.verbose?)
+				container = run(container, parent&.verbose?)
 				
 				container.wait(true)
 			end
