@@ -31,9 +31,15 @@ RSpec.shared_context Falcon::Command::Virtual do
 		]
 	}
 	
-	let!(:container) {command.run(true)}
+	let(:container) {command.run(true)}
 	
 	around do |example|
+		# Wait for the container to start...
+		container
+		
+		# TODO some kind of more reliable synchronisation:
+		sleep(1)
+		
 		begin
 			example.run
 		ensure
@@ -42,7 +48,6 @@ RSpec.shared_context Falcon::Command::Virtual do
 	end
 	
 	let(:insecure_client) {Async::HTTP::Client.new(command.insecure_endpoint, retries: 0)}
-	let(:secure_client) {Async::HTTP::Client.new(command.secure_endpoint, retries: 0)}
 end
 
 RSpec.describe Falcon::Command::Virtual do
@@ -67,19 +72,39 @@ RSpec.describe Falcon::Command::Virtual do
 			end
 		end
 		
-		it "gets valid response from secure endpoint" do
-			request = Protocol::HTTP::Request.new("http", "hello.localhost", "GET", "/index")
+		shared_examples_for Falcon::Command::Virtual do
+			let(:secure_endpoint) {command.secure_endpoint(hostname: "hello.localhost", protocol: protocol)}
+			let(:secure_client) {Async::HTTP::Client.new(secure_endpoint, retries: 0)}
 			
-			expect(request.authority).to be == "hello.localhost"
-			
-			Async do
-				response = secure_client.call(request)
+			it "gets valid response from secure endpoint" do
+				request = Protocol::HTTP::Request.new("https", "hello.localhost", "GET", "/index")
 				
-				expect(response).to be_success
-				expect(response.read).to be == "Hello World"
+				expect(request.authority).to be == "hello.localhost"
 				
-				response.close
+				Async do
+					response = secure_client.call(request)
+					
+					expect(response).to be_success
+					expect(response.read).to be == "Hello World"
+					
+					secure_client.close
+				end.wait
 			end
+		end
+		
+		context "HTTP/1.0" do
+			let(:protocol) {Async::HTTP::Protocol::HTTP10}
+			include_examples Falcon::Command::Virtual
+		end
+		
+		context "HTTP/1.1" do
+			let(:protocol) {Async::HTTP::Protocol::HTTP11}
+			include_examples Falcon::Command::Virtual
+		end
+		
+		context "HTTP/2" do
+			let(:protocol) {Async::HTTP::Protocol::HTTP2}
+			include_examples Falcon::Command::Virtual
 		end
 	end
 end

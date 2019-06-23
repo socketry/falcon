@@ -93,12 +93,12 @@ module Falcon
 				container.wait
 			end
 			
-			def insecure_endpoint
-				Async::HTTP::Endpoint.parse(@options[:bind_insecure])
+			def insecure_endpoint(**options)
+				Async::HTTP::Endpoint.parse(@options[:bind_insecure], **options)
 			end
 			
-			def secure_endpoint
-				Async::HTTP::Endpoint.parse(@options[:bind_secure])
+			def secure_endpoint(**options)
+				Async::HTTP::Endpoint.parse(@options[:bind_secure], **options)
 			end
 		end
 	end

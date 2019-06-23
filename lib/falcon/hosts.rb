@@ -30,7 +30,6 @@ require 'async/http/endpoint'
 
 module Falcon
 	class Hosts
-		DEFAULT_ALPN_PROTOCOLS = ['h2', 'http/1.1'].freeze
 		SERVER_CIPHERS = "EECDH+CHACHA20:EECDH+AES128:RSA+AES128:EECDH+AES256:RSA+AES256:EECDH+3DES:RSA+3DES:!MD5".freeze
 		
 		def initialize(configuration)
