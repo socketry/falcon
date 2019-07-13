@@ -13,7 +13,7 @@ class Benchmark
 		SMALL
 	end
 	
-	BIG = [200, {}, ["Hello World\n" * 100] * 100].freeze
+	BIG = [200, {}, ["Hello World\n" * 1000] * 1000].freeze
 	
 	def big(env)
 		BIG
