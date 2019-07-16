@@ -138,12 +138,12 @@ Please ensure you specify `config.threadsafe!` in your `config/application.rb`:
 
 ```ruby
 module MySite
-	class Application < Rails::Application
-		# ...
+  class Application < Rails::Application
+    # ...
 		
-		# Enable threaded mode
-		config.threadsafe!
-	end
+    # Enable threaded mode
+    config.threadsafe!
+  end
 end
 ```
 
