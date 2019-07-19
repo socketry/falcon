@@ -11,7 +11,7 @@ addons:
     packages:
     - wrk
 
-after_success:
+after_script:
   - bundle exec rake benchmark:compare
 
 matrix:
