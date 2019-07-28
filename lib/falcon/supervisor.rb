@@ -58,7 +58,7 @@ module Falcon
 				keys = header.split(/\s+/).map(&:downcase)
 				
 				processes = lines.map do |line|
-					keys.zip(line.split(/\s+/, keys.count)).to_h
+					keys.zip(line.split(/\s+/, keys.size)).to_h
 				end
 				
 				return processes
