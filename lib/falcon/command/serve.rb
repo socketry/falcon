@@ -32,6 +32,8 @@ require 'samovar'
 require 'rack/builder'
 require 'rack/server'
 
+require 'bundler'
+
 module Falcon
 	module Command
 		class Serve < Samovar::Command
@@ -45,6 +47,7 @@ module Falcon
 				option '-t/--timeout <duration>', "Specify the maximum time to wait for blocking operations.", type: Float, default: nil
 				
 				option '-c/--config <path>', "Rackup configuration file to load", default: 'config.ru'
+				option '--preload', "Preload the bundle before creating containers"
 				
 				option '--forked | --threaded | --hybrid', "Select a specific parallelism model", key: :container, default: :forked
 				
@@ -101,7 +104,9 @@ module Falcon
 			end
 			
 			def run(verbose = false)
-				app, _ = load_app(verbose)
+				if @options[:preload]
+					Bundler.require(:preload)
+				end
 				
 				endpoint = Endpoint.parse(@options[:bind], **endpoint_options)
 				
@@ -137,6 +142,8 @@ module Falcon
 							end
 						end
 					end
+					
+					app, _ = load_app(verbose)
 					
 					server = Falcon::Server.new(app, bound_endpoint, endpoint.protocol, endpoint.scheme)
 					
