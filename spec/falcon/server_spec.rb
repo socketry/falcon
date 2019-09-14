@@ -41,7 +41,8 @@ RSpec.describe Falcon::Server, timeout: 1 do
 		end
 		
 		context "GET /" do
-			let(:response) {client.get("/")}
+			let!(:response) {client.get("/")}
+			after {response.finish}
 			
 			it "generates successful response" do
 				expect(response).to be_success

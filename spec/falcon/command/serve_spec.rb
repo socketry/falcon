@@ -40,6 +40,7 @@ RSpec.shared_examples_for Falcon::Command::Serve do
 				response = client.get("/")
 				expect(response).to be_success
 				
+				response.finish
 				client.close
 			end
 		ensure

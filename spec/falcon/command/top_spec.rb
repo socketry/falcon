@@ -39,6 +39,8 @@ RSpec.describe Falcon::Command::Top do
 				response = client.get("/")
 				expect(response).to be_success
 				
+				response.finish
+				
 				client.close
 			end
 			
