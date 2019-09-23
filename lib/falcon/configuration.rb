@@ -92,11 +92,6 @@ module Falcon
 			
 			def add(name, *parents, &block)
 				raise KeyError.new("#{name} is already set", key: name) if @environments.key?(name)
-				
-				environments = parents.map{|name| @environments.fetch(name)}
-				
-				parent = Build::Environment.combine(*environments)
-				
 				@environments[name] = merge(name, *parents, &block)
 			end
 				
@@ -143,7 +138,7 @@ module Falcon
 				
 				parent = Build::Environment.combine(*environments)
 				
-				return Build::Environment.new(parent, name: name, &block)
+				Build::Environment.new(parent, name: name, &block)
 			end
 		end
 	end
