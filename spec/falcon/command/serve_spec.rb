@@ -21,8 +21,6 @@
 require 'falcon/command/serve'
 
 RSpec.shared_examples_for Falcon::Command::Serve do
-	let(:options) {Array.new}
-	
 	let(:command) do
 		described_class[
 			"--port", 8090,
@@ -50,6 +48,8 @@ RSpec.shared_examples_for Falcon::Command::Serve do
 end
 
 RSpec.describe Falcon::Command::Serve do
+	let(:options) { [] }
+
 	context "with custom port" do
 		include_examples Falcon::Command::Serve
 	end
