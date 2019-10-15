@@ -77,7 +77,7 @@ module Falcon
 					http_key = "HTTP_#{key.upcase.tr('-', '_')}"
 					
 					if current_value = env[http_key]
-						env[http_key] = "#{current_value}\n#{value}"
+						env[http_key] = "#{current_value};#{value}"
 					else
 						env[http_key] = value
 					end

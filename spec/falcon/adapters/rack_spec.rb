@@ -35,7 +35,7 @@ RSpec.describe Falcon::Adapters::Rack do
 		it "should merge duplicate headers" do
 			subject.unwrap_headers(fields, env)
 			
-			expect(env).to be == {'HTTP_COOKIE' => "a=b\nx=y"}
+			expect(env).to be == {'HTTP_COOKIE' => "a=b;x=y"}
 		end
 	end
 	
