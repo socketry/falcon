@@ -70,6 +70,12 @@ module Falcon
 		end
 		
 		def restart(message)
+			# Tell the parent of this process group to spin up a new process group/container.
+			# Wait for that to start accepting new connections.
+			# Stop accepting connections.
+			# Wait for existing connnections to drain.
+			# Terminate this process group.
+			
 			signal = message[:signal] || :INT
 			
 			# Sepukku:

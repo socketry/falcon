@@ -2,6 +2,8 @@ source 'https://rubygems.org'
 
 gemspec
 
+gem "async-container", path: "../async-container"
+
 group :development do
 	gem 'ruby-prof', platform: :mri
 end

@@ -29,7 +29,7 @@ RSpec.shared_examples_for Falcon::Command::Serve do
 	end
 	
 	it "can listen on specified port" do
-		container = command.run(true)
+		controller = command.run(true)
 		
 		begin
 			Async do
@@ -42,7 +42,7 @@ RSpec.shared_examples_for Falcon::Command::Serve do
 				client.close
 			end
 		ensure
-			container.stop(false)
+			controller.stop(false)
 		end
 	end
 end

@@ -22,6 +22,7 @@ require_relative '../server'
 require_relative '../endpoint'
 
 require 'async/container'
+
 require 'async/io/trap'
 require 'async/io/host_endpoint'
 require 'async/io/shared_endpoint'
@@ -101,8 +102,6 @@ module Falcon
 			end
 			
 			def run(verbose = false)
-				app, _ = load_app(verbose)
-				
 				endpoint = Endpoint.parse(@options[:bind], **endpoint_options)
 				
 				bound_endpoint = Async::Reactor.run do
@@ -112,46 +111,49 @@ module Falcon
 				Async.logger.info(endpoint) do |buffer|
 					buffer.puts "Falcon v#{VERSION} taking flight! Using #{container_class} #{container_options}"
 					buffer.puts "- To terminate: Ctrl-C or kill #{Process.pid}"
+					buffer.puts "- To reload configuration: kill -HUP #{Process.pid}"
 				end
 				
 				debug_trap = Async::IO::Trap.new(:USR1)
 				debug_trap.ignore!
 				
-				container = container_class.new
-				
-				container.attach do
-					bound_endpoint.close
-				end
-				
-				container.run(name: "Falcon Server", restart: true, **container_options) do |task, instance|
-					task.async do
-						if debug_trap.install!
-							Async.logger.info(instance) do
-								"- Per-process status: kill -USR1 #{Process.pid}"
+				controller = Async::Container::Controller.new(container_class: self.container_class) do |container|
+					app, _ = self.load_app(verbose)
+					
+					container.run(name: "Falcon Server", restart: true, **self.container_options) do |task, instance|
+						task.async do
+							if debug_trap.install!
+								Async.logger.info(instance) do
+									"- Per-process status: kill -USR1 #{Process.pid}"
+								end
+							end
+							
+							debug_trap.trap do
+								Async.logger.info(self) do |buffer|
+									task.reactor.print_hierarchy(buffer)
+								end
 							end
 						end
 						
-						debug_trap.trap do
-							Async.logger.info(self) do |buffer|
-								task.reactor.print_hierarchy(buffer)
-							end
-						end
+						server = Falcon::Server.new(app, bound_endpoint, endpoint.protocol, endpoint.scheme)
+						
+						server.run
+						
+						task.children.each(&:wait)
 					end
-					
-					server = Falcon::Server.new(app, bound_endpoint, endpoint.protocol, endpoint.scheme)
-					
-					server.run
-					
-					task.children.each(&:wait)
 				end
 				
-				return container
+				# container.attach do
+				# 	bound_endpoint.close
+				# end
+				
+				return controller
 			end
 			
 			def call
-				container = run(parent.verbose?)
+				controller = run(parent.verbose?)
 				
-				container.wait
+				controller.run
 			end
 		end
 	end
