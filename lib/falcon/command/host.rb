@@ -74,6 +74,14 @@ module Falcon
 			def call(container = Async::Container.new)
 				container = run(container, parent&.verbose?)
 				
+				Signal.trap(:USR2) do
+					replacement = run(container.class.new, parent&.verbose?)
+					
+					container.stop
+					
+					container = replacement
+				end
+				
 				container.wait(true)
 			end
 		end

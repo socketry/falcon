@@ -40,7 +40,6 @@ RSpec.describe Falcon::Command::Top do
 				expect(response).to be_success
 				
 				response.finish
-				
 				client.close
 			end
 			

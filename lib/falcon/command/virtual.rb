@@ -91,6 +91,9 @@ module Falcon
 			def call
 				container = run(parent.verbose?)
 				
+				# If we are asked to restart a given container, spawn a new container to replace the old one.
+				
+				
 				container.wait
 			end
 			
