@@ -47,54 +47,68 @@ module Falcon
 			
 			many :paths
 			
-			def assume_privileges(path)
-				stat = File.stat(path)
-				
-				Process::GID.change_privilege(stat.gid)
-				Process::UID.change_privilege(stat.uid)
-				
-				home = Etc.getpwuid(stat.uid).dir
-				
-				return {
-					'HOME' => home,
-				}
-			end
-			
-			def spawn(path, container, **options)
-				container.spawn(name: self.name, restart: true) do |instance|
-					env = assume_privileges(path)
+			class Controller < Async::Container::Controller
+				def initialize(command, **options)
+					@command = command
 					
-					instance.exec(env, "bundle", "exec", path, **options)
+					@endpoint = nil
+					@bound_endpoint = nil
+					@debug_trap = Async::IO::Trap.new(:USR1)
+					
+					super(**options)
+				end
+				
+				def assume_privileges(path)
+					stat = File.stat(path)
+					
+					Process::GID.change_privilege(stat.gid)
+					Process::UID.change_privilege(stat.uid)
+					
+					home = Etc.getpwuid(stat.uid).dir
+					
+					return {
+						'HOME' => home,
+					}
+				end
+				
+				def spawn(path, container, **options)
+					container.spawn(name: self.name, restart: true) do |instance|
+						env = assume_privileges(path)
+						
+						instance.exec(env, "bundle", "exec", path, **options)
+					end
+				end
+				
+				def setup(container)
+					configuration = Configuration.new(verbose)
+					
+					@paths.each do |path|
+						path = File.expand_path(path)
+						root = File.dirname(path)
+						
+						configuration.load_file(path)
+						
+						spawn(path, container, chdir: root)
+					end
+					
+					hosts = Hosts.new(configuration)
+					
+					hosts.run(container, **@options)
 				end
 			end
 			
-			def run(verbose = false)
-				configuration = Configuration.new(verbose)
-				container = Async::Container.new
-				
-				@paths.each do |path|
-					path = File.expand_path(path)
-					root = File.dirname(path)
-					
-					configuration.load_file(path)
-					
-					spawn(path, container, chdir: root)
-				end
-				
-				hosts = Hosts.new(configuration)
-				
-				hosts.run(container, **@options)
-				
-				return container
+			def controller
+				Controller.new(self)
 			end
 			
 			def call
-				container = run(parent.verbose?)
+				Async.logger.info(self.endpoint) do |buffer|
+					buffer.puts "Falcon v#{VERSION} taking flight!"
+					buffer.puts "- To terminate: Ctrl-C or kill #{Process.pid}"
+					buffer.puts "- To reload all sites: kill -HUP #{Process.pid}"
+				end
 				
-				# If we are asked to restart a given container, spawn a new container to replace the old one.
-				
-				
-				container.wait
+				self.controller.run
 			end
 			
 			def insecure_endpoint(**options)

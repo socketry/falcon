@@ -69,7 +69,11 @@ module Falcon
 				end
 			end
 			
-			def load_app(verbose)
+			def verbose?
+				@parent&.verbose?
+			end
+			
+			def load_app(verbose = self.verbose?)
 				rack_app, options = Rack::Builder.parse_file(@options[:config])
 				
 				return Server.middleware(rack_app, verbose: verbose), options
@@ -96,6 +100,10 @@ module Falcon
 				slice_options(:hostname, :port, :reuse_port, :timeout)
 			end
 			
+			def endpoint
+				Endpoint.parse(@options[:bind], **endpoint_options)
+			end
+			
 			def client_endpoint
 				Async::HTTP::Endpoint.parse(@options[:bind], **endpoint_options)
 			end
@@ -104,45 +112,52 @@ module Falcon
 				Async::HTTP::Client.new(client_endpoint)
 			end
 			
-			def run(verbose = false)
-				if @options[:preload]
-					Bundler.require(:preload)
-				end
-				
-				endpoint = Endpoint.parse(@options[:bind], **endpoint_options)
-				
-				bound_endpoint = Async::Reactor.run do
-					Async::IO::SharedEndpoint.bound(endpoint)
-				end.wait
-				
-				Async.logger.info(endpoint) do |buffer|
-					buffer.puts "Falcon v#{VERSION} taking flight! Using #{container_class} #{container_options}"
-					buffer.puts "- To terminate: Ctrl-C or kill #{Process.pid}"
-					buffer.puts "- To reload configuration: kill -HUP #{Process.pid}"
-				end
-				
-				debug_trap = Async::IO::Trap.new(:USR1)
-				debug_trap.ignore!
-				
-				controller = Async::Container::Controller.new(container_class: self.container_class) do |container|
-					app, _ = self.load_app(verbose)
+			class Controller < Async::Container::Controller
+				def initialize(command, **options)
+					@command = command
 					
-					container.run(name: "Falcon Server", restart: true, **self.container_options) do |task, instance|
+					@endpoint = nil
+					@bound_endpoint = nil
+					@debug_trap = Async::IO::Trap.new(:USR1)
+					
+					super(**options)
+				end
+				
+				def create_container
+					@command.container_class.new
+				end
+				
+				def start
+					@endpoint ||= @command.endpoint
+					
+					@bound_endpoint = Async::Reactor.run do
+						Async::IO::SharedEndpoint.bound(@endpoint)
+					end.wait
+					
+					@debug_trap.ignore!
+					
+					super
+				end
+				
+				def setup(container)
+					app, _ = @command.load_app
+					
+					container.run(name: "Falcon Server", restart: true, **@command.container_options) do |task, instance|
 						task.async do
-							if debug_trap.install!
+							if @debug_trap.install!
 								Async.logger.info(instance) do
 									"- Per-process status: kill -USR1 #{Process.pid}"
 								end
 							end
 							
-							debug_trap.trap do
+							@debug_trap.trap do
 								Async.logger.info(self) do |buffer|
 									task.reactor.print_hierarchy(buffer)
 								end
 							end
 						end
 						
-						server = Falcon::Server.new(app, bound_endpoint, endpoint.protocol, endpoint.scheme)
+						server = Falcon::Server.new(app, @bound_endpoint, @endpoint.protocol, @endpoint.scheme)
 						
 						server.run
 						
@@ -150,17 +165,31 @@ module Falcon
 					end
 				end
 				
-				# container.attach do
-				# 	bound_endpoint.close
-				# end
-				
-				return controller
+				def stop(*)
+					@bound_endpoint&.close
+					
+					@debug_trap.default!
+					
+					super
+				end
+			end
+			
+			def controller
+				Controller.new(self)
 			end
 			
 			def call
-				controller = run(parent.verbose?)
+				Async.logger.info(self.endpoint) do |buffer|
+					buffer.puts "Falcon v#{VERSION} taking flight! Using #{self.container_class} #{self.container_options}"
+					buffer.puts "- To terminate: Ctrl-C or kill #{Process.pid}"
+					buffer.puts "- To reload configuration: kill -HUP #{Process.pid}"
+				end
 				
-				controller.run
+				if @options[:preload]
+					Bundler.require(:preload)
+				end
+				
+				self.controller.run
 			end
 		end
 	end
