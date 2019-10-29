@@ -87,23 +87,23 @@ Falcon can replace Nginx as a virtual server for Ruby applications. **This is an
 /--------------------\
 |   Client Browser   |
 \--------------------/
-          ||          
+          ||
   (TLS + HTTP/2 TCP)
-          ||          
+          ||
 /--------------------\
 | Falcon Proxy (SNI) |
 \--------------------/
-          ||          
+          ||
   (HTTP/2 UNIX PIPE)
-          ||          
+          ||
 /--------------------\
 | Application Server |   (Rack Compatible)
-\--------------------/	
+\--------------------/
 ```
 
 You need to create a `falcon.rb` configuration in the root of your application, and start the virtual host:
 
-```
+```ruby
 $ cat /srv/http/example.com/falcon.rb
 #!/usr/bin/env -S falcon host
 
@@ -138,12 +138,12 @@ Please ensure you specify `config.threadsafe!` in your `config/application.rb`:
 
 ```ruby
 module MySite
-	class Application < Rails::Application
-		# ...
-		
-		# Enable threaded mode
-		config.threadsafe!
-	end
+  class Application < Rails::Application
+    # ...
+
+    # Enable threaded mode
+    config.threadsafe!
+  end
 end
 ```
 
@@ -229,12 +229,12 @@ In order to use `curl` with self-signed localhost certificates, you need to spec
 > Host: localhost:9292
 > User-Agent: curl/7.63.0
 > Accept: */*
-> 
+>
 < HTTP/1.1 301
 < location: /index
 < cache-control: max-age=86400
 < content-length: 0
-< 
+<
 * Connection #0 to host localhost left intact
 ```
 
@@ -248,7 +248,7 @@ It uses one Fiber per request, which yields in the presence of blocking IO.
 
 ### Memory Usage
 
-Falcon uses a pre-fork model which loads the entire rack application before forking. This reduces per-process memory usage. 
+Falcon uses a pre-fork model which loads the entire rack application before forking. This reduces per-process memory usage.
 
 [async-http] has been designed carefully to minimize IO related garbage. This avoids large per-request memory allocations or disk usage, provided that you use streaming IO.
 
