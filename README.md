@@ -4,7 +4,7 @@ Falcon is a multi-process, multi-fiber rack-compatible HTTP server built on top 
 
 [Priority Business Support](#priority-business-support) is available.
 
-[![Build Status](https://travis-ci.com/socketry/falcon.svg)](http://travis-ci.com/socketry/falcon)
+[![Build Status](https://travis-ci.com/socketry/falcon.svg?branch=master)](https://travis-ci.com/socketry/falcon)
 [![Code Climate](https://codeclimate.com/github/socketry/falcon.svg)](https://codeclimate.com/github/socketry/falcon)
 [![Coverage Status](https://coveralls.io/repos/socketry/falcon/badge.svg)](https://coveralls.io/r/socketry/falcon)
 [![Gitter](https://badges.gitter.im/join.svg)](https://gitter.im/socketry/falcon)
