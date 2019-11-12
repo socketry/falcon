@@ -105,6 +105,7 @@ module Falcon
 				# https://tools.ietf.org/html/rfc7239#section-5.4
 				# https://github.com/rack/rack/issues/1310
 				env[HTTP_X_FORWARDED_PROTO] ||= request.scheme
+				env[RACK_URL_SCHEME] = env[HTTP_X_FORWARDED_PROTO]
 				
 				if remote_address = request.remote_address
 					env[REMOTE_ADDR] = remote_address.ip_address if remote_address.ip?
@@ -158,11 +159,6 @@ module Falcon
 				
 				self.unwrap_request(request, env)
 
-				unless request.headers["x-forwarded-proto"].nil?
-					request.scheme = request.headers["x-forwarded-proto"].first
-					env[RACK_URL_SCHEME] = request.scheme
-				end
-				
 				if request.push?
 					env[RACK_EARLY_HINTS] = EarlyHints.new(request)
 				end
