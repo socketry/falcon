@@ -252,6 +252,16 @@ Falcon uses a pre-fork model which loads the entire rack application before fork
 
 [async-http] has been designed carefully to minimize IO related garbage. This avoids large per-request memory allocations or disk usage, provided that you use streaming IO.
 
+### System Limitations
+
+If you are expecting to handle many simultaneous connections, please ensure you configure your file limits correctly.
+
+```
+Errno::EMFILE: Too many open files - accept(2)
+```
+
+This means that your system is limiting the number of files that can be opened by falcon. Please check the `ulimit` of your system and set it appropriately.
+
 ## Priority Business Support
 
 Falcon can be an important part of your business or project, both improving performance and saving money. As such, priority business support is available to make every project a success. The agreement will give you:
