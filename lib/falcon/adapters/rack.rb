@@ -114,10 +114,6 @@ module Falcon
 			def call(request)
 				request_path, query_string = request.path.split('?', 2)
 				server_name, server_port = (request.authority || '').split(':', 2)
-
-				unless request.headers["x-forwarded-proto"].nil?
-					request.scheme = request.headers["x-forwarded-proto"].first
-				end
 				
 				env = {
 					RACK_VERSION => [2, 0, 0],
@@ -161,6 +157,11 @@ module Falcon
 				}
 				
 				self.unwrap_request(request, env)
+
+				unless request.headers["x-forwarded-proto"].nil?
+					request.scheme = request.headers["x-forwarded-proto"].first
+					env[RACK_URL_SCHEME] = request.scheme
+				end
 				
 				if request.push?
 					env[RACK_EARLY_HINTS] = EarlyHints.new(request)
