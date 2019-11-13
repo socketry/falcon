@@ -91,6 +91,28 @@ RSpec.describe Falcon::Adapters::Rack do
 		end
 	end
 
+	context "rack.url_scheme" do
+		include_context Falcon::Server
+		let(:protocol) {Async::HTTP::Protocol::HTTP1}
+
+		let(:app) do
+			lambda do |env|
+				[200, {}, ["Scheme: #{env['rack.url_scheme'].inspect}"]]
+			end
+		end
+
+		it 'defaults to http' do
+			response = client.get('/')
+
+			expect(response.read).to be == 'Scheme: "http"'
+		end
+
+		it 'responses X-Forwarded-Proto headers' do
+			response = client.get('/', [["X-Forwarded-Proto", "https"]])
+
+			expect(response.read).to be == 'Scheme: "https"'
+		end
+	end
 	context "early hints" do
 		it_behaves_like Falcon::Adapters::EarlyHints
 	end
