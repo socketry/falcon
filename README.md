@@ -309,6 +309,7 @@ We take the security of our systems seriously, and we value input from the secur
 Websites below are listed in alphabetical order.
 
 - iCook - [https://icook.tw](https://icook.tw)
+- RubyAPI - [https://rubyapi.org](https://rubyapi.org)
 
 You're welcome to file a PR if you want to add your sites here.
 
