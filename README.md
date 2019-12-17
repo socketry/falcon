@@ -8,6 +8,7 @@ Falcon is a multi-process, multi-fiber rack-compatible HTTP server built on top 
 [![Code Climate](https://codeclimate.com/github/socketry/falcon.svg)](https://codeclimate.com/github/socketry/falcon)
 [![Coverage Status](https://coveralls.io/repos/socketry/falcon/badge.svg)](https://coveralls.io/r/socketry/falcon)
 [![Gitter](https://badges.gitter.im/join.svg)](https://gitter.im/socketry/falcon)
+[![Open Source Helpers](https://www.codetriage.com/socketry/falcon/badges/users.svg)](https://www.codetriage.com/socketry/falcon)
 
 [async]: https://github.com/socketry/async
 [async-io]: https://github.com/socketry/async-io
