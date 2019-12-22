@@ -14,7 +14,7 @@ class Allocations
 		return counts
 	end
 	
-	def print_allocations(minimum = 1000)
+	def print_allocations(minimum = 100)
 		buffer = StringIO.new
 		
 		total = allocations.values.sum
