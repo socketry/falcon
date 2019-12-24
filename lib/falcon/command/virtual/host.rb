@@ -18,11 +18,11 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-require_relative '../server'
-require_relative '../endpoint'
-require_relative '../configuration'
-require_relative '../hosts'
-require_relative '../services'
+require_relative '../../server'
+require_relative '../../endpoint'
+require_relative '../../configuration'
+require_relative '../../hosts'
+require_relative '../../services'
 
 require 'async/container'
 require 'async/container/controller'

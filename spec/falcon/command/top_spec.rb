@@ -31,7 +31,8 @@ RSpec.describe Falcon::Command::Top do
 			]
 			
 			serve = top.command
-			container = serve.run
+			container = serve.controller
+			container.start
 			
 			Async do
 				client = serve.client
