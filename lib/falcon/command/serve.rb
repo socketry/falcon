@@ -112,70 +112,8 @@ module Falcon
 				Async::HTTP::Client.new(client_endpoint)
 			end
 			
-			class Controller < Async::Container::Controller
-				def initialize(command, **options)
-					@command = command
-					
-					@endpoint = nil
-					@bound_endpoint = nil
-					@debug_trap = Async::IO::Trap.new(:USR1)
-					
-					super(**options)
-				end
-				
-				def create_container
-					@command.container_class.new
-				end
-				
-				def start
-					@endpoint ||= @command.endpoint
-					
-					@bound_endpoint = Async::Reactor.run do
-						Async::IO::SharedEndpoint.bound(@endpoint)
-					end.wait
-					
-					@debug_trap.ignore!
-					
-					super
-				end
-				
-				def setup(container)
-					app, _ = @command.load_app
-					
-					container.run(name: "Falcon Server", restart: true, **@command.container_options) do |task, instance|
-						task.async do
-							if @debug_trap.install!
-								Async.logger.info(instance) do
-									"- Per-process status: kill -USR1 #{Process.pid}"
-								end
-							end
-							
-							@debug_trap.trap do
-								Async.logger.info(self) do |buffer|
-									task.reactor.print_hierarchy(buffer)
-								end
-							end
-						end
-						
-						server = Falcon::Server.new(app, @bound_endpoint, @endpoint.protocol, @endpoint.scheme)
-						
-						server.run
-						
-						task.children.each(&:wait)
-					end
-				end
-				
-				def stop(*)
-					@bound_endpoint&.close
-					
-					@debug_trap.default!
-					
-					super
-				end
-			end
-			
 			def controller
-				Controller.new(self)
+				Controller::Serve.new(self)
 			end
 			
 			def call
