@@ -76,11 +76,6 @@ module Falcon
 			end.wait
 		end
 		
-		def stop
-			@bound_endpoint&.close
-			@bound_endpoint = nil
-		end
-		
 		def setup(container)
 			container.run(name: self.name, restart: true) do |task, instance|
 				Async.logger.info(self) {"Starting application server, binding to #{@bound_endpoint}..."}
@@ -91,6 +86,11 @@ module Falcon
 				
 				task.children.each(&:wait)
 			end
+		end
+		
+		def stop
+			@bound_endpoint&.close
+			@bound_endpoint = nil
 		end
 	end
 end
