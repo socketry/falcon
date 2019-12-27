@@ -18,9 +18,9 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-load :host
+load :application
 
-add(:rack, :host) do
+add(:rack, :application) do
 	config_path {::File.expand_path("config.ru", root)}
 	
 	middleware do

@@ -25,8 +25,10 @@ module Falcon
 		def initialize(configuration)
 			@named = {}
 			
-			configuration.each(:start) do |environment|
-				add(Service.new(environment))
+			configuration.each(:service) do |environment|
+				service = Service.wrap(environment)
+				
+				add(service)
 			end
 		end
 		
@@ -38,12 +40,37 @@ module Falcon
 			@named[service.name] = service
 		end
 		
-		def run(container = Async::Container.new, **options)
+		def start
 			@named.each do |name, service|
-				service.spawn(container)
+				Async.logger.debug(self) {"Starting #{name}..."}
+				service.start
+			end
+		end
+		
+		def setup(container)
+			@named.each do |name, service|
+				Async.logger.debug(self) {"Setup #{name} into #{container}..."}
+				service.setup(container)
 			end
 			
 			return container
+		end
+		
+		def stop
+			failed = false
+			
+			@named.each do |name, service|
+				Async.logger.debug(self) {"Stopping #{name}..."}
+				
+				begin
+					service.stop
+				rescue
+					failed = true
+					Async.logger.error(self, $!)
+				end
+			end
+			
+			return failed
 		end
 	end
 end

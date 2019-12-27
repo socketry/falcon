@@ -1,6 +1,4 @@
-#!/usr/bin/env ruby
-
-# Copyright, 2017, by Samuel G. D. Williams. <http://www.codeotaku.com>
+# Copyright, 2019, by Samuel G. D. Williams. <http://www.codeotaku.com>
 # 
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -20,9 +18,22 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-require_relative '../lib/falcon'
+require_relative '../proxy_endpoint'
+require_relative '../application'
+require_relative '../server'
 
-begin
-	Falcon::Command::Virtual::Host.call
-rescue Interrupt
+add(:application) do
+	middleware do
+		::Protocol::HTTP::Middleware::HelloWorld
+	end
+	
+	ipc_path {::File.expand_path("application.ipc", root)}
+	protocol {Async::HTTP::Protocol::HTTP2}
+	scheme 'https'
+	
+	endpoint {::Falcon::ProxyEndpoint.unix(ipc_path, protocol: protocol, scheme: scheme, authority: authority)}
+	
+	service do
+		::Falcon::Application
+	end
 end

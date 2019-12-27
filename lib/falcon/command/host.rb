@@ -1,4 +1,4 @@
-# Copyright, 2019, by Samuel G. D. Williams. <http://www.codeotaku.com>
+# Copyright, 2018, by Samuel G. D. Williams. <http://www.codeotaku.com>
 # 
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -18,27 +18,40 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-require_relative '../proxy_endpoint'
-require_relative '../server'
+require_relative '../container/host'
+require_relative '../configuration'
 
-add(:host) do
-	middleware do
-		::Protocol::HTTP::Middleware::HelloWorld
-	end
-	
-	ipc_path {::File.expand_path("server.ipc", root)}
-	protocol {Async::HTTP::Protocol::HTTP2}
-	scheme 'https'
-	
-	endpoint {::Falcon::ProxyEndpoint.unix(ipc_path, protocol: protocol, scheme: scheme, authority: authority)}
-	
-	bound_endpoint do
-		Async::Reactor.run do
-			Async::IO::SharedEndpoint.bound(endpoint)
-		end.wait
-	end
-	
-	server do
-		::Falcon::Server.new(middleware, bound_endpoint, protocol, scheme)
+require 'samovar'
+
+module Falcon
+	module Command
+		class Host < Samovar::Command
+			self.description = "Host the specified applications."
+			
+			many :paths, "Service configuration paths.", default: ["falcon.rb"]
+			
+			def container_class
+				Async::Container.best_container_class
+			end
+			
+			def configuration(verbose = false)
+				configuration = Configuration.new(verbose)
+				
+				@paths.each do |path|
+					path = File.expand_path(path)
+					configuration.load_file(path)
+				end
+				
+				return configuration
+			end
+			
+			def controller
+				Container::Host.new(self)
+			end
+			
+			def call
+				self.controller.run
+			end
+		end
 	end
 end

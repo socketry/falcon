@@ -46,7 +46,7 @@ module Falcon
 				
 				option '-p/--port <number>', "Override the specified port", type: Integer
 				option '-h/--hostname <hostname>', "Specify the hostname which would be used for certificates, etc."
-				option '-t/--timeout <duration>', "Specify the maximum time to wait for blocking operations.", type: Float, default: nil
+				option '-t/--timeout <duration>', "Specify the maximum time to wait for non-blocking operations.", type: Float, default: nil
 				
 				option '-c/--config <path>', "Rackup configuration file to load", default: 'config.ru'
 				option '--preload', "Preload the bundle before creating containers"

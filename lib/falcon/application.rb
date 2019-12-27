@@ -21,7 +21,13 @@
 require_relative 'service'
 
 module Falcon
-	class Host < Service
+	class Application < Service
+		def initialize(environment)
+			super
+			
+			@bound_endpoint = nil
+		end
+		
 		def name
 			"Falcon Host for #{self.authority}"
 		end
@@ -42,31 +48,48 @@ module Falcon
 			@evaluator.root
 		end
 		
-		def bound_endpoint
-			@evaluator.bound_endpoint
+		def middleware
+			@evaluator.middleware
+		end
+		
+		def protocol
+			@evaluator.protocol
+		end
+		
+		def scheme
+			@evaluator.scheme
+		end
+		
+		def endpoint
+			@evaluator.endpoint
 		end
 		
 		def to_s
 			"\#<#{self.class} #{@evaluator.authority}>"
 		end
 		
-		def run(container)
-			if @environment.include?(:server)
-				bound_endpoint = self.bound_endpoint
+		def start
+			Async.logger.info(self) {"Binding to #{self.endpoint}..."}
+			
+			@bound_endpoint = Async::Reactor.run do
+				Async::IO::SharedEndpoint.bound(self.endpoint)
+			end.wait
+		end
+		
+		def stop
+			@bound_endpoint&.close
+			@bound_endpoint = nil
+		end
+		
+		def setup(container)
+			container.run(name: self.name, restart: true) do |task, instance|
+				Async.logger.info(self) {"Starting application server, binding to #{@bound_endpoint}..."}
 				
-				container.run(name: self.name, restart: true) do |task, instance|
-					Async.logger.info(self) {"Starting application server, binding to #{self.endpoint}..."}
-					
-					server = @evaluator.server
-					
-					server.run
-					
-					task.children.each(&:wait)
-				end
+				server = Server.new(self.middleware, @bound_endpoint, self.protocol, self.scheme)
 				
-				container.attach do
-					bound_endpoint.close
-				end
+				server.run
+				
+				task.children.each(&:wait)
 			end
 		end
 	end

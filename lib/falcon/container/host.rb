@@ -18,20 +18,19 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-require_relative '../server'
+require_relative '../services'
 
 require 'async/io/trap'
 require 'async/io/shared_endpoint'
 
 module Falcon
 	module Container
-		class Serve < Async::Container::Controller
+		class Host < Async::Container::Controller
 			def initialize(command, **options)
 				@command = command
 				
-				@endpoint = nil
-				@bound_endpoint = nil
-				@debug_trap = Async::IO::Trap.new(:USR1)
+				@configuration = command.configuration
+				@services = Services.new(@configuration)
 				
 				super(**options)
 			end
@@ -41,47 +40,17 @@ module Falcon
 			end
 			
 			def start
-				@endpoint ||= @command.endpoint
-				
-				@bound_endpoint = Async::Reactor.run do
-					Async::IO::SharedEndpoint.bound(@endpoint)
-				end.wait
-				
-				@debug_trap.ignore!
+				@services.start
 				
 				super
 			end
 			
 			def setup(container)
-				app, _ = @command.load_app
-				
-				container.run(name: "Falcon Server", restart: true, **@command.container_options) do |task, instance|
-					task.async do
-						if @debug_trap.install!
-							Async.logger.info(instance) do
-								"- Per-process status: kill -USR1 #{Process.pid}"
-							end
-						end
-						
-						@debug_trap.trap do
-							Async.logger.info(self) do |buffer|
-								task.reactor.print_hierarchy(buffer)
-							end
-						end
-					end
-					
-					server = Falcon::Server.new(app, @bound_endpoint, @endpoint.protocol, @endpoint.scheme)
-					
-					server.run
-					
-					task.children.each(&:wait)
-				end
+				@services.setup(container)
 			end
 			
 			def stop(*)
-				@bound_endpoint&.close
-				
-				@debug_trap.default!
+				@services.stop
 				
 				super
 			end

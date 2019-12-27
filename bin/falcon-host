@@ -21,6 +21,7 @@
 # THE SOFTWARE.
 
 require_relative '../lib/falcon'
+require_relative '../lib/falcon/command/host'
 
 begin
 	Falcon::Command::Host.call

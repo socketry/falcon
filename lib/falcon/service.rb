@@ -29,6 +29,13 @@ require 'async/http/endpoint'
 
 module Falcon
 	class Service
+		def self.wrap(environment)
+			evaluator = environment.evaluator
+			service = evaluator.service || self
+			
+			return service.new(environment)
+		end
+		
 		def initialize(environment)
 			@environment = environment
 			@evaluator = @environment.evaluator
@@ -36,18 +43,6 @@ module Falcon
 		
 		def name
 			@evaluator.name
-		end
-		
-		def run(container)
-			container.run(name: self.name, count: 1, restart: true) do |task, instance|
-				Async.logger.info(self) {"Starting #{self.name}..."}
-				
-				if service = @evaluator.service
-					service.run
-				else
-					Async.logger.error(self) {"Could not determine how to start service: #{@environment.inspect}"}
-				end
-			end
 		end
 	end
 end

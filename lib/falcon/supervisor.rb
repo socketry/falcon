@@ -28,7 +28,7 @@ require 'async/container/controller'
 require 'async/http/endpoint'
 
 module Falcon
-	class Supervisor
+	class Supervisor < Service
 		class Statistics
 			PS = "ps"
 			
