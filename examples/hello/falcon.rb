@@ -2,6 +2,8 @@
 
 load :rack, :self_signed_tls, :supervisor
 
+supervisor
+
 rack 'hello.localhost', :self_signed_tls do
 	scheme 'http'
 	protocol {Async::HTTP::Protocol::HTTP1}
@@ -11,9 +13,9 @@ rack 'hello.localhost', :self_signed_tls do
 	end
 	
 	append preload "preload.rb"
+	
+	report :supervisor
 end
-
-# supervisor
 
 # service 'jobs' do
 # 	shell ['rake', 'background:jobs:process']
