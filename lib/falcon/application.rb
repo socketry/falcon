@@ -64,6 +64,16 @@ module Falcon
 			@evaluator.endpoint
 		end
 		
+		def preload!
+			if scripts = @evaluator.preload
+				Async.logger.info(self) {"Preloading..."}
+				scripts.each do |path|
+					Async.logger.info(self) {"Preloading #{path}..."}
+					load(path)
+				end
+			end
+		end
+		
 		def to_s
 			"\#<#{self.class} #{@evaluator.authority}>"
 		end
@@ -74,6 +84,8 @@ module Falcon
 			@bound_endpoint = Async::Reactor.run do
 				Async::IO::SharedEndpoint.bound(self.endpoint)
 			end.wait
+			
+			preload!
 		end
 		
 		def setup(container)

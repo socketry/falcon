@@ -9,6 +9,8 @@ rack 'hello.localhost', :self_signed_tls do
 	endpoint do
 		Async::HTTP::Endpoint.for(scheme, "localhost", port: 9292, protocol: protocol)
 	end
+	
+	append preload "preload.rb"
 end
 
 # supervisor
