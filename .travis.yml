@@ -24,12 +24,13 @@ matrix:
     - rvm: 2.6
       gemfile: gems/rack3.gemfile
     - rvm: 2.6
-      env: COVERAGE=Summary,Coveralls
+      env: COVERAGE=PartialSummary,Coveralls
+    - rvm: 2.7
     - rvm: truffleruby
     - rvm: jruby-head
       env: JRUBY_OPTS="--debug -X+O"
     - rvm: ruby-head
-    - rvm: 2.6
+    - rvm: 2.7
       os: osx
   allow_failures:
     - rvm: truffleruby
