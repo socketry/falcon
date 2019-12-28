@@ -3,12 +3,12 @@
 load :rack, :self_signed_tls, :supervisor
 
 rack 'hello.localhost', :self_signed_tls do
-	endpoint do
-		Async::HTTP::Endpoint.parse("http://localhost:9292")
-	end
-	
-	protocol {Async::HTTP::Protocol::HTTP1}
 	scheme 'http'
+	protocol {Async::HTTP::Protocol::HTTP1}
+	
+	endpoint do
+		Async::HTTP::Endpoint.for(scheme, "localhost", port: 9292, protocol: protocol)
+	end
 end
 
 # supervisor

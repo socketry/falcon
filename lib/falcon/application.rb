@@ -53,11 +53,11 @@ module Falcon
 		end
 		
 		def protocol
-			@evaluator.protocol
+			endpoint.protocol
 		end
 		
 		def scheme
-			@evaluator.scheme
+			endpoint.scheme
 		end
 		
 		def endpoint

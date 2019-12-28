@@ -27,11 +27,17 @@ add(:application) do
 		::Protocol::HTTP::Middleware::HelloWorld
 	end
 	
-	ipc_path {::File.expand_path("application.ipc", root)}
-	protocol {Async::HTTP::Protocol::HTTP2}
 	scheme 'https'
+	protocol {Async::HTTP::Protocol::HTTP2}
+	ipc_path {::File.expand_path("application.ipc", root)}
 	
-	endpoint {::Falcon::ProxyEndpoint.unix(ipc_path, protocol: protocol, scheme: scheme, authority: authority)}
+	endpoint do
+		::Falcon::ProxyEndpoint.unix(ipc_path,
+			protocol: protocol,
+			scheme: scheme,
+			authority: authority
+		)
+	end
 	
 	service do
 		::Falcon::Application
