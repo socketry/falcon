@@ -18,28 +18,18 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-require_relative '../proxy_endpoint'
-require_relative '../application'
-require_relative '../server'
+require_relative '../service/supervisor'
 
-add(:application) do
-	middleware do
-		::Protocol::HTTP::Middleware::HelloWorld
-	end
+add(:supervisor) do
+	start true
 	
-	scheme 'https'
-	protocol {Async::HTTP::Protocol::HTTP2}
-	ipc_path {::File.expand_path("application.ipc", root)}
+	name "supervisor"
 	
-	endpoint do
-		::Falcon::ProxyEndpoint.unix(ipc_path,
-			protocol: protocol,
-			scheme: scheme,
-			authority: authority
-		)
-	end
+	ipc_path {::File.expand_path("supervisor.ipc", root)}
+	
+	endpoint {Async::IO::Endpoint.unix(ipc_path)}
 	
 	service do
-		::Falcon::Application
+		::Falcon::Service::Supervisor
 	end
 end

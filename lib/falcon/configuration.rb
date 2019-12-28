@@ -82,7 +82,7 @@ module Falcon
 				features.each do |feature|
 					next if @loaded.include?(feature)
 					
-					relative_path = File.join(__dir__, "configurations", "#{feature}.rb")
+					relative_path = File.join(__dir__, "configuration", "#{feature}.rb")
 					
 					self.instance_eval(File.read(relative_path), relative_path)
 					

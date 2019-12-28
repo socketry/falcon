@@ -1,4 +1,4 @@
-# Copyright, 2018, by Samuel G. D. Williams. <http://www.codeotaku.com>
+# Copyright, 2019, by Samuel G. D. Williams. <http://www.codeotaku.com>
 # 
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -18,31 +18,29 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-require 'async/io/endpoint'
+require_relative '../proxy_endpoint'
+require_relative '../server'
 
-require_relative 'proxy'
-require_relative 'redirection'
+require_relative '../service/application'
 
-require 'async/container'
-require 'async/container/controller'
-require 'async/http/endpoint'
-
-module Falcon
-	class Service
-		def self.wrap(environment)
-			evaluator = environment.evaluator
-			service = evaluator.service || self
-			
-			return service.new(environment)
-		end
-		
-		def initialize(environment)
-			@environment = environment
-			@evaluator = @environment.evaluator
-		end
-		
-		def name
-			@evaluator.name
-		end
+add(:application) do
+	middleware do
+		::Protocol::HTTP::Middleware::HelloWorld
+	end
+	
+	scheme 'https'
+	protocol {Async::HTTP::Protocol::HTTP2}
+	ipc_path {::File.expand_path("application.ipc", root)}
+	
+	endpoint do
+		::Falcon::ProxyEndpoint.unix(ipc_path,
+			protocol: protocol,
+			scheme: scheme,
+			authority: authority
+		)
+	end
+	
+	service do
+		::Falcon::Service::Application
 	end
 end

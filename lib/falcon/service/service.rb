@@ -1,4 +1,4 @@
-# Copyright, 2019, by Samuel G. D. Williams. <http://www.codeotaku.com>
+# Copyright, 201, by Samuel G. D. Williams. <http://www.codeotaku.com>
 # 
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -18,18 +18,24 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-require_relative '../supervisor'
-
-add(:supervisor) do
-	start true
-	
-	name "supervisor"
-	
-	ipc_path {::File.expand_path("supervisor.ipc", root)}
-	
-	endpoint {Async::IO::Endpoint.unix(ipc_path)}
-	
-	service do
-		::Falcon::Supervisor.new(endpoint)
+module Falcon
+	module Service
+		class Generic
+			def self.wrap(environment)
+				evaluator = environment.evaluator
+				service = evaluator.service || self
+				
+				return service.new(environment)
+			end
+			
+			def initialize(environment)
+				@environment = environment
+				@evaluator = @environment.evaluator
+			end
+			
+			def name
+				@evaluator.name
+			end
+		end
 	end
 end

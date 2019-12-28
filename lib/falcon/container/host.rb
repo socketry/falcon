@@ -30,7 +30,7 @@ module Falcon
 				@command = command
 				
 				@configuration = command.configuration
-				@services = Services.new(@configuration)
+				@services = Service::Controller.new(@configuration)
 				
 				super(**options)
 			end
