@@ -35,11 +35,11 @@ module Falcon
 		attr :endpoint
 		
 		def protocol
-			@options[:protocol]
+			endpoint.protocol
 		end
 		
 		def scheme
-			@options[:scheme]
+			endpoint.scheme
 		end
 		
 		def authority
