@@ -20,6 +20,9 @@
 
 require_relative 'generic'
 
+require 'async/http/endpoint'
+require 'async/io/shared_endpoint'
+
 module Falcon
 	module Service
 		class Application < Generic
@@ -67,10 +70,10 @@ module Falcon
 			
 			def preload!
 				if scripts = @evaluator.preload
-					Async.logger.info(self) {"Preloading..."}
 					scripts.each do |path|
 						Async.logger.info(self) {"Preloading #{path}..."}
-						load(path)
+						full_path = File.expand_path(path, self.root)
+						load(full_path)
 					end
 				end
 			end

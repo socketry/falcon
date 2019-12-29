@@ -1,4 +1,4 @@
-# Copyright, 2018, by Samuel G. D. Williams. <http://www.codeotaku.com>
+# Copyright, 2017, by Samuel G. D. Williams. <http://www.codeotaku.com>
 # 
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -18,59 +18,56 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-require_relative 'service'
+require_relative 'serve'
+require_relative 'host'
+require_relative 'supervisor'
+
+require_relative '../version'
+
+require 'samovar'
 
 module Falcon
-	class Services
-		def initialize(configuration)
-			@named = {}
+	module Command
+		class Top < Samovar::Command
+			self.description = "An asynchronous HTTP server."
 			
-			configuration.each(:service) do |environment|
-				service = Service.wrap(environment)
+			options do
+				option '--verbose | --quiet', "Verbosity of output for debugging.", key: :logging
+				option '-h/--help', "Print out help information."
+				option '-v/--version', "Print out the application version."
+			end
+			
+			nested :command, {
+				'serve' => Serve,
+				'host' => Host,
+				'supervisor' => Supervisor
+			}, default: 'serve'
+			
+			def verbose?
+				@options[:logging] == :verbose
+			end
+			
+			def quiet?
+				@options[:logging] == :quiet
+			end
+			
+			def call
+				if verbose?
+					Async.logger.debug!
+				elsif quiet?
+					Async.logger.warn!
+				else
+					Async.logger.info!
+				end
 				
-				add(service)
-			end
-		end
-		
-		def each(&block)
-			@named.each_value(&block)
-		end
-		
-		def add(service)
-			@named[service.name] = service
-		end
-		
-		def start
-			@named.each do |name, service|
-				Async.logger.debug(self) {"Starting #{name}..."}
-				service.start
-			end
-		end
-		
-		def setup(container)
-			@named.each do |name, service|
-				Async.logger.debug(self) {"Setup #{name} into #{container}..."}
-				service.setup(container)
-			end
-			
-			return container
-		end
-		
-		def stop
-			failed = false
-			
-			@named.each do |name, service|
-				Async.logger.debug(self) {"Stopping #{name}..."}
-				
-				begin
-					service.stop
-				rescue
-					failed = true
-					Async.logger.error(self, $!)
+				if @options[:version]
+					puts "#{self.name} v#{Falcon::VERSION}"
+				elsif @options[:help]
+					self.print_usage
+				else
+					@command.call
 				end
 			end
-			
-			return failed
 		end
 	end
 end

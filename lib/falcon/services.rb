@@ -1,4 +1,4 @@
-# Copyright, 2017, by Samuel G. D. Williams. <http://www.codeotaku.com>
+# Copyright, 2018, by Samuel G. D. Williams. <http://www.codeotaku.com>
 # 
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -18,4 +18,59 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-require_relative "falcon/server"
+require_relative 'service/generic'
+
+module Falcon
+	class Services
+		def initialize(configuration)
+			@named = {}
+			
+			configuration.each(:service) do |environment|
+				service = Service::Generic.wrap(environment)
+				
+				add(service)
+			end
+		end
+		
+		def each(&block)
+			@named.each_value(&block)
+		end
+		
+		def add(service)
+			@named[service.name] = service
+		end
+		
+		def start
+			@named.each do |name, service|
+				Async.logger.debug(self) {"Starting #{name}..."}
+				service.start
+			end
+		end
+		
+		def setup(container)
+			@named.each do |name, service|
+				Async.logger.debug(self) {"Setup #{name} into #{container}..."}
+				service.setup(container)
+			end
+			
+			return container
+		end
+		
+		def stop
+			failed = false
+			
+			@named.each do |name, service|
+				Async.logger.debug(self) {"Stopping #{name}..."}
+				
+				begin
+					service.stop
+				rescue
+					failed = true
+					Async.logger.error(self, $!)
+				end
+			end
+			
+			return failed
+		end
+	end
+end

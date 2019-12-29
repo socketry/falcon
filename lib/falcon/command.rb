@@ -18,60 +18,12 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-require_relative 'command/serve'
-require_relative 'command/host'
-require_relative 'command/supervisor'
-
-require_relative 'version'
-
-require 'samovar'
+require_relative 'command/top'
 
 module Falcon
 	module Command
-		def self.call(*args)
-			Top.call(*args)
-		end
-		
-		class Top < Samovar::Command
-			self.description = "An asynchronous HTTP server."
-			
-			options do
-				option '--verbose | --quiet', "Verbosity of output for debugging.", key: :logging
-				option '-h/--help', "Print out help information."
-				option '-v/--version', "Print out the application version."
-			end
-			
-			nested :command, {
-				'serve' => Serve,
-				'host' => Host,
-				'supervisor' => Supervisor
-			}, default: 'serve'
-			
-			def verbose?
-				@options[:logging] == :verbose
-			end
-			
-			def quiet?
-				@options[:logging] == :quiet
-			end
-			
-			def call
-				if verbose?
-					Async.logger.debug!
-				elsif quiet?
-					Async.logger.warn!
-				else
-					Async.logger.info!
-				end
-				
-				if @options[:version]
-					puts "#{self.name} v#{Falcon::VERSION}"
-				elsif @options[:help]
-					self.print_usage
-				else
-					@command.call
-				end
-			end
+		def self.call(*arguments)
+			Top.call(*arguments)
 		end
 	end
 end

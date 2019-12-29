@@ -20,8 +20,7 @@
 
 require_relative '../services'
 
-require 'async/io/trap'
-require 'async/io/shared_endpoint'
+require 'async/container/controller'
 
 module Falcon
 	module Container
@@ -30,7 +29,7 @@ module Falcon
 				@command = command
 				
 				@configuration = command.configuration
-				@services = Service::Controller.new(@configuration)
+				@services = Services.new(@configuration)
 				
 				super(**options)
 			end

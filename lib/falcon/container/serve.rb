@@ -22,9 +22,6 @@ require_relative '../server'
 
 require 'async/container/controller'
 
-require 'async/io/trap'
-require 'async/io/shared_endpoint'
-
 module Falcon
 	module Container
 		class Serve < Async::Container::Controller
