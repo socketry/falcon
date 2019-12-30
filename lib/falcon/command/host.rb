@@ -51,6 +51,8 @@ module Falcon
 			
 			def call
 				self.controller.run
+			ensure
+				puts "Exiting: #{$!}"
 			end
 		end
 	end

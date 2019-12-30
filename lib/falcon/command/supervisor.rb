@@ -40,11 +40,11 @@ module Falcon
 				end
 			end
 			
-			class Statistics < Samovar::Command
-				self.description = "Show statistics about the process group."
+			class Metrics < Samovar::Command
+				self.description = "Show metrics about the falcon processes."
 				
 				def call(stream)
-					stream.puts({please: 'statistics'}.to_json, separator: "\0")
+					stream.puts({please: 'metrics'}.to_json, separator: "\0")
 					response = JSON.parse(stream.gets("\0"), symbolize_names: true)
 					
 					pp response
@@ -53,8 +53,8 @@ module Falcon
 			
 			nested :command, {
 				'restart' => Restart,
-				'statistics' => Statistics,
-			}, default: 'statistics'
+				'metrics' => Metrics,
+			}, default: 'metrics'
 			
 			def endpoint
 				Async::IO::Endpoint.unix(@options[:path])

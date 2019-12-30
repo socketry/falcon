@@ -19,44 +19,16 @@
 # THE SOFTWARE.
 
 require 'async/io/endpoint'
+require 'process/metrics'
+require 'json'
 
 module Falcon
 	module Service
 		class Supervisor < Generic
-			class Statistics
-				PS = "ps"
+			def initialize(environment)
+				super
 				
-				def initialize(pgid: Process.ppid, ps: PS)
-					@ppid = pgid
-					@ps = ps
-				end
-				
-				# pid: Process Identifier
-				# pmem: Percentage Memory used.
-				# pcpu: Percentage Processor used.
-				# time: The process time used (executing on CPU).
-				# vsz: Virtual Size in kilobytes
-				# rss: Resident Set Size in kilobytes
-				# etime: The process elapsed time.
-				# command: The name of the process.
-				COLUMNS = "pid,pmem,pcpu,time,vsz,rss,etime,command"
-				
-				def capture
-					input, output = IO.pipe
-					
-					system(@ps, "--ppid", @ppid.to_s, "-o", COLUMNS, out: output, pgroup: true)
-					output.close
-					
-					header, *lines = input.readlines.map(&:strip)
-					
-					keys = header.split(/\s+/).map(&:downcase)
-					
-					processes = lines.map do |line|
-						keys.zip(line.split(/\s+/, keys.size)).to_h
-					end
-					
-					return processes
-				end
+				@bound_endpoint = nil
 			end
 			
 			def endpoint
@@ -76,18 +48,16 @@ module Falcon
 				Process.kill(signal, -Process.getpgrp)
 			end
 			
-			def do_statistics(message)
-				statistics = Statistics.new
-				
-				statistics.capture
+			def do_metrics(message)
+				Process::Metrics.capture(pid: Process.ppid, ppid: Process.ppid)
 			end
 			
 			def handle(message)
 				case message[:please]
 				when 'restart'
 					self.do_restart(message)
-				when 'statistics'
-					self.do_statistics(message)
+				when 'metrics'
+					self.do_metrics(message)
 				end
 			end
 			
@@ -100,7 +70,7 @@ module Falcon
 			end
 			
 			def setup(container)
-				container.run(name: self.name, restart: true) do |task, instance|
+				container.run(name: self.name, restart: true, count: 1) do |task, instance|
 					@bound_endpoint.accept do |peer|
 						stream = Async::IO::Stream.new(peer)
 						

@@ -30,6 +30,8 @@ Gem::Specification.new do |spec|
 	spec.add_dependency 'localhost', "~> 1.1"
 	spec.add_dependency 'build-environment', '~> 1.11'
 	
+	spec.add_dependency 'process-metrics', '~> 0.1.0'
+	
 	spec.add_development_dependency "async-rspec", "~> 1.7"
 	spec.add_development_dependency "async-websocket", "~> 0.12.0"
 	spec.add_development_dependency "async-process", "~> 1.1"

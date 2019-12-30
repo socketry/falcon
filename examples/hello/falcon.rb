@@ -2,7 +2,7 @@
 
 load :rack, :self_signed_tls, :supervisor
 
-# supervisor
+supervisor
 
 rack 'hello.localhost', :self_signed_tls do
 	scheme 'http'
