@@ -14,6 +14,7 @@ rack 'hello.localhost', :self_signed_tls do
 	
 	append preload "preload.rb"
 	
+	# Process will connect to supervisor to report statistics periodically, otherwise it would be killed.
 	# report :supervisor
 end
 

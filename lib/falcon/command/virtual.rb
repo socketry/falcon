@@ -18,22 +18,9 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-require_relative '../server'
-require_relative '../endpoint'
-require_relative '../hosts'
-require_relative '../configuration'
-
-require 'async/container'
-require 'async/container/controller'
-
-require 'async/io/host_endpoint'
-require 'async/io/shared_endpoint'
-require 'async/io/ssl_endpoint'
+require_relative '../container/virtual'
 
 require 'samovar'
-
-require 'rack/builder'
-require 'rack/server'
 
 module Falcon
 	module Command
@@ -41,68 +28,18 @@ module Falcon
 			self.description = "Run one or more virtual hosts with a front-end proxy."
 			
 			options do
-				option '--bind-insecure <address>', "Bind redirection to the given hostname/address", default: "http://[::]"
-				option '--bind-secure <address>', "Bind proxy to the given hostname/address", default: "https://[::]"
+				option '--bind-insecure <address>', "Bind redirection to the given hostname/address", default: "http://[::]:8080"
+				option '--bind-secure <address>', "Bind proxy to the given hostname/address", default: "https://[::]:8443"
 			end
 			
 			many :paths
 			
-			class Controller < Async::Container::Controller
-				def initialize(command, **options)
-					@command = command
-					
-					@endpoint = nil
-					@bound_endpoint = nil
-					@debug_trap = Async::IO::Trap.new(:USR1)
-					
-					super(**options)
-				end
-				
-				def assume_privileges(path)
-					stat = File.stat(path)
-					
-					Process::GID.change_privilege(stat.gid)
-					Process::UID.change_privilege(stat.uid)
-					
-					home = Etc.getpwuid(stat.uid).dir
-					
-					return {
-						'HOME' => home,
-					}
-				end
-				
-				def spawn(path, container, **options)
-					container.spawn(name: self.name, restart: true) do |instance|
-						env = assume_privileges(path)
-						
-						instance.exec(env, "bundle", "exec", path, **options)
-					end
-				end
-				
-				def setup(container)
-					configuration = Configuration.new(verbose)
-					
-					@paths.each do |path|
-						path = File.expand_path(path)
-						root = File.dirname(path)
-						
-						configuration.load_file(path)
-						
-						spawn(path, container, chdir: root)
-					end
-					
-					hosts = Hosts.new(configuration)
-					
-					hosts.run(container, **@options)
-				end
-			end
-			
 			def controller
-				Controller.new(self)
+				Container::Virtual.new(self)
 			end
 			
 			def call
-				Async.logger.info(self.endpoint) do |buffer|
+				Async.logger.info(self) do |buffer|
 					buffer.puts "Falcon v#{VERSION} taking flight!"
 					buffer.puts "- To terminate: Ctrl-C or kill #{Process.pid}"
 					buffer.puts "- To reload all sites: kill -HUP #{Process.pid}"

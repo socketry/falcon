@@ -1,4 +1,4 @@
-# Copyright, 201, by Samuel G. D. Williams. <http://www.codeotaku.com>
+# Copyright, 2018, by Samuel G. D. Williams. <http://www.codeotaku.com>
 # 
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -18,27 +18,49 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
+require 'async/container/controller'
+
 module Falcon
-	module Service
-		class Generic
-			def self.wrap(environment)
-				evaluator = environment.evaluator
-				service = evaluator.service || self
+	module Container
+		class Virtual < Async::Container::Controller
+			def initialize(command, **options)
+				@command = command
 				
-				return service.new(environment)
+				super(**options)
 			end
 			
-			def initialize(environment)
-				@environment = environment
-				@evaluator = @environment.evaluator
+			def assume_privileges(path)
+				stat = File.stat(path)
+				
+				Process::GID.change_privilege(stat.gid)
+				Process::UID.change_privilege(stat.uid)
+				
+				home = Etc.getpwuid(stat.uid).dir
+				
+				return {
+					'HOME' => home,
+				}
 			end
 			
-			def include?(keys)
-				keys.all?{|key| @environment.include?(key)}
+			def spawn(path, container, **options)
+				container.spawn(restart: true) do |instance|
+					env = assume_privileges(path)
+					
+					instance.exec(env, "bundle", "exec", path, **options)
+				end
 			end
 			
-			def name
-				@evaluator.name
+			def setup(container)
+				# configuration = Configuration.new(verbose)
+				
+				@command.paths.each do |path|
+					path = File.expand_path(path)
+					root = File.dirname(path)
+					
+					# configuration.load_file(path)
+					
+					spawn(path, container, chdir: root)
+				end
 			end
 		end
 	end

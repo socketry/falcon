@@ -21,6 +21,7 @@
 require_relative 'serve'
 require_relative 'host'
 require_relative 'supervisor'
+require_relative 'virtual'
 
 require_relative '../version'
 
@@ -40,6 +41,7 @@ module Falcon
 			nested :command, {
 				'serve' => Serve,
 				'host' => Host,
+				'virtual' => Virtual,
 				'supervisor' => Supervisor
 			}, default: 'serve'
 			

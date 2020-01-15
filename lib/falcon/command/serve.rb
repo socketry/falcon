@@ -114,12 +114,12 @@ module Falcon
 			end
 			
 			def controller
-				Container::Serve.new(self)
+				Container::Serve.new(self, &self.method(:load_app))
 			end
 			
 			def call
 				Async.logger.info(self.endpoint) do |buffer|
-					buffer.puts "Falcon v#{VERSION} taking flight! Using #{self.container_class} #{self.container_options}"
+					buffer.puts "Falcon v#{VERSION} taking flight! Using #{self.container_class} #{self.container_options}."
 					buffer.puts "- To terminate: Ctrl-C or kill #{Process.pid}"
 					buffer.puts "- To reload configuration: kill -HUP #{Process.pid}"
 				end
