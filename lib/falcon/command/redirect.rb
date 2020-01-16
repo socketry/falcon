@@ -18,44 +18,51 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-require 'async/http/client'
+require_relative '../container/redirect'
+
+require 'samovar'
 
 module Falcon
-	module NotFound
-		def self.call(request)
-			return Protocol::HTTP::Response[404, {}, []]
-		end
-		
-		def self.close
-		end
-	end
-	
-	class Redirection < Protocol::HTTP::Middleware
-		def initialize(app, hosts, endpoint)
-			super(app)
+	module Command
+		class Redirect < Samovar::Command
+			self.description = "Redirect from insecure HTTP to secure HTTP."
 			
-			@hosts = hosts
-			@endpoint = endpoint
-		end
-		
-		def lookup(request)
-			# Trailing dot and port is ignored/normalized.
-			if authority = request.authority&.sub(/(\.)?(:\d+)?$/, '')
-				return @hosts[authority]
+			options do
+				option '--bind <address>', "Bind to the given hostname/address", default: "http://[::]:80"
+				option '--redirect <address>', "Redirect using this address as a template.", default: "https://[::]:443"
 			end
-		end
-		
-		def call(request)
-			if host = lookup(request)
-				if @endpoint.default_port?
-					location = "#{@endpoint.scheme}://#{host.authority}#{request.path}"
-				else
-					location = "#{@endpoint.scheme}://#{host.authority}:#{@endpoint.port}#{request.path}"
+			
+			many :paths
+			
+			def controller
+				Container::Redirect.new(self)
+			end
+			
+			def container_class
+				Async::Container.best_container_class
+			end
+			
+			def container_options
+				{}
+			end
+			
+			def call
+				Async.logger.info(self) do |buffer|
+					buffer.puts "Falcon Redirect v#{VERSION} taking flight!"
+					buffer.puts "- Binding to: #{@options[:bind]}"
+					buffer.puts "- To terminate: Ctrl-C or kill #{Process.pid}"
+					buffer.puts "- To reload: kill -HUP #{Process.pid}"
 				end
 				
-				return Protocol::HTTP::Response[301, [['location', location]], []]
-			else
-				super
+				self.controller.run
+			end
+			
+			def endpoint(**options)
+				Async::HTTP::Endpoint.parse(@options[:bind], **options)
+			end
+			
+			def redirect_endpoint(**options)
+				Async::HTTP::Endpoint.parse(@options[:redirect], **options)
 			end
 		end
 	end

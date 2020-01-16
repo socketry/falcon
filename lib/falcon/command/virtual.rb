@@ -38,9 +38,17 @@ module Falcon
 				Container::Virtual.new(self)
 			end
 			
+			def bind_secure
+				@options[:bind_secure]
+			end
+			
+			def bind_insecure
+				@options[:bind_insecure]
+			end
+			
 			def call
 				Async.logger.info(self) do |buffer|
-					buffer.puts "Falcon v#{VERSION} taking flight!"
+					buffer.puts "Falcon Virtual v#{VERSION} taking flight!"
 					buffer.puts "- To terminate: Ctrl-C or kill #{Process.pid}"
 					buffer.puts "- To reload all sites: kill -HUP #{Process.pid}"
 				end

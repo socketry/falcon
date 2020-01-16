@@ -18,46 +18,57 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-require_relative '../container/host'
-require_relative '../configuration'
+require 'async/container/controller'
 
-require 'samovar'
+require_relative 'serve'
+require_relative '../middleware/redirect'
 
 module Falcon
-	module Command
-		class Host < Samovar::Command
-			self.description = "Host the specified applications."
-			
-			many :paths, "Service configuration paths.", default: ["falcon.rb"]
-			
-			def container_class
-				Async::Container.best_container_class
+	module Container
+		class Redirect < Serve
+			def initialize(command, **options)
+				super(command, **options)
+				
+				@hosts = {}
 			end
 			
-			def configuration(verbose = false)
-				configuration = Configuration.new(verbose)
+			def load_app
+				return Middleware::Redirect.new(Middleware::NotFound, @hosts, @command.redirect_endpoint)
+			end
+			
+			def endpoint
+				@command.endpoint.with(
+					reuse_address: true,
+				)
+			end
+			
+			def configuration
+				configuration = Configuration.new
 				
-				@paths.each do |path|
+				@command.paths.each do |path|
 					path = File.expand_path(path)
+					root = File.dirname(path)
+					
 					configuration.load_file(path)
 				end
 				
 				return configuration
 			end
 			
-			def controller
-				Container::Host.new(self)
-			end
-			
-			def call
-				Async.logger.info(self) do |buffer|
-					buffer.puts "Falcon Host v#{VERSION} taking flight!"
-					buffer.puts "- Configuration: #{@paths.join(', ')}"
-					buffer.puts "- To terminate: Ctrl-C or kill #{Process.pid}"
-					buffer.puts "- To reload all sites: kill -HUP #{Process.pid}"
+			def start
+				configuration = self.configuration
+				
+				services = Services.new(configuration)
+				
+				@hosts = {}
+				
+				services.each do |service|
+					if service.is_a?(Service::Application)
+						@hosts[service.authority] = service
+					end
 				end
 				
-				self.controller.run
+				super
 			end
 		end
 	end

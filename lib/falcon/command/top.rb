@@ -20,8 +20,10 @@
 
 require_relative 'serve'
 require_relative 'host'
-require_relative 'supervisor'
 require_relative 'virtual'
+require_relative 'proxy'
+require_relative 'redirect'
+require_relative 'supervisor'
 
 require_relative '../version'
 
@@ -42,7 +44,9 @@ module Falcon
 				'serve' => Serve,
 				'host' => Host,
 				'virtual' => Virtual,
-				'supervisor' => Supervisor
+				'proxy' => Proxy,
+				'redirect' => Redirect,
+				'supervisor' => Supervisor,
 			}, default: 'serve'
 			
 			def verbose?
@@ -54,14 +58,14 @@ module Falcon
 			end
 			
 			def call
-				if verbose?
-					Async.logger.debug!
-				elsif quiet?
-					Async.logger.warn!
-				else
-					Async.logger.info!
-				end
-				
+				# if verbose?
+				# 	Async.logger.debug!
+				# elsif quiet?
+				# 	Async.logger.warn!
+				# else
+				# 	Async.logger.info!
+				# end
+				# 
 				if @options[:version]
 					puts "#{self.name} v#{Falcon::VERSION}"
 				elsif @options[:help]

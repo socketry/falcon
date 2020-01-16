@@ -18,46 +18,46 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-require_relative '../container/host'
-require_relative '../configuration'
+require_relative '../container/proxy'
 
 require 'samovar'
 
 module Falcon
 	module Command
-		class Host < Samovar::Command
-			self.description = "Host the specified applications."
+		class Proxy < Samovar::Command
+			self.description = "Proxy to one or more backend hosts."
 			
-			many :paths, "Service configuration paths.", default: ["falcon.rb"]
+			options do
+				option '--bind <address>', "Bind to the given hostname/address", default: "https://[::]:443"
+			end
+			
+			many :paths
+			
+			def controller
+				Container::Proxy.new(self)
+			end
 			
 			def container_class
 				Async::Container.best_container_class
 			end
 			
-			def configuration(verbose = false)
-				configuration = Configuration.new(verbose)
-				
-				@paths.each do |path|
-					path = File.expand_path(path)
-					configuration.load_file(path)
-				end
-				
-				return configuration
-			end
-			
-			def controller
-				Container::Host.new(self)
+			def container_options
+				{}
 			end
 			
 			def call
 				Async.logger.info(self) do |buffer|
-					buffer.puts "Falcon Host v#{VERSION} taking flight!"
-					buffer.puts "- Configuration: #{@paths.join(', ')}"
+					buffer.puts "Falcon Proxy v#{VERSION} taking flight!"
+					buffer.puts "- Binding to: #{@options[:bind]}"
 					buffer.puts "- To terminate: Ctrl-C or kill #{Process.pid}"
-					buffer.puts "- To reload all sites: kill -HUP #{Process.pid}"
+					buffer.puts "- To reload: kill -HUP #{Process.pid}"
 				end
 				
 				self.controller.run
+			end
+			
+			def endpoint(**options)
+				Async::HTTP::Endpoint.parse(@options[:bind], **options)
 			end
 		end
 	end

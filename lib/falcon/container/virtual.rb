@@ -51,15 +51,19 @@ module Falcon
 			end
 			
 			def setup(container)
-				# configuration = Configuration.new(verbose)
-				
 				@command.paths.each do |path|
 					path = File.expand_path(path)
 					root = File.dirname(path)
 					
-					# configuration.load_file(path)
-					
 					spawn(path, container, chdir: root)
+				end
+				
+				container.spawn(restart: true) do |instance|
+					instance.exec($0, "redirect", "--bind", @command.bind_insecure, "--redirect", @command.bind_secure, *@command.paths)
+				end
+				
+				container.spawn(restart: true) do |instance|
+					instance.exec($0, "proxy", "--bind", @command.bind_secure, *@command.paths)
 				end
 			end
 		end

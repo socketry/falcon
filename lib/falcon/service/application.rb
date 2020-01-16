@@ -33,7 +33,7 @@ module Falcon
 			end
 			
 			def name
-				"Falcon Host for #{self.authority}"
+				"#{self.class} for #{self.authority}"
 			end
 			
 			def authority

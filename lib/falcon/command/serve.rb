@@ -42,16 +42,16 @@ module Falcon
 			self.description = "Run an HTTP server."
 			
 			options do
-				option '-b/--bind <address>', "Bind to the given hostname/address", default: "https://localhost:9292"
+				option '-b/--bind <address>', "Bind to the given hostname/address.", default: "https://localhost:9292"
 				
-				option '-p/--port <number>', "Override the specified port", type: Integer
+				option '-p/--port <number>', "Override the specified port.", type: Integer
 				option '-h/--hostname <hostname>', "Specify the hostname which would be used for certificates, etc."
 				option '-t/--timeout <duration>', "Specify the maximum time to wait for non-blocking operations.", type: Float, default: nil
 				
-				option '-c/--config <path>', "Rackup configuration file to load", default: 'config.ru'
-				option '--preload', "Preload the bundle before creating containers"
+				option '-c/--config <path>', "Rackup configuration file to load.", default: 'config.ru'
+				option '--preload', "Preload the bundle before creating containers."
 				
-				option '--forked | --threaded | --hybrid', "Select a specific parallelism model", key: :container, default: :forked
+				option '--forked | --threaded | --hybrid', "Select a specific parallelism model.", key: :container, default: :forked
 				
 				option '-n/--count <count>', "Number of instances to start.", default: Async::Container.processor_count, type: Integer
 				
@@ -114,7 +114,7 @@ module Falcon
 			end
 			
 			def controller
-				Container::Serve.new(self, &self.method(:load_app))
+				Container::Serve.new(self)
 			end
 			
 			def call

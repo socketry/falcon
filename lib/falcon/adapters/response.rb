@@ -20,7 +20,7 @@
 
 require_relative 'output'
 require_relative '../version'
-require_relative '../proxy'
+require_relative '../middleware/proxy'
 
 require 'async/http/body/hijack'
 require 'time'
@@ -28,7 +28,7 @@ require 'time'
 module Falcon
 	module Adapters
 		class Response < ::Protocol::HTTP::Response
-			IGNORE_HEADERS = Proxy::HOP_HEADERS
+			IGNORE_HEADERS = Middleware::Proxy::HOP_HEADERS
 			
 			# Append a list of newline encoded headers.
 			def self.wrap_headers(fields)

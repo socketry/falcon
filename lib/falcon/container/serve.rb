@@ -25,11 +25,10 @@ require 'async/container/controller'
 module Falcon
 	module Container
 		class Serve < Async::Container::Controller
-			def initialize(command, endpoint = nil, **options, &block)
+			def initialize(command, **options)
 				@command = command
-				@block = block
 				
-				@endpoint = endpoint
+				@endpoint = nil
 				@bound_endpoint = nil
 				@debug_trap = Async::IO::Trap.new(:USR1)
 				
@@ -40,8 +39,16 @@ module Falcon
 				@command.container_class.new
 			end
 			
+			def endpoint
+				@command.endpoint
+			end
+			
+			def load_app
+				@command.load_app
+			end
+			
 			def start
-				@endpoint ||= @command.endpoint
+				@endpoint ||= self.endpoint
 				
 				@bound_endpoint = Async::Reactor.run do
 					Async::IO::SharedEndpoint.bound(@endpoint)
@@ -53,7 +60,11 @@ module Falcon
 			end
 			
 			def setup(container)
-				app, _ = @block.call
+				app, _ = self.load_app
+				
+				if GC.respond_to?(:compact)
+					GC.compact
+				end
 				
 				container.run(name: "Falcon Server", restart: true, **@command.container_options) do |task, instance|
 					task.async do
