@@ -19,6 +19,7 @@
 # THE SOFTWARE.
 
 require_relative '../container/proxy'
+require_relative 'paths'
 
 require 'samovar'
 
@@ -32,6 +33,8 @@ module Falcon
 			end
 			
 			many :paths
+			
+			include Paths
 			
 			def controller
 				Container::Proxy.new(self)

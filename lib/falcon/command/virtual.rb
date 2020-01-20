@@ -19,6 +19,7 @@
 # THE SOFTWARE.
 
 require_relative '../container/virtual'
+require_relative 'paths'
 
 require 'samovar'
 
@@ -33,6 +34,8 @@ module Falcon
 			end
 			
 			many :paths
+			
+			include Paths
 			
 			def controller
 				Container::Virtual.new(self)

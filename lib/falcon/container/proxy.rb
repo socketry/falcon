@@ -78,21 +78,8 @@ module Falcon
 				)
 			end
 			
-			def configuration
-				configuration = Configuration.new
-				
-				@command.paths.each do |path|
-					path = File.expand_path(path)
-					root = File.dirname(path)
-					
-					configuration.load_file(path)
-				end
-				
-				return configuration
-			end
-			
 			def start
-				configuration = self.configuration
+				configuration = @command.configuration
 				
 				services = Services.new(configuration)
 				

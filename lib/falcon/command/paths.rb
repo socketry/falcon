@@ -1,4 +1,4 @@
-# Copyright, 2018, by Samuel G. D. Williams. <http://www.codeotaku.com>
+# Copyright, 2019, by Samuel G. D. Williams. <http://www.codeotaku.com>
 # 
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -18,44 +18,27 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-require 'async/container/controller'
-
-require_relative 'serve'
-require_relative '../middleware/redirect'
+require_relative '../configuration'
 
 module Falcon
-	module Container
-		class Redirect < Serve
-			def initialize(command, **options)
-				super(command, **options)
-				
-				@hosts = {}
+	module Command
+		module Paths
+			def resolved_paths(&block)
+				@paths.collect do |path|
+					Dir.glob(path)
+				end.flatten.sort.uniq.each(&block)
 			end
 			
-			def load_app
-				return Middleware::Redirect.new(Middleware::NotFound, @hosts, @command.redirect_endpoint)
-			end
-			
-			def endpoint
-				@command.endpoint.with(
-					reuse_address: true,
-				)
-			end
-			
-			def start
-				configuration = @command.configuration
+			def configuration
+				configuration = Configuration.new
 				
-				services = Services.new(configuration)
-				
-				@hosts = {}
-				
-				services.each do |service|
-					if service.is_a?(Service::Application)
-						@hosts[service.authority] = service
-					end
+				self.resolved_paths.each do |path|
+					path = File.expand_path(path)
+					
+					configuration.load_file(path)
 				end
 				
-				super
+				return configuration
 			end
 		end
 	end

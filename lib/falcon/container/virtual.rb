@@ -27,6 +27,8 @@ module Falcon
 				@command = command
 				
 				super(**options)
+				
+				trap(SIGHUP, &self.method(:reload))
 			end
 			
 			def assume_privileges(path)
@@ -43,7 +45,7 @@ module Falcon
 			end
 			
 			def spawn(path, container, **options)
-				container.spawn(restart: true) do |instance|
+				container.spawn(name: "Falcon Application", restart: true, key: path) do |instance|
 					env = assume_privileges(path)
 					
 					instance.exec(env, "bundle", "exec", path, **options)
@@ -51,19 +53,29 @@ module Falcon
 			end
 			
 			def setup(container)
-				@command.paths.each do |path|
-					path = File.expand_path(path)
-					root = File.dirname(path)
+				if proxy = container[:proxy]
+					proxy.kill(:HUP)
+				end
+				
+				if redirect = container[:redirect]
+					redirect.kill(:HUP)
+				end
+				
+				container.reload do
+					@command.resolved_paths do |path|
+						path = File.expand_path(path)
+						root = File.dirname(path)
+						
+						spawn(path, container, chdir: root)
+					end
 					
-					spawn(path, container, chdir: root)
-				end
-				
-				container.spawn(restart: true) do |instance|
-					instance.exec($0, "redirect", "--bind", @command.bind_insecure, "--redirect", @command.bind_secure, *@command.paths)
-				end
-				
-				container.spawn(restart: true) do |instance|
-					instance.exec($0, "proxy", "--bind", @command.bind_secure, *@command.paths)
+					container.spawn(name: "Falcon Redirector", restart: true, key: :redirect) do |instance|
+						instance.exec($0, "redirect", "--bind", @command.bind_insecure, "--redirect", @command.bind_secure, *@command.paths)
+					end
+					
+					container.spawn(name: "Falcon Proxy", restart: true, key: :proxy) do |instance|
+						instance.exec($0, "proxy", "--bind", @command.bind_secure, *@command.paths)
+					end
 				end
 			end
 		end
