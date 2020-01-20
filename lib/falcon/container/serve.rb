@@ -59,6 +59,10 @@ module Falcon
 				super
 			end
 			
+			def name
+				"Falcon Server"
+			end
+			
 			def setup(container)
 				app, _ = self.load_app
 				
@@ -66,7 +70,7 @@ module Falcon
 					GC.compact
 				end
 				
-				container.run(name: "Falcon Server", restart: true, **@command.container_options) do |task, instance|
+				container.run(name: self.name, restart: true, **@command.container_options) do |task, instance|
 					task.async do
 						if @debug_trap.install!
 							Async.logger.info(instance) do

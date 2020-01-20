@@ -36,6 +36,10 @@ module Falcon
 				return Middleware::Redirect.new(Middleware::NotFound, @hosts, @command.redirect_endpoint)
 			end
 			
+			def name
+				"Falcon Redirect Server"
+			end
+			
 			def endpoint
 				@command.endpoint.with(
 					reuse_address: true,

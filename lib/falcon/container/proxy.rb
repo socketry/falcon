@@ -40,6 +40,10 @@ module Falcon
 				return Middleware::Proxy.new(Middleware::BadRequest, @hosts)
 			end
 			
+			def name
+				"Falcon Proxy Server"
+			end
+			
 			def host_context(socket, hostname)
 				if host = @hosts[hostname]
 					Async.logger.debug(self) {"Resolving #{hostname} -> #{host}"}
