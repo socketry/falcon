@@ -70,26 +70,28 @@ module Falcon
 					GC.compact
 				end
 				
-				container.run(name: self.name, restart: true, **@command.container_options) do |task, instance|
-					task.async do
-						if @debug_trap.install!
-							Async.logger.info(instance) do
-								"- Per-process status: kill -USR1 #{Process.pid}"
+				container.run(name: self.name, restart: true, **@command.container_options) do |instance|
+					Async do |task|
+						task.async do
+							if @debug_trap.install!
+								Async.logger.info(instance) do
+									"- Per-process status: kill -USR1 #{Process.pid}"
+								end
+							end
+							
+							@debug_trap.trap do
+								Async.logger.info(self) do |buffer|
+									task.reactor.print_hierarchy(buffer)
+								end
 							end
 						end
 						
-						@debug_trap.trap do
-							Async.logger.info(self) do |buffer|
-								task.reactor.print_hierarchy(buffer)
-							end
-						end
+						server = Falcon::Server.new(app, @bound_endpoint, @endpoint.protocol, @endpoint.scheme)
+						
+						server.run
+						
+						task.children.each(&:wait)
 					end
-					
-					server = Falcon::Server.new(app, @bound_endpoint, @endpoint.protocol, @endpoint.scheme)
-					
-					server.run
-					
-					task.children.each(&:wait)
 				end
 			end
 			

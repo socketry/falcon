@@ -40,6 +40,10 @@ module Falcon
 			def name
 				@evaluator.name
 			end
+			
+			def logger
+				return Async.logger.with(name: name)
+			end
 		end
 	end
 end

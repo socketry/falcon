@@ -70,13 +70,15 @@ module Falcon
 			end
 			
 			def setup(container)
-				container.run(name: self.name, restart: true, count: 1) do |task, instance|
-					@bound_endpoint.accept do |peer|
-						stream = Async::IO::Stream.new(peer)
-						
-						while message = stream.gets("\0")
-							response = handle(JSON.parse(message, symbolize_names: true))
-							stream.puts(response.to_json, separator: "\0")
+				container.run(name: self.name, restart: true, count: 1) do |instance|
+					Async do
+						@bound_endpoint.accept do |peer|
+							stream = Async::IO::Stream.new(peer)
+							
+							while message = stream.gets("\0")
+								response = handle(JSON.parse(message, symbolize_names: true))
+								stream.puts(response.to_json, separator: "\0")
+							end
 						end
 					end
 				end

@@ -93,14 +93,16 @@ module Falcon
 			end
 			
 			def setup(container)
-				container.run(name: self.name, restart: true) do |task, instance|
-					Async.logger.info(self) {"Starting application server, binding to #{@bound_endpoint}..."}
-					
-					server = Server.new(self.middleware, @bound_endpoint, self.protocol, self.scheme)
-					
-					server.run
-					
-					task.children.each(&:wait)
+				container.run(name: self.name, restart: true) do |instance|
+					Async(logger: logger) do |task|
+						Async.logger.info(self) {"Starting application server..."}
+						
+						server = Server.new(self.middleware, @bound_endpoint, self.protocol, self.scheme)
+						
+						server.run
+						
+						task.children.each(&:wait)
+					end
 				end
 			end
 			
