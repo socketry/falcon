@@ -31,20 +31,16 @@ RSpec.shared_context Falcon::Command::Virtual do
 		]
 	}
 	
-	let(:container) {command.container}
-	
 	around do |example|
 		# Wait for the container to start...
-		container.start
+		controller = command.controller
 		
-		# TODO some kind of more reliable synchronisation:
-		# until File.exist? "server.ipc"
-		sleep(4)
+		controller.start
 		
 		begin
 			example.run
 		ensure
-			container.stop(false)
+			controller.stop(true)
 		end
 	end
 	

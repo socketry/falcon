@@ -52,6 +52,10 @@ module Falcon
 				end
 			end
 			
+			def falcon_path
+				File.expand_path("../../../bin/falcon", __dir__)
+			end
+			
 			def setup(container)
 				if proxy = container[:proxy]
 					proxy.kill(:HUP)
@@ -70,11 +74,11 @@ module Falcon
 					end
 					
 					container.spawn(name: "Falcon Redirector", restart: true, key: :redirect) do |instance|
-						instance.exec($0, "redirect", "--bind", @command.bind_insecure, "--redirect", @command.bind_secure, *@command.paths)
+						instance.exec(falcon_path, "redirect", "--bind", @command.bind_insecure, "--redirect", @command.bind_secure, *@command.paths)
 					end
 					
 					container.spawn(name: "Falcon Proxy", restart: true, key: :proxy) do |instance|
-						instance.exec($0, "proxy", "--bind", @command.bind_secure, *@command.paths)
+						instance.exec(falcon_path, "proxy", "--bind", @command.bind_secure, *@command.paths)
 					end
 				end
 			end

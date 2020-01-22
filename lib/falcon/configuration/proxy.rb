@@ -18,8 +18,8 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-load(:host)
+load(:application)
 
-add(:proxy, :host) do
+add(:proxy, :application) do
 	endpoint {::Async::HTTP::Endpoint.parse(url)}
 end
