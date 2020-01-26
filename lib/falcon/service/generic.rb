@@ -42,7 +42,11 @@ module Falcon
 			end
 			
 			def logger
-				return Async.logger.with(name: name)
+				return Async.logger # .with(name: name)
+			end
+			
+			def to_s
+				self.class.name
 			end
 		end
 	end

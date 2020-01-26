@@ -79,7 +79,7 @@ module Falcon
 			end
 			
 			def to_s
-				"\#<#{self.class} #{@evaluator.authority}>"
+				"#{self.class} #{@evaluator.authority}"
 			end
 			
 			def start
