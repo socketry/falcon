@@ -20,6 +20,9 @@
 
 require 'falcon/command/virtual'
 
+require 'async/http'
+require 'protocol/http/request'
+
 RSpec.shared_context Falcon::Command::Virtual do
 	let(:examples_root) {File.expand_path("../../../examples", __dir__)}
 	
@@ -40,7 +43,7 @@ RSpec.shared_context Falcon::Command::Virtual do
 		begin
 			example.run
 		ensure
-			controller.stop(true)
+			controller.stop
 		end
 	end
 	

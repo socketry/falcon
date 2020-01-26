@@ -44,7 +44,7 @@ RSpec.shared_examples_for Falcon::Command::Serve do
 				client.close
 			end
 		ensure
-			controller.stop(false)
+			controller.stop
 		end
 	end
 end
