@@ -58,7 +58,7 @@ module Falcon
 			return to_enum unless block_given?
 			
 			@endpoint.each do |endpoint|
-				yield self.class.new(endpoint, @options)
+				yield self.class.new(endpoint, **@options)
 			end
 		end
 		
