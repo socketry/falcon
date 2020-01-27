@@ -18,19 +18,18 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-require_relative '../server'
+require_relative '../services'
 
 require 'async/container/controller'
 
 module Falcon
-	module Container
-		class Serve < Async::Container::Controller
+	module Controller
+		class Host < Async::Container::Controller
 			def initialize(command, **options)
 				@command = command
 				
-				@endpoint = nil
-				@bound_endpoint = nil
-				@debug_trap = Async::IO::Trap.new(:USR1)
+				@configuration = command.configuration
+				@services = Services.new(@configuration)
 				
 				super(**options)
 			end
@@ -39,66 +38,18 @@ module Falcon
 				@command.container_class.new
 			end
 			
-			def endpoint
-				@command.endpoint
-			end
-			
-			def load_app
-				@command.load_app
-			end
-			
 			def start
-				@endpoint ||= self.endpoint
-				
-				@bound_endpoint = Async::Reactor.run do
-					Async::IO::SharedEndpoint.bound(@endpoint)
-				end.wait
-				
-				@debug_trap.ignore!
+				@services.start
 				
 				super
 			end
 			
-			def name
-				"Falcon Server"
-			end
-			
 			def setup(container)
-				app, _ = self.load_app
-				
-				if GC.respond_to?(:compact)
-					GC.compact
-				end
-				
-				container.run(name: self.name, restart: true, **@command.container_options) do |instance|
-					Async do |task|
-						task.async do
-							if @debug_trap.install!
-								Async.logger.info(instance) do
-									"- Per-process status: kill -USR1 #{Process.pid}"
-								end
-							end
-							
-							@debug_trap.trap do
-								Async.logger.info(self) do |buffer|
-									task.reactor.print_hierarchy(buffer)
-								end
-							end
-						end
-						
-						server = Falcon::Server.new(app, @bound_endpoint, @endpoint.protocol, @endpoint.scheme)
-						
-						server.run
-						
-						task.children.each(&:wait)
-					end
-				end
+				@services.setup(container)
 			end
 			
 			def stop(*)
-				@bound_endpoint&.close
-				
-				@debug_trap.default!
+				@services.stop
 				
 				super
 			end

@@ -21,7 +21,7 @@
 require 'async/container/controller'
 
 module Falcon
-	module Container
+	module Controller
 		class Virtual < Async::Container::Controller
 			def initialize(command, **options)
 				@command = command

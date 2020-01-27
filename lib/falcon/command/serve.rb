@@ -20,7 +20,7 @@
 
 require_relative '../server'
 require_relative '../endpoint'
-require_relative '../container/serve'
+require_relative '../controller/serve'
 
 require 'async/container'
 
@@ -114,7 +114,7 @@ module Falcon
 			end
 			
 			def controller
-				Container::Serve.new(self)
+				Controller::Serve.new(self)
 			end
 			
 			def call

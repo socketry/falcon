@@ -18,7 +18,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-require_relative '../container/proxy'
+require_relative '../controller/proxy'
 require_relative 'paths'
 
 require 'samovar'
@@ -37,7 +37,7 @@ module Falcon
 			include Paths
 			
 			def controller
-				Container::Proxy.new(self)
+				Controller::Proxy.new(self)
 			end
 			
 			def container_class

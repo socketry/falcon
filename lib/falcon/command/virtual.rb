@@ -18,7 +18,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-require_relative '../container/virtual'
+require_relative '../controller/virtual'
 require_relative 'paths'
 
 require 'samovar'
@@ -38,7 +38,7 @@ module Falcon
 			include Paths
 			
 			def controller
-				Container::Virtual.new(self)
+				Controller::Virtual.new(self)
 			end
 			
 			def bind_secure

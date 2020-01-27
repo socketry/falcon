@@ -18,7 +18,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-require_relative '../container/host'
+require_relative '../controller/host'
 require_relative '../configuration'
 
 require 'samovar'
@@ -46,7 +46,7 @@ module Falcon
 			end
 			
 			def controller
-				Container::Host.new(self)
+				Controller::Host.new(self)
 			end
 			
 			def call

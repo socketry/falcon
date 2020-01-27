@@ -18,7 +18,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-require_relative '../container/redirect'
+require_relative '../controller/redirect'
 require_relative 'paths'
 
 require 'samovar'
@@ -38,7 +38,7 @@ module Falcon
 			include Paths
 			
 			def controller
-				Container::Redirect.new(self)
+				Controller::Redirect.new(self)
 			end
 			
 			def container_class

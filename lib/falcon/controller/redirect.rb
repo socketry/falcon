@@ -24,7 +24,7 @@ require_relative 'serve'
 require_relative '../middleware/redirect'
 
 module Falcon
-	module Container
+	module Controller
 		class Redirect < Serve
 			def initialize(command, **options)
 				super(command, **options)

@@ -24,7 +24,7 @@ require_relative 'serve'
 require_relative '../middleware/proxy'
 
 module Falcon
-	module Container
+	module Controller
 		class Proxy < Serve
 			SERVER_CIPHERS = "EECDH+CHACHA20:EECDH+AES128:RSA+AES128:EECDH+AES256:RSA+AES256:EECDH+3DES:RSA+3DES:!MD5".freeze
 			DEFAULT_SESSION_ID = "falcon"
