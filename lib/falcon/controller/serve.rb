@@ -93,6 +93,8 @@ module Falcon
 						
 						server.run
 						
+						instance.send(ready: true, status: "Ready for connections...")
+						
 						task.children.each(&:wait)
 					end
 				end
