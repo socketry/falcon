@@ -80,6 +80,8 @@ module Falcon
 								stream.puts(response.to_json, separator: "\0")
 							end
 						end
+						
+						instance.ready!
 					end
 				end
 			end

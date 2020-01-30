@@ -48,7 +48,9 @@ module Falcon
 				container.spawn(name: "Falcon Application", restart: true, key: path) do |instance|
 					env = assume_privileges(path)
 					
-					instance.exec(env, "bundle", "exec", path, **options)
+					instance.exec(env,
+						"bundle", "exec", "--keep-file-descriptors",
+						path, ready: false, **options)
 				end
 			end
 			
@@ -74,11 +76,11 @@ module Falcon
 					end
 					
 					container.spawn(name: "Falcon Redirector", restart: true, key: :redirect) do |instance|
-						instance.exec(falcon_path, "redirect", "--bind", @command.bind_insecure, "--redirect", @command.bind_secure, *@command.paths)
+						instance.exec(falcon_path, "redirect", "--bind", @command.bind_insecure, "--redirect", @command.bind_secure, *@command.paths, ready: false)
 					end
 					
 					container.spawn(name: "Falcon Proxy", restart: true, key: :proxy) do |instance|
-						instance.exec(falcon_path, "proxy", "--bind", @command.bind_secure, *@command.paths)
+						instance.exec(falcon_path, "proxy", "--bind", @command.bind_secure, *@command.paths, ready: false)
 					end
 				end
 			end
