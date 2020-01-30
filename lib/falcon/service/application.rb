@@ -64,10 +64,6 @@ module Falcon
 				endpoint.scheme
 			end
 			
-			def endpoint
-				@evaluator.endpoint
-			end
-			
 			def preload!
 				if scripts = @evaluator.preload
 					scripts.each do |path|
