@@ -23,31 +23,33 @@ run lambda {|env|
 	body.write("<!DOCTYPE html><html><head><title>#{count} Bottles of Beer</title></head><body>")
 	
 	task.async do |task|
-		body.write(COMMENT)
-		
-		count.downto(1) do |i|
-			task.annotate "bottles of beer #{i}"
+		begin
+			body.write(COMMENT)
 			
-			Async.logger.info(body) {"#{bottles(i)} of beer on the wall..."}
-			body.write("<p>#{bottles(i)} of beer on the wall, ")
-			task.sleep(0.1)
-			body.write("#{bottles(i)} of beer, ")
-			task.sleep(0.1)
-			body.write("take one down and pass it around, ")
-			task.sleep(0.1)
-			body.write("#{bottles(i-1)} of beer on the wall.</p>")
-			task.sleep(0.1)
-			body.write("<script>var child; while (child = document.body.firstChild) child.remove();</script>")
+			count.downto(1) do |i|
+				task.annotate "bottles of beer #{i}"
+				
+				Async.logger.info(body) {"#{bottles(i)} of beer on the wall..."}
+				body.write("<p>#{bottles(i)} of beer on the wall, ")
+				task.sleep(0.1)
+				body.write("#{bottles(i)} of beer, ")
+				task.sleep(0.1)
+				body.write("take one down and pass it around, ")
+				task.sleep(0.1)
+				body.write("#{bottles(i-1)} of beer on the wall.</p>")
+				task.sleep(0.1)
+				body.write("<script>var child; while (child = document.body.firstChild) child.remove();</script>")
+			end
+			
+			code = File.read(__FILE__)
+			body.write("<h1>Source Code</h1>")
+			body.write("<pre><code>#{CGI.escapeHTML code}</code></pre>")
+			body.write("</body></html>")
+		rescue
+			puts "Remote end closed connection: #{$!}"
+		ensure
+			body.close
 		end
-		
-		code = File.read(__FILE__)
-		body.write("<h1>Source Code</h1>")
-		body.write("<pre><code>#{CGI.escapeHTML code}</code></pre>")
-		body.write("</body></html>")
-	rescue
-		puts "Remote end closed connection: #{$!}"
-	ensure
-		body.close
 	end
 	
 	[200, {'content-type' => 'text/html; charset=utf-8'}, body]
