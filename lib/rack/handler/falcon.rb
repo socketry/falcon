@@ -3,6 +3,7 @@ require 'rack/handler'
 
 require_relative '../../falcon'
 
+require 'async/reactor'
 require 'async/io/host_endpoint'
 
 module Rack
@@ -26,7 +27,7 @@ module Rack
 				
 				server = ::Falcon::Server.new(app, endpoint, Async::HTTP::Protocol::HTTP1, SCHEME)
 				yield server if block_given?
-
+				
 				Async::Reactor.run do
 					server.run
 				end

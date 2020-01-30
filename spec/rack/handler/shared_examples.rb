@@ -19,6 +19,7 @@
 # THE SOFTWARE.
 
 require 'falcon/server'
+require 'async/http/endpoint'
 require 'async/http/client'
 require 'async/process'
 
