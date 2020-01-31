@@ -19,9 +19,11 @@
 # THE SOFTWARE.
 
 require_relative '../extensions/openssl'
+require_relative '../controller/proxy'
 
 add(:tls) do
-	ssl_session_id {"falcon"}
+	ssl_session_id "falcon"
+	ssl_ciphers Falcon::Controller::Proxy::SERVER_CIPHERS
 	
 	ssl_certificate_path {File.expand_path("ssl/certificate.pem", root)}
 	ssl_certificates {OpenSSL::X509.load_certificates(ssl_certificate_path)}
@@ -36,6 +38,7 @@ add(:tls) do
 		OpenSSL::SSL::SSLContext.new.tap do |context|
 			context.add_certificate(ssl_certificate, ssl_private_key, ssl_certificate_chain)
 			
+			context.session_cache_mode = OpenSSL::SSL::SSLContext::SESSION_CACHE_CLIENT
 			context.session_id_context = ssl_session_id
 			
 			context.alpn_select_cb = lambda do |protocols|
@@ -51,6 +54,7 @@ add(:tls) do
 			end
 			
 			context.set_params(
+				ciphers: ssl_ciphers,
 				verify_mode: OpenSSL::SSL::VERIFY_NONE,
 				min_version: OpenSSL::SSL::TLS1_2_VERSION,
 			)
