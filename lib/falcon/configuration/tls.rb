@@ -54,10 +54,12 @@ add(:tls) do
 				end
 			end
 			
+			# TODO Ruby 2.4 requires using ssl_version.
+			context.ssl_version = :TLSv1_2_server
+			
 			context.set_params(
 				ciphers: ssl_ciphers,
 				verify_mode: OpenSSL::SSL::VERIFY_NONE,
-				min_version: OpenSSL::SSL::TLS1_2_VERSION,
 			)
 			
 			context.setup

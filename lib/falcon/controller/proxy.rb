@@ -68,10 +68,11 @@ module Falcon
 					
 					context.session_id_context = @session_id
 					
+					context.ssl_version = :TLSv1_2_server
+					
 					context.set_params(
 						ciphers: TLS::SERVER_CIPHERS,
 						verify_mode: OpenSSL::SSL::VERIFY_NONE,
-						min_version: OpenSSL::SSL::TLS1_2_VERSION,
 					)
 					
 					context.setup
