@@ -20,10 +20,11 @@
 
 require_relative '../extensions/openssl'
 require_relative '../controller/proxy'
+require_relative '../tls'
 
 add(:tls) do
 	ssl_session_id "falcon"
-	ssl_ciphers Falcon::Controller::Proxy::SERVER_CIPHERS
+	ssl_ciphers Falcon::TLS::SERVER_CIPHERS
 	
 	ssl_certificate_path {File.expand_path("ssl/certificate.pem", root)}
 	ssl_certificates {OpenSSL::X509.load_certificates(ssl_certificate_path)}

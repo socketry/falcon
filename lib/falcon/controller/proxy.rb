@@ -24,10 +24,11 @@ require_relative 'serve'
 require_relative '../middleware/proxy'
 require_relative '../service/proxy'
 
+require_relative '../tls'
+
 module Falcon
 	module Controller
 		class Proxy < Serve
-			SERVER_CIPHERS = "EECDH+CHACHA20:EECDH+AES128:RSA+AES128:EECDH+AES256:RSA+AES256:EECDH+3DES:RSA+3DES:!MD5".freeze
 			DEFAULT_SESSION_ID = "falcon"
 			
 			def initialize(command, session_id: DEFAULT_SESSION_ID, **options)
@@ -68,9 +69,9 @@ module Falcon
 					context.session_id_context = @session_id
 					
 					context.set_params(
-						ciphers: SERVER_CIPHERS,
+						ciphers: TLS::SERVER_CIPHERS,
 						verify_mode: OpenSSL::SSL::VERIFY_NONE,
-						min_version: ::OpenSSL::SSL::TLS1_2_VERSION,
+						min_version: OpenSSL::SSL::TLS1_2_VERSION,
 					)
 					
 					context.setup
