@@ -22,6 +22,7 @@ require 'async/container/controller'
 
 require_relative 'serve'
 require_relative '../middleware/redirect'
+require_relative '../service/proxy'
 
 module Falcon
 	module Controller
@@ -54,7 +55,7 @@ module Falcon
 				@hosts = {}
 				
 				services.each do |service|
-					if service.is_a?(Service::Application)
+					if service.is_a?(Service::Proxy)
 						@hosts[service.authority] = service
 					end
 				end
