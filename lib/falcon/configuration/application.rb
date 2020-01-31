@@ -40,7 +40,5 @@ add(:application) do
 		)
 	end
 	
-	service do
-		::Falcon::Service::Application
-	end
+	service ::Falcon::Service::Application
 end

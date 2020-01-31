@@ -1,4 +1,4 @@
-# Copyright, 2019, by Samuel G. D. Williams. <http://www.codeotaku.com>
+# Copyright, 2018, by Samuel G. D. Williams. <http://www.codeotaku.com>
 # 
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -18,8 +18,41 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-add(:proxy) do
-	endpoint {::Async::HTTP::Endpoint.parse(url)}
-	
-	service ::Falcon::Service::Proxy
+require_relative 'generic'
+
+require 'async/http/endpoint'
+require 'async/io/shared_endpoint'
+
+module Falcon
+	module Service
+		class Proxy < Generic
+			def name
+				"#{self.class} for #{self.authority}"
+			end
+			
+			def authority
+				@evaluator.authority
+			end
+			
+			def endpoint
+				@evaluator.endpoint
+			end
+			
+			def ssl_context
+				@evaluator.ssl_context
+			end
+			
+			def root
+				@evaluator.root
+			end
+			
+			def protocol
+				endpoint.protocol
+			end
+			
+			def scheme
+				endpoint.scheme
+			end
+		end
+	end
 end

@@ -18,50 +18,22 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-require_relative 'generic'
+require_relative 'proxy'
 
 require 'async/http/endpoint'
 require 'async/io/shared_endpoint'
 
 module Falcon
 	module Service
-		class Application < Generic
+		class Application < Proxy
 			def initialize(environment)
 				super
 				
 				@bound_endpoint = nil
 			end
 			
-			def name
-				"#{self.class} for #{self.authority}"
-			end
-			
-			def authority
-				@evaluator.authority
-			end
-			
-			def endpoint
-				@evaluator.endpoint
-			end
-			
-			def ssl_context
-				@evaluator.ssl_context
-			end
-			
-			def root
-				@evaluator.root
-			end
-			
 			def middleware
 				@evaluator.middleware
-			end
-			
-			def protocol
-				endpoint.protocol
-			end
-			
-			def scheme
-				endpoint.scheme
 			end
 			
 			def preload!
@@ -72,10 +44,6 @@ module Falcon
 						load(full_path)
 					end
 				end
-			end
-			
-			def to_s
-				"#{self.class} #{@evaluator.authority}"
 			end
 			
 			def start

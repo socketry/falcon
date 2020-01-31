@@ -18,9 +18,11 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-require 'async/io/endpoint'
 require 'process/metrics'
 require 'json'
+
+require 'async/io/endpoint'
+require 'async/io/shared_endpoint'
 
 module Falcon
 	module Service
