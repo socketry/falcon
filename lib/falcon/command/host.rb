@@ -20,6 +20,7 @@
 
 require_relative '../controller/host'
 require_relative '../configuration'
+require_relative '../version'
 
 require 'samovar'
 
@@ -54,7 +55,7 @@ module Falcon
 					buffer.puts "Falcon Host v#{VERSION} taking flight!"
 					buffer.puts "- Configuration: #{@paths.join(', ')}"
 					buffer.puts "- To terminate: Ctrl-C or kill #{Process.pid}"
-					buffer.puts "- To reload all sites: kill -HUP #{Process.pid}"
+					buffer.puts "- To reload: kill -HUP #{Process.pid}"
 				end
 				
 				self.controller.run
