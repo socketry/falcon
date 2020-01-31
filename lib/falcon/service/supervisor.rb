@@ -69,6 +69,8 @@ module Falcon
 				@bound_endpoint = Async::Reactor.run do
 					Async::IO::SharedEndpoint.bound(self.endpoint)
 				end.wait
+				
+				super
 			end
 			
 			def setup(container)
@@ -86,11 +88,15 @@ module Falcon
 						instance.ready!
 					end
 				end
+				
+				super
 			end
 			
 			def stop
 				@bound_endpoint&.close
 				@bound_endpoint = nil
+				
+				super
 			end
 		end
 	end

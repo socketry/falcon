@@ -54,6 +54,8 @@ module Falcon
 				end.wait
 				
 				preload!
+				
+				super
 			end
 			
 			def setup(container)
@@ -70,11 +72,15 @@ module Falcon
 						task.children.each(&:wait)
 					end
 				end
+				
+				super
 			end
 			
 			def stop
 				@bound_endpoint&.close
 				@bound_endpoint = nil
+				
+				super
 			end
 		end
 	end

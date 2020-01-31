@@ -45,8 +45,13 @@ module Falcon
 				return Async.logger # .with(name: name)
 			end
 			
-			def to_s
-				self.class.name
+			def start
+			end
+			
+			def setup(container)
+			end
+			
+			def stop
 			end
 		end
 	end
