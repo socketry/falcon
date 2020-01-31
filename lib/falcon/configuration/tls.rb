@@ -52,6 +52,7 @@ add(:tls) do
 			
 			context.set_params(
 				verify_mode: OpenSSL::SSL::VERIFY_NONE,
+				min_version: OpenSSL::SSL::TLS1_2_VERSION,
 			)
 			
 			context.setup

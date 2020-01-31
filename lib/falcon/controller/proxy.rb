@@ -70,6 +70,7 @@ module Falcon
 					context.set_params(
 						ciphers: SERVER_CIPHERS,
 						verify_mode: OpenSSL::SSL::VERIFY_NONE,
+						min_version: ::OpenSSL::SSL::TLS1_2_VERSION,
 					)
 					
 					context.setup
