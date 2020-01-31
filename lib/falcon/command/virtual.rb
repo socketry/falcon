@@ -29,8 +29,8 @@ module Falcon
 			self.description = "Run one or more virtual hosts with a front-end proxy."
 			
 			options do
-				option '--bind-insecure <address>', "Bind redirection to the given hostname/address", default: "http://[::]:8080"
-				option '--bind-secure <address>', "Bind proxy to the given hostname/address", default: "https://[::]:8443"
+				option '--bind-insecure <address>', "Bind redirection to the given hostname/address", default: "http://[::]:80"
+				option '--bind-secure <address>', "Bind proxy to the given hostname/address", default: "https://[::]:443"
 			end
 			
 			many :paths
