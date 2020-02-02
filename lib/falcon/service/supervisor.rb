@@ -46,8 +46,7 @@ module Falcon
 				
 				signal = message[:signal] || :INT
 				
-				# Sepukku:
-				Process.kill(signal, -Process.getpgrp)
+				Process.kill(signal, Process.ppid)
 			end
 			
 			def do_metrics(message)
