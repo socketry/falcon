@@ -1,4 +1,5 @@
 #!/usr/bin/env falcon --verbose serve --concurrency 1 --config
+# frozen_string_literal: true
 
 class EarlyHints
 	def initialize(app)

@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 
 require 'falcon/server'
 require 'async/http/client'

@@ -1,4 +1,5 @@
 #!/usr/bin/env falcon-host
+# frozen_string_literal: true
 
 load :proxy, :self_signed_tls, :supervisor
 

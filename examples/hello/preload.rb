@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 
 if GC.respond_to?(:compact)
 	Async.logger.warn(self, "Compacting the mainframe...")

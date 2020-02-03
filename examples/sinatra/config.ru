@@ -1,4 +1,5 @@
 #!/usr/bin/env falcon --verbose serve -c
+# frozen_string_literal: true
 
 # Save this as `config.ru`, make it executable and then run it (or run falcon serve by hand)
 

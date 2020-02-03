@@ -1,4 +1,5 @@
 #!/usr/bin/env falcon --verbose serve -c
+# frozen_string_literal: true
 
 require 'rack'
 require 'cgi'
