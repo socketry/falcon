@@ -36,6 +36,7 @@ Gem::Specification.new do |spec|
 	spec.add_development_dependency "async-websocket", "~> 0.12.0"
 	spec.add_development_dependency "async-process", "~> 1.1"
 	
+	spec.add_development_dependency "bake"
 	spec.add_development_dependency "covered", "~> 0.10"
 	spec.add_development_dependency "bundler"
 	spec.add_development_dependency "rspec", "~> 3.6"

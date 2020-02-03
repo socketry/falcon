@@ -21,6 +21,8 @@
 require 'samovar'
 require 'async'
 require 'json'
+
+require 'async/io/stream'
 require 'async/io/unix_endpoint'
 
 module Falcon
