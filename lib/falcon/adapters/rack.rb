@@ -191,11 +191,11 @@ module Falcon
 			rescue => exception
 				@logger.error(self) {exception}
 				
-				return failure_response(exception)
+				return failure_response
 			end
 			
-			def failure_response(exception)
-				Protocol::HTTP::Response.for_exception(exception)
+			def failure_response
+				Protocol::HTTP::Response[500, {'content-type' => 'text/plain'}, ['Internal Server Error']]
 			end
 		end
 	end
