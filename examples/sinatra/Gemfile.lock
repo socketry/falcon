@@ -29,7 +29,7 @@ GEM
       rack
     rainbow (2.2.2)
       rake
-    rake (12.3.1)
+    rake (13.0.1)
     samovar (1.8.0)
       mapping (~> 1.0)
       rainbow (~> 2.0)
