@@ -25,4 +25,8 @@ require_relative '../lib/falcon/command'
 begin
 	Falcon::Command.call
 rescue Interrupt
+	# Ignore.
+rescue => error
+	Async.logger.error(Falcon::Command) {error}
+	exit! 1
 end
