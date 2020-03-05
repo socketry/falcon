@@ -40,6 +40,7 @@ module Falcon
 				option '--verbose | --quiet', "Verbosity of output for debugging.", key: :logging
 				option '-h/--help', "Print out help information."
 				option '-v/--version', "Print out the application version."
+				option '-e/--encoding', "Specify the default external encoding of the server.", default: "UTF-8"
 			end
 			
 			nested :command, {
@@ -59,15 +60,27 @@ module Falcon
 				@options[:logging] == :quiet
 			end
 			
+			# If you don't specify these, it's possible to have issues when encodings mismatch on the server.
+			def update_external_encoding!(encoding = Encoding::UTF_8)
+				if Encoding.default_external != encoding
+					Console.logger.warn(self) {"Updating Encoding.default_external from #{Encoding.default_external} to #{encoding}"}
+					Encoding.default_external = encoding
+				end
+			end
+			
+			def encoding
+				if name = @options[:encoding]
+					Encoding.find(name)
+				end
+			end
+			
 			def call
-				# if verbose?
-				# 	Async.logger.debug!
-				# elsif quiet?
-				# 	Async.logger.warn!
-				# else
-				# 	Async.logger.info!
-				# end
-				# 
+				if encoding = self.encoding
+					update_external_encoding!(encoding)
+				else
+					update_external_encoding!
+				end
+				
 				if @options[:version]
 					puts "#{self.name} v#{Falcon::VERSION}"
 				elsif @options[:help]
