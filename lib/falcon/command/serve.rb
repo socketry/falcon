@@ -122,8 +122,9 @@ module Falcon
 			end
 			
 			def call
-				Async.logger.info(self.endpoint) do |buffer|
+				Async.logger.info(self) do |buffer|
 					buffer.puts "Falcon v#{VERSION} taking flight! Using #{self.container_class} #{self.container_options}."
+					buffer.puts "- Binding to: #{self.endpoint}"
 					buffer.puts "- To terminate: Ctrl-C or kill #{Process.pid}"
 					buffer.puts "- To reload configuration: kill -HUP #{Process.pid}"
 				end
