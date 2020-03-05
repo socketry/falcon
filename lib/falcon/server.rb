@@ -25,16 +25,22 @@ require 'async/http/server'
 require 'protocol/http/middleware/builder'
 require 'protocol/http/content_encoding'
 
+require 'async/http/cache'
+
 require_relative 'verbose'
 require_relative 'adapters/rewindable'
 require_relative 'adapters/rack'
 
 module Falcon
 	class Server < Async::HTTP::Server
-		def self.middleware(rack_app, verbose: false)
+		def self.middleware(rack_app, verbose: false, cache: true)
 			::Protocol::HTTP::Middleware.build do
 				if verbose
 					use Verbose
+				end
+				
+				if cache
+					use Async::HTTP::Cache
 				end
 				
 				use ::Protocol::HTTP::ContentEncoding

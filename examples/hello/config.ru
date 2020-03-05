@@ -17,6 +17,6 @@ class RequestLogger
 	end
 end
 
-use RequestLogger
+# use RequestLogger
 
-run lambda {|env| Async.logger.debug(self) {env['HTTP_USER_AGENT']}; [200, {}, ["Hello World"]]}
+run lambda {|env| [200, {'cache-control' => 'max-age=10, public'}, ["Hello World"]]}

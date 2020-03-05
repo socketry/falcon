@@ -53,6 +53,8 @@ module Falcon
 				option '-c/--config <path>', "Rackup configuration file to load.", default: 'config.ru'
 				option '--preload', "Preload the bundle before creating containers."
 				
+				option '--cache', "Enable response cache.", default: false
+				
 				option '--forked | --threaded | --hybrid', "Select a specific parallelism model.", key: :container, default: :forked
 				
 				option '-n/--count <count>', "Number of instances to start.", default: Async::Container.processor_count, type: Integer
@@ -79,7 +81,7 @@ module Falcon
 			def load_app(verbose = self.verbose?)
 				rack_app, options = Rack::Builder.parse_file(@options[:config])
 				
-				return Server.middleware(rack_app, verbose: verbose), options
+				return Server.middleware(rack_app, verbose: verbose, cache: @options[:cache]), options
 			end
 			
 			def slice_options(*keys)
