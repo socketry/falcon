@@ -53,7 +53,7 @@ module Falcon
 				option '-c/--config <path>', "Rackup configuration file to load.", default: 'config.ru'
 				option '--preload', "Preload the bundle before creating containers."
 				
-				option '--cache', "Enable response cache.", default: false
+				option '--cache', "Enable the response cache."
 				
 				option '--forked | --threaded | --hybrid', "Select a specific parallelism model.", key: :container, default: :forked
 				
@@ -78,10 +78,14 @@ module Falcon
 				@parent&.verbose?
 			end
 			
-			def load_app(verbose = self.verbose?)
-				rack_app, options = Rack::Builder.parse_file(@options[:config])
+			def cache?
+				@options[:cache]
+			end
+			
+			def load_app
+				rack_app, _ = Rack::Builder.parse_file(@options[:config])
 				
-				return Server.middleware(rack_app, verbose: verbose, cache: @options[:cache]), options
+				return Server.middleware(rack_app, verbose: self.verbose?, cache: self.cache?)
 			end
 			
 			def slice_options(*keys)
@@ -131,6 +135,10 @@ module Falcon
 				
 				if @options[:preload]
 					Bundler.require(:preload)
+				end
+				
+				if GC.respond_to?(:compact)
+					GC.compact
 				end
 				
 				self.controller.run

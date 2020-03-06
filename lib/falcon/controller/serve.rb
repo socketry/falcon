@@ -69,14 +69,10 @@ module Falcon
 			end
 			
 			def setup(container)
-				app, _ = self.load_app
-				
-				if GC.respond_to?(:compact)
-					GC.compact
-				end
-				
 				container.run(name: self.name, restart: true, **@command.container_options) do |instance|
 					Async do |task|
+						app = self.load_app
+						
 						task.async do
 							if @debug_trap.install!
 								Async.logger.info(instance) do
