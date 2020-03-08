@@ -21,7 +21,8 @@ Gem::Specification.new do |spec|
 		
 	spec.add_dependency "async", "~> 1.13"
 	spec.add_dependency "async-io", "~> 1.22"
-	spec.add_dependency "async-http", "~> 0.50.3"
+	spec.add_dependency "async-http", "~> 0.50.4"
+	spec.add_dependency "async-http-cache", "~> 0.1.0"
 	spec.add_dependency "async-container", "~> 0.16.0"
 	
 	spec.add_dependency "rack", ">= 1.0"

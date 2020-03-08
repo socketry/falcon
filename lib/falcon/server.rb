@@ -40,7 +40,7 @@ module Falcon
 				end
 				
 				if cache
-					use Async::HTTP::Cache
+					use Async::HTTP::Cache::General
 				end
 				
 				use ::Protocol::HTTP::ContentEncoding
