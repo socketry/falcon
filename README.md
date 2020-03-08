@@ -273,7 +273,7 @@ Falcon can be an important part of your business or project, both improving perf
 - Priority consideration of feature requests and bug reports.
 - Private support and assistance via direct email.
 
-The standard price for business support is $120.00 USD / year / production instance (including reserve instances). Please [contact us](mailto:context@oriontransfer.net?subject=Falcon%20Business%20Support) for more details.
+The standard price for business support is $120.00 USD / year / production instance (including reserve instances). Please [contact us](mailto:contact@oriontransfer.net?subject=Falcon%20Business%20Support) for more details.
 
 ### "Stretch" Goals
 
