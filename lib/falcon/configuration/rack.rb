@@ -25,9 +25,14 @@ load :application
 add(:rack, :application) do
 	config_path {::File.expand_path("config.ru", root)}
 	
+	cache true
+	
 	middleware do
-		::Falcon::Server.middleware(
-			::Rack::Builder.parse_file(config_path).first, verbose: verbose
+		app, _ = ::Rack::Builder.parse_file(config_path)
+		
+		::Falcon::Server.middleware(app,
+			verbose: verbose,
+			cache: cache
 		)
 	end
 end
