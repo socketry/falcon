@@ -41,7 +41,7 @@ require 'bundler'
 module Falcon
 	module Command
 		class Serve < Samovar::Command
-			self.description = "Run an HTTP server."
+			self.description = "Run an HTTP server for development purposes."
 			
 			options do
 				option '-b/--bind <address>', "Bind to the given hostname/address.", default: "https://localhost:9292"
@@ -51,7 +51,7 @@ module Falcon
 				option '-t/--timeout <duration>', "Specify the maximum time to wait for non-blocking operations.", type: Float, default: nil
 				
 				option '-c/--config <path>', "Rackup configuration file to load.", default: 'config.ru'
-				option '--preload', "Preload the bundle before creating containers."
+				option '--preload <path>', "Preload the specified path before creating containers."
 				
 				option '--cache', "Enable the response cache."
 				
@@ -133,8 +133,9 @@ module Falcon
 					buffer.puts "- To reload configuration: kill -HUP #{Process.pid}"
 				end
 				
-				if @options[:preload]
-					Bundler.require(:preload)
+				if path = @options[:preload]
+					full_path = File.expand_path(path)
+					load(full_path)
 				end
 				
 				if GC.respond_to?(:compact)
