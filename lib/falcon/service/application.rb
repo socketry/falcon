@@ -35,8 +35,8 @@ module Falcon
 			end
 			
 			def middleware
-				# In a multi-threaded container, we don't want to modify the evaluator's cache.
-				@evaluator.dup.middleware
+				# In a multi-threaded container, we don't want to modify the shared evaluator's cache, so we create a new evaluator:
+				@environment.evaluator.middleware
 			end
 			
 			def preload!
