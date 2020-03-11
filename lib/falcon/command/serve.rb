@@ -138,6 +138,8 @@ module Falcon
 					load(full_path)
 				end
 				
+				Bundler.require(:preload)
+				
 				if GC.respond_to?(:compact)
 					GC.compact
 				end

@@ -60,6 +60,8 @@ module Falcon
 					buffer.puts "- To reload: kill -HUP #{Process.pid}"
 				end
 				
+				Bundler.require(:preload)
+				
 				self.controller.run
 			end
 		end
