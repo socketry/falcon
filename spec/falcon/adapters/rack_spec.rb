@@ -71,7 +71,7 @@ RSpec.describe Falcon::Adapters::Rack do
 		let(:response) {client.get("/")}
 		
 		it "get valid response" do
-			expect(response.headers).to be_empty
+			expect(response.headers).to_not include('connection')
 			expect(response.read).to be == "Hello World!"
 		end
 	end

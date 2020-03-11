@@ -50,10 +50,6 @@ RSpec.describe Falcon::Server, timeout: 1 do
 				expect(response).to be_success
 				expect(response.read).to be == "Hello World"
 			end
-			
-			it "doesn't generate any headers by default" do
-				expect(response.headers).to be_empty
-			end
 		end
 		
 		it "can POST application/x-www-form-urlencoded" do
