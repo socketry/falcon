@@ -71,6 +71,7 @@ module Falcon
 			def setup(container)
 				container.run(name: self.name, restart: true, **@command.container_options) do |instance|
 					Async do |task|
+						# Load one app instance per container:
 						app = self.load_app
 						
 						task.async do
