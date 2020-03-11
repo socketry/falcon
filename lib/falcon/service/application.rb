@@ -35,7 +35,8 @@ module Falcon
 			end
 			
 			def middleware
-				@evaluator.middleware
+				# In a multi-threaded container, we don't want to modify the evaluator's cache.
+				@evaluator.dup.middleware
 			end
 			
 			def preload!
@@ -61,11 +62,14 @@ module Falcon
 			end
 			
 			def setup(container)
+				protocol = self.protocol
+				scheme = self.scheme
+				
 				container.run(name: self.name, restart: true) do |instance|
 					Async(logger: logger) do |task|
 						Async.logger.info(self) {"Starting application server for #{self.root}..."}
 						
-						server = Server.new(self.middleware, @bound_endpoint, self.protocol, self.scheme)
+						server = Server.new(self.middleware, @bound_endpoint, protocol, scheme)
 						
 						server.run
 						

@@ -29,7 +29,7 @@ Gem::Specification.new do |spec|
 	
 	spec.add_dependency 'samovar', "~> 2.1"
 	spec.add_dependency 'localhost', "~> 1.1"
-	spec.add_dependency 'build-environment', '~> 1.11'
+	spec.add_dependency 'build-environment', '~> 1.13'
 	
 	spec.add_dependency 'process-metrics', '~> 0.1.0'
 	
