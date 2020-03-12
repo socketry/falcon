@@ -25,7 +25,7 @@ load :application
 add(:rack, :application) do
 	config_path {::File.expand_path("config.ru", root)}
 	
-	cache true
+	cache false
 	
 	middleware do
 		app, _ = ::Rack::Builder.parse_file(config_path)
