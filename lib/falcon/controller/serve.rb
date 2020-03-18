@@ -68,8 +68,16 @@ module Falcon
 				"Falcon Server"
 			end
 			
+			def before_serve
+			end
+			
+			def instance_ready(server)
+			end
+			
 			def setup(container)
 				container.run(name: self.name, restart: true, **@command.container_options) do |instance|
+					self.before_serve
+					
 					Async do |task|
 						# Load one app instance per container:
 						app = self.load_app
@@ -93,6 +101,8 @@ module Falcon
 						server.run
 						
 						instance.ready!
+						
+						self.instance_ready(server)
 						
 						task.children.each(&:wait)
 					end

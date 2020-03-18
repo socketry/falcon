@@ -64,6 +64,7 @@ module Falcon
 			end
 			
 			attr :count
+			attr :clients
 			
 			def close
 				@clients.each_value(&:close)

@@ -8,6 +8,7 @@ gemspec
 
 group :development do
 	gem 'ruby-prof', platform: :mri
+	gem 'memory_profiler'
 end
 
 group :test do

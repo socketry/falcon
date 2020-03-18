@@ -47,7 +47,7 @@ module Falcon
 			end
 			
 			def container_options
-				{}
+				{count: 1}
 			end
 			
 			def call

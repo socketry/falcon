@@ -88,7 +88,54 @@ module Falcon
 				)
 			end
 			
+			def before_serve
+				# require 'memory_profiler'
+				# MemoryProfiler.start
+			end
+			
+			def instance_ready(server, parent: Async::Task.current)
+				# parent.async do |task|
+				# 	task.sleep(20)
+				# 
+				# 	Async.logger.info(self) {"Preparing memory report..."}
+				# 
+				# 	require 'objspace'
+				# 	ObjectSpace.trace_object_allocations_start
+				# 
+				# 	File.open("heap-#{Process.pid}.dump", 'w') do |file|
+				# 		ObjectSpace.dump_all(output: file)
+				# 	end
+				# end
+				# 
+				# 	report = MemoryProfiler.stop
+				# 	report.pretty_print($stderr)
+				# 
+				# 	ObjectSpace.each_object(Async::HTTP::Protocol::HTTP2::Server) do |server|
+				# 		Async.logger.info(server) {server.inspect}
+				# 	end
+				# 
+				# 	clients = server.delegate.clients
+				# 	clients.each do |key, client|
+				# 		Async.logger.info(self) do |buffer|
+				# 			buffer.puts "Client for #{key}: #{client.pool}"
+				# 
+				# 			pool = client.pool
+				# 			pool.resources.each do |connection, usage|
+				# 				buffer.puts "\t#{usage}: #{connection}"
+				# 				connection.streams.each do |key, stream|
+				# 					buffer.puts "\t\t#{key} -> #{stream}"
+				# 				end
+				# 			end
+				# 		end
+				# 	end
+				# end
+			end
+			
 			def start
+				if GC.respond_to?(:compact)
+					GC.compact
+				end
+				
 				configuration = @command.configuration
 				
 				services = Services.new(configuration)
