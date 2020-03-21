@@ -43,9 +43,8 @@ module Falcon
 				elsif status == 200 and body.respond_to?(:to_path)
 					# Don't mangle partial responsese (206)
 					return ::Protocol::HTTP::Body::File.open(body.to_path)
-				elsif body.is_a? Array
-					# TODO after dropping 2.3, change to #sum
-					length ||= body.inject(0){|sum, chunk| sum + chunk.bytesize}
+				elsif body.is_a?(Array)
+					length ||= body.sum(&:bytesize)
 					return self.new(headers, body, length)
 				else
 					return self.new(headers, body, length)
