@@ -24,7 +24,7 @@ require 'falcon/adapters/output'
 
 RSpec.describe Falcon::Adapters::Output do
 	context 'with empty body' do
-		subject {described_class.new({}, [], nil)}
+		subject {described_class.new([], nil)}
 		
 		it "should be empty?" do
 			expect(subject).to be_empty
@@ -32,7 +32,7 @@ RSpec.describe Falcon::Adapters::Output do
 	end
 	
 	context 'with single string body' do
-		subject {described_class.new({}, ["Hello World"], nil)}
+		subject {described_class.new(["Hello World"], nil)}
 		
 		it "should not be empty?" do
 			expect(subject).to_not be_empty

@@ -52,6 +52,17 @@ RSpec.describe Falcon::Server, timeout: 1 do
 			end
 		end
 		
+		context "HEAD /" do
+			let!(:response) {client.head("/")}
+			after {response.finish}
+			
+			it "generates successful response" do
+				expect(response).to be_success
+				expect(response.body).to be_empty
+				expect(response.body).to have_attributes(length: 11)
+			end
+		end
+		
 		it "can POST application/x-www-form-urlencoded" do
 			response = client.post("/", {'content-type' => 'application/x-www-form-urlencoded'}, ['hello=world'])
 			
