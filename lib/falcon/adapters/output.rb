@@ -45,13 +45,13 @@ module Falcon
 					return ::Protocol::HTTP::Body::File.open(body.to_path)
 				elsif body.is_a?(Array)
 					length ||= body.sum(&:bytesize)
-					return self.new(headers, body, length)
+					return self.new(body, length)
 				else
-					return self.new(headers, body, length)
+					return self.new(body, length)
 				end
 			end
 			
-			def initialize(headers, body, length)
+			def initialize(body, length)
 				@length = length
 				@body = body
 				
