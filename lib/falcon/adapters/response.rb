@@ -67,6 +67,11 @@ module Falcon
 					body = Output.wrap(status, headers, body)
 				end
 				
+				if request&.head?
+					# I thought about doing this in Output.wrap, but decided the semantics are too tricky. Specifically, the various ways a rack response body can be wrapped, and the need to invoke #close at the right point.
+					body = ::Protocol::HTTP::Body::Head.for(body)
+				end
+				
 				protocol = meta['rack.protocol']
 				
 				# https://tools.ietf.org/html/rfc7231#section-7.4.2
