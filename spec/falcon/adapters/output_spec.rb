@@ -38,5 +38,4 @@ RSpec.describe Falcon::Adapters::Output do
 			expect(subject).to_not be_empty
 		end
 	end
-
 end
