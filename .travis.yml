@@ -11,6 +11,8 @@ addons:
     packages:
     - wrk
 
+script: bundle exec rspec
+
 after_script:
   - bundle exec rake benchmark:compare
 
