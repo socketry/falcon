@@ -34,12 +34,12 @@ Gem::Specification.new do |spec|
 	spec.add_dependency 'process-metrics', '~> 0.1.0'
 	
 	spec.add_development_dependency "async-rspec", "~> 1.7"
-	spec.add_development_dependency "async-websocket", "~> 0.12.0"
+	spec.add_development_dependency "async-websocket", "~> 0.14.0"
 	spec.add_development_dependency "async-process", "~> 1.1"
 	
 	spec.add_development_dependency "bake"
-	spec.add_development_dependency "covered", "~> 0.10"
+	spec.add_development_dependency "covered"
 	spec.add_development_dependency "bundler"
 	spec.add_development_dependency "rspec", "~> 3.6"
-	spec.add_development_dependency "rake"
+	spec.add_development_dependency "bake-bundler"
 end
