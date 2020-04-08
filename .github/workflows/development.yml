@@ -1,0 +1,45 @@
+name: Development
+
+on: [push, pull_request]
+
+jobs:
+  test:
+    strategy:
+      matrix:
+        os:
+          - ubuntu
+          - macos
+        
+        ruby:
+          - 2.5
+          - 2.6
+          - 2.7
+        
+        include:
+          - os: 'ubuntu'
+            ruby: 2.7
+            env: BUNDLE_GEMFILE=gems/rack1.gemfile
+          - os: 'ubuntu'
+            ruby: 2.7
+            env: BUNDLE_GEMFILE=gems/rack3.gemfile
+          - os: 'ubuntu'
+            ruby: 2.6
+            env: COVERAGE=PartialSummary,Coveralls
+    
+    runs-on: ${{matrix.os}}-latest
+    
+    steps:
+    - uses: actions/checkout@v1
+    - uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: ${{matrix.ruby}}
+    
+    - name: Installing packages (ubuntu)
+      if: matrix.os == 'ubuntu'
+      run: sudo apt-get install apache2-utils
+    
+    - name: Install dependencies
+      run: ${{matrix.env}} bundle install
+    
+    - name: Run tests
+      run: ${{matrix.env}} bundle exec rspec
