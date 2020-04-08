@@ -75,22 +75,44 @@ RSpec.describe Falcon::Command::Virtual do
 		end
 		
 		shared_examples_for Falcon::Command::Virtual do
-			let(:host_endpoint) {command.host_endpoint("hello.localhost")}
 			let(:secure_client) {Async::HTTP::Client.new(host_endpoint, retries: 0)}
 			
-			it "gets valid response from secure endpoint" do
-				request = Protocol::HTTP::Request.new("https", "hello.localhost", "GET", "/index")
+			context "for hello.localhost" do
+				let(:host_endpoint) {command.host_endpoint("hello.localhost")}
 				
-				expect(request.authority).to be == "hello.localhost"
+				it "gets valid response from secure endpoint" do
+					request = Protocol::HTTP::Request.new("https", "hello.localhost", "GET", "/index")
+					
+					expect(request.authority).to be == "hello.localhost"
+					
+					Async do
+						response = secure_client.call(request)
+						
+						expect(response).to be_success
+						expect(response.read).to be == "Hello World"
+						
+						secure_client.close
+					end.wait
+				end
+			end
+			
+			context "for beer.localhost" do
+				let(:host_endpoint) {command.host_endpoint("beer.localhost")}
 				
-				Async do
-					response = secure_client.call(request)
+				it "can cancel request" do
+					request = Protocol::HTTP::Request.new("https", "beer.localhost", "GET", "/index")
 					
-					expect(response).to be_success
-					expect(response.read).to be == "Hello World"
-					
-					secure_client.close
-				end.wait
+					Async do
+						response = secure_client.call(request)
+						
+						expect(response).to be_success
+						
+						response.body.read
+						response.close
+						
+						secure_client.close
+					end.wait
+				end
 			end
 		end
 		
