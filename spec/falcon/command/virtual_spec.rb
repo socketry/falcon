@@ -145,17 +145,17 @@ RSpec.describe Falcon::Command::Virtual do
 			end
 		end
 		
-		context "HTTP/1.0" do
+		context "using HTTP/1.0" do
 			let(:protocol) {Async::HTTP::Protocol::HTTP10}
 			include_examples Falcon::Command::Virtual
 		end
 		
-		context "HTTP/1.1" do
+		context "using HTTP/1.1" do
 			let(:protocol) {Async::HTTP::Protocol::HTTP11}
 			include_examples Falcon::Command::Virtual
 		end
 		
-		context "HTTP/2" do
+		context "using HTTP/2" do
 			let(:protocol) {Async::HTTP::Protocol::HTTP2}
 			include_examples Falcon::Command::Virtual
 		end
