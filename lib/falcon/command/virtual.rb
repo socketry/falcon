@@ -33,6 +33,8 @@ module Falcon
 			options do
 				option '--bind-insecure <address>', "Bind redirection to the given hostname/address", default: "http://[::]:80"
 				option '--bind-secure <address>', "Bind proxy to the given hostname/address", default: "https://[::]:443"
+				
+				option '-t/--timeout <duration>', "Specify the maximum time to wait for non-blocking operations.", type: Float, default: 30
 			end
 			
 			many :paths
@@ -49,6 +51,10 @@ module Falcon
 			
 			def bind_insecure
 				@options[:bind_insecure]
+			end
+			
+			def timeout
+				@options[:timeout]
 			end
 			
 			def call

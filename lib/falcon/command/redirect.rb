@@ -33,6 +33,8 @@ module Falcon
 			options do
 				option '--bind <address>', "Bind to the given hostname/address", default: "http://[::]:80"
 				option '--redirect <address>', "Redirect using this address as a template.", default: "https://[::]:443"
+				
+				option '-t/--timeout <duration>', "Specify the maximum time to wait for non-blocking operations.", type: Float, default: nil
 			end
 			
 			many :paths
@@ -63,7 +65,7 @@ module Falcon
 			end
 			
 			def endpoint(**options)
-				Async::HTTP::Endpoint.parse(@options[:bind], **options)
+				Async::HTTP::Endpoint.parse(@options[:bind], timeout: @options[:timeout], **options)
 			end
 			
 			def redirect_endpoint(**options)

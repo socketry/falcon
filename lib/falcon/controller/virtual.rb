@@ -78,11 +78,20 @@ module Falcon
 					end
 					
 					container.spawn(name: "Falcon Redirector", restart: true, key: :redirect) do |instance|
-						instance.exec(falcon_path, "redirect", "--bind", @command.bind_insecure, "--redirect", @command.bind_secure, *@command.paths, ready: false)
+						instance.exec(falcon_path, "redirect",
+							"--bind", @command.bind_insecure,
+							"--timeout", @command.timeout.to_s,
+							"--redirect", @command.bind_secure,
+							*@command.paths, ready: false
+						)
 					end
 					
 					container.spawn(name: "Falcon Proxy", restart: true, key: :proxy) do |instance|
-						instance.exec(falcon_path, "proxy", "--bind", @command.bind_secure, *@command.paths, ready: false)
+						instance.exec(falcon_path, "proxy",
+							"--bind", @command.bind_secure,
+							"--timeout", @command.timeout.to_s,
+							*@command.paths, ready: false
+						)
 					end
 				end
 			end
