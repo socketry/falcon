@@ -21,12 +21,15 @@ jobs:
           - 2.7
         
         include:
+          # - experimental: true
+          #   os: ubuntu
+          #   ruby: truffleruby
+          # - experimental: true
+          #   os: ubuntu
+          #   ruby: jruby
           - experimental: true
             os: ubuntu
-            ruby: truffleruby
-          - experimental: true
-            os: ubuntu
-            ruby: jruby
+            ruby: head
           - experimental: true
             os: ubuntu
             ruby: 2.7
