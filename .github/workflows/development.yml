@@ -23,6 +23,12 @@ jobs:
         include:
           - experimental: true
             os: ubuntu
+            ruby: truffleruby
+          - experimental: true
+            os: ubuntu
+            ruby: jruby
+          - experimental: true
+            os: ubuntu
             ruby: 2.7
             env: BUNDLE_GEMFILE=gems/rack1.gemfile
           - experimental: true
