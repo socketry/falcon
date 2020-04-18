@@ -4,8 +4,13 @@ on: [push, pull_request]
 
 jobs:
   test:
+    runs-on: ${{matrix.os}}-latest
+    continue-on-error: ${{matrix.experimental}}
+    
     strategy:
       matrix:
+        experimental: [false]
+        
         os:
           - ubuntu
           - macos
@@ -16,17 +21,18 @@ jobs:
           - 2.7
         
         include:
-          - os: 'ubuntu'
+          - experimental: true
+            os: ubuntu
             ruby: 2.7
             env: BUNDLE_GEMFILE=gems/rack1.gemfile
-          - os: 'ubuntu'
+          - experimental: true
+            os: ubuntu
             ruby: 2.7
             env: BUNDLE_GEMFILE=gems/rack3.gemfile
-          - os: 'ubuntu'
+          - experimental: true
+            os: ubuntu
             ruby: 2.6
             env: COVERAGE=PartialSummary,Coveralls
-    
-    runs-on: ${{matrix.os}}-latest
     
     steps:
     - uses: actions/checkout@v1
