@@ -52,7 +52,7 @@ module Falcon
 			end
 			
 			def do_metrics(message)
-				Process::Metrics.capture(pid: Process.ppid, ppid: Process.ppid)
+				Process::Metrics::General.capture(pid: Process.ppid, ppid: Process.ppid)
 			end
 			
 			def handle(message)
