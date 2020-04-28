@@ -1,0 +1,124 @@
+GEM
+  remote: https://rubygems.org/
+  specs:
+    async (1.25.2)
+      console (~> 1.0)
+      nio4r (~> 2.3)
+      timers (~> 4.1)
+    async-container (0.16.4)
+      async (~> 1.0)
+      async-io (~> 1.26)
+      process-group
+    async-http (0.52.0)
+      async (~> 1.25)
+      async-io (~> 1.28)
+      async-pool (~> 0.2)
+      protocol-http (~> 0.18.0)
+      protocol-http1 (~> 0.12.0)
+      protocol-http2 (~> 0.14.0)
+    async-http-cache (0.2.0)
+      async-http (~> 0.51)
+    async-io (1.29.0)
+      async (~> 1.14)
+    async-pool (0.3.0)
+      async (~> 1.25)
+    bake (0.10.0)
+      samovar (~> 2.1)
+    build-environment (1.13.0)
+    concurrent-ruby (1.1.6)
+    console (1.8.2)
+    falcon (0.36.4)
+      async (~> 1.13)
+      async-container (~> 0.16.0)
+      async-http (~> 0.52.0)
+      async-http-cache (~> 0.2.0)
+      async-io (~> 1.22)
+      build-environment (~> 1.13)
+      localhost (~> 1.1)
+      process-metrics (~> 0.2.0)
+      rack (>= 1.0)
+      samovar (~> 2.1)
+    ffi (1.12.2)
+    http-accept (2.1.1)
+    kramdown (2.2.1)
+      rexml
+    kramdown-parser-gfm (1.1.0)
+      kramdown (~> 2.0)
+    localhost (1.1.6)
+    mail (2.7.1)
+      mini_mime (>= 0.1.1)
+    mapping (1.1.1)
+    mime-types (3.3.1)
+      mime-types-data (~> 3.2015)
+    mime-types-data (3.2020.0425)
+    mini_mime (1.0.2)
+    msgpack (1.3.3)
+    nio4r (2.5.2)
+    process-group (1.2.1)
+      process-terminal (~> 0.2.0)
+    process-metrics (0.2.1)
+      console (~> 1.8)
+      samovar (~> 2.1)
+    process-terminal (0.2.0)
+      ffi
+    protocol-hpack (1.4.2)
+    protocol-http (0.18.0)
+    protocol-http1 (0.12.0)
+      protocol-http (~> 0.18)
+    protocol-http2 (0.14.0)
+      protocol-hpack (~> 1.4)
+      protocol-http (~> 0.18)
+    rack (2.3.0)
+    rackula (1.1.0)
+      falcon (~> 0.34)
+      samovar (~> 2.1)
+      variant
+    rake (13.0.1)
+    rake-compiler (1.1.0)
+      rake
+    rexml (3.2.4)
+    samovar (2.1.4)
+      console (~> 1.0)
+      mapping (~> 1.0)
+    thread-local (1.0.0)
+    timers (4.3.0)
+    trenni (3.9.0)
+      rake-compiler
+    utopia (2.14.0)
+      concurrent-ruby (~> 1.0)
+      console (~> 1.0)
+      http-accept (~> 2.1)
+      mail (~> 2.6)
+      mime-types (~> 3.0)
+      msgpack
+      rack (~> 2.2)
+      samovar (~> 2.1)
+      trenni (~> 3.0)
+      variant (~> 0.1)
+    utopia-gallery (2.5.0)
+      trenni (~> 3.9)
+      utopia (~> 2.0)
+      vips-thumbnail (~> 1.6)
+    utopia-wiki (0.3.0)
+      bake
+      falcon
+      kramdown
+      kramdown-parser-gfm
+      rackula
+      utopia (~> 2.14)
+      utopia-gallery
+    variant (0.1.1)
+      thread-local
+    vips (8.9.1)
+      ffi (~> 1.9)
+    vips-thumbnail (1.6.0)
+      vips (~> 8.9)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  utopia-wiki
+
+BUNDLED WITH
+   2.1.4
