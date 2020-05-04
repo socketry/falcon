@@ -1,6 +1,22 @@
+PATH
+  remote: .
+  specs:
+    falcon (0.36.4)
+      async (~> 1.13)
+      async-container (~> 0.16.0)
+      async-http (~> 0.52.0)
+      async-http-cache (~> 0.2.0)
+      async-io (~> 1.22)
+      build-environment (~> 1.13)
+      localhost (~> 1.1)
+      process-metrics (~> 0.2.0)
+      rack (>= 1.0)
+      samovar (~> 2.1)
+
 GEM
   remote: https://rubygems.org/
   specs:
+    ast (2.4.0)
     async (1.25.2)
       console (~> 1.0)
       nio4r (~> 2.3)
@@ -20,30 +36,42 @@ GEM
       async-http (~> 0.51)
     async-io (1.29.0)
       async (~> 1.14)
-    async-pool (0.3.0)
+    async-pool (0.3.1)
       async (~> 1.25)
-    bake (0.10.0)
+    async-process (1.3.0)
+      async (~> 1.0)
+      async-io (~> 1.0)
+    async-rest (0.12.2)
+      async-http (~> 0.42)
+      protocol-http (~> 0.7)
+    async-rspec (1.14.0)
+      rspec (~> 3.0)
+      rspec-files (~> 1.0)
+      rspec-memory (~> 1.0)
+    async-websocket (0.14.0)
+      async-http (~> 0.51)
+      async-io (~> 1.23)
+      protocol-websocket (~> 0.7.0)
+    bake (0.13.0)
       samovar (~> 2.1)
+    bake-bundler (0.3.1)
+      bake (~> 0.9)
+      rspec
     build-environment (1.13.0)
     concurrent-ruby (1.1.6)
     console (1.8.2)
-    falcon (0.36.4)
-      async (~> 1.13)
-      async-container (~> 0.16.0)
-      async-http (~> 0.52.0)
-      async-http-cache (~> 0.2.0)
-      async-io (~> 1.22)
-      build-environment (~> 1.13)
-      localhost (~> 1.1)
-      process-metrics (~> 0.2.0)
-      rack (>= 1.0)
-      samovar (~> 2.1)
+    covered (0.13.1)
+      async-rest
+      console (~> 1.0)
+      msgpack
+      parser
+    decode (0.8.0)
+      parser
+    diff-lcs (1.3)
     ffi (1.12.2)
     http-accept (2.1.1)
     kramdown (2.2.1)
       rexml
-    kramdown-parser-gfm (1.1.0)
-      kramdown (~> 2.0)
     localhost (1.1.6)
     mail (2.7.1)
       mini_mime (>= 0.1.1)
@@ -54,6 +82,8 @@ GEM
     mini_mime (1.0.2)
     msgpack (1.3.3)
     nio4r (2.5.2)
+    parser (2.7.1.2)
+      ast (~> 2.4.0)
     process-group (1.2.1)
       process-terminal (~> 0.2.0)
     process-metrics (0.2.1)
@@ -68,7 +98,12 @@ GEM
     protocol-http2 (0.14.0)
       protocol-hpack (~> 1.4)
       protocol-http (~> 0.18)
-    rack (2.3.0)
+    protocol-websocket (0.7.4)
+      protocol-http (~> 0.2)
+      protocol-http1 (~> 0.2)
+    puma (4.3.3)
+      nio4r (~> 2.0)
+    rack (2.2.2)
     rackula (1.1.0)
       falcon (~> 0.34)
       samovar (~> 2.1)
@@ -77,6 +112,24 @@ GEM
     rake-compiler (1.1.0)
       rake
     rexml (3.2.4)
+    rspec (3.9.0)
+      rspec-core (~> 3.9.0)
+      rspec-expectations (~> 3.9.0)
+      rspec-mocks (~> 3.9.0)
+    rspec-core (3.9.2)
+      rspec-support (~> 3.9.3)
+    rspec-expectations (3.9.1)
+      diff-lcs (>= 1.2.0, < 2.0)
+      rspec-support (~> 3.9.0)
+    rspec-files (1.0.2)
+      rspec (~> 3.0)
+    rspec-memory (1.0.2)
+      rspec (~> 3.0)
+    rspec-mocks (3.9.1)
+      diff-lcs (>= 1.2.0, < 2.0)
+      rspec-support (~> 3.9.0)
+    rspec-support (3.9.3)
+    ruby-prof (1.3.2)
     samovar (2.1.4)
       console (~> 1.0)
       mapping (~> 1.0)
@@ -84,7 +137,7 @@ GEM
     timers (4.3.0)
     trenni (3.9.0)
       rake-compiler
-    utopia (2.14.0)
+    utopia (2.15.1)
       concurrent-ruby (~> 1.0)
       console (~> 1.0)
       http-accept (~> 2.1)
@@ -95,30 +148,32 @@ GEM
       samovar (~> 2.1)
       trenni (~> 3.0)
       variant (~> 0.1)
-    utopia-gallery (2.5.0)
-      trenni (~> 3.9)
-      utopia (~> 2.0)
-      vips-thumbnail (~> 1.6)
-    utopia-wiki (0.3.0)
-      bake
+    utopia-project (0.3.0)
+      decode
       falcon
       kramdown
-      kramdown-parser-gfm
       rackula
+      thread-local
       utopia (~> 2.14)
-      utopia-gallery
     variant (0.1.1)
       thread-local
-    vips (8.9.1)
-      ffi (~> 1.9)
-    vips-thumbnail (1.6.0)
-      vips (~> 8.9)
 
 PLATFORMS
   ruby
 
 DEPENDENCIES
-  utopia-wiki
+  async-process (~> 1.1)
+  async-rspec (~> 1.7)
+  async-websocket (~> 0.14.0)
+  bake
+  bake-bundler
+  bundler
+  covered
+  falcon!
+  puma
+  rspec (~> 3.6)
+  ruby-prof
+  utopia-project
 
 BUNDLED WITH
    2.1.4

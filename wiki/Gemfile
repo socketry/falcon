@@ -1,6 +1,0 @@
-
-source "https://rubygems.org"
-
-group :preload do
-	gem "utopia-wiki"
-end

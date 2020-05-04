@@ -37,6 +37,8 @@ Gem::Specification.new do |spec|
 	spec.add_development_dependency "async-websocket", "~> 0.14.0"
 	spec.add_development_dependency "async-process", "~> 1.1"
 	
+	spec.add_development_dependency "utopia-project"
+	
 	spec.add_development_dependency "bake"
 	spec.add_development_dependency "covered"
 	spec.add_development_dependency "bundler"
