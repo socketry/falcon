@@ -24,8 +24,10 @@ require_relative 'extensions/openssl'
 
 module Falcon
 	module TLS
-		# We follow "Intermediate compatibility"
-		# https://wiki.mozilla.org/Security/Server_Side_TLS
+		# The list of supported ciphers.
+		#
+		# We follow "Intermediate compatibility" as oulined here:
+		# <https://wiki.mozilla.org/Security/Server_Side_TLS>
 		SERVER_CIPHERS = [
 			# TLS 1.3:
 			"TLS_AES_128_GCM_SHA256",

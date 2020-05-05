@@ -2,8 +2,6 @@
 
 Falcon is a multi-process, multi-fiber rack-compatible HTTP server built on top of [async], [async-io], [async-container] and [async-http]. Each request is executed within a lightweight fiber and can block on up-stream requests without stalling the entire server process. Falcon supports HTTP/1 and HTTP/2 natively.
 
-[Priority Business Support](#priority-business-support) is available.
-
 [![Actions Status](https://github.com/socketry/falcon/workflows/Development/badge.svg)](https://github.com/socketry/falcon/actions?workflow=Development)
 [![Code Climate](https://codeclimate.com/github/socketry/falcon.svg)](https://codeclimate.com/github/socketry/falcon)
 [![Coverage Status](https://coveralls.io/repos/socketry/falcon/badge.svg)](https://coveralls.io/r/socketry/falcon)
@@ -25,44 +23,20 @@ My long term vision for Falcon is to make a web application platform which trivi
 
 As web development is something I'm passionate about, having a server like Falcon is empowering.
 
-## Usage
-
-Please see the <a href="https://socketry.github.io/falcon/">project documentation</a> or run it locally using `bake utopia:project:serve`.
-
-## Performance
-
-Falcon uses an asynchronous event-driven reactor to provide non-blocking IO. It can handle an arbitrary number of in-flight requests with minimal overhead per request.
-
-It uses one Fiber per request, which yields in the presence of blocking IO.
-
-- [Improving Ruby Concurrency](https://www.codeotaku.com/journal/2018-06/improving-ruby-concurrency/index#performance) – Comparison of Falcon and Puma.
-
-### Memory Usage
-
-Falcon uses a pre-fork model which loads the entire rack application before forking. This reduces per-process memory usage. 
-
-[async-http] has been designed carefully to minimize IO related garbage. This avoids large per-request memory allocations or disk usage, provided that you use streaming IO.
-
-### System Limitations
-
-If you are expecting to handle many simultaneous connections, please ensure you configure your file limits correctly.
-
-```
-Errno::EMFILE: Too many open files - accept(2)
-```
-
-This means that your system is limiting the number of files that can be opened by falcon. Please check the `ulimit` of your system and set it appropriately.
-
 ## Priority Business Support
 
 Falcon can be an important part of your business or project, both improving performance and saving money. As such, priority business support is available to make every project a success. The support agreement will give you:
 
-- Better software by funding development and testing.
+- Direct support and assistance via Slack and direct email.
 - Advance notification of bugs and security issues.
 - Priority consideration of feature requests and bug reports.
-- Private support and assistance via Slack and direct email.
+- Better software by funding development and testing.
 
-The standard price for business support is $120.00 USD / year / production instance (including reserve instances). Please [contact us](mailto:contact@oriontransfer.net?subject=Falcon%20Business%20Support) for more details.
+The standard price for business support is $120.00 USD / year / production instance (including reserve instances). Please [contact us](mailto:contact@oriontransfer.co.nz?subject=Falcon%20Business%20Support) for more details.
+
+## Usage
+
+Please see the <a href="https://socketry.github.io/falcon/">project documentation</a> or run it locally using `bake utopia:project:serve`.
 
 ## Contributing
 
@@ -76,7 +50,7 @@ We welcome contributions to this project.
 
 ### Responsible Disclosure
 
-We take the security of our systems seriously, and we value input from the security community. The disclosure of security vulnerabilities helps us ensure the security and privacy of our users. If you believe you've found a security vulnerability in one of our products or platforms please [tell us via email](mailto:security@oriontransfer.net).
+We take the security of our systems seriously, and we value input from the security community. The disclosure of security vulnerabilities helps us ensure the security and privacy of our users. If you believe you've found a security vulnerability in one of our products or platforms please [tell us via email](mailto:contact@oriontransfer.co.nz?subject=Falcon%20Security).
 
 ## Websites using Falcon
 

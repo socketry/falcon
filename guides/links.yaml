@@ -6,3 +6,5 @@ deployment:
   order: 3
 extended-features:
   order: 4
+performance-tuning:
+  order: 5
