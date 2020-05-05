@@ -25,14 +25,6 @@ My long term vision for Falcon is to make a web application platform which trivi
 
 As web development is something I'm passionate about, having a server like Falcon is empowering.
 
-## Installation
-
-Execute the following in your project:
-
-~~~ bash
-$ bundle add bake
-~~~
-
 ## Usage
 
 Please see the <a href="https://socketry.github.io/falcon/">project documentation</a> or run it locally using `bake utopia:project:serve`.
@@ -99,7 +91,7 @@ You're welcome to file a PR if you want to add your sites here.
 
 Released under the MIT license.
 
-Copyright, 2018, by [Samuel G. D. Williams](http://www.codeotaku.com/samuel-williams).
+Copyright, 2018, by [Samuel G. D. Williams](http://www.codeotaku.com).
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
