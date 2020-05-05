@@ -35,7 +35,31 @@ The Body must respond to each and must only yield String values. The Body itself
 		<h2>Definitions</h2>
 		
 		<h3 id="::Falcon::Adapters::Output.wrap"><code class="language-ruby">def self.wrap(status, headers, body)</code></h3><p>Wraps an array into a buffered body.</p>
-<h3 id="::Falcon::Adapters::Output:body"><code class="language-ruby">attr :body</code></h3><p>The rack response body.</p>
+<section class="collapsible">
+							<input type="checkbox" id="::Falcon::Adapters::Output.wrap-implementation"/>
+							<label for="::Falcon::Adapters::Output.wrap-implementation">
+								<h4>Implementation</h4>
+							</label>
+							<pre><code class="language-ruby">def self.wrap(status, headers, body)
+	# In no circumstance do we want this header propagating out:
+	if length = headers.delete(CONTENT_LENGTH)
+		# We don't really trust the user to provide the right length to the transport.
+		length = Integer(length)
+	end
+	
+	if body.is_a?(::Protocol::HTTP::Body::Readable)
+		return body
+	elsif status == 200 and body.respond_to?(:to_path)
+		# Don't mangle partial responsese (206)
+		return ::Protocol::HTTP::Body::File.open(body.to_path)
+	elsif body.is_a?(Array)
+		length ||= body.sum(&amp;:bytesize)
+		return self.new(body, length)
+	else
+		return self.new(body, length)
+	end
+end</code></pre>
+						</section><h3 id="::Falcon::Adapters::Output:body"><code class="language-ruby">attr :body</code></h3><p>The rack response body.</p>
 <h3 id="::Falcon::Adapters::Output:length"><code class="language-ruby">attr :length</code></h3><p>The content length of the rack response body.</p>
 	</main>
 

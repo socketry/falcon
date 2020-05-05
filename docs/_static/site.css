@@ -142,3 +142,28 @@ footer {
 	margin: 1rem;
 	margin-top: 5rem;
 }
+
+section.collapsible input[type=checkbox]  {
+	display: none;
+}
+
+section.collapsible pre {
+	display: none;
+}
+
+section.collapsible input[type=checkbox]:checked ~ pre {
+	display: block;
+}
+
+section.collapsible > label {
+	cursor: pointer;
+}
+
+section.collapsible input[type=checkbox] ~ label > *:last-child:after {
+	content: '▸';
+	padding: 0 0.5rem;
+}
+
+section.collapsible input[type=checkbox]:checked ~ label > *:last-child:after {
+	content: '▾';
+}
