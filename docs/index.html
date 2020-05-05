@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		
+			<title>Falcon</title>
+		
+		<meta charset="UTF-8"/>
+		
+		<link rel="icon" type="image/png" href="_static/icon.png"/>
+		<link rel="stylesheet" href="_static/site.css" type="text/css" media="screen"/>
+		
+		<script src="_components/jquery/jquery.min.js"></script>
+		<script src="_components/jquery-syntax/jquery.syntax.min.js"></script>
+		
+		<script type="text/javascript">
+		//<![CDATA[
+			jQuery(function($) {
+				$.syntax();
+			});
+		//]]>
+		</script>
+	</head>
+
+	<body class="">
+		
+	<header><img src="logo.svg"/></header>
+<p>Falcon is a multi-process, multi-fiber rack-compatible HTTP server built on top of <a href="https://github.com/socketry/async">async</a>, <a href="https://github.com/socketry/async-io">async-io</a>, <a href="https://github.com/socketry/async-container">async-container</a> and <a href="https://github.com/socketry/async-http">async-http</a>. Each request is executed within a lightweight fiber and can block on up-stream requests without stalling the entire server process. Falcon supports HTTP/1 and HTTP/2 natively.</p>
+
+<p><a href="index.html#priority-business-support">Priority Business Support</a> is available.</p>
+
+<p><a href="https://github.com/socketry/falcon/actions?workflow=Development"><img src="https://github.com/socketry/falcon/workflows/Development/badge.svg" alt="Actions Status"/></a>
+<a href="https://codeclimate.com/github/socketry/falcon"><img src="https://codeclimate.com/github/socketry/falcon.svg" alt="Code Climate"/></a>
+<a href="https://coveralls.io/r/socketry/falcon"><img src="https://coveralls.io/repos/socketry/falcon/badge.svg" alt="Coverage Status"/></a>
+<a href="https://gitter.im/socketry/falcon"><img src="https://badges.gitter.im/join.svg" alt="Gitter"/></a>
+<a href="https://www.codetriage.com/socketry/falcon"><img src="https://www.codetriage.com/socketry/falcon/badges/users.svg" alt="Open Source Helpers"/></a></p>
+
+<h2 id="motivation">Motivation</h2>
+
+<p>Initially, when I developed <a href="https://github.com/socketry/async">async</a>, I saw an opportunity to implement <a href="https://github.com/socketry/async-http">async-http</a>: providing both client and server components. After experimenting with these ideas, I decided to build an actual web server for comparing and validating performance primarily out of interest. Falcon grew out of those experiments and permitted the ability to test existing real-world code on top of <a href="https://github.com/socketry/async">async</a>.</p>
+
+<p>Once I had something working, I saw an opportunity to simplify my development, testing and production environments, replacing production (Nginx+Passenger) and development (Puma) with Falcon. Not only does this simplify deployment, it helps minimize environment-specific bugs.</p>
+
+<p>My long term vision for Falcon is to make a web application platform which trivializes server deployment. Ideally, a web application can fully describe all it’s components: HTTP servers, databases, periodic jobs, background jobs, remote management, etc. Currently, it is not uncommon for all these facets to be handled independently in platform specific ways. This can make it difficult to set up new instances as well as make changes to underlying infrastructure. I hope Falcon can address some of these issues in a platform agnostic way.</p>
+
+<p>As web development is something I’m passionate about, having a server like Falcon is empowering.</p>
+
+<h2 id="installation">Installation</h2>
+
+<p>Execute the following in your project:</p>
+
+<pre><code class="language-bash">$ bundle add bake
+</code></pre>
+
+<h2>Usage</h2>
+
+<p>Please browse the <a href="source/index.html">source code index</a> or refer to the guides below.</p>
+
+	<h3><a href="guides/getting-started/index.html">Getting Started</a></h3>
+	
+		<p>This guide explains how to use Falcon for Ruby web application
+development.</p>
+
+
+	<h3><a href="guides/rails-integration/index.html">Rails Integration</a></h3>
+	
+		<p>This guide explains how to host Rails applications with Falcon.</p>
+
+
+	<h3><a href="guides/deployment/index.html">Deployment</a></h3>
+	
+		<p>This guide explains how to use Falcon in production environments.</p>
+
+
+	<h3><a href="guides/extended-features/index.html">Extended Features</a></h3>
+	
+		<p>This guide explains some of the extended features and functionality of
+Falcon.</p>
+
+
+<h2 id="performance">Performance</h2>
+
+<p>Falcon uses an asynchronous event-driven reactor to provide non-blocking IO. It can handle an arbitrary number of in-flight requests with minimal overhead per request.</p>
+
+<p>It uses one Fiber per request, which yields in the presence of blocking IO.</p>
+
+<ul>
+  <li><a href="https://www.codeotaku.com/journal/2018-06/improving-ruby-concurrency/index#performance">Improving Ruby Concurrency</a> – Comparison of Falcon and Puma.</li>
+</ul>
+
+<h3 id="memory-usage">Memory Usage</h3>
+
+<p>Falcon uses a pre-fork model which loads the entire rack application before forking. This reduces per-process memory usage.</p>
+
+<p><a href="https://github.com/socketry/async-http">async-http</a> has been designed carefully to minimize IO related garbage. This avoids large per-request memory allocations or disk usage, provided that you use streaming IO.</p>
+
+<h3 id="system-limitations">System Limitations</h3>
+
+<p>If you are expecting to handle many simultaneous connections, please ensure you configure your file limits correctly.</p>
+
+<p><code>
+Errno::EMFILE: Too many open files - accept(2)
+</code></p>
+
+<p>This means that your system is limiting the number of files that can be opened by falcon. Please check the <code>ulimit</code> of your system and set it appropriately.</p>
+
+<h2 id="priority-business-support">Priority Business Support</h2>
+
+<p>Falcon can be an important part of your business or project, both improving performance and saving money. As such, priority business support is available to make every project a success. The support agreement will give you:</p>
+
+<ul>
+  <li>Better software by funding development and testing.</li>
+  <li>Advance notification of bugs and security issues.</li>
+  <li>Priority consideration of feature requests and bug reports.</li>
+  <li>Private support and assistance via Slack and direct email.</li>
+</ul>
+
+<p>The standard price for business support is $120.00 USD / year / production instance (including reserve instances). Please <a href="mailto:contact@oriontransfer.net?subject=Falcon%20Business%20Support">contact us</a> for more details.</p>
+
+<h2 id="contributing">Contributing</h2>
+
+<p>We welcome contributions to this project.</p>
+
+<ol>
+  <li>Fork it</li>
+  <li>Create your feature branch (<code>git checkout -b my-new-feature</code>)</li>
+  <li>Commit your changes (<code>git commit -am 'Add some feature'</code>)</li>
+  <li>Push to the branch (<code>git push origin my-new-feature</code>)</li>
+  <li>Create new Pull Request</li>
+</ol>
+
+<h3 id="responsible-disclosure">Responsible Disclosure</h3>
+
+<p>We take the security of our systems seriously, and we value input from the security community. The disclosure of security vulnerabilities helps us ensure the security and privacy of our users. If you believe you’ve found a security vulnerability in one of our products or platforms please <a href="mailto:security@oriontransfer.net">tell us via email</a>.</p>
+
+<h2 id="websites-using-falcon">Websites using Falcon</h2>
+
+<p>Websites below are listed in alphabetical order.</p>
+
+<ul>
+  <li>iCook - <a href="https://icook.tw">https://icook.tw</a></li>
+  <li>RubyAPI - <a href="https://rubyapi.org">https://rubyapi.org</a></li>
+</ul>
+
+<p>You’re welcome to file a PR if you want to add your sites here.</p>
+
+<h2 id="license">License</h2>
+
+<p>Released under the MIT license.</p>
+
+<p>Copyright, 2018, by <a href="http://www.codeotaku.com/samuel-williams">Samuel G. D. Williams</a>.</p>
+
+<p>Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the “Software”), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:</p>
+
+<p>The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.</p>
+
+<p>THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.</p>
+
+		
+		<footer>Documentation generated by <a href="https://github.com/socketry/utopia-project">Utopia::Project</a>.</footer>
+	</body>
+</html>

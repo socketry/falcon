@@ -1,0 +1,18 @@
+.syntax-theme-base .xml .cdata-content {
+  color: #046;
+  border-radius: 0.5em; }
+.syntax-theme-base .xml .xml-tag, .syntax-theme-base .xml .cdata {
+  color: #00c; }
+.syntax-theme-base .xml .tag-name, .syntax-theme-base .xml .cdata-tag {
+  color: #00f;
+  font-weight: bold; }
+.syntax-theme-base .xml .namespace {
+  color: #00c; }
+.syntax-theme-base .xml .attribute {
+  color: #00c; }
+.syntax-theme-base .xml .instruction {
+  color: #00c; }
+.syntax-theme-base .xml .entity, .syntax-theme-base .xml .percent-escape {
+  color: #666;
+  background-color: #ddd;
+  border-radius: 0.5em; }

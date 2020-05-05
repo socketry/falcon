@@ -1,0 +1,6 @@
+.syntax-container.syntax-theme-base div.editor.syntax {
+  padding: 0.2em !important;
+  margin: 0 !important;
+  white-space: pre; }
+.syntax-container.syntax-theme-base div.editor.syntax:focus {
+  outline: none; }

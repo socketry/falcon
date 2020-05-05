@@ -1,0 +1,4 @@
+.syntax-theme-base .bash .prompt {
+  color: #558; }
+.syntax-theme-base .bash .stderr {
+  color: red; }
