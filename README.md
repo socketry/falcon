@@ -27,7 +27,7 @@ As web development is something I'm passionate about, having a server like Falco
 
 Falcon can be an important part of your business or project, both improving performance and saving money. As such, priority business support is available to make every project a success. The support agreement will give you:
 
-- Direct support and assistance via Slack and direct email.
+- Direct support and assistance via Slack and email.
 - Advance notification of bugs and security issues.
 - Priority consideration of feature requests and bug reports.
 - Better software by funding development and testing.
