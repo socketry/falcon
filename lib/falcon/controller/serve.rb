@@ -55,7 +55,7 @@ module Falcon
 			def start
 				@endpoint ||= self.endpoint
 				
-				@bound_endpoint = Async::Reactor.run do
+				@bound_endpoint = Async do
 					Async::IO::SharedEndpoint.bound(@endpoint)
 				end.wait
 				

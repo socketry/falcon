@@ -1,0 +1,8 @@
+getting-started:
+  order: 1
+rails-integration:
+  order: 2
+deployment:
+  order: 3
+extended-features:
+  order: 4

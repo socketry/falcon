@@ -148,7 +148,7 @@ GEM
       samovar (~> 2.1)
       trenni (~> 3.0)
       variant (~> 0.1)
-    utopia-project (0.3.0)
+    utopia-project (0.4.0)
       decode
       falcon
       kramdown

@@ -1,12 +1,12 @@
-# Falcon For Deployment
+# Deployment
 
-This guide explains how to use falcon for deployment.
+This guide explains how to use Falcon in production environments.
 
-Falcon can be deployed into production either as a standalone application server, or as a virtual host routing to multiple applications.
+Falcon can be deployed into production either as a standalone application server, or as a virtual host routing to multiple applications. Both configurations can run behind a load balancer, but `falcon virtual` is designed to be zero-configuration deployment option.
 
 ## Falcon Serve
 
-`falcon serve` is not designed for deployment. As a command, it's designed around the needs of development.
+`falcon serve` is not designed for deployment. Do not use it for deployment.
 
 ## Falcon Hosts
 
@@ -32,7 +32,7 @@ end
 supervisor
 ~~~
 
-These configuration blocks are constructed using [build-environment](https://github.com/ioquatix/build-environment), and the defaults are listed in the [falcon source code](https://github.com/socketry/falcon/tree/master/lib/falcon/configuration).
+These configuration blocks are constructed using [build-environment](https://github.com/ioquatix/build-environment), and the defaults are listed in the [Falcon source code](https://github.com/socketry/falcon/tree/master/lib/falcon/configuration).
 
 ### Application Configuration
 
@@ -56,7 +56,7 @@ You can verify this is woring using `nghttp -v http://localhost:3000`.
 
 ## Falcon Virtual
 
-Falcon can replace Nginx as a virtual server for Ruby applications. **This is an experimental feature**.
+Falcon can replace Nginx as a virtual server for Ruby applications.
 
 ~~~
 /--------------------\
@@ -73,7 +73,7 @@ Falcon can replace Nginx as a virtual server for Ruby applications. **This is an
           ||          
 /--------------------\
 | Application Server |   (Rack Compatible)
-\--------------------/	
+\--------------------/
 ~~~
 
 You need to create a `falcon.rb` configuration in the root of your applications, and start the virtual host:
@@ -91,4 +91,4 @@ supervisor
 $ falcon virtual /srv/http/example.com/falcon.rb
 ~~~
 
-The falcon virtual server is hard coded to redirect http traffic to https, and will serve each application using an internal SNI-based proxy.
+The Falcon virtual server is hard coded to redirect http traffic to https, and will serve each application using an internal SNI-based proxy.

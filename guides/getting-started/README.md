@@ -1,4 +1,4 @@
-# Falcon For Development
+# Getting Started
 
 This guide explains how to use Falcon for Ruby web application development.
 

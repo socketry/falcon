@@ -38,4 +38,4 @@ This became the default in Rails 5 so no change is necessary unless you explicit
 
 ### ActionCable
 
-Falcon supports `rack.hijack` and is compatible with ActionCable. If you use the `async` adapter, you should run falcon in threaded mode, or in forked mode with `--count 1`. Otherwise, your messaging system will be distributed over several processes with no IPC mechanism. You might like to try out [async-redis](https://github.com/socketry/async-redis) as an asynchronous message bus.
+Falcon supports `rack.hijack` and is compatible with ActionCable. If you use the `async` adapter, you should run Falcon in threaded mode, or in forked mode with `--count 1`. Otherwise, your messaging system will be distributed over several processes with no IPC mechanism. You might like to try out [async-redis](https://github.com/socketry/async-redis) as an asynchronous message bus.
