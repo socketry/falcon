@@ -68,6 +68,10 @@ module Falcon
 				@length == 0 or (@body.respond_to?(:empty?) and @body.empty?)
 			end
 			
+			def ready?
+				true
+			end
+			
 			def close(error = nil)
 				if @body and @body.respond_to?(:close)
 					@body.close
