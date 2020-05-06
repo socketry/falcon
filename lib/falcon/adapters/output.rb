@@ -26,11 +26,15 @@ require 'protocol/http/body/file'
 module Falcon
 	module Adapters
 		# Wraps the rack response body.
-		# The Body must respond to each and must only yield String values. The Body itself should not be an instance of String, as this will break in Ruby 1.9. If the Body responds to close, it will be called after iteration. If the body is replaced by a middleware after action, the original body must be closed first, if it responds to close. If the Body responds to to_path, it must return a String identifying the location of a file whose contents are identical to that produced by calling each; this may be used by the server as an alternative, possibly more efficient way to transport the response. The Body commonly is an Array of Strings, the application instance itself, or a File-like object.
+		#
+		# The `rack` body must respond to `each` and must only yield `String` values. If the body responds to `close`, it will be called after iteration. If the body is replaced by a middleware after action, the original body must be closed first, if it responds to `close`. If the body responds to `to_path`, it must return a String identifying the location of a file whose contents are identical to that produced by calling `each`; this may be used by the server as an alternative, possibly more efficient way to transport the response. The body commonly is an `Array` of strings, the application instance itself, or a `File`-like object.
 		class Output < ::Protocol::HTTP::Body::Readable
 			CONTENT_LENGTH = 'content-length'.freeze
 			
 			# Wraps an array into a buffered body.
+			# @param status [Integer] The response status.
+			# @param headers [Protocol::HTTP::Headers] The response headers.
+			# @param body [Object] The `rack` response body.
 			def self.wrap(status, headers, body)
 				# In no circumstance do we want this header propagating out:
 				if length = headers.delete(CONTENT_LENGTH)
@@ -51,6 +55,9 @@ module Falcon
 				end
 			end
 			
+			# Initialize the output wrapper.
+			# @param body [Object] The rack response body.
+			# @param length [Integer] The rack response length.
 			def initialize(body, length)
 				@length = length
 				@body = body
@@ -64,14 +71,17 @@ module Falcon
 			# The content length of the rack response body.
 			attr :length
 			
+			# Whether the body is empty.
 			def empty?
 				@length == 0 or (@body.respond_to?(:empty?) and @body.empty?)
 			end
 			
+			# Whether the body can be read immediately.
 			def ready?
 				true
 			end
 			
+			# Close the response body.
 			def close(error = nil)
 				if @body and @body.respond_to?(:close)
 					@body.close
@@ -83,12 +93,17 @@ module Falcon
 				super
 			end
 			
+			# Enumerate the response body.
+			# @block `{|chunk| ...}`
+			# @yield chunk [String]
 			def each(&block)
 				@body.each(&block)
 			ensure
 				self.close($!)
 			end
 			
+			# Read the next chunk from the response body.
+			# @return [String | Nil]
 			def read
 				@chunks ||= @body.to_enum(:each)
 				

@@ -25,8 +25,14 @@ require 'protocol/http/body/rewindable'
 
 module Falcon
 	module Adapters
-		# The input stream is an IO-like object which contains the raw HTTP POST data. When applicable, its external encoding must be “ASCII-8BIT” and it must be opened in binary mode, for Ruby 1.9 compatibility. The input stream must respond to gets, each, read and rewind.
+		# Wraps a streaming input body into the interface required by `rack.input`.
+		#
+		# The input stream is an `IO`-like object which contains the raw HTTP POST data. When applicable, its external encoding must be `ASCII-8BIT` and it must be opened in binary mode, for Ruby 1.9 compatibility. The input stream must respond to `gets`, `each`, `read` and `rewind`.
+		#
+		# This implementation is not always rewindable, to avoid buffering the input when handling large uploads. See {Rewindable} for more details.
 		class Input
+			# Initialize the input wrapper.
+			# @param body [Protocol::HTTP::Body::Readable]
 			def initialize(body)
 				@body = body
 				
@@ -35,9 +41,13 @@ module Falcon
 				@finished = @body.nil?
 			end
 			
+			# The input body.
+			# @attr [Protocol::HTTP::Body::Readable]
 			attr :body
 			
-			# each must be called without arguments and only yield Strings.
+			# Enumerate chunks of the request body.
+			# @block `{|chunk| ...}`
+			# @yield [String]
 			def each(&block)
 				return to_enum unless block_given?
 				
@@ -46,8 +56,11 @@ module Falcon
 				end
 			end
 			
-			# rewind must be called without arguments. It rewinds the input stream back to the beginning. It must not raise Errno::ESPIPE: that is, it may not be a pipe or a socket. Therefore, handler developers must buffer the input data into some rewindable object if the underlying input stream is not rewindable.
-			# @return [Boolean] whether the body could be rewound.
+			# Rewind the input stream back to the start.
+			#
+			# `rewind` must be called without arguments. It rewinds the input stream back to the beginning. It must not raise Errno::ESPIPE: that is, it may not be a pipe or a socket. Therefore, handler developers must buffer the input data into some rewindable object if the underlying input stream is not rewindable.
+			#
+			# @return [Boolean] Whether the body could be rewound.
 			def rewind
 				if @body and @body.respond_to? :rewind
 					# If the body is not rewindable, this will fail.
@@ -61,7 +74,10 @@ module Falcon
 				return false
 			end
 			
-			# read behaves like IO#read. Its signature is read([length, [buffer]]). If given, length must be a non-negative Integer (>= 0) or nil, and buffer must be a String and may not be nil. If length is given and not nil, then this method reads at most length bytes from the input stream. If length is not given or nil, then this method reads all data until EOF. When EOF is reached, this method returns nil if length is given and not nil, or “” if length is not given or is nil. If buffer is given, then the read data will be placed into buffer instead of a newly created String object.
+			# Read data from the input stream.
+			# 
+			# `read` behaves like `IO#read`. Its signature is `read(length = nil, buffer = nil)`. If given, length must be a non-negative `Integer` (>= 0) or `nil`, and buffer must be a `String` and may not be nil. If `length` is given and not `nil`, then this method reads at most `length` bytes from the input stream. If `length` is not given or `nil`, then this method reads all data. When the end is reached, this method returns `nil` if `length` is given and not `nil`, or an empty `String` if `length` is not given or is `nil`. If `buffer` is given, then the read data will be placed into the `buffer` instead of a newly created `String` object.
+			#
 			# @param length [Integer] the amount of data to read
 			# @param buffer [String] the buffer which will receive the data
 			# @return a buffer containing the data
@@ -93,12 +109,17 @@ module Falcon
 				return buffer
 			end
 			
+			# Has the input stream been read completely?
+			# @return [Boolean]
 			def eof?
 				@finished and @buffer.nil?
 			end
 			
-			# gets must be called without arguments and return a string, or nil on EOF.
-			# @return [String, nil] The next chunk from the body.
+			# Read the next chunk of data from the input stream.
+			#
+			# `gets` must be called without arguments and return a `String`, or `nil` when the input stream has no more data.
+			#
+			# @return [String | Nil] The next chunk from the body.
 			def gets
 				if @buffer.nil?
 					return read_next
@@ -109,7 +130,7 @@ module Falcon
 				end
 			end
 			
-			# close must never be called on the input stream. huh?
+			# Close and discard the remainder of the input stream.
 			def close
 				@body&.close
 			end

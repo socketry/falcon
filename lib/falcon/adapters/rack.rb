@@ -31,7 +31,8 @@ require 'async/logger'
 module Falcon
 	module Adapters
 		class Rack
-			# CGI keys (https://tools.ietf.org/html/rfc3875#section-4.1)
+			# CGI keys <https://tools.ietf.org/html/rfc3875#section-4.1>:
+			
 			HTTP_HOST = 'HTTP_HOST'
 			PATH_INFO = 'PATH_INFO'
 			REQUEST_METHOD = 'REQUEST_METHOD'
@@ -46,7 +47,8 @@ module Falcon
 			CONTENT_TYPE = 'CONTENT_TYPE'
 			CONTENT_LENGTH = 'CONTENT_LENGTH'
 			
-			# Rack environment variables
+			# Rack environment variables:
+			
 			RACK_VERSION = 'rack.version'
 			RACK_ERRORS = 'rack.errors'
 			RACK_LOGGER = 'rack.logger'
@@ -60,11 +62,17 @@ module Falcon
 			RACK_HIJACK_IO = 'rack.hijack_io'
 			RACK_EARLY_HINTS = "rack.early_hints"
 			
+			# Async::HTTP specific metadata:
+			
 			ASYNC_HTTP_REQUEST = "async.http.request"
 			
-			# Header constants
+			# Header constants:
+			
 			HTTP_X_FORWARDED_PROTO = 'HTTP_X_FORWARDED_PROTO'
 			
+			# Initialize the rack adaptor middleware.
+			# @param app [Object] The rack middleware.
+			# @param logger [Console::Logger] The logger to use.
 			def initialize(app, logger = Async.logger)
 				@app = app
 				
@@ -73,7 +81,12 @@ module Falcon
 				@logger = logger
 			end
 			
-			# Rack separates multiple headers with the same key, into a single field with multiple "lines".
+			# Unwrap raw HTTP headers into the CGI-style expected by Rack middleware.
+			#
+			# Rack separates multiple headers with the same key, into a single field with multiple lines.
+			#
+			# @param headers [Protocol::HTTP::Headers] The raw HTTP request headers.
+			# @param env [Hash] The rack request `env`.
 			def unwrap_headers(headers, env)
 				headers.each do |key, value|
 					http_key = "HTTP_#{key.upcase.tr('-', '_')}"
@@ -86,7 +99,15 @@ module Falcon
 				end
 			end
 			
-			# Process the incoming request into a valid rack env.
+			# Process the incoming request into a valid rack `env`.
+			#
+			# - Set the `env['CONTENT_TYPE']` and `env['CONTENT_LENGTH']` based on the incoming request body. 
+			# - Set the `env['HTTP_HOST']` header to the request authority.
+			# - Set the `env['HTTP_X_FORWARDED_PROTO']` header to the request scheme.
+			# - Set `env['REMOTE_ADDR']` to the request remote adress.
+			#
+			# @param request [Protocol::HTTP::Request] The incoming request.
+			# @param env [Hash] The rack `env`.
 			def unwrap_request(request, env)
 				if content_type = request.headers.delete('content-type')
 					env[CONTENT_TYPE] = content_type
@@ -113,6 +134,9 @@ module Falcon
 				end
 			end
 			
+			# Build a rack `env` from the incoming request and apply it to the rack middleware.
+			#
+			# @param request [Protocol::HTTP::Request] The incoming request.
 			def call(request)
 				request_path, query_string = request.path.split('?', 2)
 				server_name, server_port = (request.authority || '').split(':', 2)
@@ -194,6 +218,9 @@ module Falcon
 				return failure_response(exception)
 			end
 			
+			# Generate a suitable response for the given exception.
+			# @param exception [Exception]
+			# @return [Protocol::HTTP::Response]
 			def failure_response(exception)
 				Protocol::HTTP::Response.for_exception(exception)
 			end

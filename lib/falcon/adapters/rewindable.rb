@@ -24,8 +24,9 @@ require 'protocol/http/body/rewindable'
 
 module Falcon
 	module Adapters
-		# Content type driven input buffering.
+		# Content-type driven input buffering, specific to the needs of `rack`.
 		class Rewindable < ::Protocol::HTTP::Middleware
+			# Media types that require buffering.
 			BUFFERED_MEDIA_TYPES = %r{
 				application/x-www-form-urlencoded|
 				multipart/form-data|
@@ -35,10 +36,15 @@ module Falcon
 			
 			POST = 'POST'.freeze
 			
+			# Initialize the rewindable middleware.
+			# @param app [Protocol::HTTP::Middleware] The middleware to wrap.
 			def initialize(app)
 				super(app)
 			end
 			
+			# Determine whether the request needs a rewindable body.
+			# @param request [Protocol::HTTP::Request]
+			# @return [Boolean]
 			def needs_rewind?(request)
 				content_type = request.headers['content-type']
 				
@@ -53,7 +59,8 @@ module Falcon
 				return false
 			end
 			
-			# Wrap the request body in a rewindable buffer.
+			# Wrap the request body in a rewindable buffer if required.
+			# @param request [Protocol::HTTP::Request]
 			# @return [Protocol::HTTP::Response] the response.
 			def call(request)
 				if body = request.body and needs_rewind?(request)

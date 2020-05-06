@@ -29,10 +29,22 @@ require 'time'
 
 module Falcon
 	module Adapters
+		# A wrapper for a `Rack` response.
+		#
+		# A Rack response consisting of `[status, headers, body]` includes various rack-specific elements, including:
+		#
+		# - A `headers['rack.hijack']` callback which bypasses normal response handling.
+		# - Potentially invalid content length.
+		# - Potentially invalid body when processing a `HEAD` request.
+		# - Newline-separated header values.
+		# - Other `rack.` specific header key/value pairs.
+		#
+		# This wrapper takes those issues into account and adapts the rack response tuple into a {Protocol::HTTP::Response}.
 		class Response < ::Protocol::HTTP::Response
 			IGNORE_HEADERS = Middleware::Proxy::HOP_HEADERS
 			
-			# Append a list of newline encoded headers.
+			# Process the rack response headers into into a {Protocol::HTTP::Headers} instance, along with any extra `rack.` metadata.
+			# @return [Tuple(Protocol::HTTP::Headers, Hash)]
 			def self.wrap_headers(fields)
 				headers = ::Protocol::HTTP::Headers.new
 				meta = {}
@@ -52,6 +64,11 @@ module Falcon
 				return headers, meta
 			end
 			
+			# Wrap a rack response.
+			# @param status [Integer] The rack response status.
+			# @param headers [Duck(:each)] The rack response headers.
+			# @param body [Duck(:each, :close) | Nil] The rack response body.
+			# @param request [Protocol::HTTP::Request] The original request.
 			def self.wrap(status, headers, body, request = nil)
 				headers, meta = wrap_headers(headers)
 				
@@ -83,6 +100,11 @@ module Falcon
 				return self.new(status, headers, body, protocol)
 			end
 			
+			# Initialize the response wrapper.
+			# @param status [Integer] The response status.
+			# @param headers [Protocol::HTTP::Headers] The response headers.
+			# @param body [Protocol::HTTP::Body] The response body.
+			# @param protocol [String] The response protocol for upgraded requests.
 			def initialize(status, headers, body, protocol = nil)
 				super(nil, status, headers, body, protocol)
 			end
