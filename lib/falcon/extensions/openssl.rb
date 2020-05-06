@@ -25,6 +25,7 @@ require 'openssl/x509'
 module OpenSSL::X509
 	CERTIFICATE_PATTERN = /-----BEGIN CERTIFICATE-----.*?-----END CERTIFICATE-----/m
 	
+	# An extension to load an array of certificates from a file at the given path.
 	def self.load_certificates(path)
 		File.read(path).scan(CERTIFICATE_PATTERN).collect do |text|
 			Certificate.new(text)

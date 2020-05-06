@@ -27,16 +27,22 @@ require 'protocol/http/content_encoding'
 
 require 'async/http/cache'
 
-require_relative 'verbose'
+require_relative 'middleware/verbose'
+
 require_relative 'adapters/rewindable'
 require_relative 'adapters/rack'
 
 module Falcon
+	# A server listening on a specific endpoint, hosting a specific middleware.
 	class Server < Async::HTTP::Server
+		# Wrap a rack application into a middleware suitable the server.
+		# @param rack_app [Proc | Object] A rack application/middleware.
+		# @param verbose [Boolean] Whether to add the {Verbose} middleware.
+		# @param cache [Boolean] Whether to add the {Async::HTTP::Cache} middleware.
 		def self.middleware(rack_app, verbose: false, cache: true)
 			::Protocol::HTTP::Middleware.build do
 				if verbose
-					use Verbose
+					use Middleware::Verbose
 				end
 				
 				if cache

@@ -9,10 +9,14 @@ require 'async/io/host_endpoint'
 
 module Rack
 	module Handler
+		# The falcon adaptor for the `rackup` executable.
 		module Falcon
-			SCHEME = "http".freeze
+			# The default scheme.
+			SCHEME = "http"
 			NAME = :falcon
 			
+			# Generate an endpoint for the given `rackup` options.
+			# @return [Async::IO::Endpoint]
 			def self.endpoint_for(**options)
 				host = options[:Host] || 'localhost'
 				port = Integer(options[:Port] || 9292)
@@ -20,6 +24,8 @@ module Rack
 				return Async::IO::Endpoint.tcp(host, port)
 			end
 			
+			# Run the specified app using the given options:
+			# @param app [Object] The rack middleware.
 			def self.run(app, **options)
 				endpoint = endpoint_for(**options)
 				

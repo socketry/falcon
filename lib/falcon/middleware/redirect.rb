@@ -24,6 +24,7 @@ require 'async/http/client'
 
 module Falcon
 	module Middleware
+		# A static middleware which always returns a 404 not found response.
 		module NotFound
 			def self.call(request)
 				return Protocol::HTTP::Response[404, {}, []]
@@ -33,7 +34,13 @@ module Falcon
 			end
 		end
 		
+		# A HTTP middleware for redirecting a given set of hosts to a different endpoint.
+		# Typically used for implementing HTTP -> HTTPS redirects.
 		class Redirect < Protocol::HTTP::Middleware
+			# Initialize the redirect middleware.
+			# @param app [Protocol::HTTP::Middleware] The middleware to wrap.
+			# @param hosts [Hash(String, Service::Proxy)] The map of hosts.
+			# @param endpoint [Endpoint] The template endpoint to use to build the redirect location.
 			def initialize(app, hosts, endpoint)
 				super(app)
 				
@@ -41,6 +48,8 @@ module Falcon
 				@endpoint = endpoint
 			end
 			
+			# Lookup the appropriate host for the given request.
+			# @param request [Protocol::HTTP::Request]
 			def lookup(request)
 				# Trailing dot and port is ignored/normalized.
 				if authority = request.authority&.sub(/(\.)?(:\d+)?$/, '')
@@ -48,6 +57,8 @@ module Falcon
 				end
 			end
 			
+			# Redirect the request if the authority matches a specific host.
+			# @param request [Protocol::HTTP::Request]
 			def call(request)
 				if host = lookup(request)
 					if @endpoint.default_port?

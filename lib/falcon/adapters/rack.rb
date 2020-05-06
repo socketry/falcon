@@ -32,38 +32,38 @@ module Falcon
 	module Adapters
 		class Rack
 			# CGI keys (https://tools.ietf.org/html/rfc3875#section-4.1)
-			HTTP_HOST = 'HTTP_HOST'.freeze
-			PATH_INFO = 'PATH_INFO'.freeze
-			REQUEST_METHOD = 'REQUEST_METHOD'.freeze
-			REQUEST_PATH = 'REQUEST_PATH'.freeze
-			REQUEST_URI = 'REQUEST_URI'.freeze
-			SCRIPT_NAME = 'SCRIPT_NAME'.freeze
-			QUERY_STRING = 'QUERY_STRING'.freeze
-			SERVER_PROTOCOL = 'SERVER_PROTOCOL'.freeze
-			SERVER_NAME = 'SERVER_NAME'.freeze
-			SERVER_PORT = 'SERVER_PORT'.freeze
-			REMOTE_ADDR = 'REMOTE_ADDR'.freeze
-			CONTENT_TYPE = 'CONTENT_TYPE'.freeze
-			CONTENT_LENGTH = 'CONTENT_LENGTH'.freeze
+			HTTP_HOST = 'HTTP_HOST'
+			PATH_INFO = 'PATH_INFO'
+			REQUEST_METHOD = 'REQUEST_METHOD'
+			REQUEST_PATH = 'REQUEST_PATH'
+			REQUEST_URI = 'REQUEST_URI'
+			SCRIPT_NAME = 'SCRIPT_NAME'
+			QUERY_STRING = 'QUERY_STRING'
+			SERVER_PROTOCOL = 'SERVER_PROTOCOL'
+			SERVER_NAME = 'SERVER_NAME'
+			SERVER_PORT = 'SERVER_PORT'
+			REMOTE_ADDR = 'REMOTE_ADDR'
+			CONTENT_TYPE = 'CONTENT_TYPE'
+			CONTENT_LENGTH = 'CONTENT_LENGTH'
 			
 			# Rack environment variables
-			RACK_VERSION = 'rack.version'.freeze
-			RACK_ERRORS = 'rack.errors'.freeze
-			RACK_LOGGER = 'rack.logger'.freeze
-			RACK_INPUT = 'rack.input'.freeze
-			RACK_MULTITHREAD = 'rack.multithread'.freeze
-			RACK_MULTIPROCESS = 'rack.multiprocess'.freeze
-			RACK_RUNONCE = 'rack.run_once'.freeze
-			RACK_URL_SCHEME = 'rack.url_scheme'.freeze
-			RACK_HIJACK = 'rack.hijack'.freeze
-			RACK_IS_HIJACK = 'rack.hijack?'.freeze
-			RACK_HIJACK_IO = 'rack.hijack_io'.freeze
-			RACK_EARLY_HINTS = "rack.early_hints".freeze
+			RACK_VERSION = 'rack.version'
+			RACK_ERRORS = 'rack.errors'
+			RACK_LOGGER = 'rack.logger'
+			RACK_INPUT = 'rack.input'
+			RACK_MULTITHREAD = 'rack.multithread'
+			RACK_MULTIPROCESS = 'rack.multiprocess'
+			RACK_RUNONCE = 'rack.run_once'
+			RACK_URL_SCHEME = 'rack.url_scheme'
+			RACK_HIJACK = 'rack.hijack'
+			RACK_IS_HIJACK = 'rack.hijack?'
+			RACK_HIJACK_IO = 'rack.hijack_io'
+			RACK_EARLY_HINTS = "rack.early_hints"
 			
-			ASYNC_HTTP_REQUEST = "async.http.request".freeze
+			ASYNC_HTTP_REQUEST = "async.http.request"
 			
 			# Header constants
-			HTTP_X_FORWARDED_PROTO = 'HTTP_X_FORWARDED_PROTO'.freeze
+			HTTP_X_FORWARDED_PROTO = 'HTTP_X_FORWARDED_PROTO'
 			
 			def initialize(app, logger = Async.logger)
 				@app = app

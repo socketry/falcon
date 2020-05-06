@@ -27,6 +27,7 @@ require 'async/io/shared_endpoint'
 
 module Falcon
 	module Service
+		# Implements an application server using an internal clear-text proxy.
 		class Application < Proxy
 			def initialize(environment)
 				super
@@ -34,11 +35,14 @@ module Falcon
 				@bound_endpoint = nil
 			end
 			
+			# The middleware that will be served by this application.
+			# @return [Protocol::HTTP::Middleware]
 			def middleware
 				# In a multi-threaded container, we don't want to modify the shared evaluator's cache, so we create a new evaluator:
 				@environment.evaluator.middleware
 			end
 			
+			# Preload any resources specified by the environment.
 			def preload!
 				if scripts = @evaluator.preload
 					scripts.each do |path|
@@ -49,6 +53,8 @@ module Falcon
 				end
 			end
 			
+			# Prepare the bound endpoint for the application instances.
+			# Invoke {preload!} to load shared resources into the parent process.
 			def start
 				Async.logger.info(self) {"Binding to #{self.endpoint}..."}
 				
@@ -61,6 +67,7 @@ module Falcon
 				super
 			end
 			
+			# Setup instances of the application into the container.
 			def setup(container)
 				protocol = self.protocol
 				scheme = self.scheme
@@ -82,6 +89,7 @@ module Falcon
 				super
 			end
 			
+			# Close the bound endpoint.
 			def stop
 				@bound_endpoint&.close
 				@bound_endpoint = nil

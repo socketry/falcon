@@ -26,6 +26,7 @@ require 'protocol/http/middleware'
 
 module Falcon
 	module Middleware
+		# A static middleware which always returns a 400 bad request response.
 		module BadRequest
 			def self.call(request)
 				return Protocol::HTTP::Response[400, {}, []]
@@ -35,14 +36,17 @@ module Falcon
 			end
 		end
 		
+		# A HTTP middleware for proxying requests to a given set of hosts.
+		# Typically used for implementing virtual servers.
 		class Proxy < Protocol::HTTP::Middleware
-			FORWARDED = 'forwarded'.freeze
-			X_FORWARDED_FOR = 'x-forwarded-for'.freeze
-			X_FORWARDED_PROTO = 'x-forwarded-proto'.freeze
+			FORWARDED = 'forwarded'
+			X_FORWARDED_FOR = 'x-forwarded-for'
+			X_FORWARDED_PROTO = 'x-forwarded-proto'
 			
-			VIA = 'via'.freeze
-			CONNECTION = 'connection'.freeze
+			VIA = 'via'
+			CONNECTION = 'connection'
 			
+			# HTTP hop headers which *should* not be passed through the proxy.
 			HOP_HEADERS = [
 				'connection',
 				'keep-alive',
@@ -52,6 +56,9 @@ module Falcon
 				'upgrade',
 			]
 			
+			# Initialize the proxy middleware.
+			# @param app [Protocol::HTTP::Middleware] The middleware to use if a request can't be proxied.
+			# @param hosts [Array(Service::Proxy)] The host applications to proxy to.
 			def initialize(app, hosts)
 				super(app)
 				
@@ -63,18 +70,26 @@ module Falcon
 				@count = 0
 			end
 			
+			# The number of requests that have been proxied.
+			# @attr [Integer]
 			attr :count
 			
+			# Close all the connections to the upstream hosts.
 			def close
 				@clients.each_value(&:close)
 				
 				super
 			end
 			
+			# Establish a connection to the specified upstream endpoint.
+			# @param endpoint [Async::HTTP::Endpoint]
 			def connect(endpoint)
 				@clients[endpoint] ||= Async::HTTP::Client.new(endpoint)
 			end
 			
+			# Lookup the appropriate host for the given request.
+			# @param request [Protocol::HTTP::Request]
+			# @return [Service::Proxy]
 			def lookup(request)
 				# Trailing dot and port is ignored/normalized.
 				if authority = request.authority&.sub(/(\.)?(:\d+)?$/, '')
@@ -82,6 +97,8 @@ module Falcon
 				end
 			end
 			
+			# Prepare the headers to be sent to an upstream host.
+			# In particular, we delete all connection and hop headers.
 			def prepare_headers(headers)
 				if connection = headers[CONNECTION]
 					headers.extract(connection)
@@ -90,6 +107,8 @@ module Falcon
 				headers.extract(HOP_HEADERS)
 			end
 			
+			# Prepare the request to be proxied to the specified host.
+			# In particular, we set appropriate {VIA}, {FORWARDED}, {X_FORWARDED_FOR} and {X_FORWARDED_PROTO} headers.
 			def prepare_request(request, host)
 				forwarded = []
 				
@@ -124,6 +143,8 @@ module Falcon
 				return request
 			end
 			
+			# Proxy the request if the authority matches a specific host.
+			# @param request [Protocol::HTTP::Request]
 			def call(request)
 				if host = lookup(request)
 					@count += 1

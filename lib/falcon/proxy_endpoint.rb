@@ -23,7 +23,10 @@
 require 'async/io/unix_endpoint'
 
 module Falcon
+	# An endpoint suitable for proxing requests, typically via a unix pipe.
 	class ProxyEndpoint < Async::IO::Endpoint
+		# Initialize the proxy endpoint.
+		# @param endpoint [Async::IO::Endpoint] The endpoint which will be used for connecting/binding.
 		def initialize(endpoint, **options)
 			super(**options)
 			
@@ -34,28 +37,44 @@ module Falcon
 			"\#<#{self.class} endpoint=#{@endpoint}>"
 		end
 		
+		# The actual endpoint for I/O.
+		# @attr [Async::IO::Endpoint]
 		attr :endpoint
 		
+		# The protocol to use for this connection.
+		# @return [Async::HTTP::Protocol] A specific protocol, e.g. {Async::HTTP::P}
 		def protocol
 			@options[:protocol]
 		end
 		
+		# The scheme to use for this endpoint.
+		# e.g. `"http"`.
+		# @return [String]
 		def scheme
 			@options[:scheme]
 		end
 		
+		# The authority to use for this endpoint.
+		# e.g. `"myapp.com"`.
+		# @return [String]
 		def authority
 			@options[:authority]
 		end
 		
+		# Connect to the endpoint.
 		def connect(&block)
 			@endpoint.connect(&block)
 		end
 		
+		# Bind to the endpoint.
 		def bind(&block)
 			@endpoint.bind(&block)
 		end
 		
+		# Enumerate the endpoint.
+		# If the endpoint has multiple underlying endpoints, this will enumerate them individually.
+		# @block `{|endpoint| ...}`
+		# @yield endpoint [ProxyEndpoint]
 		def each
 			return to_enum unless block_given?
 			
@@ -64,6 +83,8 @@ module Falcon
 			end
 		end
 		
+		# Create a proxy unix endpoint with the specific path.
+		# @return [ProxyEndpoint]
 		def self.unix(path, **options)
 			self.new(::Async::IO::Endpoint.unix(path), **options)
 		end

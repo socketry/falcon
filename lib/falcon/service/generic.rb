@@ -22,7 +22,13 @@
 
 module Falcon
 	module Service
+		# Captures the stateful behaviour of a specific service.
+		# Specifies the interfaces required by derived classes.
+		#
+		# Designed to be invoked within an {Async::Controller::Container}.
 		class Generic
+			# Convert the given environment into a service if possible.
+			# @param environment [Build::Environment] The environment to use to construct the service.
 			def self.wrap(environment)
 				evaluator = environment.evaluator
 				service = evaluator.service || self
@@ -30,29 +36,41 @@ module Falcon
 				return service.new(environment)
 			end
 			
+			# Initialize the service from the given environment.
+			# @param environment [Build::Environment]
 			def initialize(environment)
 				@environment = environment
 				@evaluator = @environment.evaluator
 			end
 			
+			# Whether the service environment contains the specified keys.
+			# This is used for matching environment configuration to service behaviour.
 			def include?(keys)
 				keys.all?{|key| @environment.include?(key)}
 			end
 			
+			# The name of the service.
+			# e.g. `myapp.com`.
 			def name
 				@evaluator.name
 			end
 			
+			# The logger to use for this service.
+			# @return [Console::Logger]
 			def logger
 				return Async.logger # .with(name: name)
 			end
 			
+			# Start the service.
 			def start
 			end
 			
+			# Setup the service into the specified container.
+			# @param container [Async::Container::Generic]
 			def setup(container)
 			end
 			
+			# Stop the service.
 			def stop
 			end
 		end
