@@ -24,11 +24,19 @@ require 'async/http/endpoint'
 require 'localhost/authority'
 
 module Falcon
+	# An HTTP-specific endpoint which adds localhost TLS.
 	class Endpoint < Async::HTTP::Endpoint
+		# The SSL context to use, which invokes {build_ssl_context} if not otherwise specified.
+		# @return [OpenSSL::SSL::SSLContext]
 		def ssl_context
 			@options[:ssl_context] || build_ssl_context
 		end
 		
+		# Build an appropriate SSL context for the given hostname.
+		#
+		# Uses {Localhost::Authority} to generate self-signed certficates.
+		#
+		# @return [OpenSSL::SSL::SSLContext]
 		def build_ssl_context(hostname = self.hostname)
 			authority = Localhost::Authority.fetch(hostname)
 			
