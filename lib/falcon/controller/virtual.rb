@@ -24,7 +24,13 @@ require 'async/container/controller'
 
 module Falcon
 	module Controller
+		# A controller which mananages several virtual hosts.
+		# Spawns instances of {Proxy} and {Redirect} to handle incoming requests.
+		#
+		# A virtual host is an application bound to a specific authority (essentially a hostname). The virtual controller manages multiple hosts and allows a single server to host multiple applications easily.
 		class Virtual < Async::Container::Controller
+			# Initialize the virtual controller.
+			# @param command [Command::Virtual] The user-specified command-line options.
 			def initialize(command, **options)
 				@command = command
 				
@@ -33,6 +39,8 @@ module Falcon
 				trap(SIGHUP, &self.method(:reload))
 			end
 			
+			# Drop privileges according to the user and group of the specified path.
+			# @param path [String] The path to the application directory.
 			def assume_privileges(path)
 				stat = File.stat(path)
 				
@@ -46,6 +54,10 @@ module Falcon
 				}
 			end
 			
+			# Spawn an application instance from the specified path.
+			# @param path [String] The path to the application directory.
+			# @param container [Async::Container::Generic] The container to spawn into.
+			# @param options [Options] The options which are passed to `exec`.
 			def spawn(path, container, **options)
 				container.spawn(name: "Falcon Application", restart: true, key: path) do |instance|
 					env = assume_privileges(path)
@@ -56,10 +68,14 @@ module Falcon
 				end
 			end
 			
+			# The path to the falcon executable from this gem.
+			# @return [String]
 			def falcon_path
 				File.expand_path("../../../bin/falcon", __dir__)
 			end
 			
+			# Setup the container with {Redirect} and {Proxy} child processes.
+			# These processes are gracefully restarted if they are already running.
 			def setup(container)
 				if proxy = container[:proxy]
 					proxy.kill(:HUP)

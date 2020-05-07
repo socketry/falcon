@@ -30,9 +30,14 @@ require_relative '../tls'
 
 module Falcon
 	module Controller
+		# A controller for proxying requests.
 		class Proxy < Serve
+			# The default SSL session identifier.
 			DEFAULT_SESSION_ID = "falcon"
 			
+			# Initialize the proxy controller.
+			# @param command [Command::Proxy] The user-specified command-line options.
+			# @param session_id [String] The SSL session identifier to use for the session cache.
 			def initialize(command, session_id: DEFAULT_SESSION_ID, **options)
 				super(command, **options)
 				
@@ -40,14 +45,19 @@ module Falcon
 				@hosts = {}
 			end
 			
+			# Load the {Middleware::Proxy} application with the specified hosts.
 			def load_app
 				return Middleware::Proxy.new(Middleware::BadRequest, @hosts)
 			end
 			
+			# The name of the controller which is used for the process title.
 			def name
 				"Falcon Proxy Server"
 			end
 			
+			# Look up the host context for the given hostname, and update the socket hostname if necessary.
+			# @param socket [OpenSSL::SSL::SSLSocket] The incoming connection.
+			# @param hostname [String] The negotiated hostname.
 			def host_context(socket, hostname)
 				if host = @hosts[hostname]
 					Async.logger.debug(self) {"Resolving #{hostname} -> #{host}"}
@@ -62,6 +72,7 @@ module Falcon
 				end
 			end
 			
+			# Generate an SSL context which delegates to {host_context} to multiplex based on hostname.
 			def ssl_context
 				@server_context ||= OpenSSL::SSL::SSLContext.new.tap do |context|
 					context.servername_cb = Proc.new do |socket, hostname|
@@ -81,6 +92,7 @@ module Falcon
 				end
 			end
 			
+			# The endpoint the server will bind to.
 			def endpoint
 				@command.endpoint.with(
 					ssl_context: self.ssl_context,
@@ -88,6 +100,7 @@ module Falcon
 				)
 			end
 			
+			# Builds a map of host redirections.
 			def start
 				configuration = @command.configuration
 				

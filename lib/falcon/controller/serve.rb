@@ -29,7 +29,11 @@ require 'async/io/shared_endpoint'
 
 module Falcon
 	module Controller
+		# A generic controller for serving an application.
+		# Uses {Server} for handling incoming requests.
 		class Serve < Async::Container::Controller
+			# Initialize the server controller.
+			# @param command [Command::Serve] The user-specified command-line options.
 			def initialize(command, **options)
 				@command = command
 				
@@ -40,18 +44,23 @@ module Falcon
 				super(**options)
 			end
 			
+			# Create the controller as specified by the command.
+			# e.g. `Async::Container::Forked`.
 			def create_container
 				@command.container_class.new
 			end
 			
+			# The endpoint the server will bind to.
 			def endpoint
 				@command.endpoint
 			end
 			
+			# @return [Protocol::HTTP::Middleware] an instance of the application to be served.
 			def load_app
 				@command.load_app
 			end
 			
+			# Prepare the bound endpoint for the server.
 			def start
 				@endpoint ||= self.endpoint
 				
@@ -64,10 +73,12 @@ module Falcon
 				super
 			end
 			
+			# The name of the controller which is used for the process title.
 			def name
 				"Falcon Server"
 			end
 			
+			# Setup the container with the application instance.
 			def setup(container)
 				container.run(name: self.name, restart: true, **@command.container_options) do |instance|
 					Async do |task|
@@ -99,6 +110,7 @@ module Falcon
 				end
 			end
 			
+			# Close the bound endpoint.
 			def stop(*)
 				@bound_endpoint&.close
 				
