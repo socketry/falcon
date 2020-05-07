@@ -46,6 +46,8 @@ module Falcon
 		class Serve < Samovar::Command
 			self.description = "Run an HTTP server for development purposes."
 			
+			# The command line options.
+			# @attr [Samovar::Options]
 			options do
 				option '-b/--bind <address>', "Bind to the given hostname/address.", default: "https://localhost:9292"
 				
@@ -90,36 +92,46 @@ module Falcon
 				@options[:cache]
 			end
 			
+			# Load the rack application from the specified configuration path.
+			# @return [Protocol::HTTP::Middleware]
 			def load_app
 				rack_app, _ = Rack::Builder.parse_file(@options[:config])
 				
 				return Server.middleware(rack_app, verbose: self.verbose?, cache: self.cache?)
 			end
 			
+			# Options for the container.
+			# See {Controller::Serve#setup}.
 			def container_options
 				@options.slice(:count, :forks, :threads)
 			end
 			
+			# Options for the {endpoint}.
 			def endpoint_options
 				@options.slice(:hostname, :port, :reuse_port, :timeout)
 			end
 			
+			# The endpoint to bind to.
 			def endpoint
 				Endpoint.parse(@options[:bind], **endpoint_options)
 			end
 			
+			# The endpoint suitable for a client to connect.
 			def client_endpoint
 				Async::HTTP::Endpoint.parse(@options[:bind], **endpoint_options)
 			end
 			
+			# Create a new client suitable for accessing the application.
 			def client
 				Async::HTTP::Client.new(client_endpoint)
 			end
 			
+			# Prepare a new controller for the command.
 			def controller
 				Controller::Serve.new(self)
 			end
 			
+			# Prepare the environment and run the controller.
 			def call
 				Async.logger.info(self) do |buffer|
 					buffer.puts "Falcon v#{VERSION} taking flight! Using #{self.container_class} #{self.container_options}."

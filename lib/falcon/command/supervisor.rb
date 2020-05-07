@@ -35,21 +35,27 @@ module Falcon
 		class Supervisor < Samovar::Command
 			self.description = "Control and query a specific supervisor."
 			
+			# The command line options.
+			# @attr [Samovar::Options]
 			options do
 				option "--path <path>", "The control IPC path.", default: "supervisor.ipc"
 			end
 			
+			# Implements the `falcon supervisor restart` command.
 			class Restart < Samovar::Command
 				self.description = "Restart the process group."
 				
+				# Send the restart message to the supervisor.
 				def call(stream)
 					stream.puts({please: 'restart'}.to_json, separator: "\0")
 				end
 			end
 			
+			# Implements the `falcon supervisor metrics` command.
 			class Metrics < Samovar::Command
 				self.description = "Show metrics about the falcon processes."
 				
+				# Send the metrics message to the supervisor and print the results.
 				def call(stream)
 					stream.puts({please: 'metrics'}.to_json, separator: "\0")
 					response = JSON.parse(stream.gets("\0"), symbolize_names: true)
@@ -58,15 +64,20 @@ module Falcon
 				end
 			end
 			
+			# The nested command to execute.
+			# @name nested
+			# @attr [Command]
 			nested :command, {
 				'restart' => Restart,
 				'metrics' => Metrics,
 			}, default: 'metrics'
 			
+			# The endpoint the supervisor is bound to.
 			def endpoint
 				Async::IO::Endpoint.unix(@options[:path])
 			end
 			
+			# Connect to the supervisor and execute the requested command.
 			def call
 				Async do
 					endpoint.connect do |socket|

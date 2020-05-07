@@ -37,6 +37,8 @@ module Falcon
 		class Top < Samovar::Command
 			self.description = "An asynchronous HTTP server."
 			
+			# The command line options.
+			# @attr [Samovar::Options]
 			options do
 				option '--verbose | --quiet', "Verbosity of output for debugging.", key: :logging
 				option '-h/--help', "Print out help information."
@@ -68,7 +70,11 @@ module Falcon
 				@options[:logging] == :quiet
 			end
 			
+			# Update the external encoding.
+			#
 			# If you don't specify these, it's possible to have issues when encodings mismatch on the server.
+			#
+			# @param encoding [Encoding] Defaults to `Encoding::UTF_8`.
 			def update_external_encoding!(encoding = Encoding::UTF_8)
 				if Encoding.default_external != encoding
 					Console.logger.warn(self) {"Updating Encoding.default_external from #{Encoding.default_external} to #{encoding}"}
@@ -76,12 +82,14 @@ module Falcon
 				end
 			end
 			
+			# The desired external encoding.
 			def encoding
 				if name = @options[:encoding]
 					Encoding.find(name)
 				end
 			end
 			
+			# Prepare the environment and invoke the sub-command.
 			def call
 				if encoding = self.encoding
 					update_external_encoding!(encoding)

@@ -33,6 +33,8 @@ module Falcon
 		class Proxy < Samovar::Command
 			self.description = "Proxy to one or more backend hosts."
 			
+			# The command line options.
+			# @attr [Samovar::Options]
 			options do
 				option '--bind <address>', "Bind to the given hostname/address", default: "https://[::]:443"
 				
@@ -56,10 +58,13 @@ module Falcon
 				Async::Container.best_container_class
 			end
 			
+			# Options for the container.
+			# See {Controller::Serve#setup}.
 			def container_options
 				{}
 			end
 			
+			# Prepare the environment and run the controller.
 			def call
 				Async.logger.info(self) do |buffer|
 					buffer.puts "Falcon Proxy v#{VERSION} taking flight!"
@@ -71,6 +76,7 @@ module Falcon
 				self.controller.run
 			end
 			
+			# The endpoint to bind to.
 			def endpoint(**options)
 				Async::HTTP::Endpoint.parse(@options[:bind], timeout: @options[:timeout], **options)
 			end

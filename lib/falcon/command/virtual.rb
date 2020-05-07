@@ -33,6 +33,8 @@ module Falcon
 		class Virtual < Samovar::Command
 			self.description = "Run one or more virtual hosts with a front-end proxy."
 			
+			# The command line options.
+			# @attr [Samovar::Options]
 			options do
 				option '--bind-insecure <address>', "Bind redirection to the given hostname/address", default: "http://[::]:80"
 				option '--bind-secure <address>', "Bind proxy to the given hostname/address", default: "https://[::]:443"
@@ -52,10 +54,12 @@ module Falcon
 				Controller::Virtual.new(self)
 			end
 			
+			# The URI to bind the `HTTPS` -> `falcon host` proxy.
 			def bind_secure
 				@options[:bind_secure]
 			end
 			
+			# The URI to bind the `HTTP` -> `HTTPS` redirector.
 			def bind_insecure
 				@options[:bind_insecure]
 			end

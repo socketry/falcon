@@ -30,6 +30,8 @@ module Falcon
 		class Redirect < Samovar::Command
 			self.description = "Redirect from insecure HTTP to secure HTTP."
 			
+			# The command line options.
+			# @attr [Samovar::Options]
 			options do
 				option '--bind <address>', "Bind to the given hostname/address", default: "http://[::]:80"
 				option '--redirect <address>', "Redirect using this address as a template.", default: "https://[::]:443"
@@ -54,10 +56,13 @@ module Falcon
 				Async::Container.best_container_class
 			end
 			
+			# Options for the container.
+			# See {Controller::Serve#setup}.
 			def container_options
 				{}
 			end
 			
+			# Prepare the environment and run the controller.
 			def call
 				Async.logger.info(self) do |buffer|
 					buffer.puts "Falcon Redirect v#{VERSION} taking flight!"
@@ -69,10 +74,12 @@ module Falcon
 				self.controller.run
 			end
 			
+			# The endpoint to bind to.
 			def endpoint(**options)
 				Async::HTTP::Endpoint.parse(@options[:bind], timeout: @options[:timeout], **options)
 			end
 			
+			# The template endpoint to redirect to.
 			def redirect_endpoint(**options)
 				Async::HTTP::Endpoint.parse(@options[:redirect], **options)
 			end
