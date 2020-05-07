@@ -20,28 +20,32 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-require 'localhost/authority'
+require_relative '../service/supervisor'
 
-add(:self_signed_tls) do
-	ssl_session_id {"falcon"}
+# A application process monitor environment.
+#
+# @scope Falcon Environments
+# @name supervisor
+environment(:supervisor) do
+	# The name of the supervisor
+	# @attr [String]
+	name "supervisor"
 	
-	ssl_context do
-		contexts = Localhost::Authority.fetch(authority)
-		
-		contexts.server_context.tap do |context|
-			context.alpn_select_cb = lambda do |protocols|
-				if protocols.include? "h2"
-					return "h2"
-				elsif protocols.include? "http/1.1"
-					return "http/1.1"
-				elsif protocols.include? "http/1.0"
-					return "http/1.0"
-				else
-					return nil
-				end
-			end
-			
-			context.session_id_context = ssl_session_id
-		end
+	# The IPC path to use for communication with the supervisor.
+	# @attr [String]
+	ipc_path do
+		::File.expand_path("supervisor.ipc", root)
+	end
+	
+	# The endpoint the supervisor will bind to.
+	# @attr [Async::IO::Endpoint]
+	endpoint do
+		Async::IO::Endpoint.unix(ipc_path)
+	end
+	
+	# The service class to use for the supervisor.
+	# @attr [Class]
+	service do
+		::Falcon::Service::Supervisor
 	end
 end

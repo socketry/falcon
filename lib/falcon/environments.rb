@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# Copyright, 2019, by Samuel G. D. Williams. <http://www.codeotaku.com>
+# Copyright, 2018, by Samuel G. D. Williams. <http://www.codeotaku.com>
 # 
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -20,32 +20,12 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-require_relative '../configuration'
+require 'build/environment'
 
 module Falcon
-	module Command
-		# A helper for resolving wildcard configuration paths.
-		module Paths
-			# Resolve a set of `@paths` that may contain wildcards, into a sorted, unique array.
-			# @return [Array(String)]
-			def resolved_paths(&block)
-				@paths.collect do |path|
-					Dir.glob(path)
-				end.flatten.sort.uniq.each(&block)
-			end
-			
-			# Build a configuration based on the resolved paths.
-			def configuration
-				configuration = Configuration.new
-				
-				self.resolved_paths.each do |path|
-					path = File.expand_path(path)
-					
-					configuration.load_file(path)
-				end
-				
-				return configuration
-			end
-		end
+	# Pre-defined environments for hosting web applications.
+	#
+	# See {Configuration::Loader:load} for more details.
+	module Environments
 	end
 end

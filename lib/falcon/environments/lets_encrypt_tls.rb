@@ -20,18 +20,28 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-require_relative '../service/supervisor'
+load(:tls)
 
-add(:supervisor) do
-	start true
+# A Lets Encrypt SSL context environment.
+#
+# Derived from {.tls}.
+#
+# @scope Falcon Environments
+# @name lets_encrypt_tls
+environment(:lets_encrypt_tls, :tls) do
+	# The Lets Encrypt certificate store path.
+	# @param [String]
+	lets_encrypt_root '/etc/letsencrypt/live'
 	
-	name "supervisor"
+	# The public certificate path.
+	# @attr [String]
+	ssl_certificate_path do
+		File.join(lets_encrypt_root, authority, "fullchain.pem")
+	end
 	
-	ipc_path {::File.expand_path("supervisor.ipc", root)}
-	
-	endpoint {Async::IO::Endpoint.unix(ipc_path)}
-	
-	service do
-		::Falcon::Service::Supervisor
+	# The private key path.
+	# @attr [String]
+	ssl_private_key_path do
+		File.join(lets_encrypt_root, authority, "privkey.pem")
 	end
 end

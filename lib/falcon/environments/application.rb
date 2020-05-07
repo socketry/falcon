@@ -25,15 +25,35 @@ require_relative '../server'
 
 require_relative '../service/application'
 
-add(:application) do
+# A general application environment.
+# Suitable for use with any {Protocol::HTTP::Middleware}.
+#
+# @scope Falcon Environments
+# @name application
+environment(:application) do
+	# The middleware stack for the application.
+	# @attr [Protocol::HTTP::Middleware]
 	middleware do
 		::Protocol::HTTP::Middleware::HelloWorld
 	end
 	
+	# The scheme to use to communicate with the application.
+	# @attr [String]
 	scheme 'https'
+	
+	# The protocol to use to communicate with the application.
+	#
+	# Typically one of {Async::HTTP::Protocol::HTTP1} or {Async::HTTP::Protocl::HTTP2}.
+	#
+	# @attr [Async::HTTP::Protocol]
 	protocol {Async::HTTP::Protocol::HTTP2}
+	
+	# The IPC path to use for communication with the application.
+	# @attr [String]
 	ipc_path {::File.expand_path("application.ipc", root)}
 	
+	# The endpoint that will be used for communicating with the application server.
+	# @attr [Async::IO::Endpoint]
 	endpoint do
 		::Falcon::ProxyEndpoint.unix(ipc_path,
 			protocol: protocol,
@@ -42,5 +62,7 @@ add(:application) do
 		)
 	end
 	
+	# The service class to use for the application.
+	# @attr [Class]
 	service ::Falcon::Service::Application
 end

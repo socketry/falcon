@@ -24,19 +24,53 @@ require_relative '../extensions/openssl'
 require_relative '../controller/proxy'
 require_relative '../tls'
 
-add(:tls) do
+# A general SSL context environment.
+#
+# @scope Falcon Environments
+# @name tls
+environment(:tls) do
+	# The default session identifier for the session cache.
+	# @attr [String]
 	ssl_session_id "falcon"
+	
+	# The supported ciphers.
+	# @attr [Array(String)]
 	ssl_ciphers Falcon::TLS::SERVER_CIPHERS
 	
-	ssl_certificate_path {File.expand_path("ssl/certificate.pem", root)}
-	ssl_certificates {OpenSSL::X509.load_certificates(ssl_certificate_path)}
+	# The public certificate path.
+	# @attr [String]
+	ssl_certificate_path do
+		File.expand_path("ssl/certificate.pem", root)
+	end
 	
+	# The list of certificates loaded from that path.
+	# @attr [Array(OpenSSL::X509::Certificate)]
+	ssl_certificates do
+		OpenSSL::X509.load_certificates(ssl_certificate_path)
+	end
+	
+	# The main certificate.
+	# @attr [OpenSSL::X509::Certificate]
 	ssl_certificate {ssl_certificates[0]}
+	
+	# The certificate chain.
+	# @attr [Array(OpenSSL::X509::Certificate)]
 	ssl_certificate_chain {ssl_certificates[1..-1]}
 	
-	ssl_private_key_path {File.expand_path("ssl/private.key", root)}
-	ssl_private_key {OpenSSL::PKey::RSA.new(File.read(ssl_private_key_path))}
+	# The private key path.
+	# @attr [String]
+	ssl_private_key_path do
+		File.expand_path("ssl/private.key", root)
+	end
 	
+	# The private key.
+	# @attr [OpenSSL::PKey::RSA]
+	ssl_private_key do
+		OpenSSL::PKey::RSA.new(File.read(ssl_private_key_path))
+	end
+	
+	# The SSL context to use for incoming connections.
+	# @attr [OpenSSL::SSL::SSLContext]
 	ssl_context do
 		OpenSSL::SSL::SSLContext.new.tap do |context|
 			context.add_certificate(ssl_certificate, ssl_private_key, ssl_certificate_chain)

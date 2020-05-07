@@ -27,6 +27,9 @@ require 'samovar'
 
 module Falcon
 	module Command
+		# Implements the `falcon proxy` command.
+		#
+		# Manages a {Controller::Proxy} instance which is responsible for proxing incoming requests.
 		class Proxy < Samovar::Command
 			self.description = "Proxy to one or more backend hosts."
 			
@@ -36,14 +39,19 @@ module Falcon
 				option '-t/--timeout <duration>', "Specify the maximum time to wait for non-blocking operations.", type: Float, default: nil
 			end
 			
+			# One or more paths to the configuration files.
+			# @name paths
+			# @attr [Array(String)]
 			many :paths
 			
 			include Paths
 			
+			# Prepare a new controller for the command.
 			def controller
 				Controller::Proxy.new(self)
 			end
 			
+			# The container class to use.
 			def container_class
 				Async::Container.best_container_class
 			end

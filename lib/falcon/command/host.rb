@@ -28,17 +28,25 @@ require 'samovar'
 
 module Falcon
 	module Command
+		# Implements the `falcon host` command. Designed for *deployment*.
+		#
+		# Manages a {Controller::Host} instance which is responsible for running applications in a production environment.
 		class Host < Samovar::Command
 			self.description = "Host the specified applications."
 			
+			# One or more paths to the configuration files.
+			# @name paths
+			# @attr [Array(String)]
 			many :paths, "Service configuration paths.", default: ["falcon.rb"]
 			
+			# The container class to use.
 			def container_class
 				Async::Container.best_container_class
 			end
 			
-			def configuration(verbose = false)
-				configuration = Configuration.new(verbose)
+			# Generate a configuration based on the specified {paths}.
+			def configuration
+				configuration = Configuration.new
 				
 				@paths.each do |path|
 					path = File.expand_path(path)
@@ -48,10 +56,12 @@ module Falcon
 				return configuration
 			end
 			
+			# Prepare a new controller for the command.
 			def controller
 				Controller::Host.new(self)
 			end
 			
+			# Prepare the environment and run the controller.
 			def call
 				Async.logger.info(self) do |buffer|
 					buffer.puts "Falcon Host v#{VERSION} taking flight!"

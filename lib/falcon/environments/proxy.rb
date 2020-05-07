@@ -20,19 +20,18 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-load :application
-
-add(:rack, :application) do
-	config_path {::File.expand_path("config.ru", root)}
+# A HTTP proxy environment.
+#
+# Derived from {.application}.
+#
+# @scope Falcon Environments
+# @name rack
+environment(:proxy) do
+	# The upstream endpoint that will handle incoming requests.
+	# @attr [Async::HTTP::Endpoint]
+	endpoint {::Async::HTTP::Endpoint.parse(url)}
 	
-	cache false
-	
-	middleware do
-		app, _ = ::Rack::Builder.parse_file(config_path)
-		
-		::Falcon::Server.middleware(app,
-			verbose: verbose,
-			cache: cache
-		)
-	end
+	# The service class to use for the proxy.
+	# @attr [Class]
+	service ::Falcon::Service::Proxy
 end

@@ -33,6 +33,7 @@ require 'samovar'
 
 module Falcon
 	module Command
+		# The top level command for the `falcon` executable.
 		class Top < Samovar::Command
 			self.description = "An asynchronous HTTP server."
 			
@@ -43,6 +44,9 @@ module Falcon
 				option '-e/--encoding', "Specify the default external encoding of the server.", default: "UTF-8"
 			end
 			
+			# The nested command to execute.
+			# @name nested
+			# @attr [Command]
 			nested :command, {
 				'serve' => Serve,
 				'host' => Host,
@@ -52,10 +56,14 @@ module Falcon
 				'supervisor' => Supervisor,
 			}, default: 'serve'
 			
+			# Whether verbose logging is enabled.
+			# @return [Boolean]
 			def verbose?
 				@options[:logging] == :verbose
 			end
 			
+			# Whether quiet logging was enabled.
+			# @return [Boolean]
 			def quiet?
 				@options[:logging] == :quiet
 			end

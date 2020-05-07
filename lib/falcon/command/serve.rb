@@ -40,6 +40,9 @@ require 'bundler'
 
 module Falcon
 	module Command
+		# Implements the `falcon serve` command. Designed for *development*.
+		#
+		# Manages a {Controller::Serve} instance which is responsible for running applications in a development environment.
 		class Serve < Samovar::Command
 			self.description = "Run an HTTP server for development purposes."
 			
@@ -63,6 +66,7 @@ module Falcon
 				option '--threads <count>', "Number of threads (hybrid only).", type: Integer
 			end
 			
+			# The container class to use.
 			def container_class
 				case @options[:container]
 				when :threaded
@@ -74,10 +78,14 @@ module Falcon
 				end
 			end
 			
+			# Whether verbose logging is enabled.
+			# @return [Boolean]
 			def verbose?
 				@parent&.verbose?
 			end
 			
+			# Whether to enable the application HTTP cache.
+			# @return [Boolean]
 			def cache?
 				@options[:cache]
 			end
@@ -88,25 +96,12 @@ module Falcon
 				return Server.middleware(rack_app, verbose: self.verbose?, cache: self.cache?)
 			end
 			
-			def slice_options(*keys)
-				# TODO: Ruby 2.5 introduced Hash#slice
-				options = {}
-				
-				keys.each do |key|
-					if @options.key?(key)
-						options[key] = @options[key]
-					end
-				end
-				
-				return options
-			end
-			
 			def container_options
-				slice_options(:count, :forks, :threads)
+				@options.slice(:count, :forks, :threads)
 			end
 			
 			def endpoint_options
-				slice_options(:hostname, :port, :reuse_port, :timeout)
+				@options.slice(:hostname, :port, :reuse_port, :timeout)
 			end
 			
 			def endpoint

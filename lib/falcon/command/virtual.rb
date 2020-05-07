@@ -27,6 +27,9 @@ require 'samovar'
 
 module Falcon
 	module Command
+		# Implements the `falcon virtual` command. Designed for *deployment*.
+		#
+		# Manages a {Controller::Virtual} instance which is responsible for running the {Proxy} and {Redirect} instances.
 		class Virtual < Samovar::Command
 			self.description = "Run one or more virtual hosts with a front-end proxy."
 			
@@ -37,10 +40,14 @@ module Falcon
 				option '-t/--timeout <duration>', "Specify the maximum time to wait for non-blocking operations.", type: Float, default: 30
 			end
 			
+			# One or more paths to the configuration files.
+			# @name paths
+			# @attr [Array(String)]
 			many :paths
 			
 			include Paths
 			
+			# Prepare a new controller for the command.
 			def controller
 				Controller::Virtual.new(self)
 			end
@@ -53,10 +60,12 @@ module Falcon
 				@options[:bind_insecure]
 			end
 			
+			# The connection timeout to use for incoming connections.
 			def timeout
 				@options[:timeout]
 			end
 			
+			# Prepare the environment and run the controller.
 			def call
 				Async.logger.info(self) do |buffer|
 					buffer.puts "Falcon Virtual v#{VERSION} taking flight!"
@@ -67,10 +76,12 @@ module Falcon
 				self.controller.run
 			end
 			
+			# The insecure endpoint for connecting to the {Redirect} instance.
 			def insecure_endpoint(**options)
 				Async::HTTP::Endpoint.parse(@options[:bind_insecure], **options)
 			end
 			
+			# The secure endpoint for connecting to the {Proxy} instance.
 			def secure_endpoint(**options)
 				Async::HTTP::Endpoint.parse(@options[:bind_secure], **options)
 			end

@@ -20,11 +20,31 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-load(:tls)
+load :application
 
-add(:lets_encrypt_tls, :tls) do
-	lets_encrypt_root '/etc/letsencrypt/live'
+# A rack application environment.
+#
+# Derived from {.application}.
+#
+# @scope Falcon Environments
+# @name rack
+environment(:rack, :application) do
+	# The rack configuration path.
+	# @attr [String]
+	config_path {::File.expand_path("config.ru", root)}
 	
-	ssl_certificate_path {File.join(lets_encrypt_root, authority, "fullchain.pem")}
-	ssl_private_key_path {File.join(lets_encrypt_root, authority, "privkey.pem")}
+	# Whether to enable the application layer cache.
+	# @attr [String]
+	cache false
+	
+	# The middleware stack for the rack application.
+	# @attr [Protocol::HTTP::Middleware]
+	middleware do
+		app, _ = ::Rack::Builder.parse_file(config_path)
+		
+		::Falcon::Server.middleware(app,
+			verbose: verbose,
+			cache: cache
+		)
+	end
 end

@@ -29,8 +29,11 @@ require 'async/io/unix_endpoint'
 
 module Falcon
 	module Command
+		# Implements the `falcon supervisor` command.
+		#
+		# Talks to an instance of the supervisor to issue commands and print results.
 		class Supervisor < Samovar::Command
-			self.description = "Control and query a specific host."
+			self.description = "Control and query a specific supervisor."
 			
 			options do
 				option "--path <path>", "The control IPC path.", default: "supervisor.ipc"
