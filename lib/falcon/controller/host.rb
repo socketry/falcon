@@ -56,6 +56,7 @@ module Falcon
 			end
 			
 			# Setup all specified services into the container.
+			# @parameter container [Async::Container::Generic]
 			def setup(container)
 				@services.setup(container)
 			end

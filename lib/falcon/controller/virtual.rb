@@ -76,6 +76,7 @@ module Falcon
 			
 			# Setup the container with {Redirect} and {Proxy} child processes.
 			# These processes are gracefully restarted if they are already running.
+			# @parameter container [Async::Container::Generic]
 			def setup(container)
 				if proxy = container[:proxy]
 					proxy.kill(:HUP)

@@ -68,6 +68,7 @@ module Falcon
 			end
 			
 			# Setup instances of the application into the container.
+			# @parameter container [Async::Container::Generic]
 			def setup(container)
 				protocol = self.protocol
 				scheme = self.scheme

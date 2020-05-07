@@ -79,6 +79,7 @@ module Falcon
 			end
 			
 			# Setup the container with the application instance.
+			# @parameter container [Async::Container::Generic]
 			def setup(container)
 				container.run(name: self.name, restart: true, **@command.container_options) do |instance|
 					Async do |task|

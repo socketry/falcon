@@ -84,6 +84,7 @@ module Falcon
 			end
 			
 			# Start the supervisor process which accepts connections from the bound endpoint and processes JSON formatted messages.
+			# @parameter container [Async::Container::Generic]
 			def setup(container)
 				container.run(name: self.name, restart: true, count: 1) do |instance|
 					Async do
