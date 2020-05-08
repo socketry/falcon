@@ -8,3 +8,5 @@ extended-features:
   order: 4
 performance-tuning:
   order: 5
+how-it-works:
+  order: 6
