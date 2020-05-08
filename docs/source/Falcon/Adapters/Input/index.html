@@ -2,9 +2,10 @@
 <html>
 	<head>
 		
-			<title>::Falcon::Adapters::Input</title>
+			<title>Falcon::Adapters::Input</title>
 		
 		<meta charset="UTF-8"/>
+		<meta name="viewport" content="width=device-width, initial-scale=1"/>
 		
 		<link rel="icon" type="image/png" href="../../../../_static/icon.png"/>
 		<link rel="stylesheet" href="../../../../_static/site.css" type="text/css" media="screen"/>
@@ -26,20 +27,32 @@
 
 		
 		
-	<h1><code class="language-ruby">::Falcon::Adapters::Input</code></h1>
+	<h1><code class="language-ruby">Falcon::Adapters::Input</code></h1>
 	
 	<main>
-		<p>The input stream is an IO-like object which contains the raw HTTP POST data. When applicable, its external encoding must be “ASCII-8BIT” and it must be opened in binary mode, for Ruby 1.9 compatibility. The input stream must respond to gets, each, read and rewind.</p>
+		<p>Wraps a streaming input body into the interface required by <code>rack.input</code>.</p>
+
+<p>The input stream is an <code>IO</code>-like object which contains the raw HTTP POST data. When applicable, its external encoding must be <code>ASCII-8BIT</code> and it must be opened in binary mode, for Ruby 1.9 compatibility. The input stream must respond to <code>gets</code>, <code>each</code>, <code>read</code> and <code>rewind</code>.</p>
+
+<p>This implementation is not always rewindable, to avoid buffering the input when handling large uploads. See <a href="../Rewindable/index.html"><code class="language-ruby">class Rewindable</code></a> for more details.</p>
 		
 		
 		<h2>Definitions</h2>
 		
-		<h3 id="::Falcon::Adapters::Input:each"><code class="language-ruby">def each(&amp;block)</code></h3><p>each must be called without arguments and only yield Strings.</p>
-<section class="collapsible">
-							<input type="checkbox" id="::Falcon::Adapters::Input:each-implementation"/>
-							<label for="::Falcon::Adapters::Input:each-implementation">
-								<h4>Implementation</h4>
-							</label>
+		<h3 id="Falcon::Adapters::Input#initialize"><code class="language-ruby">def initialize(body)</code></h3><p>Initialize the input wrapper.</p>
+<details>
+							<summary><h4>Implementation</h4></summary>
+							<pre><code class="language-ruby">def initialize(body)
+	@body = body
+	
+	# Will hold remaining data in `#read`.
+	@buffer = nil
+	@finished = @body.nil?
+end</code></pre>
+						</details><h3 id="Falcon::Adapters::Input#body"><code class="language-ruby">attr :body</code></h3><p>The input body.</p>
+<h3 id="Falcon::Adapters::Input#each"><code class="language-ruby">def each(&amp;block)</code></h3><p>Enumerate chunks of the request body.</p>
+<details>
+							<summary><h4>Implementation</h4></summary>
 							<pre><code class="language-ruby">def each(&amp;block)
 	return to_enum unless block_given?
 	
@@ -47,12 +60,11 @@
 		yield chunk
 	end
 end</code></pre>
-						</section><h3 id="::Falcon::Adapters::Input:rewind"><code class="language-ruby">def rewind</code></h3><p>rewind must be called without arguments. It rewinds the input stream back to the beginning. It must not raise Errno::ESPIPE: that is, it may not be a pipe or a socket. Therefore, handler developers must buffer the input data into some rewindable object if the underlying input stream is not rewindable.</p>
-<section class="collapsible">
-							<input type="checkbox" id="::Falcon::Adapters::Input:rewind-implementation"/>
-							<label for="::Falcon::Adapters::Input:rewind-implementation">
-								<h4>Implementation</h4>
-							</label>
+						</details><h3 id="Falcon::Adapters::Input#rewind"><code class="language-ruby">def rewind</code></h3><p>Rewind the input stream back to the start.</p>
+
+<p><code>rewind</code> must be called without arguments. It rewinds the input stream back to the beginning. It must not raise Errno::ESPIPE: that is, it may not be a pipe or a socket. Therefore, handler developers must buffer the input data into some rewindable object if the underlying input stream is not rewindable.</p>
+<details>
+							<summary><h4>Implementation</h4></summary>
 							<pre><code class="language-ruby">def rewind
 	if @body and @body.respond_to? :rewind
 		# If the body is not rewindable, this will fail.
@@ -65,18 +77,20 @@ end</code></pre>
 	
 	return false
 end</code></pre>
-						</section><h3 id="::Falcon::Adapters::Input:read"><code class="language-ruby">def read(length = nil, buffer = nil)</code></h3><p>read behaves like IO#read. Its signature is read([length, [buffer]]). If given, length must be a non-negative Integer (&gt;= 0) or nil, and buffer must be a String and may not be nil. If length is given and not nil, then this method reads at most length bytes from the input stream. If length is not given or nil, then this method reads all data until EOF. When EOF is reached, this method returns nil if length is given and not nil, or “” if length is not given or is nil. If buffer is given, then the read data will be placed into buffer instead of a newly created String object.</p>
-<h4>Parameters</h4><dl>							<dt><code class="syntax">length</code> — <code class="language-ruby">Integer</code></dt>
-								<dd><p>the amount of data to read</p>
+						</details><h3 id="Falcon::Adapters::Input#read"><code class="language-ruby">def read(length = nil, buffer = nil)</code></h3><p>Read data from the input stream.</p>
+
+<p><code>read</code> behaves like <code>IO#read</code>. Its signature is <code>read(length = nil, buffer = nil)</code>. If given, length must be a non-negative <code>Integer</code> (&gt;= 0) or <code>nil</code>, and buffer must be a <code>String</code> and may not be nil. If <code>length</code> is given and not <code>nil</code>, then this method reads at most <code>length</code> bytes from the input stream. If <code>length</code> is not given or <code>nil</code>, then this method reads all data. When the end is reached, this method returns <code>nil</code> if <code>length</code> is given and not <code>nil</code>, or an empty <code>String</code> if <code>length</code> is not given or is <code>nil</code>. If <code>buffer</code> is given, then the read data will be placed into the <code>buffer</code> instead of a newly created <code>String</code> object.</p>
+<details open>
+							<summary><h4>Parameters</h4></summary>
+							<dl>								<dt><code class="syntax">length</code> — <code class="language-ruby">Integer</code></dt>
+									<dd><p>the amount of data to read</p>
 </dd>
-													<dt><code class="syntax">buffer</code> — <code class="language-ruby">String</code></dt>
-								<dd><p>the buffer which will receive the data</p>
+															<dt><code class="syntax">buffer</code> — <code class="language-ruby">String</code></dt>
+									<dd><p>the buffer which will receive the data</p>
 </dd>
-						</dl><section class="collapsible">
-							<input type="checkbox" id="::Falcon::Adapters::Input:read-implementation"/>
-							<label for="::Falcon::Adapters::Input:read-implementation">
-								<h4>Implementation</h4>
-							</label>
+							</dl>
+						</details><details>
+							<summary><h4>Implementation</h4></summary>
 							<pre><code class="language-ruby">def read(length = nil, buffer = nil)
 	buffer ||= Async::IO::Buffer.new
 	buffer.clear
@@ -104,12 +118,17 @@ end</code></pre>
 	
 	return buffer
 end</code></pre>
-						</section><h3 id="::Falcon::Adapters::Input:gets"><code class="language-ruby">def gets</code></h3><p>gets must be called without arguments and return a string, or nil on EOF.</p>
-<section class="collapsible">
-							<input type="checkbox" id="::Falcon::Adapters::Input:gets-implementation"/>
-							<label for="::Falcon::Adapters::Input:gets-implementation">
-								<h4>Implementation</h4>
-							</label>
+						</details><h3 id="Falcon::Adapters::Input#eof?"><code class="language-ruby">def eof?</code></h3><p>Has the input stream been read completely?</p>
+<details>
+							<summary><h4>Implementation</h4></summary>
+							<pre><code class="language-ruby">def eof?
+	@finished and @buffer.nil?
+end</code></pre>
+						</details><h3 id="Falcon::Adapters::Input#gets"><code class="language-ruby">def gets</code></h3><p>Read the next chunk of data from the input stream.</p>
+
+<p><code>gets</code> must be called without arguments and return a <code>String</code>, or <code>nil</code> when the input stream has no more data.</p>
+<details>
+							<summary><h4>Implementation</h4></summary>
 							<pre><code class="language-ruby">def gets
 	if @buffer.nil?
 		return read_next
@@ -119,16 +138,13 @@ end</code></pre>
 		return buffer
 	end
 end</code></pre>
-						</section><h3 id="::Falcon::Adapters::Input:close"><code class="language-ruby">def close</code></h3><p>close must never be called on the input stream. huh?</p>
-<section class="collapsible">
-							<input type="checkbox" id="::Falcon::Adapters::Input:close-implementation"/>
-							<label for="::Falcon::Adapters::Input:close-implementation">
-								<h4>Implementation</h4>
-							</label>
+						</details><h3 id="Falcon::Adapters::Input#close"><code class="language-ruby">def close</code></h3><p>Close and discard the remainder of the input stream.</p>
+<details>
+							<summary><h4>Implementation</h4></summary>
 							<pre><code class="language-ruby">def close
 	@body&amp;.close
 end</code></pre>
-						</section>	</main>
+						</details>	</main>
 
 		
 		<footer>Documentation generated by <a href="https://github.com/socketry/utopia-project">Utopia::Project</a>.</footer>

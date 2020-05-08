@@ -2,9 +2,10 @@
 <html>
 	<head>
 		
-			<title>::Falcon::Adapters::Output</title>
+			<title>Falcon::Adapters::Output</title>
 		
 		<meta charset="UTF-8"/>
+		<meta name="viewport" content="width=device-width, initial-scale=1"/>
 		
 		<link rel="icon" type="image/png" href="../../../../_static/icon.png"/>
 		<link rel="stylesheet" href="../../../../_static/site.css" type="text/css" media="screen"/>
@@ -26,21 +27,31 @@
 
 		
 		
-	<h1><code class="language-ruby">::Falcon::Adapters::Output</code></h1>
+	<h1><code class="language-ruby">Falcon::Adapters::Output</code></h1>
 	
 	<main>
-		<p>Wraps the rack response body.
-The Body must respond to each and must only yield String values. The Body itself should not be an instance of String, as this will break in Ruby 1.9. If the Body responds to close, it will be called after iteration. If the body is replaced by a middleware after action, the original body must be closed first, if it responds to close. If the Body responds to to_path, it must return a String identifying the location of a file whose contents are identical to that produced by calling each; this may be used by the server as an alternative, possibly more efficient way to transport the response. The Body commonly is an Array of Strings, the application instance itself, or a File-like object.</p>
+		<p>Wraps the rack response body.</p>
+
+<p>The <code>rack</code> body must respond to <code>each</code> and must only yield <code>String</code> values. If the body responds to <code>close</code>, it will be called after iteration. If the body is replaced by a middleware after action, the original body must be closed first, if it responds to <code>close</code>. If the body responds to <code>to_path</code>, it must return a String identifying the location of a file whose contents are identical to that produced by calling <code>each</code>; this may be used by the server as an alternative, possibly more efficient way to transport the response. The body commonly is an <code>Array</code> of strings, the application instance itself, or a <code>File</code>-like object.</p>
 		
 		
 		<h2>Definitions</h2>
 		
-		<h3 id="::Falcon::Adapters::Output.wrap"><code class="language-ruby">def self.wrap(status, headers, body)</code></h3><p>Wraps an array into a buffered body.</p>
-<section class="collapsible">
-							<input type="checkbox" id="::Falcon::Adapters::Output.wrap-implementation"/>
-							<label for="::Falcon::Adapters::Output.wrap-implementation">
-								<h4>Implementation</h4>
-							</label>
+		<h3 id="Falcon::Adapters::Output.wrap"><code class="language-ruby">def self.wrap(status, headers, body)</code></h3><p>Wraps an array into a buffered body.</p>
+<details open>
+							<summary><h4>Parameters</h4></summary>
+							<dl>								<dt><code class="syntax">status</code> — <code class="language-ruby">Integer</code></dt>
+									<dd><p>The response status.</p>
+</dd>
+															<dt><code class="syntax">headers</code> — <code class="language-ruby">Protocol::HTTP::Headers</code></dt>
+									<dd><p>The response headers.</p>
+</dd>
+															<dt><code class="syntax">body</code> — <code class="language-ruby">Object</code></dt>
+									<dd><p>The <code>rack</code> response body.</p>
+</dd>
+							</dl>
+						</details><details>
+							<summary><h4>Implementation</h4></summary>
 							<pre><code class="language-ruby">def self.wrap(status, headers, body)
 	# In no circumstance do we want this header propagating out:
 	if length = headers.delete(CONTENT_LENGTH)
@@ -60,9 +71,70 @@ The Body must respond to each and must only yield String values. The Body itself
 		return self.new(body, length)
 	end
 end</code></pre>
-						</section><h3 id="::Falcon::Adapters::Output:body"><code class="language-ruby">attr :body</code></h3><p>The rack response body.</p>
-<h3 id="::Falcon::Adapters::Output:length"><code class="language-ruby">attr :length</code></h3><p>The content length of the rack response body.</p>
-	</main>
+						</details><h3 id="Falcon::Adapters::Output#initialize"><code class="language-ruby">def initialize(body, length)</code></h3><p>Initialize the output wrapper.</p>
+<details open>
+							<summary><h4>Parameters</h4></summary>
+							<dl>								<dt><code class="syntax">body</code> — <code class="language-ruby">Object</code></dt>
+									<dd><p>The rack response body.</p>
+</dd>
+															<dt><code class="syntax">length</code> — <code class="language-ruby">Integer</code></dt>
+									<dd><p>The rack response length.</p>
+</dd>
+							</dl>
+						</details><details>
+							<summary><h4>Implementation</h4></summary>
+							<pre><code class="language-ruby">def initialize(body, length)
+	@length = length
+	@body = body
+	
+	@chunks = nil
+end</code></pre>
+						</details><h3 id="Falcon::Adapters::Output#body"><code class="language-ruby">attr :body</code></h3><p>The rack response body.</p>
+<h3 id="Falcon::Adapters::Output#length"><code class="language-ruby">attr :length</code></h3><p>The content length of the rack response body.</p>
+<h3 id="Falcon::Adapters::Output#empty?"><code class="language-ruby">def empty?</code></h3><p>Whether the body is empty.</p>
+<details>
+							<summary><h4>Implementation</h4></summary>
+							<pre><code class="language-ruby">def empty?
+	@length == 0 or (@body.respond_to?(:empty?) and @body.empty?)
+end</code></pre>
+						</details><h3 id="Falcon::Adapters::Output#ready?"><code class="language-ruby">def ready?</code></h3><p>Whether the body can be read immediately.</p>
+<details>
+							<summary><h4>Implementation</h4></summary>
+							<pre><code class="language-ruby">def ready?
+	true
+end</code></pre>
+						</details><h3 id="Falcon::Adapters::Output#close"><code class="language-ruby">def close(error = nil)</code></h3><p>Close the response body.</p>
+<details>
+							<summary><h4>Implementation</h4></summary>
+							<pre><code class="language-ruby">def close(error = nil)
+	if @body and @body.respond_to?(:close)
+		@body.close
+	end
+	
+	@body = nil
+	@chunks = nil
+	
+	super
+end</code></pre>
+						</details><h3 id="Falcon::Adapters::Output#each"><code class="language-ruby">def each(&amp;block)</code></h3><p>Enumerate the response body.</p>
+<details>
+							<summary><h4>Implementation</h4></summary>
+							<pre><code class="language-ruby">def each(&amp;block)
+	@body.each(&amp;block)
+ensure
+	self.close($!)
+end</code></pre>
+						</details><h3 id="Falcon::Adapters::Output#read"><code class="language-ruby">def read</code></h3><p>Read the next chunk from the response body.</p>
+<details>
+							<summary><h4>Implementation</h4></summary>
+							<pre><code class="language-ruby">def read
+	@chunks ||= @body.to_enum(:each)
+	
+	return @chunks.next
+rescue StopIteration
+	return nil
+end</code></pre>
+						</details>	</main>
 
 		
 		<footer>Documentation generated by <a href="https://github.com/socketry/utopia-project">Utopia::Project</a>.</footer>
