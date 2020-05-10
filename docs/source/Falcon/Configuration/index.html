@@ -62,14 +62,19 @@ end
 	@environments = {}
 end</code></pre>
 						</details><h3 id="Falcon::Configuration#environments"><code class="language-ruby">attr :environments</code></h3><p>The map of named environments.</p>
+<details open>
+	<summary><h4>Signature</h4></summary>
+	<dl><dt>
+					<strong>attribute</strong>　<code class="language-ruby">Hash(String, Build::Environment)</code></dt></dl>
+</details>
 <h3 id="Falcon::Configuration#each"><code class="language-ruby">def each(key = :authority)</code></h3><p>Enumerate all environments that have the specified key.</p>
 <details open>
-							<summary><h4>Parameters</h4></summary>
-							<dl>								<dt><code class="syntax">key</code> — <code class="language-ruby">Symbol</code></dt>
-									<dd><p>Filter environments that don’t have this key.</p>
-</dd>
-							</dl>
-						</details><details>
+	<summary><h4>Signature</h4></summary>
+	<dl><dt>
+					<strong>parameter</strong>　<code class="syntax">key</code>　<code class="language-ruby">Symbol</code></dt><dd><p>Filter environments that don’t have this key.</p>
+</dd></dl>
+</details>
+<details>
 							<summary><h4>Implementation</h4></summary>
 							<pre><code class="language-ruby">def each(key = :authority)
 	return to_enum(key) unless block_given?
@@ -98,7 +103,7 @@ end</code></pre>
 	
 	@environments[name] = environment
 end</code></pre>
-						</details><h3 id="Falcon::Configuration#load_file"><code class="language-ruby">def load_file(path)</code></h3><p>Load the specified configuration file. See <code class="language-ruby">Loader:load_file</code> for more details.</p>
+						</details><h3 id="Falcon::Configuration#load_file"><code class="language-ruby">def load_file(path)</code></h3><p>Load the specified configuration file. See <code class="language-ruby">Loader#load_file</code> for more details.</p>
 <details>
 							<summary><h4>Implementation</h4></summary>
 							<pre><code class="language-ruby">def load_file(path)

@@ -37,12 +37,12 @@
 		
 		<h3 id="Falcon::ProxyEndpoint#initialize"><code class="language-ruby">def initialize(endpoint, **options)</code></h3><p>Initialize the proxy endpoint.</p>
 <details open>
-							<summary><h4>Parameters</h4></summary>
-							<dl>								<dt><code class="syntax">endpoint</code> — <code class="language-ruby">Async::IO::Endpoint</code></dt>
-									<dd><p>The endpoint which will be used for connecting/binding.</p>
-</dd>
-							</dl>
-						</details><details>
+	<summary><h4>Signature</h4></summary>
+	<dl><dt>
+					<strong>parameter</strong>　<code class="syntax">endpoint</code>　<code class="language-ruby">Async::IO::Endpoint</code></dt><dd><p>The endpoint which will be used for connecting/binding.</p>
+</dd></dl>
+</details>
+<details>
 							<summary><h4>Implementation</h4></summary>
 							<pre><code class="language-ruby">def initialize(endpoint, **options)
 	super(**options)
@@ -50,7 +50,18 @@
 	@endpoint = endpoint
 end</code></pre>
 						</details><h3 id="Falcon::ProxyEndpoint#endpoint"><code class="language-ruby">attr :endpoint</code></h3><p>The actual endpoint for I/O.</p>
+<details open>
+	<summary><h4>Signature</h4></summary>
+	<dl><dt>
+					<strong>attribute</strong>　<code class="language-ruby">Async::IO::Endpoint</code></dt></dl>
+</details>
 <h3 id="Falcon::ProxyEndpoint#protocol"><code class="language-ruby">def protocol</code></h3><p>The protocol to use for this connection.</p>
+<details open>
+	<summary><h4>Signature</h4></summary>
+	<dl><dt>
+					<strong>returns</strong>　<code class="language-ruby">Async::HTTP::Protocol</code></dt><dd><p>A specific protocol, e.g. <code class="language-ruby">Async::HTTP::P</code></p>
+</dd></dl>
+</details>
 <details>
 							<summary><h4>Implementation</h4></summary>
 							<pre><code class="language-ruby">def protocol
@@ -58,6 +69,11 @@ end</code></pre>
 end</code></pre>
 						</details><h3 id="Falcon::ProxyEndpoint#scheme"><code class="language-ruby">def scheme</code></h3><p>The scheme to use for this endpoint.
 e.g. <code>"http"</code>.</p>
+<details open>
+	<summary><h4>Signature</h4></summary>
+	<dl><dt>
+					<strong>returns</strong>　<code class="language-ruby">String</code></dt></dl>
+</details>
 <details>
 							<summary><h4>Implementation</h4></summary>
 							<pre><code class="language-ruby">def scheme
@@ -65,6 +81,11 @@ e.g. <code>"http"</code>.</p>
 end</code></pre>
 						</details><h3 id="Falcon::ProxyEndpoint#authority"><code class="language-ruby">def authority</code></h3><p>The authority to use for this endpoint.
 e.g. <code>"myapp.com"</code>.</p>
+<details open>
+	<summary><h4>Signature</h4></summary>
+	<dl><dt>
+					<strong>returns</strong>　<code class="language-ruby">String</code></dt></dl>
+</details>
 <details>
 							<summary><h4>Implementation</h4></summary>
 							<pre><code class="language-ruby">def authority
@@ -84,6 +105,13 @@ end</code></pre>
 end</code></pre>
 						</details><h3 id="Falcon::ProxyEndpoint#each"><code class="language-ruby">def each</code></h3><p>Enumerate the endpoint.
 If the endpoint has multiple underlying endpoints, this will enumerate them individually.</p>
+<details open>
+	<summary><h4>Signature</h4></summary>
+	<dl><dt>
+					<strong>yields</strong>　<code class="syntax language-ruby">{|endpoint| ...}</code></dt><dd><dl>
+<dt>
+					<strong>parameter</strong>　<code class="syntax">endpoint</code>　<a href="index.html"><code class="language-ruby">class Falcon::ProxyEndpoint</code></a></dt>					</dl></dd></dl>
+</details>
 <details>
 							<summary><h4>Implementation</h4></summary>
 							<pre><code class="language-ruby">def each
@@ -94,6 +122,11 @@ If the endpoint has multiple underlying endpoints, this will enumerate them indi
 	end
 end</code></pre>
 						</details><h3 id="Falcon::ProxyEndpoint.unix"><code class="language-ruby">def self.unix(path, **options)</code></h3><p>Create a proxy unix endpoint with the specific path.</p>
+<details open>
+	<summary><h4>Signature</h4></summary>
+	<dl><dt>
+					<strong>returns</strong>　<a href="index.html"><code class="language-ruby">class Falcon::ProxyEndpoint</code></a></dt></dl>
+</details>
 <details>
 							<summary><h4>Implementation</h4></summary>
 							<pre><code class="language-ruby">def self.unix(path, **options)

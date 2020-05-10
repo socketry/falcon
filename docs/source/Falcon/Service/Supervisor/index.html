@@ -36,6 +36,11 @@
 		<h2>Definitions</h2>
 		
 		<h3 id="Falcon::Service::Supervisor#initialize"><code class="language-ruby">def initialize(environment)</code></h3><p>Initialize the supervisor using the given environment.</p>
+<details open>
+	<summary><h4>Signature</h4></summary>
+	<dl><dt>
+					<strong>parameter</strong>　<code class="syntax">environment</code>　<code class="language-ruby">Build::Environment</code></dt></dl>
+</details>
 <details>
 							<summary><h4>Implementation</h4></summary>
 							<pre><code class="language-ruby">def initialize(environment)
@@ -71,12 +76,12 @@ end</code></pre>
 end</code></pre>
 						</details><h3 id="Falcon::Service::Supervisor#handle"><code class="language-ruby">def handle(message)</code></h3><p>Handle an incoming request.</p>
 <details open>
-							<summary><h4>Parameters</h4></summary>
-							<dl>								<dt><code class="syntax">message</code> — <code class="language-ruby">Hash</code></dt>
-									<dd><p>The decoded message.</p>
-</dd>
-							</dl>
-						</details><details>
+	<summary><h4>Signature</h4></summary>
+	<dl><dt>
+					<strong>parameter</strong>　<code class="syntax">message</code>　<code class="language-ruby">Hash</code></dt><dd><p>The decoded message.</p>
+</dd></dl>
+</details>
+<details>
 							<summary><h4>Implementation</h4></summary>
 							<pre><code class="language-ruby">def handle(message)
 	case message[:please]

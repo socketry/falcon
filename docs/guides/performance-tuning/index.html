@@ -80,9 +80,8 @@ end
 
 <p>If you are expecting to handle many simultaneous connections, please ensure you configure your file limits correctly.</p>
 
-<p><code>
-Errno::EMFILE: Too many open files - accept(2)
-</code></p>
+<pre><code>Errno::EMFILE: Too many open files - accept(2)
+</code></pre>
 
 <p>This means that your system is limiting the number of files that can be opened by falcon. Please check the <code>ulimit</code> of your system and set it appropriately.</p>
 </main>

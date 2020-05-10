@@ -37,19 +37,19 @@
 		
 		<h3 id="Falcon::Controller::Redirect#initialize"><code class="language-ruby">def initialize(command, **options)</code></h3><p>Initialize the redirect controller.</p>
 <details open>
-							<summary><h4>Parameters</h4></summary>
-							<dl>								<dt><code class="syntax">command</code> — <a href="../../Command/Redirect/index.html"><code class="language-ruby">class Redirect</code></a></dt>
-									<dd><p>The user-specified command-line options.</p>
-</dd>
-							</dl>
-						</details><details>
+	<summary><h4>Signature</h4></summary>
+	<dl><dt>
+					<strong>parameter</strong>　<code class="syntax">command</code>　<a href="../../Command/Redirect/index.html"><code class="language-ruby">class Falcon::Command::Redirect</code></a></dt><dd><p>The user-specified command-line options.</p>
+</dd></dl>
+</details>
+<details>
 							<summary><h4>Implementation</h4></summary>
 							<pre><code class="language-ruby">def initialize(command, **options)
 	super(command, **options)
 	
 	@hosts = {}
 end</code></pre>
-						</details><h3 id="Falcon::Controller::Redirect#load_app"><code class="language-ruby">def load_app</code></h3><p>Load the <a href="../../Middleware/Redirect/index.html"><code class="language-ruby">class Redirect</code></a> application with the specified hosts.</p>
+						</details><h3 id="Falcon::Controller::Redirect#load_app"><code class="language-ruby">def load_app</code></h3><p>Load the <a href="../../Middleware/Redirect/index.html"><code class="language-ruby">class Falcon::Middleware::Redirect</code></a> application with the specified hosts.</p>
 <details>
 							<summary><h4>Implementation</h4></summary>
 							<pre><code class="language-ruby">def load_app

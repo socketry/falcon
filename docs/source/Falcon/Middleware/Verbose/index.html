@@ -37,15 +37,14 @@
 		
 		<h3 id="Falcon::Middleware::Verbose#initialize"><code class="language-ruby">def initialize(app, logger = Async.logger)</code></h3><p>Initialize the verbose middleware.</p>
 <details open>
-							<summary><h4>Parameters</h4></summary>
-							<dl>								<dt><code class="syntax">app</code> — <code class="language-ruby">Protocol::HTTP::Middleware</code></dt>
-									<dd><p>The middleware to wrap.</p>
-</dd>
-															<dt><code class="syntax">logger</code> — <code class="language-ruby">Console::Logger</code></dt>
-									<dd><p>The logger to use.</p>
-</dd>
-							</dl>
-						</details><details>
+	<summary><h4>Signature</h4></summary>
+	<dl><dt>
+					<strong>parameter</strong>　<code class="syntax">app</code>　<code class="language-ruby">Protocol::HTTP::Middleware</code></dt><dd><p>The middleware to wrap.</p>
+</dd><dt>
+					<strong>parameter</strong>　<code class="syntax">logger</code>　<code class="language-ruby">Console::Logger</code></dt><dd><p>The logger to use.</p>
+</dd></dl>
+</details>
+<details>
 							<summary><h4>Implementation</h4></summary>
 							<pre><code class="language-ruby">def initialize(app, logger = Async.logger)
 	super(app)
@@ -63,7 +62,7 @@ end</code></pre>
 	
 	task.annotate(&quot;#{request.method} #{request.path} from #{address.inspect}&quot;)
 end</code></pre>
-						</details><h3 id="Falcon::Middleware::Verbose#call"><code class="language-ruby">def call(request)</code></h3><p>Log details of the incoming request using <a href="index.html#Falcon%3A%3AMiddleware%3A%3AVerbose%23annotate"><code class="language-ruby">def annotate</code></a> and wrap the response to log response details too.</p>
+						</details><h3 id="Falcon::Middleware::Verbose#call"><code class="language-ruby">def call(request)</code></h3><p>Log details of the incoming request using <a href="index.html#Falcon%3A%3AMiddleware%3A%3AVerbose%23annotate"><code class="language-ruby">Falcon::Middleware::Verbose#annotate</code></a> and wrap the response to log response details too.</p>
 <details>
 							<summary><h4>Implementation</h4></summary>
 							<pre><code class="language-ruby">def call(request)

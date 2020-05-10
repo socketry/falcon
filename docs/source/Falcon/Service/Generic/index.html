@@ -40,12 +40,12 @@ Specifies the interfaces required by derived classes.</p>
 		
 		<h3 id="Falcon::Service::Generic.wrap"><code class="language-ruby">def self.wrap(environment)</code></h3><p>Convert the given environment into a service if possible.</p>
 <details open>
-							<summary><h4>Parameters</h4></summary>
-							<dl>								<dt><code class="syntax">environment</code> — <code class="language-ruby">Build::Environment</code></dt>
-									<dd><p>The environment to use to construct the service.</p>
-</dd>
-							</dl>
-						</details><details>
+	<summary><h4>Signature</h4></summary>
+	<dl><dt>
+					<strong>parameter</strong>　<code class="syntax">environment</code>　<code class="language-ruby">Build::Environment</code></dt><dd><p>The environment to use to construct the service.</p>
+</dd></dl>
+</details>
+<details>
 							<summary><h4>Implementation</h4></summary>
 							<pre><code class="language-ruby">def self.wrap(environment)
 	evaluator = environment.evaluator
@@ -54,6 +54,11 @@ Specifies the interfaces required by derived classes.</p>
 	return service.new(environment)
 end</code></pre>
 						</details><h3 id="Falcon::Service::Generic#initialize"><code class="language-ruby">def initialize(environment)</code></h3><p>Initialize the service from the given environment.</p>
+<details open>
+	<summary><h4>Signature</h4></summary>
+	<dl><dt>
+					<strong>parameter</strong>　<code class="syntax">environment</code>　<code class="language-ruby">Build::Environment</code></dt></dl>
+</details>
 <details>
 							<summary><h4>Implementation</h4></summary>
 							<pre><code class="language-ruby">def initialize(environment)
@@ -75,6 +80,11 @@ e.g. <code>myapp.com</code>.</p>
 	@evaluator.name
 end</code></pre>
 						</details><h3 id="Falcon::Service::Generic#logger"><code class="language-ruby">def logger</code></h3><p>The logger to use for this service.</p>
+<details open>
+	<summary><h4>Signature</h4></summary>
+	<dl><dt>
+					<strong>returns</strong>　<code class="language-ruby">Console::Logger</code></dt></dl>
+</details>
 <details>
 							<summary><h4>Implementation</h4></summary>
 							<pre><code class="language-ruby">def logger
@@ -86,6 +96,11 @@ end</code></pre>
 							<pre><code class="language-ruby">def start
 end</code></pre>
 						</details><h3 id="Falcon::Service::Generic#setup"><code class="language-ruby">def setup(container)</code></h3><p>Setup the service into the specified container.</p>
+<details open>
+	<summary><h4>Signature</h4></summary>
+	<dl><dt>
+					<strong>parameter</strong>　<code class="syntax">container</code>　<code class="language-ruby">Async::Container::Generic</code></dt></dl>
+</details>
 <details>
 							<summary><h4>Implementation</h4></summary>
 							<pre><code class="language-ruby">def setup(container)

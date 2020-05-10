@@ -31,19 +31,19 @@
 	
 	<main>
 		<p>A generic controller for serving an application.
-Uses <a href="../../Server/index.html"><code class="language-ruby">class Server</code></a> for handling incoming requests.</p>
+Uses <a href="../../Server/index.html"><code class="language-ruby">class Falcon::Server</code></a> for handling incoming requests.</p>
 		
 		
 		<h2>Definitions</h2>
 		
 		<h3 id="Falcon::Controller::Serve#initialize"><code class="language-ruby">def initialize(command, **options)</code></h3><p>Initialize the server controller.</p>
 <details open>
-							<summary><h4>Parameters</h4></summary>
-							<dl>								<dt><code class="syntax">command</code> — <a href="../../Command/Serve/index.html"><code class="language-ruby">class Serve</code></a></dt>
-									<dd><p>The user-specified command-line options.</p>
-</dd>
-							</dl>
-						</details><details>
+	<summary><h4>Signature</h4></summary>
+	<dl><dt>
+					<strong>parameter</strong>　<code class="syntax">command</code>　<a href="../../Command/Serve/index.html"><code class="language-ruby">class Falcon::Command::Serve</code></a></dt><dd><p>The user-specified command-line options.</p>
+</dd></dl>
+</details>
+<details>
 							<summary><h4>Implementation</h4></summary>
 							<pre><code class="language-ruby">def initialize(command, **options)
 	@command = command
@@ -67,7 +67,12 @@ end</code></pre>
 							<pre><code class="language-ruby">def endpoint
 	@command.endpoint
 end</code></pre>
-						</details><h3 id="Falcon::Controller::Serve#load_app"><code class="language-ruby">def load_app</code></h3>
+						</details><h3 id="Falcon::Controller::Serve#load_app"><code class="language-ruby">def load_app</code></h3><details open>
+	<summary><h4>Signature</h4></summary>
+	<dl><dt>
+					<strong>returns</strong>　<code class="language-ruby">Protocol::HTTP::Middleware</code></dt><dd><p>an instance of the application to be served.</p>
+</dd></dl>
+</details>
 <details>
 							<summary><h4>Implementation</h4></summary>
 							<pre><code class="language-ruby">def load_app

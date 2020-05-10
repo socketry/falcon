@@ -38,8 +38,23 @@
 		<h2>Definitions</h2>
 		
 		<h3 id="Falcon::Environments.rack#config_path"><code class="language-ruby">config_path {::File.expand_path(&quot;config.ru&quot;, root)}</code></h3><p>The rack configuration path.</p>
+<details open>
+	<summary><h4>Signature</h4></summary>
+	<dl><dt>
+					<strong>attribute</strong>　<code class="language-ruby">String</code></dt></dl>
+</details>
 <h3 id="Falcon::Environments.rack#cache"><code class="language-ruby">cache false</code></h3><p>Whether to enable the application layer cache.</p>
+<details open>
+	<summary><h4>Signature</h4></summary>
+	<dl><dt>
+					<strong>attribute</strong>　<code class="language-ruby">String</code></dt></dl>
+</details>
 <h3 id="Falcon::Environments.rack#middleware"><code class="language-ruby">middleware { ... }</code></h3><p>The middleware stack for the rack application.</p>
+<details open>
+	<summary><h4>Signature</h4></summary>
+	<dl><dt>
+					<strong>attribute</strong>　<code class="language-ruby">Protocol::HTTP::Middleware</code></dt></dl>
+</details>
 <details>
 							<summary><h4>Implementation</h4></summary>
 							<pre><code class="language-ruby">middleware do
@@ -51,7 +66,17 @@
 	)
 end</code></pre>
 						</details><h3 id="Falcon::Environments.rack#endpoint"><code class="language-ruby">endpoint {::Async::HTTP::Endpoint.parse(url)}</code></h3><p>The upstream endpoint that will handle incoming requests.</p>
+<details open>
+	<summary><h4>Signature</h4></summary>
+	<dl><dt>
+					<strong>attribute</strong>　<code class="language-ruby">Async::HTTP::Endpoint</code></dt></dl>
+</details>
 <h3 id="Falcon::Environments.rack#service"><code class="language-ruby">service ::Falcon::Service::Proxy</code></h3><p>The service class to use for the proxy.</p>
+<details open>
+	<summary><h4>Signature</h4></summary>
+	<dl><dt>
+					<strong>attribute</strong>　<code class="language-ruby">Class</code></dt></dl>
+</details>
 	</main>
 
 		

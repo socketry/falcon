@@ -2,19 +2,20 @@
 html {
 	font-family: "PT Sans", Verdana, Helvetica, Arial, sans-serif;
 	font-size: 16px;
-}
-
-pre {
-	tab-size: 2;
+	
+	/* Fix odd text-size in `display: flex` elements on Safari iOS */
+	text-size-adjust: 100%;
+	-webkit-text-size-adjust: 100%;
 }
 
 @media (min-width: 40em) {
 	html {
 		font-size: 18px;
+		--tab-size: 4;
 	}
 	
-	pre {
-		tab-size: 4;
+	main > pre {
+		margin: 2rem;
 	}
 }
 
@@ -22,10 +23,21 @@ pre {
 	html {
 		font-size: 20px;
 	}
-	
-	pre {
-		tab-size: 4;
-	}
+}
+
+p code {
+	padding: 0 0.2rem;
+}
+
+p code:first-child, p code:last-child {
+	padding: 0;
+}
+
+pre {
+	/* -moz-tab-size is still required by Firefox */
+	--tab-size: 2;
+	tab-size: var(--tab-size);
+	-moz-tab-size: var(--tab-size);
 }
 
 html {
@@ -66,7 +78,7 @@ html {
 }
 
 body {
-	margin: 0 0;
+	margin: 0;
 	padding: 0;
 	
 	/* Force the element to contain margins */
@@ -95,8 +107,12 @@ nav {
 	color: #aaa;
 }
 
-li {
+li, dt, dd {
 	margin: 0.5rem 0;
+}
+
+details dt, details dd {
+	margin: 1rem 0;
 }
 
 ul.index {
@@ -167,6 +183,7 @@ summary {
 	font-weight: bold;
 	margin: -.5rem -.5rem 0;
 	padding: .5rem;
+	cursor: pointer;
 }
 
 details[open] {

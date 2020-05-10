@@ -39,18 +39,16 @@
 		
 		<h3 id="Falcon::Adapters::Output.wrap"><code class="language-ruby">def self.wrap(status, headers, body)</code></h3><p>Wraps an array into a buffered body.</p>
 <details open>
-							<summary><h4>Parameters</h4></summary>
-							<dl>								<dt><code class="syntax">status</code> — <code class="language-ruby">Integer</code></dt>
-									<dd><p>The response status.</p>
-</dd>
-															<dt><code class="syntax">headers</code> — <code class="language-ruby">Protocol::HTTP::Headers</code></dt>
-									<dd><p>The response headers.</p>
-</dd>
-															<dt><code class="syntax">body</code> — <code class="language-ruby">Object</code></dt>
-									<dd><p>The <code>rack</code> response body.</p>
-</dd>
-							</dl>
-						</details><details>
+	<summary><h4>Signature</h4></summary>
+	<dl><dt>
+					<strong>parameter</strong>　<code class="syntax">status</code>　<code class="language-ruby">Integer</code></dt><dd><p>The response status.</p>
+</dd><dt>
+					<strong>parameter</strong>　<code class="syntax">headers</code>　<code class="language-ruby">Protocol::HTTP::Headers</code></dt><dd><p>The response headers.</p>
+</dd><dt>
+					<strong>parameter</strong>　<code class="syntax">body</code>　<code class="language-ruby">Object</code></dt><dd><p>The <code>rack</code> response body.</p>
+</dd></dl>
+</details>
+<details>
 							<summary><h4>Implementation</h4></summary>
 							<pre><code class="language-ruby">def self.wrap(status, headers, body)
 	# In no circumstance do we want this header propagating out:
@@ -73,15 +71,14 @@
 end</code></pre>
 						</details><h3 id="Falcon::Adapters::Output#initialize"><code class="language-ruby">def initialize(body, length)</code></h3><p>Initialize the output wrapper.</p>
 <details open>
-							<summary><h4>Parameters</h4></summary>
-							<dl>								<dt><code class="syntax">body</code> — <code class="language-ruby">Object</code></dt>
-									<dd><p>The rack response body.</p>
-</dd>
-															<dt><code class="syntax">length</code> — <code class="language-ruby">Integer</code></dt>
-									<dd><p>The rack response length.</p>
-</dd>
-							</dl>
-						</details><details>
+	<summary><h4>Signature</h4></summary>
+	<dl><dt>
+					<strong>parameter</strong>　<code class="syntax">body</code>　<code class="language-ruby">Object</code></dt><dd><p>The rack response body.</p>
+</dd><dt>
+					<strong>parameter</strong>　<code class="syntax">length</code>　<code class="language-ruby">Integer</code></dt><dd><p>The rack response length.</p>
+</dd></dl>
+</details>
+<details>
 							<summary><h4>Implementation</h4></summary>
 							<pre><code class="language-ruby">def initialize(body, length)
 	@length = length
@@ -117,6 +114,13 @@ end</code></pre>
 	super
 end</code></pre>
 						</details><h3 id="Falcon::Adapters::Output#each"><code class="language-ruby">def each(&amp;block)</code></h3><p>Enumerate the response body.</p>
+<details open>
+	<summary><h4>Signature</h4></summary>
+	<dl><dt>
+					<strong>yields</strong>　<code class="syntax language-ruby">{|chunk| ...}</code></dt><dd><dl>
+<dt>
+					<strong>parameter</strong>　<code class="syntax">chunk</code>　<code class="language-ruby">String</code></dt>					</dl></dd></dl>
+</details>
 <details>
 							<summary><h4>Implementation</h4></summary>
 							<pre><code class="language-ruby">def each(&amp;block)
@@ -125,6 +129,11 @@ ensure
 	self.close($!)
 end</code></pre>
 						</details><h3 id="Falcon::Adapters::Output#read"><code class="language-ruby">def read</code></h3><p>Read the next chunk from the response body.</p>
+<details open>
+	<summary><h4>Signature</h4></summary>
+	<dl><dt>
+					<strong>returns</strong>　<code class="language-ruby">String | Nil</code></dt></dl>
+</details>
 <details>
 							<summary><h4>Implementation</h4></summary>
 							<pre><code class="language-ruby">def read

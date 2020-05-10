@@ -38,15 +38,14 @@
 		<h3 id="Falcon::Controller::Proxy::DEFAULT_SESSION_ID"><code class="language-ruby">DEFAULT_SESSION_ID = &quot;falcon&quot;</code></h3><p>The default SSL session identifier.</p>
 <h3 id="Falcon::Controller::Proxy#initialize"><code class="language-ruby">def initialize(command, session_id: DEFAULT_SESSION_ID, **options)</code></h3><p>Initialize the proxy controller.</p>
 <details open>
-							<summary><h4>Parameters</h4></summary>
-							<dl>								<dt><code class="syntax">command</code> — <a href="../../Command/Proxy/index.html"><code class="language-ruby">class Proxy</code></a></dt>
-									<dd><p>The user-specified command-line options.</p>
-</dd>
-															<dt><code class="syntax">session_id</code> — <code class="language-ruby">String</code></dt>
-									<dd><p>The SSL session identifier to use for the session cache.</p>
-</dd>
-							</dl>
-						</details><details>
+	<summary><h4>Signature</h4></summary>
+	<dl><dt>
+					<strong>parameter</strong>　<code class="syntax">command</code>　<a href="../../Command/Proxy/index.html"><code class="language-ruby">class Falcon::Command::Proxy</code></a></dt><dd><p>The user-specified command-line options.</p>
+</dd><dt>
+					<strong>parameter</strong>　<code class="syntax">session_id</code>　<code class="language-ruby">String</code></dt><dd><p>The SSL session identifier to use for the session cache.</p>
+</dd></dl>
+</details>
+<details>
 							<summary><h4>Implementation</h4></summary>
 							<pre><code class="language-ruby">def initialize(command, session_id: DEFAULT_SESSION_ID, **options)
 	super(command, **options)
@@ -54,7 +53,7 @@
 	@session_id = session_id
 	@hosts = {}
 end</code></pre>
-						</details><h3 id="Falcon::Controller::Proxy#load_app"><code class="language-ruby">def load_app</code></h3><p>Load the <a href="../../Middleware/Proxy/index.html"><code class="language-ruby">class Proxy</code></a> application with the specified hosts.</p>
+						</details><h3 id="Falcon::Controller::Proxy#load_app"><code class="language-ruby">def load_app</code></h3><p>Load the <a href="../../Middleware/Proxy/index.html"><code class="language-ruby">class Falcon::Middleware::Proxy</code></a> application with the specified hosts.</p>
 <details>
 							<summary><h4>Implementation</h4></summary>
 							<pre><code class="language-ruby">def load_app
@@ -68,15 +67,14 @@ end</code></pre>
 end</code></pre>
 						</details><h3 id="Falcon::Controller::Proxy#host_context"><code class="language-ruby">def host_context(socket, hostname)</code></h3><p>Look up the host context for the given hostname, and update the socket hostname if necessary.</p>
 <details open>
-							<summary><h4>Parameters</h4></summary>
-							<dl>								<dt><code class="syntax">socket</code> — <code class="language-ruby">OpenSSL::SSL::SSLSocket</code></dt>
-									<dd><p>The incoming connection.</p>
-</dd>
-															<dt><code class="syntax">hostname</code> — <code class="language-ruby">String</code></dt>
-									<dd><p>The negotiated hostname.</p>
-</dd>
-							</dl>
-						</details><details>
+	<summary><h4>Signature</h4></summary>
+	<dl><dt>
+					<strong>parameter</strong>　<code class="syntax">socket</code>　<code class="language-ruby">OpenSSL::SSL::SSLSocket</code></dt><dd><p>The incoming connection.</p>
+</dd><dt>
+					<strong>parameter</strong>　<code class="syntax">hostname</code>　<code class="language-ruby">String</code></dt><dd><p>The negotiated hostname.</p>
+</dd></dl>
+</details>
+<details>
 							<summary><h4>Implementation</h4></summary>
 							<pre><code class="language-ruby">def host_context(socket, hostname)
 	if host = @hosts[hostname]
@@ -91,7 +89,7 @@ end</code></pre>
 		return nil
 	end
 end</code></pre>
-						</details><h3 id="Falcon::Controller::Proxy#ssl_context"><code class="language-ruby">def ssl_context</code></h3><p>Generate an SSL context which delegates to <a href="index.html#Falcon%3A%3AController%3A%3AProxy%23host_context"><code class="language-ruby">def host_context</code></a> to multiplex based on hostname.</p>
+						</details><h3 id="Falcon::Controller::Proxy#ssl_context"><code class="language-ruby">def ssl_context</code></h3><p>Generate an SSL context which delegates to <a href="index.html#Falcon%3A%3AController%3A%3AProxy%23host_context"><code class="language-ruby">Falcon::Controller::Proxy#host_context</code></a> to multiplex based on hostname.</p>
 <details>
 							<summary><h4>Implementation</h4></summary>
 							<pre><code class="language-ruby">def ssl_context

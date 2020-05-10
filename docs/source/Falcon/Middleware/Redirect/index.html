@@ -38,18 +38,16 @@ Typically used for implementing HTTP -&gt; HTTPS redirects.</p>
 		
 		<h3 id="Falcon::Middleware::Redirect#initialize"><code class="language-ruby">def initialize(app, hosts, endpoint)</code></h3><p>Initialize the redirect middleware.</p>
 <details open>
-							<summary><h4>Parameters</h4></summary>
-							<dl>								<dt><code class="syntax">app</code> — <code class="language-ruby">Protocol::HTTP::Middleware</code></dt>
-									<dd><p>The middleware to wrap.</p>
-</dd>
-															<dt><code class="syntax">hosts</code> — <code class="language-ruby">Hash(String, Service::Proxy)</code></dt>
-									<dd><p>The map of hosts.</p>
-</dd>
-															<dt><code class="syntax">endpoint</code> — <a href="../../Endpoint/index.html"><code class="language-ruby">class Endpoint</code></a></dt>
-									<dd><p>The template endpoint to use to build the redirect location.</p>
-</dd>
-							</dl>
-						</details><details>
+	<summary><h4>Signature</h4></summary>
+	<dl><dt>
+					<strong>parameter</strong>　<code class="syntax">app</code>　<code class="language-ruby">Protocol::HTTP::Middleware</code></dt><dd><p>The middleware to wrap.</p>
+</dd><dt>
+					<strong>parameter</strong>　<code class="syntax">hosts</code>　<code class="language-ruby">Hash(String, Service::Proxy)</code></dt><dd><p>The map of hosts.</p>
+</dd><dt>
+					<strong>parameter</strong>　<code class="syntax">endpoint</code>　<a href="../../Endpoint/index.html"><code class="language-ruby">class Falcon::Endpoint</code></a></dt><dd><p>The template endpoint to use to build the redirect location.</p>
+</dd></dl>
+</details>
+<details>
 							<summary><h4>Implementation</h4></summary>
 							<pre><code class="language-ruby">def initialize(app, hosts, endpoint)
 	super(app)
@@ -58,6 +56,11 @@ Typically used for implementing HTTP -&gt; HTTPS redirects.</p>
 	@endpoint = endpoint
 end</code></pre>
 						</details><h3 id="Falcon::Middleware::Redirect#lookup"><code class="language-ruby">def lookup(request)</code></h3><p>Lookup the appropriate host for the given request.</p>
+<details open>
+	<summary><h4>Signature</h4></summary>
+	<dl><dt>
+					<strong>parameter</strong>　<code class="syntax">request</code>　<code class="language-ruby">Protocol::HTTP::Request</code></dt></dl>
+</details>
 <details>
 							<summary><h4>Implementation</h4></summary>
 							<pre><code class="language-ruby">def lookup(request)
@@ -67,6 +70,11 @@ end</code></pre>
 	end
 end</code></pre>
 						</details><h3 id="Falcon::Middleware::Redirect#call"><code class="language-ruby">def call(request)</code></h3><p>Redirect the request if the authority matches a specific host.</p>
+<details open>
+	<summary><h4>Signature</h4></summary>
+	<dl><dt>
+					<strong>parameter</strong>　<code class="syntax">request</code>　<code class="language-ruby">Protocol::HTTP::Request</code></dt></dl>
+</details>
 <details>
 							<summary><h4>Implementation</h4></summary>
 							<pre><code class="language-ruby">def call(request)

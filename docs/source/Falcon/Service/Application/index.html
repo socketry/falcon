@@ -36,6 +36,11 @@
 		<h2>Definitions</h2>
 		
 		<h3 id="Falcon::Service::Application#middleware"><code class="language-ruby">def middleware</code></h3><p>The middleware that will be served by this application.</p>
+<details open>
+	<summary><h4>Signature</h4></summary>
+	<dl><dt>
+					<strong>returns</strong>　<code class="language-ruby">Protocol::HTTP::Middleware</code></dt></dl>
+</details>
 <details>
 							<summary><h4>Implementation</h4></summary>
 							<pre><code class="language-ruby">def middleware
@@ -55,7 +60,7 @@ end</code></pre>
 	end
 end</code></pre>
 						</details><h3 id="Falcon::Service::Application#start"><code class="language-ruby">def start</code></h3><p>Prepare the bound endpoint for the application instances.
-Invoke <a href="index.html#Falcon%3A%3AService%3A%3AApplication%23preload%21"><code class="language-ruby">def preload!</code></a> to load shared resources into the parent process.</p>
+Invoke <a href="index.html#Falcon%3A%3AService%3A%3AApplication%23preload%21"><code class="language-ruby">Falcon::Service::Application#preload!</code></a> to load shared resources into the parent process.</p>
 <details>
 							<summary><h4>Implementation</h4></summary>
 							<pre><code class="language-ruby">def start

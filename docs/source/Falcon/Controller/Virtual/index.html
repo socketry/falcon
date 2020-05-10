@@ -31,7 +31,7 @@
 	
 	<main>
 		<p>A controller which mananages several virtual hosts.
-Spawns instances of <a href="../Proxy/index.html"><code class="language-ruby">class Proxy</code></a> and <a href="../Redirect/index.html"><code class="language-ruby">class Redirect</code></a> to handle incoming requests.</p>
+Spawns instances of <a href="../Proxy/index.html"><code class="language-ruby">class Falcon::Controller::Proxy</code></a> and <a href="../Redirect/index.html"><code class="language-ruby">class Falcon::Controller::Redirect</code></a> to handle incoming requests.</p>
 
 <p>A virtual host is an application bound to a specific authority (essentially a hostname). The virtual controller manages multiple hosts and allows a single server to host multiple applications easily.</p>
 		
@@ -40,12 +40,12 @@ Spawns instances of <a href="../Proxy/index.html"><code class="language-ruby">cl
 		
 		<h3 id="Falcon::Controller::Virtual#initialize"><code class="language-ruby">def initialize(command, **options)</code></h3><p>Initialize the virtual controller.</p>
 <details open>
-							<summary><h4>Parameters</h4></summary>
-							<dl>								<dt><code class="syntax">command</code> — <a href="../../Command/Virtual/index.html"><code class="language-ruby">class Virtual</code></a></dt>
-									<dd><p>The user-specified command-line options.</p>
-</dd>
-							</dl>
-						</details><details>
+	<summary><h4>Signature</h4></summary>
+	<dl><dt>
+					<strong>parameter</strong>　<code class="syntax">command</code>　<a href="../../Command/Virtual/index.html"><code class="language-ruby">class Falcon::Command::Virtual</code></a></dt><dd><p>The user-specified command-line options.</p>
+</dd></dl>
+</details>
+<details>
 							<summary><h4>Implementation</h4></summary>
 							<pre><code class="language-ruby">def initialize(command, **options)
 	@command = command
@@ -56,12 +56,12 @@ Spawns instances of <a href="../Proxy/index.html"><code class="language-ruby">cl
 end</code></pre>
 						</details><h3 id="Falcon::Controller::Virtual#assume_privileges"><code class="language-ruby">def assume_privileges(path)</code></h3><p>Drop privileges according to the user and group of the specified path.</p>
 <details open>
-							<summary><h4>Parameters</h4></summary>
-							<dl>								<dt><code class="syntax">path</code> — <code class="language-ruby">String</code></dt>
-									<dd><p>The path to the application directory.</p>
-</dd>
-							</dl>
-						</details><details>
+	<summary><h4>Signature</h4></summary>
+	<dl><dt>
+					<strong>parameter</strong>　<code class="syntax">path</code>　<code class="language-ruby">String</code></dt><dd><p>The path to the application directory.</p>
+</dd></dl>
+</details>
+<details>
 							<summary><h4>Implementation</h4></summary>
 							<pre><code class="language-ruby">def assume_privileges(path)
 	stat = File.stat(path)
@@ -77,18 +77,16 @@ end</code></pre>
 end</code></pre>
 						</details><h3 id="Falcon::Controller::Virtual#spawn"><code class="language-ruby">def spawn(path, container, **options)</code></h3><p>Spawn an application instance from the specified path.</p>
 <details open>
-							<summary><h4>Parameters</h4></summary>
-							<dl>								<dt><code class="syntax">path</code> — <code class="language-ruby">String</code></dt>
-									<dd><p>The path to the application directory.</p>
-</dd>
-															<dt><code class="syntax">container</code> — <code class="language-ruby">Async::Container::Generic</code></dt>
-									<dd><p>The container to spawn into.</p>
-</dd>
-															<dt><code class="syntax">options</code> — <code class="language-ruby">Options</code></dt>
-									<dd><p>The options which are passed to <code>exec</code>.</p>
-</dd>
-							</dl>
-						</details><details>
+	<summary><h4>Signature</h4></summary>
+	<dl><dt>
+					<strong>parameter</strong>　<code class="syntax">path</code>　<code class="language-ruby">String</code></dt><dd><p>The path to the application directory.</p>
+</dd><dt>
+					<strong>parameter</strong>　<code class="syntax">container</code>　<code class="language-ruby">Async::Container::Generic</code></dt><dd><p>The container to spawn into.</p>
+</dd><dt>
+					<strong>parameter</strong>　<code class="syntax">options</code>　<code class="language-ruby">Options</code></dt><dd><p>The options which are passed to <code>exec</code>.</p>
+</dd></dl>
+</details>
+<details>
 							<summary><h4>Implementation</h4></summary>
 							<pre><code class="language-ruby">def spawn(path, container, **options)
 	container.spawn(name: &quot;Falcon Application&quot;, restart: true, key: path) do |instance|
@@ -100,12 +98,17 @@ end</code></pre>
 	end
 end</code></pre>
 						</details><h3 id="Falcon::Controller::Virtual#falcon_path"><code class="language-ruby">def falcon_path</code></h3><p>The path to the falcon executable from this gem.</p>
+<details open>
+	<summary><h4>Signature</h4></summary>
+	<dl><dt>
+					<strong>returns</strong>　<code class="language-ruby">String</code></dt></dl>
+</details>
 <details>
 							<summary><h4>Implementation</h4></summary>
 							<pre><code class="language-ruby">def falcon_path
 	File.expand_path(&quot;../../../bin/falcon&quot;, __dir__)
 end</code></pre>
-						</details><h3 id="Falcon::Controller::Virtual#setup"><code class="language-ruby">def setup(container)</code></h3><p>Setup the container with <a href="../Redirect/index.html"><code class="language-ruby">class Redirect</code></a> and <a href="../Proxy/index.html"><code class="language-ruby">class Proxy</code></a> child processes.
+						</details><h3 id="Falcon::Controller::Virtual#setup"><code class="language-ruby">def setup(container)</code></h3><p>Setup the container with <a href="../Redirect/index.html"><code class="language-ruby">class Falcon::Controller::Redirect</code></a> and <a href="../Proxy/index.html"><code class="language-ruby">class Falcon::Controller::Proxy</code></a> child processes.
 These processes are gracefully restarted if they are already running.</p>
 <details>
 							<summary><h4>Implementation</h4></summary>

@@ -36,19 +36,39 @@
 		<h2>Definitions</h2>
 		
 		<h3 id="Falcon::Environments.supervisor#name"><code class="language-ruby">name &quot;supervisor&quot;</code></h3><p>The name of the supervisor</p>
+<details open>
+	<summary><h4>Signature</h4></summary>
+	<dl><dt>
+					<strong>attribute</strong>　<code class="language-ruby">String</code></dt></dl>
+</details>
 <h3 id="Falcon::Environments.supervisor#ipc_path"><code class="language-ruby">ipc_path { ... }</code></h3><p>The IPC path to use for communication with the supervisor.</p>
+<details open>
+	<summary><h4>Signature</h4></summary>
+	<dl><dt>
+					<strong>attribute</strong>　<code class="language-ruby">String</code></dt></dl>
+</details>
 <details>
 							<summary><h4>Implementation</h4></summary>
 							<pre><code class="language-ruby">ipc_path do
 	::File.expand_path(&quot;supervisor.ipc&quot;, root)
 end</code></pre>
 						</details><h3 id="Falcon::Environments.supervisor#endpoint"><code class="language-ruby">endpoint { ... }</code></h3><p>The endpoint the supervisor will bind to.</p>
+<details open>
+	<summary><h4>Signature</h4></summary>
+	<dl><dt>
+					<strong>attribute</strong>　<code class="language-ruby">Async::IO::Endpoint</code></dt></dl>
+</details>
 <details>
 							<summary><h4>Implementation</h4></summary>
 							<pre><code class="language-ruby">endpoint do
 	Async::IO::Endpoint.unix(ipc_path)
 end</code></pre>
 						</details><h3 id="Falcon::Environments.supervisor#service"><code class="language-ruby">service { ... }</code></h3><p>The service class to use for the supervisor.</p>
+<details open>
+	<summary><h4>Signature</h4></summary>
+	<dl><dt>
+					<strong>attribute</strong>　<code class="language-ruby">Class</code></dt></dl>
+</details>
 <details>
 							<summary><h4>Implementation</h4></summary>
 							<pre><code class="language-ruby">service do

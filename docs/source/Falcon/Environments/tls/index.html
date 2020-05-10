@@ -36,34 +36,79 @@
 		<h2>Definitions</h2>
 		
 		<h3 id="Falcon::Environments.tls#ssl_session_id"><code class="language-ruby">ssl_session_id &quot;falcon&quot;</code></h3><p>The default session identifier for the session cache.</p>
+<details open>
+	<summary><h4>Signature</h4></summary>
+	<dl><dt>
+					<strong>attribute</strong>　<code class="language-ruby">String</code></dt></dl>
+</details>
 <h3 id="Falcon::Environments.tls#ssl_ciphers"><code class="language-ruby">ssl_ciphers Falcon::TLS::SERVER_CIPHERS</code></h3><p>The supported ciphers.</p>
+<details open>
+	<summary><h4>Signature</h4></summary>
+	<dl><dt>
+					<strong>attribute</strong>　<code class="language-ruby">Array(String)</code></dt></dl>
+</details>
 <h3 id="Falcon::Environments.tls#ssl_certificate_path"><code class="language-ruby">ssl_certificate_path { ... }</code></h3><p>The public certificate path.</p>
+<details open>
+	<summary><h4>Signature</h4></summary>
+	<dl><dt>
+					<strong>attribute</strong>　<code class="language-ruby">String</code></dt></dl>
+</details>
 <details>
 							<summary><h4>Implementation</h4></summary>
 							<pre><code class="language-ruby">ssl_certificate_path do
 	File.expand_path(&quot;ssl/certificate.pem&quot;, root)
 end</code></pre>
 						</details><h3 id="Falcon::Environments.tls#ssl_certificates"><code class="language-ruby">ssl_certificates { ... }</code></h3><p>The list of certificates loaded from that path.</p>
+<details open>
+	<summary><h4>Signature</h4></summary>
+	<dl><dt>
+					<strong>attribute</strong>　<code class="language-ruby">Array(OpenSSL::X509::Certificate)</code></dt></dl>
+</details>
 <details>
 							<summary><h4>Implementation</h4></summary>
 							<pre><code class="language-ruby">ssl_certificates do
 	OpenSSL::X509.load_certificates(ssl_certificate_path)
 end</code></pre>
 						</details><h3 id="Falcon::Environments.tls#ssl_certificate"><code class="language-ruby">ssl_certificate {ssl_certificates[0]}</code></h3><p>The main certificate.</p>
+<details open>
+	<summary><h4>Signature</h4></summary>
+	<dl><dt>
+					<strong>attribute</strong>　<code class="language-ruby">OpenSSL::X509::Certificate</code></dt></dl>
+</details>
 <h3 id="Falcon::Environments.tls#ssl_certificate_chain"><code class="language-ruby">ssl_certificate_chain {ssl_certificates[1..-1]}</code></h3><p>The certificate chain.</p>
+<details open>
+	<summary><h4>Signature</h4></summary>
+	<dl><dt>
+					<strong>attribute</strong>　<code class="language-ruby">Array(OpenSSL::X509::Certificate)</code></dt></dl>
+</details>
 <h3 id="Falcon::Environments.tls#ssl_private_key_path"><code class="language-ruby">ssl_private_key_path { ... }</code></h3><p>The private key path.</p>
+<details open>
+	<summary><h4>Signature</h4></summary>
+	<dl><dt>
+					<strong>attribute</strong>　<code class="language-ruby">String</code></dt></dl>
+</details>
 <details>
 							<summary><h4>Implementation</h4></summary>
 							<pre><code class="language-ruby">ssl_private_key_path do
 	File.expand_path(&quot;ssl/private.key&quot;, root)
 end</code></pre>
 						</details><h3 id="Falcon::Environments.tls#ssl_private_key"><code class="language-ruby">ssl_private_key { ... }</code></h3><p>The private key.</p>
+<details open>
+	<summary><h4>Signature</h4></summary>
+	<dl><dt>
+					<strong>attribute</strong>　<code class="language-ruby">OpenSSL::PKey::RSA</code></dt></dl>
+</details>
 <details>
 							<summary><h4>Implementation</h4></summary>
 							<pre><code class="language-ruby">ssl_private_key do
 	OpenSSL::PKey::RSA.new(File.read(ssl_private_key_path))
 end</code></pre>
 						</details><h3 id="Falcon::Environments.tls#ssl_context"><code class="language-ruby">ssl_context { ... }</code></h3><p>The SSL context to use for incoming connections.</p>
+<details open>
+	<summary><h4>Signature</h4></summary>
+	<dl><dt>
+					<strong>attribute</strong>　<code class="language-ruby">OpenSSL::SSL::SSLContext</code></dt></dl>
+</details>
 <details>
 							<summary><h4>Implementation</h4></summary>
 							<pre><code class="language-ruby">ssl_context do

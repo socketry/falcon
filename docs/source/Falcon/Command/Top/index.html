@@ -36,6 +36,11 @@
 		<h2>Definitions</h2>
 		
 		<h3 id="Falcon::Command::Top#options"><code class="language-ruby">options { ... }</code></h3><p>The command line options.</p>
+<details open>
+	<summary><h4>Signature</h4></summary>
+	<dl><dt>
+					<strong>attribute</strong>　<code class="language-ruby">Samovar::Options</code></dt></dl>
+</details>
 <details>
 							<summary><h4>Implementation</h4></summary>
 							<pre><code class="language-ruby">options do
@@ -45,6 +50,11 @@
 	option '-e/--encoding', &quot;Specify the default external encoding of the server.&quot;, default: &quot;UTF-8&quot;
 end</code></pre>
 						</details><h3 id="Falcon::Command::Top#nested"><code class="language-ruby">nested</code></h3><p>The nested command to execute.</p>
+<details open>
+	<summary><h4>Signature</h4></summary>
+	<dl><dt>
+					<strong>attribute</strong>　<a href="../index.html"><code class="language-ruby">module Command</code></a></dt></dl>
+</details>
 <details>
 							<summary><h4>Implementation</h4></summary>
 							<pre><code class="language-ruby">nested :command, {
@@ -56,12 +66,22 @@ end</code></pre>
 	'supervisor' =&gt; Supervisor,
 }, default: 'serve'</code></pre>
 						</details><h3 id="Falcon::Command::Top#verbose?"><code class="language-ruby">def verbose?</code></h3><p>Whether verbose logging is enabled.</p>
+<details open>
+	<summary><h4>Signature</h4></summary>
+	<dl><dt>
+					<strong>returns</strong>　<code class="language-ruby">Boolean</code></dt></dl>
+</details>
 <details>
 							<summary><h4>Implementation</h4></summary>
 							<pre><code class="language-ruby">def verbose?
 	@options[:logging] == :verbose
 end</code></pre>
 						</details><h3 id="Falcon::Command::Top#quiet?"><code class="language-ruby">def quiet?</code></h3><p>Whether quiet logging was enabled.</p>
+<details open>
+	<summary><h4>Signature</h4></summary>
+	<dl><dt>
+					<strong>returns</strong>　<code class="language-ruby">Boolean</code></dt></dl>
+</details>
 <details>
 							<summary><h4>Implementation</h4></summary>
 							<pre><code class="language-ruby">def quiet?
@@ -71,12 +91,12 @@ end</code></pre>
 
 <p>If you don’t specify these, it’s possible to have issues when encodings mismatch on the server.</p>
 <details open>
-							<summary><h4>Parameters</h4></summary>
-							<dl>								<dt><code class="syntax">encoding</code> — <code class="language-ruby">Encoding</code></dt>
-									<dd><p>Defaults to <code>Encoding::UTF_8</code>.</p>
-</dd>
-							</dl>
-						</details><details>
+	<summary><h4>Signature</h4></summary>
+	<dl><dt>
+					<strong>parameter</strong>　<code class="syntax">encoding</code>　<code class="language-ruby">Encoding</code></dt><dd><p>Defaults to <code>Encoding::UTF_8</code>.</p>
+</dd></dl>
+</details>
+<details>
 							<summary><h4>Implementation</h4></summary>
 							<pre><code class="language-ruby">def update_external_encoding!(encoding = Encoding::UTF_8)
 	if Encoding.default_external != encoding

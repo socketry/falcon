@@ -36,6 +36,11 @@
 		<h2>Definitions</h2>
 		
 		<h3 id="Falcon::Adapters::EarlyHints#initialize"><code class="language-ruby">def initialize(request)</code></h3><p>Initialize the early hints interface.</p>
+<details open>
+	<summary><h4>Signature</h4></summary>
+	<dl><dt>
+					<strong>parameter</strong>　<code class="syntax">request</code>　<code class="language-ruby">Protocol::HTTP::Request</code></dt></dl>
+</details>
 <details>
 							<summary><h4>Implementation</h4></summary>
 							<pre><code class="language-ruby">def initialize(request)
@@ -43,17 +48,18 @@
 end</code></pre>
 						</details><h3 id="Falcon::Adapters::EarlyHints#push"><code class="language-ruby">def push(path, preload: true, **options)</code></h3><p>Advise the request that the specified path should be preloaded.</p>
 <details open>
-							<summary><h4>Parameters</h4></summary>
-							<dl>								<dt><code class="syntax">preload</code> — <code class="language-ruby">Boolean</code></dt>
-									<dd><p>whether the client should preload the resource.</p>
-</dd>
-							</dl>
-						</details><details>
+	<summary><h4>Signature</h4></summary>
+	<dl><dt>
+					<strong>parameter</strong>　<code class="syntax">path</code>　<code class="language-ruby">String</code></dt><dt>
+					<strong>parameter</strong>　<code class="syntax">preload</code>　<code class="language-ruby">Boolean</code></dt><dd><p>whether the client should preload the resource.</p>
+</dd></dl>
+</details>
+<details>
 							<summary><h4>Implementation</h4></summary>
 							<pre><code class="language-ruby">def push(path, preload: true, **options)
 	@request.push(path)
 end</code></pre>
-						</details><h3 id="Falcon::Adapters::EarlyHints#call"><code class="language-ruby">def call(headers)</code></h3><p>Extract link headers and invoke <a href="index.html#Falcon%3A%3AAdapters%3A%3AEarlyHints%23push"><code class="language-ruby">def push</code></a>.</p>
+						</details><h3 id="Falcon::Adapters::EarlyHints#call"><code class="language-ruby">def call(headers)</code></h3><p>Extract link headers and invoke <a href="index.html#Falcon%3A%3AAdapters%3A%3AEarlyHints%23push"><code class="language-ruby">Falcon::Adapters::EarlyHints#push</code></a>.</p>
 <details>
 							<summary><h4>Implementation</h4></summary>
 							<pre><code class="language-ruby">def call(headers)

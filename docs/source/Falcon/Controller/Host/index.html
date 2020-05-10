@@ -31,21 +31,21 @@
 	
 	<main>
 		<p>A generic controller for serving an application.
-Hosts several <a href="../../Services/index.html"><code class="language-ruby">class Services</code></a> based on the command configuration.</p>
+Hosts several <a href="../../Services/index.html"><code class="language-ruby">class Falcon::Services</code></a> based on the command configuration.</p>
 
-<p>The configuration is provided by <a href="../../Command/Host/index.html"><code class="language-ruby">class Host</code></a> and is typically loaded from a <code>falcon.rb</code> file. See <code class="language-ruby">Configuration:load_file</code> for more details.</p>
+<p>The configuration is provided by <a href="../../Command/Host/index.html"><code class="language-ruby">class Falcon::Command::Host</code></a> and is typically loaded from a <code>falcon.rb</code> file. See <a href="../../Configuration/index.html#Falcon%3A%3AConfiguration%23load_file"><code class="language-ruby">Falcon::Configuration#load_file</code></a> for more details.</p>
 		
 		
 		<h2>Definitions</h2>
 		
 		<h3 id="Falcon::Controller::Host#initialize"><code class="language-ruby">def initialize(command, **options)</code></h3><p>Initialize the virtual controller.</p>
 <details open>
-							<summary><h4>Parameters</h4></summary>
-							<dl>								<dt><code class="syntax">command</code> — <a href="../../Command/Host/index.html"><code class="language-ruby">class Host</code></a></dt>
-									<dd><p>The user-specified command-line options.</p>
-</dd>
-							</dl>
-						</details><details>
+	<summary><h4>Signature</h4></summary>
+	<dl><dt>
+					<strong>parameter</strong>　<code class="syntax">command</code>　<a href="../../Command/Host/index.html"><code class="language-ruby">class Falcon::Command::Host</code></a></dt><dd><p>The user-specified command-line options.</p>
+</dd></dl>
+</details>
+<details>
 							<summary><h4>Implementation</h4></summary>
 							<pre><code class="language-ruby">def initialize(command, **options)
 	@command = command

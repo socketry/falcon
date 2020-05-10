@@ -37,17 +37,42 @@ Suitable for use with any <code class="language-ruby">Protocol::HTTP::Middleware
 		<h2>Definitions</h2>
 		
 		<h3 id="Falcon::Environments.application#middleware"><code class="language-ruby">middleware { ... }</code></h3><p>The middleware stack for the application.</p>
+<details open>
+	<summary><h4>Signature</h4></summary>
+	<dl><dt>
+					<strong>attribute</strong>　<code class="language-ruby">Protocol::HTTP::Middleware</code></dt></dl>
+</details>
 <details>
 							<summary><h4>Implementation</h4></summary>
 							<pre><code class="language-ruby">middleware do
 	::Protocol::HTTP::Middleware::HelloWorld
 end</code></pre>
 						</details><h3 id="Falcon::Environments.application#scheme"><code class="language-ruby">scheme 'https'</code></h3><p>The scheme to use to communicate with the application.</p>
+<details open>
+	<summary><h4>Signature</h4></summary>
+	<dl><dt>
+					<strong>attribute</strong>　<code class="language-ruby">String</code></dt></dl>
+</details>
 <h3 id="Falcon::Environments.application#protocol"><code class="language-ruby">protocol {Async::HTTP::Protocol::HTTP2}</code></h3><p>The protocol to use to communicate with the application.</p>
 
 <p>Typically one of <code class="language-ruby">Async::HTTP::Protocol::HTTP1</code> or <code class="language-ruby">Async::HTTP::Protocl::HTTP2</code>.</p>
+<details open>
+	<summary><h4>Signature</h4></summary>
+	<dl><dt>
+					<strong>attribute</strong>　<code class="language-ruby">Async::HTTP::Protocol</code></dt></dl>
+</details>
 <h3 id="Falcon::Environments.application#ipc_path"><code class="language-ruby">ipc_path {::File.expand_path(&quot;application.ipc&quot;, root)}</code></h3><p>The IPC path to use for communication with the application.</p>
+<details open>
+	<summary><h4>Signature</h4></summary>
+	<dl><dt>
+					<strong>attribute</strong>　<code class="language-ruby">String</code></dt></dl>
+</details>
 <h3 id="Falcon::Environments.application#endpoint"><code class="language-ruby">endpoint { ... }</code></h3><p>The endpoint that will be used for communicating with the application server.</p>
+<details open>
+	<summary><h4>Signature</h4></summary>
+	<dl><dt>
+					<strong>attribute</strong>　<code class="language-ruby">Async::IO::Endpoint</code></dt></dl>
+</details>
 <details>
 							<summary><h4>Implementation</h4></summary>
 							<pre><code class="language-ruby">endpoint do
@@ -58,6 +83,11 @@ end</code></pre>
 	)
 end</code></pre>
 						</details><h3 id="Falcon::Environments.application#service"><code class="language-ruby">service ::Falcon::Service::Application</code></h3><p>The service class to use for the application.</p>
+<details open>
+	<summary><h4>Signature</h4></summary>
+	<dl><dt>
+					<strong>attribute</strong>　<code class="language-ruby">Class</code></dt></dl>
+</details>
 	</main>
 
 		
