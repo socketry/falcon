@@ -2,22 +2,20 @@
 require_relative 'lib/falcon/version'
 
 Gem::Specification.new do |spec|
-	spec.name          = "falcon"
-	spec.version       = Falcon::VERSION
-	spec.authors       = ["Samuel Williams"]
-	spec.email         = ["samuel.williams@oriontransfer.co.nz"]
+	spec.name = "falcon"
+	spec.version = Falcon::VERSION
+	spec.authors = ["Samuel Williams"]
+	spec.email = ["samuel.williams@oriontransfer.co.nz"]
 	
-	spec.summary       = "A fast, asynchronous, rack-compatible web server."
-	spec.homepage      = "https://github.com/socketry/falcon"
+	spec.summary = "A fast, asynchronous, rack-compatible web server."
+	spec.homepage = "https://github.com/socketry/falcon"
 	
-	spec.files         = `git ls-files -z`.split("\x0").reject do |f|
-		f.match(%r{^(test|spec|features)/})
-	end
+	spec.required_ruby_version = "~> 2.5"
 	
-	spec.required_ruby_version = '~> 2.4'
+	spec.files = Dir['{bake,bin,lib}/**/*', base: __dir__]
+	spec.require_paths = ['lib']
 	
-	spec.executables   = spec.files.grep(%r{^bin/}) { |f| File.basename(f) }
-	spec.require_paths = ["lib"]
+	spec.executables = ['falcon', 'falcon-host']
 	
 	spec.add_dependency "async", "~> 1.13"
 	spec.add_dependency "async-io", "~> 1.22"
