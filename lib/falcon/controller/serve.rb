@@ -33,7 +33,7 @@ module Falcon
 		# Uses {Server} for handling incoming requests.
 		class Serve < Async::Container::Controller
 			# Initialize the server controller.
-			# @param command [Command::Serve] The user-specified command-line options.
+			# @parameter command [Command::Serve] The user-specified command-line options.
 			def initialize(command, **options)
 				@command = command
 				
@@ -55,7 +55,7 @@ module Falcon
 				@command.endpoint
 			end
 			
-			# @return [Protocol::HTTP::Middleware] an instance of the application to be served.
+			# @returns [Protocol::HTTP::Middleware] an instance of the application to be served.
 			def load_app
 				@command.load_app
 			end

@@ -28,23 +28,23 @@ require_relative '../service/supervisor'
 # @name supervisor
 environment(:supervisor) do
 	# The name of the supervisor
-	# @attr [String]
+	# @attribute [String]
 	name "supervisor"
 	
 	# The IPC path to use for communication with the supervisor.
-	# @attr [String]
+	# @attribute [String]
 	ipc_path do
 		::File.expand_path("supervisor.ipc", root)
 	end
 	
 	# The endpoint the supervisor will bind to.
-	# @attr [Async::IO::Endpoint]
+	# @attribute [Async::IO::Endpoint]
 	endpoint do
 		Async::IO::Endpoint.unix(ipc_path)
 	end
 	
 	# The service class to use for the supervisor.
-	# @attr [Class]
+	# @attribute [Class]
 	service do
 		::Falcon::Service::Supervisor
 	end

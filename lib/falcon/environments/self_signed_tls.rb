@@ -28,11 +28,11 @@ require 'localhost/authority'
 # @name self_signed_tls
 environment(:self_signed_tls) do
 	# The default session identifier for the session cache.
-	# @attr [String]
+	# @attribute [String]
 	ssl_session_id {"falcon"}
 	
 	# The SSL context to use for incoming connections.
-	# @attr [OpenSSL::SSL::SSLContext]
+	# @attribute [OpenSSL::SSL::SSLContext]
 	ssl_context do
 		contexts = Localhost::Authority.fetch(authority)
 		

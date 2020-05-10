@@ -28,8 +28,8 @@ module Falcon
 		# A HTTP middleware for logging requests and responses.
 		class Verbose < Protocol::HTTP::Middleware
 			# Initialize the verbose middleware.
-			# @param app [Protocol::HTTP::Middleware] The middleware to wrap.
-			# @param logger [Console::Logger] The logger to use.
+			# @parameter app [Protocol::HTTP::Middleware] The middleware to wrap.
+			# @parameter logger [Console::Logger] The logger to use.
 			def initialize(app, logger = Async.logger)
 				super(app)
 				

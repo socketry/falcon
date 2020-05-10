@@ -30,14 +30,14 @@ module Falcon
 			
 			# Initialize the early hints interface.
 			#
-			# @param request [Protocol::HTTP::Request]
+			# @parameter request [Protocol::HTTP::Request]
 			def initialize(request)
 				@request = request
 			end
 			
 			# Advise the request that the specified path should be preloaded.
-			# @param path [String]
-			# @param preload [Boolean] whether the client should preload the resource.
+			# @parameter path [String]
+			# @parameter preload [Boolean] whether the client should preload the resource.
 			def push(path, preload: true, **options)
 				@request.push(path)
 			end

@@ -55,8 +55,8 @@ Create a file in your application called `preload.rb`. You can put this file any
 
 If you are expecting to handle many simultaneous connections, please ensure you configure your file limits correctly.
 
-```
+~~~
 Errno::EMFILE: Too many open files - accept(2)
-```
+~~~
 
 This means that your system is limiting the number of files that can be opened by falcon. Please check the `ulimit` of your system and set it appropriately.

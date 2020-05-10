@@ -35,7 +35,7 @@ module Falcon
 	class Services
 		# Initialize the services from the given configuration.
 		#
-		# @param configuration [Configuration]
+		# @parameter configuration [Configuration]
 		def initialize(configuration)
 			@named = {}
 			
@@ -53,7 +53,7 @@ module Falcon
 		
 		# Add a named service.
 		#
-		# @param service [Service]
+		# @parameter service [Service]
 		def add(service)
 			@named[service.name] = service
 		end
@@ -68,7 +68,7 @@ module Falcon
 		
 		# Setup all named services into the given container.
 		#
-		# @param container [Async::Container::Generic]
+		# @parameter container [Async::Container::Generic]
 		def setup(container)
 			@named.each do |name, service|
 				Async.logger.debug(self) {"Setup #{name} into #{container}..."}

@@ -36,9 +36,9 @@ module Falcon
 	# A server listening on a specific endpoint, hosting a specific middleware.
 	class Server < Async::HTTP::Server
 		# Wrap a rack application into a middleware suitable the server.
-		# @param rack_app [Proc | Object] A rack application/middleware.
-		# @param verbose [Boolean] Whether to add the {Verbose} middleware.
-		# @param cache [Boolean] Whether to add the {Async::HTTP::Cache} middleware.
+		# @parameter rack_app [Proc | Object] A rack application/middleware.
+		# @parameter verbose [Boolean] Whether to add the {Verbose} middleware.
+		# @parameter cache [Boolean] Whether to add the {Async::HTTP::Cache} middleware.
 		def self.middleware(rack_app, verbose: false, cache: true)
 			::Protocol::HTTP::Middleware.build do
 				if verbose

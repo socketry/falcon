@@ -37,14 +37,14 @@ module Falcon
 			POST = 'POST'.freeze
 			
 			# Initialize the rewindable middleware.
-			# @param app [Protocol::HTTP::Middleware] The middleware to wrap.
+			# @parameter app [Protocol::HTTP::Middleware] The middleware to wrap.
 			def initialize(app)
 				super(app)
 			end
 			
 			# Determine whether the request needs a rewindable body.
-			# @param request [Protocol::HTTP::Request]
-			# @return [Boolean]
+			# @parameter request [Protocol::HTTP::Request]
+			# @returns [Boolean]
 			def needs_rewind?(request)
 				content_type = request.headers['content-type']
 				
@@ -60,8 +60,8 @@ module Falcon
 			end
 			
 			# Wrap the request body in a rewindable buffer if required.
-			# @param request [Protocol::HTTP::Request]
-			# @return [Protocol::HTTP::Response] the response.
+			# @parameter request [Protocol::HTTP::Request]
+			# @returns [Protocol::HTTP::Response] the response.
 			def call(request)
 				if body = request.body and needs_rewind?(request)
 					request.body = Async::HTTP::Body::Rewindable.new(body)

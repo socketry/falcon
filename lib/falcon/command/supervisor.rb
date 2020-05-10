@@ -36,7 +36,7 @@ module Falcon
 			self.description = "Control and query a specific supervisor."
 			
 			# The command line options.
-			# @attr [Samovar::Options]
+			# @attribute [Samovar::Options]
 			options do
 				option "--path <path>", "The control IPC path.", default: "supervisor.ipc"
 			end
@@ -66,7 +66,7 @@ module Falcon
 			
 			# The nested command to execute.
 			# @name nested
-			# @attr [Command]
+			# @attribute [Command]
 			nested :command, {
 				'restart' => Restart,
 				'metrics' => Metrics,

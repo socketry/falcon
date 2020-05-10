@@ -34,7 +34,7 @@ module Falcon
 			self.description = "Run one or more virtual hosts with a front-end proxy."
 			
 			# The command line options.
-			# @attr [Samovar::Options]
+			# @attribute [Samovar::Options]
 			options do
 				option '--bind-insecure <address>', "Bind redirection to the given hostname/address", default: "http://[::]:80"
 				option '--bind-secure <address>', "Bind proxy to the given hostname/address", default: "https://[::]:443"
@@ -44,7 +44,7 @@ module Falcon
 			
 			# One or more paths to the configuration files.
 			# @name paths
-			# @attr [Array(String)]
+			# @attribute [Array(String)]
 			many :paths
 			
 			include Paths

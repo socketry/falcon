@@ -31,7 +31,7 @@ module Falcon
 			self.description = "Redirect from insecure HTTP to secure HTTP."
 			
 			# The command line options.
-			# @attr [Samovar::Options]
+			# @attribute [Samovar::Options]
 			options do
 				option '--bind <address>', "Bind to the given hostname/address", default: "http://[::]:80"
 				option '--redirect <address>', "Redirect using this address as a template.", default: "https://[::]:443"
@@ -41,7 +41,7 @@ module Falcon
 			
 			# One or more paths to the configuration files.
 			# @name paths
-			# @attr [Array(String)]
+			# @attribute [Array(String)]
 			many :paths
 			
 			include Paths

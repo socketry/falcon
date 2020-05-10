@@ -38,7 +38,7 @@ module Falcon
 			self.description = "An asynchronous HTTP server."
 			
 			# The command line options.
-			# @attr [Samovar::Options]
+			# @attribute [Samovar::Options]
 			options do
 				option '--verbose | --quiet', "Verbosity of output for debugging.", key: :logging
 				option '-h/--help', "Print out help information."
@@ -48,7 +48,7 @@ module Falcon
 			
 			# The nested command to execute.
 			# @name nested
-			# @attr [Command]
+			# @attribute [Command]
 			nested :command, {
 				'serve' => Serve,
 				'host' => Host,
@@ -59,13 +59,13 @@ module Falcon
 			}, default: 'serve'
 			
 			# Whether verbose logging is enabled.
-			# @return [Boolean]
+			# @returns [Boolean]
 			def verbose?
 				@options[:logging] == :verbose
 			end
 			
 			# Whether quiet logging was enabled.
-			# @return [Boolean]
+			# @returns [Boolean]
 			def quiet?
 				@options[:logging] == :quiet
 			end
@@ -74,7 +74,7 @@ module Falcon
 			#
 			# If you don't specify these, it's possible to have issues when encodings mismatch on the server.
 			#
-			# @param encoding [Encoding] Defaults to `Encoding::UTF_8`.
+			# @parameter encoding [Encoding] Defaults to `Encoding::UTF_8`.
 			def update_external_encoding!(encoding = Encoding::UTF_8)
 				if Encoding.default_external != encoding
 					Console.logger.warn(self) {"Updating Encoding.default_external from #{Encoding.default_external} to #{encoding}"}

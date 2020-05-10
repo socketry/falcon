@@ -32,9 +32,9 @@ module Falcon
 			CONTENT_LENGTH = 'content-length'.freeze
 			
 			# Wraps an array into a buffered body.
-			# @param status [Integer] The response status.
-			# @param headers [Protocol::HTTP::Headers] The response headers.
-			# @param body [Object] The `rack` response body.
+			# @parameter status [Integer] The response status.
+			# @parameter headers [Protocol::HTTP::Headers] The response headers.
+			# @parameter body [Object] The `rack` response body.
 			def self.wrap(status, headers, body)
 				# In no circumstance do we want this header propagating out:
 				if length = headers.delete(CONTENT_LENGTH)
@@ -56,8 +56,8 @@ module Falcon
 			end
 			
 			# Initialize the output wrapper.
-			# @param body [Object] The rack response body.
-			# @param length [Integer] The rack response length.
+			# @parameter body [Object] The rack response body.
+			# @parameter length [Integer] The rack response length.
 			def initialize(body, length)
 				@length = length
 				@body = body
@@ -94,8 +94,8 @@ module Falcon
 			end
 			
 			# Enumerate the response body.
-			# @block `{|chunk| ...}`
-			# @yield chunk [String]
+			# @yields {|chunk| ...}
+			# 	@parameter chunk [String]
 			def each(&block)
 				@body.each(&block)
 			ensure
@@ -103,7 +103,7 @@ module Falcon
 			end
 			
 			# Read the next chunk from the response body.
-			# @return [String | Nil]
+			# @returns [String | Nil]
 			def read
 				@chunks ||= @body.to_enum(:each)
 				

@@ -27,7 +27,7 @@ module Falcon
 		# A helper for resolving wildcard configuration paths.
 		module Paths
 			# Resolve a set of `@paths` that may contain wildcards, into a sorted, unique array.
-			# @return [Array(String)]
+			# @returns [Array(String)]
 			def resolved_paths(&block)
 				@paths.collect do |path|
 					Dir.glob(path)

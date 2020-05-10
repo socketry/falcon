@@ -16,7 +16,7 @@ module Rack
 			NAME = :falcon
 			
 			# Generate an endpoint for the given `rackup` options.
-			# @return [Async::IO::Endpoint]
+			# @returns [Async::IO::Endpoint]
 			def self.endpoint_for(**options)
 				host = options[:Host] || 'localhost'
 				port = Integer(options[:Port] || 9292)
@@ -25,7 +25,7 @@ module Rack
 			end
 			
 			# Run the specified app using the given options:
-			# @param app [Object] The rack middleware.
+			# @parameter app [Object] The rack middleware.
 			def self.run(app, **options)
 				endpoint = endpoint_for(**options)
 				

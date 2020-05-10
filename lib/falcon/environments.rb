@@ -25,7 +25,7 @@ require 'build/environment'
 module Falcon
 	# Pre-defined environments for hosting web applications.
 	#
-	# See {Configuration::Loader:load} for more details.
+	# See {Configuration::Loader#load} for more details.
 	module Environments
 	end
 end

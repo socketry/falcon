@@ -25,7 +25,7 @@ require_relative 'command/top'
 module Falcon
 	module Command
 		# The main entry point for the `falcon` executable.
-		# @param arguments [Array(String)] The command line arguments.
+		# @parameter arguments [Array(String)] The command line arguments.
 		def self.call(*arguments)
 			Top.call(*arguments)
 		end

@@ -71,8 +71,8 @@ module Falcon
 			HTTP_X_FORWARDED_PROTO = 'HTTP_X_FORWARDED_PROTO'
 			
 			# Initialize the rack adaptor middleware.
-			# @param app [Object] The rack middleware.
-			# @param logger [Console::Logger] The logger to use.
+			# @parameter app [Object] The rack middleware.
+			# @parameter logger [Console::Logger] The logger to use.
 			def initialize(app, logger = Async.logger)
 				@app = app
 				
@@ -85,8 +85,8 @@ module Falcon
 			#
 			# Rack separates multiple headers with the same key, into a single field with multiple lines.
 			#
-			# @param headers [Protocol::HTTP::Headers] The raw HTTP request headers.
-			# @param env [Hash] The rack request `env`.
+			# @parameter headers [Protocol::HTTP::Headers] The raw HTTP request headers.
+			# @parameter env [Hash] The rack request `env`.
 			def unwrap_headers(headers, env)
 				headers.each do |key, value|
 					http_key = "HTTP_#{key.upcase.tr('-', '_')}"
@@ -106,8 +106,8 @@ module Falcon
 			# - Set the `env['HTTP_X_FORWARDED_PROTO']` header to the request scheme.
 			# - Set `env['REMOTE_ADDR']` to the request remote adress.
 			#
-			# @param request [Protocol::HTTP::Request] The incoming request.
-			# @param env [Hash] The rack `env`.
+			# @parameter request [Protocol::HTTP::Request] The incoming request.
+			# @parameter env [Hash] The rack `env`.
 			def unwrap_request(request, env)
 				if content_type = request.headers.delete('content-type')
 					env[CONTENT_TYPE] = content_type
@@ -136,7 +136,7 @@ module Falcon
 			
 			# Build a rack `env` from the incoming request and apply it to the rack middleware.
 			#
-			# @param request [Protocol::HTTP::Request] The incoming request.
+			# @parameter request [Protocol::HTTP::Request] The incoming request.
 			def call(request)
 				request_path, query_string = request.path.split('?', 2)
 				server_name, server_port = (request.authority || '').split(':', 2)
@@ -219,8 +219,8 @@ module Falcon
 			end
 			
 			# Generate a suitable response for the given exception.
-			# @param exception [Exception]
-			# @return [Protocol::HTTP::Response]
+			# @parameter exception [Exception]
+			# @returns [Protocol::HTTP::Response]
 			def failure_response(exception)
 				Protocol::HTTP::Response.for_exception(exception)
 			end

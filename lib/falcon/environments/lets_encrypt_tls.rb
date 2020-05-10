@@ -30,17 +30,17 @@ load(:tls)
 # @name lets_encrypt_tls
 environment(:lets_encrypt_tls, :tls) do
 	# The Lets Encrypt certificate store path.
-	# @param [String]
+	# @parameter [String]
 	lets_encrypt_root '/etc/letsencrypt/live'
 	
 	# The public certificate path.
-	# @attr [String]
+	# @attribute [String]
 	ssl_certificate_path do
 		File.join(lets_encrypt_root, authority, "fullchain.pem")
 	end
 	
 	# The private key path.
-	# @attr [String]
+	# @attribute [String]
 	ssl_private_key_path do
 		File.join(lets_encrypt_root, authority, "privkey.pem")
 	end

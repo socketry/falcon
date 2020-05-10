@@ -36,7 +36,7 @@ module Falcon
 			
 			# One or more paths to the configuration files.
 			# @name paths
-			# @attr [Array(String)]
+			# @attribute [Array(String)]
 			many :paths, "Service configuration paths.", default: ["falcon.rb"]
 			
 			# The container class to use.

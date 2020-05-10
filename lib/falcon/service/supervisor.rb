@@ -31,7 +31,7 @@ module Falcon
 		# Implements a host supervisor which can restart the host services and provide various metrics about the running processes.
 		class Supervisor < Generic
 			# Initialize the supervisor using the given environment.
-			# @param environment [Build::Environment]
+			# @parameter environment [Build::Environment]
 			def initialize(environment)
 				super
 				
@@ -62,7 +62,7 @@ module Falcon
 			end
 			
 			# Handle an incoming request.
-			# @param message [Hash] The decoded message.
+			# @parameter message [Hash] The decoded message.
 			def handle(message)
 				case message[:please]
 				when 'restart'

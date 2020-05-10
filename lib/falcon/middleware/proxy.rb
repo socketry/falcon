@@ -57,8 +57,8 @@ module Falcon
 			]
 			
 			# Initialize the proxy middleware.
-			# @param app [Protocol::HTTP::Middleware] The middleware to use if a request can't be proxied.
-			# @param hosts [Array(Service::Proxy)] The host applications to proxy to.
+			# @parameter app [Protocol::HTTP::Middleware] The middleware to use if a request can't be proxied.
+			# @parameter hosts [Array(Service::Proxy)] The host applications to proxy to.
 			def initialize(app, hosts)
 				super(app)
 				
@@ -71,7 +71,7 @@ module Falcon
 			end
 			
 			# The number of requests that have been proxied.
-			# @attr [Integer]
+			# @attribute [Integer]
 			attr :count
 			
 			# Close all the connections to the upstream hosts.
@@ -82,14 +82,14 @@ module Falcon
 			end
 			
 			# Establish a connection to the specified upstream endpoint.
-			# @param endpoint [Async::HTTP::Endpoint]
+			# @parameter endpoint [Async::HTTP::Endpoint]
 			def connect(endpoint)
 				@clients[endpoint] ||= Async::HTTP::Client.new(endpoint)
 			end
 			
 			# Lookup the appropriate host for the given request.
-			# @param request [Protocol::HTTP::Request]
-			# @return [Service::Proxy]
+			# @parameter request [Protocol::HTTP::Request]
+			# @returns [Service::Proxy]
 			def lookup(request)
 				# Trailing dot and port is ignored/normalized.
 				if authority = request.authority&.sub(/(\.)?(:\d+)?$/, '')
@@ -144,7 +144,7 @@ module Falcon
 			end
 			
 			# Proxy the request if the authority matches a specific host.
-			# @param request [Protocol::HTTP::Request]
+			# @parameter request [Protocol::HTTP::Request]
 			def call(request)
 				if host = lookup(request)
 					@count += 1

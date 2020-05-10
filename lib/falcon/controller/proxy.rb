@@ -36,8 +36,8 @@ module Falcon
 			DEFAULT_SESSION_ID = "falcon"
 			
 			# Initialize the proxy controller.
-			# @param command [Command::Proxy] The user-specified command-line options.
-			# @param session_id [String] The SSL session identifier to use for the session cache.
+			# @parameter command [Command::Proxy] The user-specified command-line options.
+			# @parameter session_id [String] The SSL session identifier to use for the session cache.
 			def initialize(command, session_id: DEFAULT_SESSION_ID, **options)
 				super(command, **options)
 				
@@ -56,8 +56,8 @@ module Falcon
 			end
 			
 			# Look up the host context for the given hostname, and update the socket hostname if necessary.
-			# @param socket [OpenSSL::SSL::SSLSocket] The incoming connection.
-			# @param hostname [String] The negotiated hostname.
+			# @parameter socket [OpenSSL::SSL::SSLSocket] The incoming connection.
+			# @parameter hostname [String] The negotiated hostname.
 			def host_context(socket, hostname)
 				if host = @hosts[hostname]
 					Async.logger.debug(self) {"Resolving #{hostname} -> #{host}"}

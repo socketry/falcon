@@ -36,7 +36,7 @@ module Falcon
 			end
 			
 			# The middleware that will be served by this application.
-			# @return [Protocol::HTTP::Middleware]
+			# @returns [Protocol::HTTP::Middleware]
 			def middleware
 				# In a multi-threaded container, we don't want to modify the shared evaluator's cache, so we create a new evaluator:
 				@environment.evaluator.middleware

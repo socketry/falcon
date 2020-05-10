@@ -28,7 +28,7 @@ module Falcon
 		# Designed to be invoked within an {Async::Controller::Container}.
 		class Generic
 			# Convert the given environment into a service if possible.
-			# @param environment [Build::Environment] The environment to use to construct the service.
+			# @parameter environment [Build::Environment] The environment to use to construct the service.
 			def self.wrap(environment)
 				evaluator = environment.evaluator
 				service = evaluator.service || self
@@ -37,7 +37,7 @@ module Falcon
 			end
 			
 			# Initialize the service from the given environment.
-			# @param environment [Build::Environment]
+			# @parameter environment [Build::Environment]
 			def initialize(environment)
 				@environment = environment
 				@evaluator = @environment.evaluator
@@ -56,7 +56,7 @@ module Falcon
 			end
 			
 			# The logger to use for this service.
-			# @return [Console::Logger]
+			# @returns [Console::Logger]
 			def logger
 				return Async.logger # .with(name: name)
 			end
@@ -66,7 +66,7 @@ module Falcon
 			end
 			
 			# Setup the service into the specified container.
-			# @param container [Async::Container::Generic]
+			# @parameter container [Async::Container::Generic]
 			def setup(container)
 			end
 			

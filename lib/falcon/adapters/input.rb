@@ -32,7 +32,7 @@ module Falcon
 		# This implementation is not always rewindable, to avoid buffering the input when handling large uploads. See {Rewindable} for more details.
 		class Input
 			# Initialize the input wrapper.
-			# @param body [Protocol::HTTP::Body::Readable]
+			# @parameter body [Protocol::HTTP::Body::Readable]
 			def initialize(body)
 				@body = body
 				
@@ -42,12 +42,12 @@ module Falcon
 			end
 			
 			# The input body.
-			# @attr [Protocol::HTTP::Body::Readable]
+			# @attribute [Protocol::HTTP::Body::Readable]
 			attr :body
 			
 			# Enumerate chunks of the request body.
-			# @block `{|chunk| ...}`
-			# @yield [String]
+			# @yields {|chunk| ...}
+			# 	@parameter chunk [String]
 			def each(&block)
 				return to_enum unless block_given?
 				
@@ -60,7 +60,7 @@ module Falcon
 			#
 			# `rewind` must be called without arguments. It rewinds the input stream back to the beginning. It must not raise Errno::ESPIPE: that is, it may not be a pipe or a socket. Therefore, handler developers must buffer the input data into some rewindable object if the underlying input stream is not rewindable.
 			#
-			# @return [Boolean] Whether the body could be rewound.
+			# @returns [Boolean] Whether the body could be rewound.
 			def rewind
 				if @body and @body.respond_to? :rewind
 					# If the body is not rewindable, this will fail.
@@ -78,9 +78,9 @@ module Falcon
 			# 
 			# `read` behaves like `IO#read`. Its signature is `read(length = nil, buffer = nil)`. If given, length must be a non-negative `Integer` (>= 0) or `nil`, and buffer must be a `String` and may not be nil. If `length` is given and not `nil`, then this method reads at most `length` bytes from the input stream. If `length` is not given or `nil`, then this method reads all data. When the end is reached, this method returns `nil` if `length` is given and not `nil`, or an empty `String` if `length` is not given or is `nil`. If `buffer` is given, then the read data will be placed into the `buffer` instead of a newly created `String` object.
 			#
-			# @param length [Integer] the amount of data to read
-			# @param buffer [String] the buffer which will receive the data
-			# @return a buffer containing the data
+			# @parameter length [Integer] the amount of data to read
+			# @parameter buffer [String] the buffer which will receive the data
+			# @returns a buffer containing the data
 			def read(length = nil, buffer = nil)
 				buffer ||= Async::IO::Buffer.new
 				buffer.clear
@@ -110,7 +110,7 @@ module Falcon
 			end
 			
 			# Has the input stream been read completely?
-			# @return [Boolean]
+			# @returns [Boolean]
 			def eof?
 				@finished and @buffer.nil?
 			end
@@ -119,7 +119,7 @@ module Falcon
 			#
 			# `gets` must be called without arguments and return a `String`, or `nil` when the input stream has no more data.
 			#
-			# @return [String | Nil] The next chunk from the body.
+			# @returns [String | Nil] The next chunk from the body.
 			def gets
 				if @buffer.nil?
 					return read_next

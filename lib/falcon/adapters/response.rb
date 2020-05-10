@@ -44,7 +44,7 @@ module Falcon
 			IGNORE_HEADERS = Middleware::Proxy::HOP_HEADERS
 			
 			# Process the rack response headers into into a {Protocol::HTTP::Headers} instance, along with any extra `rack.` metadata.
-			# @return [Tuple(Protocol::HTTP::Headers, Hash)]
+			# @returns [Tuple(Protocol::HTTP::Headers, Hash)]
 			def self.wrap_headers(fields)
 				headers = ::Protocol::HTTP::Headers.new
 				meta = {}
@@ -65,10 +65,10 @@ module Falcon
 			end
 			
 			# Wrap a rack response.
-			# @param status [Integer] The rack response status.
-			# @param headers [Duck(:each)] The rack response headers.
-			# @param body [Duck(:each, :close) | Nil] The rack response body.
-			# @param request [Protocol::HTTP::Request] The original request.
+			# @parameter status [Integer] The rack response status.
+			# @parameter headers [Duck(:each)] The rack response headers.
+			# @parameter body [Duck(:each, :close) | Nil] The rack response body.
+			# @parameter request [Protocol::HTTP::Request] The original request.
 			def self.wrap(status, headers, body, request = nil)
 				headers, meta = wrap_headers(headers)
 				
@@ -101,10 +101,10 @@ module Falcon
 			end
 			
 			# Initialize the response wrapper.
-			# @param status [Integer] The response status.
-			# @param headers [Protocol::HTTP::Headers] The response headers.
-			# @param body [Protocol::HTTP::Body] The response body.
-			# @param protocol [String] The response protocol for upgraded requests.
+			# @parameter status [Integer] The response status.
+			# @parameter headers [Protocol::HTTP::Headers] The response headers.
+			# @parameter body [Protocol::HTTP::Body] The response body.
+			# @parameter protocol [String] The response protocol for upgraded requests.
 			def initialize(status, headers, body, protocol = nil)
 				super(nil, status, headers, body, protocol)
 			end

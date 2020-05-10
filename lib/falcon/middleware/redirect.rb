@@ -38,9 +38,9 @@ module Falcon
 		# Typically used for implementing HTTP -> HTTPS redirects.
 		class Redirect < Protocol::HTTP::Middleware
 			# Initialize the redirect middleware.
-			# @param app [Protocol::HTTP::Middleware] The middleware to wrap.
-			# @param hosts [Hash(String, Service::Proxy)] The map of hosts.
-			# @param endpoint [Endpoint] The template endpoint to use to build the redirect location.
+			# @parameter app [Protocol::HTTP::Middleware] The middleware to wrap.
+			# @parameter hosts [Hash(String, Service::Proxy)] The map of hosts.
+			# @parameter endpoint [Endpoint] The template endpoint to use to build the redirect location.
 			def initialize(app, hosts, endpoint)
 				super(app)
 				
@@ -49,7 +49,7 @@ module Falcon
 			end
 			
 			# Lookup the appropriate host for the given request.
-			# @param request [Protocol::HTTP::Request]
+			# @parameter request [Protocol::HTTP::Request]
 			def lookup(request)
 				# Trailing dot and port is ignored/normalized.
 				if authority = request.authority&.sub(/(\.)?(:\d+)?$/, '')
@@ -58,7 +58,7 @@ module Falcon
 			end
 			
 			# Redirect the request if the authority matches a specific host.
-			# @param request [Protocol::HTTP::Request]
+			# @parameter request [Protocol::HTTP::Request]
 			def call(request)
 				if host = lookup(request)
 					if @endpoint.default_port?

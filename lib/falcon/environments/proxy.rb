@@ -28,10 +28,10 @@
 # @name rack
 environment(:proxy) do
 	# The upstream endpoint that will handle incoming requests.
-	# @attr [Async::HTTP::Endpoint]
+	# @attribute [Async::HTTP::Endpoint]
 	endpoint {::Async::HTTP::Endpoint.parse(url)}
 	
 	# The service class to use for the proxy.
-	# @attr [Class]
+	# @attribute [Class]
 	service ::Falcon::Service::Proxy
 end

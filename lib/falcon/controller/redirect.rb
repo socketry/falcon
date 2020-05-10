@@ -31,7 +31,7 @@ module Falcon
 		# A controller for redirecting requests.
 		class Redirect < Serve
 			# Initialize the redirect controller.
-			# @param command [Command::Redirect] The user-specified command-line options.
+			# @parameter command [Command::Redirect] The user-specified command-line options.
 			def initialize(command, **options)
 				super(command, **options)
 				

@@ -47,7 +47,7 @@ module Falcon
 			self.description = "Run an HTTP server for development purposes."
 			
 			# The command line options.
-			# @attr [Samovar::Options]
+			# @attribute [Samovar::Options]
 			options do
 				option '-b/--bind <address>', "Bind to the given hostname/address.", default: "https://localhost:9292"
 				
@@ -81,19 +81,19 @@ module Falcon
 			end
 			
 			# Whether verbose logging is enabled.
-			# @return [Boolean]
+			# @returns [Boolean]
 			def verbose?
 				@parent&.verbose?
 			end
 			
 			# Whether to enable the application HTTP cache.
-			# @return [Boolean]
+			# @returns [Boolean]
 			def cache?
 				@options[:cache]
 			end
 			
 			# Load the rack application from the specified configuration path.
-			# @return [Protocol::HTTP::Middleware]
+			# @returns [Protocol::HTTP::Middleware]
 			def load_app
 				rack_app, _ = Rack::Builder.parse_file(@options[:config])
 				
