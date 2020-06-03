@@ -42,6 +42,12 @@ module Falcon
 				@environment.evaluator.middleware
 			end
 			
+			# Number of instances to start.
+			# @returns [Integer | nil]
+			def count
+			  @environment.evaluator.count
+			end
+			
 			# Preload any resources specified by the environment.
 			def preload!
 				if scripts = @evaluator.preload
@@ -73,7 +79,14 @@ module Falcon
 				protocol = self.protocol
 				scheme = self.scheme
 				
-				container.run(name: self.name, restart: true) do |instance|
+				run_options = {
+					name: self.name,
+					restart: true,
+				}
+				
+				run_options[:count] = count unless count.nil?
+				
+				container.run(**run_options) do |instance|
 					Async(logger: logger) do |task|
 						Async.logger.info(self) {"Starting application server for #{self.root}..."}
 						
