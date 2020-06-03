@@ -65,4 +65,8 @@ environment(:application) do
 	# The service class to use for the application.
 	# @attribute [Class]
 	service ::Falcon::Service::Application
+	
+	# Number of instances to start.
+	# @attribute [Integer | nil]
+	count nil
 end
