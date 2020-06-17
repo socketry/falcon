@@ -32,7 +32,7 @@ Falcon can be an important part of your business or project, both improving perf
 - Priority consideration of feature requests and bug reports.
 - Better software by funding development and testing.
 
-The standard price for business support is $120.00 USD / year / production instance (including reserve instances). Please [contact us](mailto:contact@oriontransfer.co.nz?subject=Falcon%20Business%20Support) for more details.
+Please visit [Socketry.io](https://socketry.io) to register and subscribe.
 
 ## Usage
 
