@@ -24,24 +24,20 @@
 
 	<body class="">
 		<nav> › <a class="link" href="../../../../index.html">Project</a> › <a class="link" href="../../../index.html">Source</a></nav>
-
 		
 		
 	<h1><code class="language-ruby">Falcon::Adapters::Response</code></h1>
 	
 	<main>
 		<p>A wrapper for a <code>Rack</code> response.</p>
-
 <p>A Rack response consisting of <code>[status, headers, body]</code> includes various rack-specific elements, including:</p>
-
 <ul>
-  <li>A <code>headers['rack.hijack']</code> callback which bypasses normal response handling.</li>
-  <li>Potentially invalid content length.</li>
-  <li>Potentially invalid body when processing a <code>HEAD</code> request.</li>
-  <li>Newline-separated header values.</li>
-  <li>Other <code>rack.</code> specific header key/value pairs.</li>
+<li>A <code>headers['rack.hijack']</code> callback which bypasses normal response handling.</li>
+<li>Potentially invalid content length.</li>
+<li>Potentially invalid body when processing a <code>HEAD</code> request.</li>
+<li>Newline-separated header values.</li>
+<li>Other <code>rack.</code> specific header key/value pairs.</li>
 </ul>
-
 <p>This wrapper takes those issues into account and adapts the rack response tuple into a <code class="language-ruby">Protocol::HTTP::Response</code>.</p>
 		
 		

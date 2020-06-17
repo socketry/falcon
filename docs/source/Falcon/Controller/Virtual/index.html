@@ -24,15 +24,13 @@
 
 	<body class="">
 		<nav> › <a class="link" href="../../../../index.html">Project</a> › <a class="link" href="../../../index.html">Source</a></nav>
-
 		
 		
 	<h1><code class="language-ruby">Falcon::Controller::Virtual</code></h1>
 	
 	<main>
 		<p>A controller which mananages several virtual hosts.
-Spawns instances of <a href="../Proxy/index.html"><code class="language-ruby">class Falcon::Controller::Proxy</code></a> and <a href="../Redirect/index.html"><code class="language-ruby">class Falcon::Controller::Redirect</code></a> to handle incoming requests.</p>
-
+Spawns instances of <a href="../Proxy/index.html" title="Proxy"><code class="language-ruby">class Falcon::Controller::Proxy</code></a> and <a href="../Redirect/index.html" title="Redirect"><code class="language-ruby">class Falcon::Controller::Redirect</code></a> to handle incoming requests.</p>
 <p>A virtual host is an application bound to a specific authority (essentially a hostname). The virtual controller manages multiple hosts and allows a single server to host multiple applications easily.</p>
 		
 		
@@ -42,7 +40,7 @@ Spawns instances of <a href="../Proxy/index.html"><code class="language-ruby">cl
 <details open>
 	<summary><h4>Signature</h4></summary>
 	<dl><dt>
-					<strong>parameter</strong>　<code class="syntax">command</code>　<a href="../../Command/Virtual/index.html"><code class="language-ruby">class Falcon::Command::Virtual</code></a></dt><dd><p>The user-specified command-line options.</p>
+					<strong>parameter</strong>　<code class="syntax">command</code>　<code class="language-ruby">Command::<a href="../../Command/Virtual/index.html">Falcon::Command::Virtual</a></code></dt><dd><p>The user-specified command-line options.</p>
 </dd></dl>
 </details>
 <details>
@@ -108,7 +106,7 @@ end</code></pre>
 							<pre><code class="language-ruby">def falcon_path
 	File.expand_path(&quot;../../../bin/falcon&quot;, __dir__)
 end</code></pre>
-						</details><h3 id="Falcon::Controller::Virtual#setup"><code class="language-ruby">def setup(container)</code></h3><p>Setup the container with <a href="../Redirect/index.html"><code class="language-ruby">class Falcon::Controller::Redirect</code></a> and <a href="../Proxy/index.html"><code class="language-ruby">class Falcon::Controller::Proxy</code></a> child processes.
+						</details><h3 id="Falcon::Controller::Virtual#setup"><code class="language-ruby">def setup(container)</code></h3><p>Setup the container with <a href="../Redirect/index.html" title="Redirect"><code class="language-ruby">class Falcon::Controller::Redirect</code></a> and <a href="../Proxy/index.html" title="Proxy"><code class="language-ruby">class Falcon::Controller::Proxy</code></a> child processes.
 These processes are gracefully restarted if they are already running.</p>
 <details>
 							<summary><h4>Implementation</h4></summary>

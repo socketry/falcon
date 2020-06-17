@@ -24,17 +24,14 @@
 
 	<body class="">
 		<nav> › <a class="link" href="../../../../index.html">Project</a> › <a class="link" href="../../../index.html">Source</a></nav>
-
 		
 		
 	<h1><code class="language-ruby">Falcon::Adapters::Input</code></h1>
 	
 	<main>
 		<p>Wraps a streaming input body into the interface required by <code>rack.input</code>.</p>
-
 <p>The input stream is an <code>IO</code>-like object which contains the raw HTTP POST data. When applicable, its external encoding must be <code>ASCII-8BIT</code> and it must be opened in binary mode, for Ruby 1.9 compatibility. The input stream must respond to <code>gets</code>, <code>each</code>, <code>read</code> and <code>rewind</code>.</p>
-
-<p>This implementation is not always rewindable, to avoid buffering the input when handling large uploads. See <a href="../Rewindable/index.html"><code class="language-ruby">class Falcon::Adapters::Rewindable</code></a> for more details.</p>
+<p>This implementation is not always rewindable, to avoid buffering the input when handling large uploads. See <a href="../Rewindable/index.html" title="Rewindable"><code class="language-ruby">class Falcon::Adapters::Rewindable</code></a> for more details.</p>
 		
 		
 		<h2>Definitions</h2>
@@ -78,7 +75,6 @@ end</code></pre>
 	end
 end</code></pre>
 						</details><h3 id="Falcon::Adapters::Input#rewind"><code class="language-ruby">def rewind</code></h3><p>Rewind the input stream back to the start.</p>
-
 <p><code>rewind</code> must be called without arguments. It rewinds the input stream back to the beginning. It must not raise Errno::ESPIPE: that is, it may not be a pipe or a socket. Therefore, handler developers must buffer the input data into some rewindable object if the underlying input stream is not rewindable.</p>
 <details open>
 	<summary><h4>Signature</h4></summary>
@@ -101,7 +97,6 @@ end</code></pre>
 	return false
 end</code></pre>
 						</details><h3 id="Falcon::Adapters::Input#read"><code class="language-ruby">def read(length = nil, buffer = nil)</code></h3><p>Read data from the input stream.</p>
-
 <p><code>read</code> behaves like <code>IO#read</code>. Its signature is <code>read(length = nil, buffer = nil)</code>. If given, length must be a non-negative <code>Integer</code> (&gt;= 0) or <code>nil</code>, and buffer must be a <code>String</code> and may not be nil. If <code>length</code> is given and not <code>nil</code>, then this method reads at most <code>length</code> bytes from the input stream. If <code>length</code> is not given or <code>nil</code>, then this method reads all data. When the end is reached, this method returns <code>nil</code> if <code>length</code> is given and not <code>nil</code>, or an empty <code>String</code> if <code>length</code> is not given or is <code>nil</code>. If <code>buffer</code> is given, then the read data will be placed into the <code>buffer</code> instead of a newly created <code>String</code> object.</p>
 <details open>
 	<summary><h4>Signature</h4></summary>
@@ -152,7 +147,6 @@ end</code></pre>
 	@finished and @buffer.nil?
 end</code></pre>
 						</details><h3 id="Falcon::Adapters::Input#gets"><code class="language-ruby">def gets</code></h3><p>Read the next chunk of data from the input stream.</p>
-
 <p><code>gets</code> must be called without arguments and return a <code>String</code>, or <code>nil</code> when the input stream has no more data.</p>
 <details open>
 	<summary><h4>Signature</h4></summary>

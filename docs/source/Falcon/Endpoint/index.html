@@ -24,7 +24,6 @@
 
 	<body class="">
 		<nav> › <a class="link" href="../../../index.html">Project</a> › <a class="link" href="../../index.html">Source</a></nav>
-
 		
 		
 	<h1><code class="language-ruby">Falcon::Endpoint</code></h1>
@@ -35,7 +34,7 @@
 		
 		<h2>Definitions</h2>
 		
-		<h3 id="Falcon::Endpoint#ssl_context"><code class="language-ruby">def ssl_context</code></h3><p>The SSL context to use, which invokes <a href="index.html#Falcon%3A%3AEndpoint%23build_ssl_context"><code class="language-ruby">Falcon::Endpoint#build_ssl_context</code></a> if not otherwise specified.</p>
+		<h3 id="Falcon::Endpoint#ssl_context"><code class="language-ruby">def ssl_context</code></h3><p>The SSL context to use, which invokes <a href="index.html#Falcon%3A%3AEndpoint%23build_ssl_context" title="build_ssl_context"><code class="language-ruby">Falcon::Endpoint#build_ssl_context</code></a> if not otherwise specified.</p>
 <details open>
 	<summary><h4>Signature</h4></summary>
 	<dl><dt>
@@ -47,7 +46,6 @@
 	@options[:ssl_context] || build_ssl_context
 end</code></pre>
 						</details><h3 id="Falcon::Endpoint#build_ssl_context"><code class="language-ruby">def build_ssl_context(hostname = self.hostname)</code></h3><p>Build an appropriate SSL context for the given hostname.</p>
-
 <p>Uses <code class="language-ruby">Localhost::Authority</code> to generate self-signed certficates.</p>
 <details open>
 	<summary><h4>Signature</h4></summary>

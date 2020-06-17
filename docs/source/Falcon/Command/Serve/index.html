@@ -24,15 +24,13 @@
 
 	<body class="">
 		<nav> › <a class="link" href="../../../../index.html">Project</a> › <a class="link" href="../../../index.html">Source</a></nav>
-
 		
 		
 	<h1><code class="language-ruby">Falcon::Command::Serve</code></h1>
 	
 	<main>
 		<p>Implements the <code>falcon serve</code> command. Designed for <em>development</em>.</p>
-
-<p>Manages a <a href="../../Controller/Serve/index.html"><code class="language-ruby">class Falcon::Controller::Serve</code></a> instance which is responsible for running applications in a development environment.</p>
+<p>Manages a <a href="../../Controller/Serve/index.html" title="Controller::Serve"><code class="language-ruby">class Falcon::Controller::Serve</code></a> instance which is responsible for running applications in a development environment.</p>
 		
 		
 		<h2>Definitions</h2>
@@ -113,13 +111,13 @@ end</code></pre>
 	return Server.middleware(rack_app, verbose: self.verbose?, cache: self.cache?)
 end</code></pre>
 						</details><h3 id="Falcon::Command::Serve#container_options"><code class="language-ruby">def container_options</code></h3><p>Options for the container.
-See <a href="../../Controller/Serve/index.html#Falcon%3A%3AController%3A%3AServe%23setup"><code class="language-ruby">Falcon::Controller::Serve#setup</code></a>.</p>
+See <a href="../../Controller/Serve/index.html#Falcon%3A%3AController%3A%3AServe%23setup" title="Controller::Serve#setup"><code class="language-ruby">Falcon::Controller::Serve#setup</code></a>.</p>
 <details>
 							<summary><h4>Implementation</h4></summary>
 							<pre><code class="language-ruby">def container_options
 	@options.slice(:count, :forks, :threads)
 end</code></pre>
-						</details><h3 id="Falcon::Command::Serve#endpoint_options"><code class="language-ruby">def endpoint_options</code></h3><p>Options for the <a href="index.html#Falcon%3A%3ACommand%3A%3AServe%23endpoint"><code class="language-ruby">Falcon::Command::Serve#endpoint</code></a>.</p>
+						</details><h3 id="Falcon::Command::Serve#endpoint_options"><code class="language-ruby">def endpoint_options</code></h3><p>Options for the <a href="index.html#Falcon%3A%3ACommand%3A%3AServe%23endpoint" title="endpoint"><code class="language-ruby">Falcon::Command::Serve#endpoint</code></a>.</p>
 <details>
 							<summary><h4>Implementation</h4></summary>
 							<pre><code class="language-ruby">def endpoint_options

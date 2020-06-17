@@ -24,23 +24,19 @@
 
 	<body class="">
 		<nav> › <a class="link" href="../../../index.html">Project</a> › <a class="link" href="../../index.html">Source</a></nav>
-
 		
 		
 	<h1><code class="language-ruby">Falcon::Services</code></h1>
 	
 	<main>
 		<p>Represents one or more services associated with a host.</p>
-
 <p>The services model allows falcon to manage one more more service associated with a given host. Some examples of services include:</p>
-
 <ul>
-  <li>Rack applications wrapped by <a href="../Service/Application/index.html"><code class="language-ruby">class Falcon::Service::Application</code></a>.</li>
-  <li>Host supervisor implemented in <a href="../Service/Supervisor/index.html"><code class="language-ruby">class Falcon::Service::Supervisor</code></a>.</li>
-  <li>Proxy services wrapped by <a href="../Service/Proxy/index.html"><code class="language-ruby">class Falcon::Service::Proxy</code></a>.</li>
+<li>Rack applications wrapped by <a href="../Service/Application/index.html" title="Service::Application"><code class="language-ruby">class Falcon::Service::Application</code></a>.</li>
+<li>Host supervisor implemented in <a href="../Service/Supervisor/index.html" title="Service::Supervisor"><code class="language-ruby">class Falcon::Service::Supervisor</code></a>.</li>
+<li>Proxy services wrapped by <a href="../Service/Proxy/index.html" title="Service::Proxy"><code class="language-ruby">class Falcon::Service::Proxy</code></a>.</li>
 </ul>
-
-<p>The list of services is typically generated from the user supplied <code>falcon.rb</code> configuration file, which is loaded into an immutable <a href="../Configuration/index.html"><code class="language-ruby">class Falcon::Configuration</code></a> instance, which is mapped into a list of services.</p>
+<p>The list of services is typically generated from the user supplied <code>falcon.rb</code> configuration file, which is loaded into an immutable <a href="../Configuration/index.html" title="Configuration"><code class="language-ruby">class Falcon::Configuration</code></a> instance, which is mapped into a list of services.</p>
 		
 		
 		<h2>Definitions</h2>
@@ -49,7 +45,7 @@
 <details open>
 	<summary><h4>Signature</h4></summary>
 	<dl><dt>
-					<strong>parameter</strong>　<code class="syntax">configuration</code>　<a href="../Configuration/index.html"><code class="language-ruby">class Falcon::Configuration</code></a></dt></dl>
+					<strong>parameter</strong>　<code class="syntax">configuration</code>　<code class="language-ruby"><a href="../Configuration/index.html">Falcon::Configuration</a></code></dt></dl>
 </details>
 <details>
 							<summary><h4>Implementation</h4></summary>
@@ -72,7 +68,7 @@ end</code></pre>
 <details open>
 	<summary><h4>Signature</h4></summary>
 	<dl><dt>
-					<strong>parameter</strong>　<code class="syntax">service</code>　<a href="../Service/index.html"><code class="language-ruby">module Service</code></a></dt></dl>
+					<strong>parameter</strong>　<code class="syntax">service</code>　<code class="language-ruby"><a href="../Service/index.html">Falcon::Service</a></code></dt></dl>
 </details>
 <details>
 							<summary><h4>Implementation</h4></summary>

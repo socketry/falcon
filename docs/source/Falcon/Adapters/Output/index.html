@@ -24,14 +24,12 @@
 
 	<body class="">
 		<nav> › <a class="link" href="../../../../index.html">Project</a> › <a class="link" href="../../../index.html">Source</a></nav>
-
 		
 		
 	<h1><code class="language-ruby">Falcon::Adapters::Output</code></h1>
 	
 	<main>
 		<p>Wraps the rack response body.</p>
-
 <p>The <code>rack</code> body must respond to <code>each</code> and must only yield <code>String</code> values. If the body responds to <code>close</code>, it will be called after iteration. If the body is replaced by a middleware after action, the original body must be closed first, if it responds to <code>close</code>. If the body responds to <code>to_path</code>, it must return a String identifying the location of a file whose contents are identical to that produced by calling <code>each</code>; this may be used by the server as an alternative, possibly more efficient way to transport the response. The body commonly is an <code>Array</code> of strings, the application instance itself, or a <code>File</code>-like object.</p>
 		
 		

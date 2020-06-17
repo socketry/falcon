@@ -24,15 +24,13 @@
 
 	<body class="">
 		<nav> › <a class="link" href="../../../../index.html">Project</a> › <a class="link" href="../../../index.html">Source</a></nav>
-
 		
 		
 	<h1><code class="language-ruby">Falcon::Command::Virtual</code></h1>
 	
 	<main>
 		<p>Implements the <code>falcon virtual</code> command. Designed for <em>deployment</em>.</p>
-
-<p>Manages a <a href="../../Controller/Virtual/index.html"><code class="language-ruby">class Falcon::Controller::Virtual</code></a> instance which is responsible for running the <a href="../Proxy/index.html"><code class="language-ruby">class Falcon::Command::Proxy</code></a> and <a href="../Redirect/index.html"><code class="language-ruby">class Falcon::Command::Redirect</code></a> instances.</p>
+<p>Manages a <a href="../../Controller/Virtual/index.html" title="Controller::Virtual"><code class="language-ruby">class Falcon::Controller::Virtual</code></a> instance which is responsible for running the <a href="../Proxy/index.html" title="Proxy"><code class="language-ruby">class Falcon::Command::Proxy</code></a> and <a href="../Redirect/index.html" title="Redirect"><code class="language-ruby">class Falcon::Command::Redirect</code></a> instances.</p>
 		
 		
 		<h2>Definitions</h2>
@@ -93,13 +91,13 @@ end</code></pre>
 	
 	self.controller.run
 end</code></pre>
-						</details><h3 id="Falcon::Command::Virtual#insecure_endpoint"><code class="language-ruby">def insecure_endpoint(**options)</code></h3><p>The insecure endpoint for connecting to the <a href="../Redirect/index.html"><code class="language-ruby">class Falcon::Command::Redirect</code></a> instance.</p>
+						</details><h3 id="Falcon::Command::Virtual#insecure_endpoint"><code class="language-ruby">def insecure_endpoint(**options)</code></h3><p>The insecure endpoint for connecting to the <a href="../Redirect/index.html" title="Redirect"><code class="language-ruby">class Falcon::Command::Redirect</code></a> instance.</p>
 <details>
 							<summary><h4>Implementation</h4></summary>
 							<pre><code class="language-ruby">def insecure_endpoint(**options)
 	Async::HTTP::Endpoint.parse(@options[:bind_insecure], **options)
 end</code></pre>
-						</details><h3 id="Falcon::Command::Virtual#secure_endpoint"><code class="language-ruby">def secure_endpoint(**options)</code></h3><p>The secure endpoint for connecting to the <a href="../Proxy/index.html"><code class="language-ruby">class Falcon::Command::Proxy</code></a> instance.</p>
+						</details><h3 id="Falcon::Command::Virtual#secure_endpoint"><code class="language-ruby">def secure_endpoint(**options)</code></h3><p>The secure endpoint for connecting to the <a href="../Proxy/index.html" title="Proxy"><code class="language-ruby">class Falcon::Command::Proxy</code></a> instance.</p>
 <details>
 							<summary><h4>Implementation</h4></summary>
 							<pre><code class="language-ruby">def secure_endpoint(**options)

@@ -24,7 +24,6 @@
 
 	<body class="">
 		<nav> › <a class="link" href="../../../../index.html">Project</a> › <a class="link" href="../../../index.html">Source</a></nav>
-
 		
 		
 	<h1><code class="language-ruby">Falcon::Adapters::Rack</code></h1>
@@ -53,7 +52,6 @@
 	@logger = logger
 end</code></pre>
 						</details><h3 id="Falcon::Adapters::Rack#unwrap_headers"><code class="language-ruby">def unwrap_headers(headers, env)</code></h3><p>Unwrap raw HTTP headers into the CGI-style expected by Rack middleware.</p>
-
 <p>Rack separates multiple headers with the same key, into a single field with multiple lines.</p>
 <details open>
 	<summary><h4>Signature</h4></summary>
@@ -77,12 +75,11 @@ end</code></pre>
 	end
 end</code></pre>
 						</details><h3 id="Falcon::Adapters::Rack#unwrap_request"><code class="language-ruby">def unwrap_request(request, env)</code></h3><p>Process the incoming request into a valid rack <code>env</code>.</p>
-
 <ul>
-  <li>Set the <code>env['CONTENT_TYPE']</code> and <code>env['CONTENT_LENGTH']</code> based on the incoming request body.</li>
-  <li>Set the <code>env['HTTP_HOST']</code> header to the request authority.</li>
-  <li>Set the <code>env['HTTP_X_FORWARDED_PROTO']</code> header to the request scheme.</li>
-  <li>Set <code>env['REMOTE_ADDR']</code> to the request remote adress.</li>
+<li>Set the <code>env['CONTENT_TYPE']</code> and <code>env['CONTENT_LENGTH']</code> based on the incoming request body.</li>
+<li>Set the <code>env['HTTP_HOST']</code> header to the request authority.</li>
+<li>Set the <code>env['HTTP_X_FORWARDED_PROTO']</code> header to the request scheme.</li>
+<li>Set <code>env['REMOTE_ADDR']</code> to the request remote adress.</li>
 </ul>
 <details open>
 	<summary><h4>Signature</h4></summary>

@@ -24,7 +24,6 @@
 
 	<body class="">
 		<nav> › <a class="link" href="../../../../index.html">Project</a> › <a class="link" href="../../../index.html">Source</a></nav>
-
 		
 		
 	<h1><code class="language-ruby">Falcon::Middleware::Proxy</code></h1>
@@ -51,9 +50,9 @@ Typically used for implementing virtual servers.</p>
 <details open>
 	<summary><h4>Signature</h4></summary>
 	<dl><dt>
-					<strong>parameter</strong>　<code class="syntax">app</code>　<code class="language-ruby">Protocol::HTTP::Middleware</code></dt><dd><p>The middleware to use if a request can’t be proxied.</p>
+					<strong>parameter</strong>　<code class="syntax">app</code>　<code class="language-ruby">Protocol::HTTP::Middleware</code></dt><dd><p>The middleware to use if a request can't be proxied.</p>
 </dd><dt>
-					<strong>parameter</strong>　<code class="syntax">hosts</code>　<code class="language-ruby">Array(Service::Proxy)</code></dt><dd><p>The host applications to proxy to.</p>
+					<strong>parameter</strong>　<code class="syntax">hosts</code>　<code class="language-ruby">Array(Service::<a href="../../Service/Proxy/index.html">Falcon::Service::Proxy</a>)</code></dt><dd><p>The host applications to proxy to.</p>
 </dd></dl>
 </details>
 <details>
@@ -98,7 +97,7 @@ end</code></pre>
 	<summary><h4>Signature</h4></summary>
 	<dl><dt>
 					<strong>parameter</strong>　<code class="syntax">request</code>　<code class="language-ruby">Protocol::HTTP::Request</code></dt><dt>
-					<strong>returns</strong>　<a href="../../Service/Proxy/index.html"><code class="language-ruby">class Falcon::Service::Proxy</code></a></dt></dl>
+					<strong>returns</strong>　<code class="language-ruby">Service::<a href="../../Service/Proxy/index.html">Falcon::Service::Proxy</a></code></dt></dl>
 </details>
 <details>
 							<summary><h4>Implementation</h4></summary>
@@ -120,7 +119,7 @@ In particular, we delete all connection and hop headers.</p>
 	headers.extract(HOP_HEADERS)
 end</code></pre>
 						</details><h3 id="Falcon::Middleware::Proxy#prepare_request"><code class="language-ruby">def prepare_request(request, host)</code></h3><p>Prepare the request to be proxied to the specified host.
-In particular, we set appropriate <a href="index.html#Falcon%3A%3AMiddleware%3A%3AProxy%3A%3AVIA"><code class="language-ruby">VIA = 'via'</code></a>, <a href="index.html#Falcon%3A%3AMiddleware%3A%3AProxy%3A%3AFORWARDED"><code class="language-ruby">FORWARDED = 'forwarded'</code></a>, <a href="index.html#Falcon%3A%3AMiddleware%3A%3AProxy%3A%3AX_FORWARDED_FOR"><code class="language-ruby">X_FORWARDED_FOR = 'x-forwarded-for'</code></a> and <a href="index.html#Falcon%3A%3AMiddleware%3A%3AProxy%3A%3AX_FORWARDED_PROTO"><code class="language-ruby">X_FORWARDED_PROTO = 'x-forwarded-proto'</code></a> headers.</p>
+In particular, we set appropriate <a href="index.html#Falcon%3A%3AMiddleware%3A%3AProxy%3A%3AVIA" title="VIA"><code class="language-ruby">VIA = 'via'</code></a>, <a href="index.html#Falcon%3A%3AMiddleware%3A%3AProxy%3A%3AFORWARDED" title="FORWARDED"><code class="language-ruby">FORWARDED = 'forwarded'</code></a>, <a href="index.html#Falcon%3A%3AMiddleware%3A%3AProxy%3A%3AX_FORWARDED_FOR" title="X_FORWARDED_FOR"><code class="language-ruby">X_FORWARDED_FOR = 'x-forwarded-for'</code></a> and <a href="index.html#Falcon%3A%3AMiddleware%3A%3AProxy%3A%3AX_FORWARDED_PROTO" title="X_FORWARDED_PROTO"><code class="language-ruby">X_FORWARDED_PROTO = 'x-forwarded-proto'</code></a> headers.</p>
 <details>
 							<summary><h4>Implementation</h4></summary>
 							<pre><code class="language-ruby">def prepare_request(request, host)

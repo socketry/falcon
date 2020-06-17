@@ -24,18 +24,14 @@
 
 	<body class="">
 		<nav> › <a class="link" href="../../../index.html">Project</a> › <a class="link" href="../../index.html">Source</a></nav>
-
 		
 		
 	<h1><code class="language-ruby">Falcon::Configuration</code></h1>
 	
 	<main>
 		<p>Manages environments which describes how to host a specific application.</p>
-
 <p>Environments are key-value maps with lazy value resolution. An environment can inherit from a parent environment, which can provide defaults</p>
-
 <p>A typical configuration file might look something like:</p>
-
 <pre><code class="language-ruby">#!/usr/bin/env falcon-host
 # frozen_string_literal: true
 
@@ -71,7 +67,7 @@ end</code></pre>
 <details open>
 	<summary><h4>Signature</h4></summary>
 	<dl><dt>
-					<strong>parameter</strong>　<code class="syntax">key</code>　<code class="language-ruby">Symbol</code></dt><dd><p>Filter environments that don’t have this key.</p>
+					<strong>parameter</strong>　<code class="syntax">key</code>　<code class="language-ruby">Symbol</code></dt><dd><p>Filter environments that don't have this key.</p>
 </dd></dl>
 </details>
 <details>
@@ -103,7 +99,7 @@ end</code></pre>
 	
 	@environments[name] = environment
 end</code></pre>
-						</details><h3 id="Falcon::Configuration#load_file"><code class="language-ruby">def load_file(path)</code></h3><p>Load the specified configuration file. See <code class="language-ruby">Loader#load_file</code> for more details.</p>
+						</details><h3 id="Falcon::Configuration#load_file"><code class="language-ruby">def load_file(path)</code></h3><p>Load the specified configuration file. See <a href="Loader/index.html#Falcon%3A%3AConfiguration%3A%3ALoader.load_file" title="Loader#load_file"><code class="language-ruby">Falcon::Configuration::Loader.load_file</code></a> for more details.</p>
 <details>
 							<summary><h4>Implementation</h4></summary>
 							<pre><code class="language-ruby">def load_file(path)
