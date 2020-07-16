@@ -11,6 +11,13 @@ gemspec
 # gem "utopia-project", path: "../utopia-project"
 # gem "decode", path: "../../ioquatix/decode"
 
+group :maintenance, optional: true do
+	gem "bake-modernize"
+	gem "bake-bundler"
+	
+	# gem "utopia-project"
+end
+
 group :development do
 	gem 'ruby-prof', platform: :mri
 end
