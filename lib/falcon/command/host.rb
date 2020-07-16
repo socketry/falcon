@@ -25,6 +25,7 @@ require_relative '../configuration'
 require_relative '../version'
 
 require 'samovar'
+require 'bundler'
 
 module Falcon
 	module Command
