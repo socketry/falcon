@@ -182,9 +182,9 @@ module Falcon
 			
 			# Define a supervisor instance
 			# Adds `root` key.
-			def supervisor
+			def supervisor(&block)
 				name = File.join(@root, "supervisor")
-				environment = merge(name, :supervisor)
+				environment = merge(name, :supervisor, &block)
 				
 				environment[:root] = @root
 				
