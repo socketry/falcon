@@ -16,7 +16,7 @@ Falcon can be deployed into production either as a standalone application server
 
 `falcon host` loads configuration from the `falcon.rb` file in your application directory. This file contains configuration blocks which define how to host the application and any related services. This file should generally be executable and it invokes `falcon host` which starts all defined services.
 
-Here is basic example which hosts a rack application:
+Here is a basic example which hosts a rack application:
 
 ~~~ ruby
 #!/usr/bin/env -S falcon host
@@ -32,11 +32,11 @@ end
 supervisor
 ~~~
 
-These configuration blocks are constructed using [build-environment](https://github.com/ioquatix/build-environment), and the defaults are listed in the [Falcon source code](https://github.com/socketry/falcon/tree/master/lib/falcon/configuration).
+These configuration blocks are constructed using [build-environment](https://github.com/ioquatix/build-environment), and the defaults are listed in the [Falcon source code](https://github.com/socketry/falcon/tree/master/lib/falcon/environments).
 
 ### Application Configuration
 
-The [`rack` environment](https://github.com/socketry/falcon/blob/master/lib/falcon/configuration/rack.rb) inherits the [application environment](https://github.com/socketry/falcon/blob/master/lib/falcon/configuration/application.rb). These environments by default are defined for usage with `falcon virtual`, but you can customise any parts of the configuration, e.g. to bind a production host to `localhost:3000` using plaintext HTTP/2:
+The [`rack` environment](https://github.com/socketry/falcon/blob/master/lib/falcon/environments/rack.rb) inherits the [application environment](https://github.com/socketry/falcon/blob/master/lib/falcon/environments/application.rb). These environments by default are defined for usage with `falcon virtual`, but you can customise any parts of the configuration, e.g. to bind a production host to `localhost:3000` using plaintext HTTP/2:
 
 ~~~ ruby
 #!/usr/bin/env -S falcon host
@@ -52,7 +52,7 @@ end
 supervisor
 ~~~
 
-You can verify this is woring using `nghttp -v http://localhost:3000`.
+You can verify this is working using `nghttp -v http://localhost:3000`.
 
 ## Falcon Virtual
 
