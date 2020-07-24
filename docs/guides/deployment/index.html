@@ -36,7 +36,7 @@
 <p><code>falcon host</code> is designed for deployment.</p>
 <h3 id="configuration">Configuration</h3>
 <p><code>falcon host</code> loads configuration from the <code>falcon.rb</code> file in your application directory. This file contains configuration blocks which define how to host the application and any related services. This file should generally be executable and it invokes <code>falcon host</code> which starts all defined services.</p>
-<p>Here is basic example which hosts a rack application:</p>
+<p>Here is a basic example which hosts a rack application:</p>
 <pre><code class="language-ruby">#!/usr/bin/env -S falcon host
 # frozen_string_literal: true
 
@@ -49,9 +49,9 @@ end
 
 supervisor
 </code></pre>
-<p>These configuration blocks are constructed using <a href="https://github.com/ioquatix/build-environment">build-environment</a>, and the defaults are listed in the <a href="https://github.com/socketry/falcon/tree/master/lib/falcon/configuration">Falcon source code</a>.</p>
+<p>These configuration blocks are constructed using <a href="https://github.com/ioquatix/build-environment">build-environment</a>, and the defaults are listed in the <a href="https://github.com/socketry/falcon/tree/master/lib/falcon/environments">Falcon source code</a>.</p>
 <h3 id="application-configuration">Application Configuration</h3>
-<p>The <a href="https://github.com/socketry/falcon/blob/master/lib/falcon/configuration/rack.rb"><code>rack</code> environment</a> inherits the <a href="https://github.com/socketry/falcon/blob/master/lib/falcon/configuration/application.rb">application environment</a>. These environments by default are defined for usage with <code>falcon virtual</code>, but you can customise any parts of the configuration, e.g. to bind a production host to <code>localhost:3000</code> using plaintext HTTP/2:</p>
+<p>The <a href="https://github.com/socketry/falcon/blob/master/lib/falcon/environments/rack.rb"><code>rack</code> environment</a> inherits the <a href="https://github.com/socketry/falcon/blob/master/lib/falcon/environments/application.rb">application environment</a>. These environments by default are defined for usage with <code>falcon virtual</code>, but you can customise any parts of the configuration, e.g. to bind a production host to <code>localhost:3000</code> using plaintext HTTP/2:</p>
 <pre><code class="language-ruby">#!/usr/bin/env -S falcon host
 # frozen_string_literal: true
 
@@ -64,7 +64,7 @@ end
 
 supervisor
 </code></pre>
-<p>You can verify this is woring using <code>nghttp -v http://localhost:3000</code>.</p>
+<p>You can verify this is working using <code>nghttp -v http://localhost:3000</code>.</p>
 <h2 id="falcon-virtual">Falcon Virtual</h2>
 <p>Falcon can replace Nginx as a virtual server for Ruby applications.</p>
 <pre><code>/--------------------\
