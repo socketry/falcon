@@ -33,11 +33,11 @@ jobs:
           - experimental: true
             os: ubuntu
             ruby: 2.7
-            env: BUNDLE_GEMFILE=gems/rack1.gemfile
+            env: BUNDLE_GEMFILE=gems/rack-v1.rb
           - experimental: true
             os: ubuntu
             ruby: 2.7
-            env: BUNDLE_GEMFILE=gems/rack3.gemfile
+            env: BUNDLE_GEMFILE=gems/rack-head.rb
           - experimental: true
             os: ubuntu
             ruby: 2.6
