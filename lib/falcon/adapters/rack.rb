@@ -175,8 +175,8 @@ module Falcon
 					RACK_URL_SCHEME => request.scheme,
 					
 					# I'm not sure what sane defaults should be here:
-					SERVER_NAME => server_name || '',
-					SERVER_PORT => server_port || '',
+					SERVER_NAME => server_name,
+					SERVER_PORT => server_port,
 					
 					# We support both request and response hijack.
 					RACK_IS_HIJACK => true,
