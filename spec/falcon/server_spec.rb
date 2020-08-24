@@ -111,13 +111,13 @@ RSpec.describe Falcon::Server, timeout: 1 do
 				raise RuntimeError, "Middleware is broken"
 			end
 		end
-		
-		it "results in a 500 error if middleware raises an exception" do
+
+		it "results in a 500 error (without exposing the exception msg) if middleware raises" do
 			response = client.get("/", {})
 			
 			expect(response).to_not be_success
 			expect(response.status).to be == 500
-			expect(response.read).to be =~ /RuntimeError: Middleware is broken/
-		end
+			expect(response.read).to eq "Internal Server Error"
+    end
 	end
 end
