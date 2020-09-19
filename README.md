@@ -1,21 +1,12 @@
 # ![Falcon](logo.svg)
 
-Falcon is a multi-process, multi-fiber rack-compatible HTTP server built on top of [async], [async-io], [async-container] and [async-http]. Each request is executed within a lightweight fiber and can block on up-stream requests without stalling the entire server process. Falcon supports HTTP/1 and HTTP/2 natively.
+Falcon is a multi-process, multi-fiber rack-compatible HTTP server built on top of [async](https://github.com/socketry/async), [async-io](https://github.com/socketry/async-io), [async-container](https://github.com/socketry/async-container) and [async-http](https://github.com/socketry/async-http). Each request is executed within a lightweight fiber and can block on up-stream requests without stalling the entire server process. Falcon supports HTTP/1 and HTTP/2 natively.
 
-[![Actions Status](https://github.com/socketry/falcon/workflows/Development/badge.svg)](https://github.com/socketry/falcon/actions?workflow=Development)
-[![Code Climate](https://codeclimate.com/github/socketry/falcon.svg)](https://codeclimate.com/github/socketry/falcon)
-[![Coverage Status](https://coveralls.io/repos/socketry/falcon/badge.svg)](https://coveralls.io/r/socketry/falcon)
-[![Gitter](https://badges.gitter.im/join.svg)](https://gitter.im/socketry/falcon)
-[![Open Source Helpers](https://www.codetriage.com/socketry/falcon/badges/users.svg)](https://www.codetriage.com/socketry/falcon)
-
-[async]: https://github.com/socketry/async
-[async-io]: https://github.com/socketry/async-io
-[async-container]: https://github.com/socketry/async-container
-[async-http]: https://github.com/socketry/async-http
+[![Development Status](https://github.com/socketry/falcon/workflows/Development/badge.svg)](https://github.com/socketry/falcon/actions?workflow=Development)
 
 ## Motivation
 
-Initially, when I developed [async], I saw an opportunity to implement [async-http]: providing both client and server components. After experimenting with these ideas, I decided to build an actual web server for comparing and validating performance primarily out of interest. Falcon grew out of those experiments and permitted the ability to test existing real-world code on top of [async].
+Initially, when I developed [async](https://github.com/socketry/async), I saw an opportunity to implement [async-http](https://github.com/socketry/async-http): providing both client and server components. After experimenting with these ideas, I decided to build an actual web server for comparing and validating performance primarily out of interest. Falcon grew out of those experiments and permitted the ability to test existing real-world code on top of [async](https://github.com/socketry/async).
 
 Once I had something working, I saw an opportunity to simplify my development, testing and production environments, replacing production (Nginx+Passenger) and development (Puma) with Falcon. Not only does this simplify deployment, it helps minimize environment-specific bugs.
 
@@ -27,10 +18,10 @@ As web development is something I'm passionate about, having a server like Falco
 
 Falcon can be an important part of your business or project, both improving performance and saving money. As such, priority business support is available to make every project a success. The support agreement will give you:
 
-- Direct support and assistance via Slack and email.
-- Advance notification of bugs and security issues.
-- Priority consideration of feature requests and bug reports.
-- Better software by funding development and testing.
+  - Direct support and assistance via Slack and email.
+  - Advance notification of bugs and security issues.
+  - Priority consideration of feature requests and bug reports.
+  - Better software by funding development and testing.
 
 Please visit [Socketry.io](https://socketry.io) to register and subscribe.
 
@@ -42,11 +33,11 @@ Please see the <a href="https://socketry.github.io/falcon/">project documentatio
 
 We welcome contributions to this project.
 
-1. Fork it
-2. Create your feature branch (`git checkout -b my-new-feature`)
-3. Commit your changes (`git commit -am 'Add some feature'`)
-4. Push to the branch (`git push origin my-new-feature`)
-5. Create new Pull Request
+1.  Fork it
+2.  Create your feature branch (`git checkout -b my-new-feature`)
+3.  Commit your changes (`git commit -am 'Add some feature'`)
+4.  Push to the branch (`git push origin my-new-feature`)
+5.  Create new Pull Request
 
 ### Responsible Disclosure
 
@@ -56,9 +47,9 @@ We take the security of our systems seriously, and we value input from the secur
 
 Websites below are listed in alphabetical order.
 
-- iCook - [https://icook.tw](https://icook.tw)
-- RubyAPI - [https://rubyapi.org](https://rubyapi.org)
-- YonderBook - [https://www.yonderbook.com/](https://www.yonderbook.com/)
+  - iCook - <https://icook.tw>
+  - RubyAPI - <https://rubyapi.org>
+  - YonderBook - <https://www.yonderbook.com/>
 
 You're welcome to file a PR if you want to add your sites here.
 

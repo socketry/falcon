@@ -1,36 +1,21 @@
-name: Development
+name: Rack V1
 
 on: [push, pull_request]
 
 jobs:
   test:
     runs-on: ${{matrix.os}}-latest
-    continue-on-error: ${{matrix.experimental}}
     
     strategy:
       matrix:
         os:
           - ubuntu
-          - macos
         
         ruby:
-          - 2.5
-          - 2.6
           - 2.7
-        
-        experimental: [false]
-        env: [""]
-        
-        include:
-          - os: ubuntu
-            ruby: truffleruby
-            experimental: true
-          - os: ubuntu
-            ruby: jruby
-            experimental: true
-          - os: ubuntu
-            ruby: head
-            experimental: true
+    
+    env:
+      BUNDLE_GEMFILE: gems/rack-v1.rb
     
     steps:
     - uses: actions/checkout@v2
@@ -45,4 +30,4 @@ jobs:
     
     - name: Run tests
       timeout-minutes: 5
-      run: ${{matrix.env}} bundle exec rspec
+      run: bundle exec rspec
