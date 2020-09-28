@@ -68,6 +68,8 @@ module Falcon
 					Async::IO::SharedEndpoint.bound(@endpoint)
 				end.wait
 				
+				Async.logger.info(self) { "Starting #{name} on #{@endpoint.to_url}" }
+				
 				@debug_trap.ignore!
 				
 				super
