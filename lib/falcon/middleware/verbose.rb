@@ -54,8 +54,8 @@ module Falcon
 				
 				response = super
 				
-				statistics.wrap(response) do |statistics, error|
-					@logger.info(request) {"Responding with: #{response.status} #{response.headers.to_h}; #{statistics.inspect}"}
+				statistics.wrap(response) do |response_statistics, error|
+					@logger.info(request) {"Responding with: #{response.status} #{response.headers.to_h}; #{response_statistics.inspect}"}
 					
 					@logger.error(request) {"#{error.class}: #{error.message}"} if error
 				end

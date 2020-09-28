@@ -198,7 +198,7 @@ module Falcon
 			# @parameter parents [Array(Build::Environment)]
 			# @yields {...} The block that will generate the environment.
 			def merge(name, *parents, &block)
-				environments = parents.map{|name| @environments.fetch(name)}
+				environments = parents.map{|env_name| @environments.fetch(env_name)}
 				
 				parent = Build::Environment.combine(*environments)
 				
