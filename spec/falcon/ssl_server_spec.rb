@@ -22,6 +22,7 @@
 
 require 'falcon/server'
 require 'async/http/client'
+require 'async/http/endpoint'
 require 'async/rspec/reactor'
 require 'async/rspec/ssl'
 
