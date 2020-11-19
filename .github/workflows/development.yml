@@ -34,7 +34,7 @@ jobs:
     
     steps:
     - uses: actions/checkout@v2
-    - uses: ioquatix/setup-ruby@master
+    - uses: ruby/setup-ruby@v1
       with:
         ruby-version: ${{matrix.ruby}}
         bundler-cache: true
