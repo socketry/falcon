@@ -27,6 +27,7 @@ require 'async/rspec/reactor'
 require 'async/rspec/ssl'
 
 require 'async/io/ssl_socket'
+require 'async/io/shared_endpoint'
 
 RSpec.describe "Falcon::Server with SSL", timeout: 1 do
 	include_context Async::RSpec::Reactor
@@ -37,13 +38,16 @@ RSpec.describe "Falcon::Server with SSL", timeout: 1 do
 	let(:protocol) {Async::HTTP::Protocol::HTTPS}
 	
 	let(:server_endpoint) {Async::HTTP::Endpoint.parse("https://localhost:6365", ssl_context: server_context)}
+	let(:bound_endpoint) {Async::IO::SharedEndpoint.bound(server_endpoint)}
 	let(:client_endpoint) {Async::HTTP::Endpoint.parse("https://localhost:6365", ssl_context: client_context)}
 	
-	let(:server) {Falcon::Server.new(Falcon::Adapters::Rack.new(app), server_endpoint, protocol)}
+	let(:server) {Falcon::Server.new(Falcon::Adapters::Rack.new(app), bound_endpoint, protocol, server_endpoint.scheme)}
 	let(:client) {Async::HTTP::Client.new(client_endpoint, protocol)}
 	after(:each) {client.close}
 	
 	around(:each) do |example|
+		bound_endpoint
+		
 		server_task = reactor.async do
 			server.run
 		end
@@ -51,6 +55,7 @@ RSpec.describe "Falcon::Server with SSL", timeout: 1 do
 		begin
 			example.run
 		ensure
+			bound_endpoint.close
 			server_task.stop
 		end
 	end
