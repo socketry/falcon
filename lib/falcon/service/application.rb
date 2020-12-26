@@ -90,7 +90,7 @@ module Falcon
 					Async(logger: logger) do |task|
 						Async.logger.info(self) {"Starting application server for #{self.root}..."}
 						
-						server = Server.new(self.middleware, @bound_endpoint, protocol, scheme)
+						server = Server.new(self.middleware, @bound_endpoint, protocol: protocol, scheme: scheme)
 						
 						server.run
 						

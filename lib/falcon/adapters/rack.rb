@@ -24,7 +24,6 @@ require 'rack'
 
 require_relative 'input'
 require_relative 'response'
-require_relative 'early_hints'
 
 require 'async/logger'
 
@@ -60,7 +59,6 @@ module Falcon
 			RACK_HIJACK = 'rack.hijack'
 			RACK_IS_HIJACK = 'rack.hijack?'
 			RACK_HIJACK_IO = 'rack.hijack_io'
-			RACK_EARLY_HINTS = "rack.early_hints"
 			
 			# Async::HTTP specific metadata:
 			
@@ -183,10 +181,6 @@ module Falcon
 				}
 				
 				self.unwrap_request(request, env)
-				
-				if request.push?
-					env[RACK_EARLY_HINTS] = EarlyHints.new(request)
-				end
 				
 				full_hijack = false
 				

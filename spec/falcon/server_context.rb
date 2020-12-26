@@ -12,7 +12,7 @@ RSpec.shared_context Falcon::Server do
 	
 	let(:protocol) {Async::HTTP::Protocol::HTTP1}
 	let(:endpoint) {Async::HTTP::Endpoint.parse('http://127.0.0.1:9294', reuse_port: true)}
-	let!(:client) {Async::HTTP::Client.new(endpoint, protocol)}
+	let!(:client) {Async::HTTP::Client.new(endpoint, protocol: protocol)}
 	
 	let!(:server_task) do
 		reactor.async do
@@ -36,6 +36,6 @@ RSpec.shared_context Falcon::Server do
 	end
 	
 	let(:server) do
-		Falcon::Server.new(middleware, endpoint, protocol)
+		Falcon::Server.new(middleware, endpoint, protocol: protocol)
 	end
 end

@@ -19,7 +19,7 @@ Gem::Specification.new do |spec|
 	
 	spec.add_dependency "async", "~> 1.13"
 	spec.add_dependency "async-container", "~> 0.16.0"
-	spec.add_dependency "async-http", "~> 0.53.0"
+	spec.add_dependency "async-http", "~> 0.54.0"
 	spec.add_dependency "async-http-cache", "~> 0.3.0"
 	spec.add_dependency "async-io", "~> 1.22"
 	spec.add_dependency "build-environment", "~> 1.13"
