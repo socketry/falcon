@@ -71,7 +71,15 @@ module Falcon
 					buffer.puts "- To reload: kill -HUP #{Process.pid}"
 				end
 				
-				Bundler.require(:preload)
+				begin
+					Bundler.require(:preload)
+				rescue Bundler::GemfileNotFound
+					# Ignore.
+				end
+				
+				if GC.respond_to?(:compact)
+					GC.compact
+				end
 				
 				self.controller.run
 			end

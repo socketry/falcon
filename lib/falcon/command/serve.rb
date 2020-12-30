@@ -145,7 +145,11 @@ module Falcon
 					load(full_path)
 				end
 				
-				Bundler.require(:preload)
+				begin
+					Bundler.require(:preload)
+				rescue Bundler::GemfileNotFound
+					# Ignore.
+				end
 				
 				if GC.respond_to?(:compact)
 					GC.compact
