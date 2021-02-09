@@ -13,6 +13,7 @@ jobs:
         
         ruby:
           - 2.7
+          - 3.0
     
     env:
       BUNDLE_GEMFILE: gems/rack-head.rb

@@ -27,12 +27,12 @@ RSpec.describe Rack::Handler::Falcon do
 	it_behaves_like Rack::Handler, 'falcon'
 	
 	let(:server_double) {instance_double(Falcon::Server)}
-
+	
 	before do
 		allow(Async::Reactor).to receive(:run)
 		allow(Falcon::Server).to receive(:new).and_return(server_double)
 	end
-
+	
 	context 'block is given' do
 		it 'yields server' do
 			expect do |block|
@@ -40,7 +40,7 @@ RSpec.describe Rack::Handler::Falcon do
 			end.to yield_with_args(server_double)
 		end
 	end
-
+	
 	context 'block is not given' do
 		it 'does not fail' do
 			expect do |block|

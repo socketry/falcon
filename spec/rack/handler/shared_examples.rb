@@ -57,5 +57,6 @@ RSpec.shared_examples_for Rack::Handler do |server_name|
 		
 		client.close
 		server_task.stop
+		server_task.wait
 	end
 end
