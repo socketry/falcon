@@ -21,5 +21,5 @@
 # THE SOFTWARE.
 
 module Falcon
-	VERSION = "0.37.2"
+	VERSION = "0.37.3"
 end
