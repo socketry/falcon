@@ -9,7 +9,6 @@ gemspec
 # gem "async-http", path: "../async-http"
 # gem "protocol-http1", path: "../protocol-http1"
 # gem "utopia-project", path: "../utopia-project"
-# gem "decode", path: "../../ioquatix/decode"
 
 group :maintenance, optional: true do
 	gem "bake-modernize"

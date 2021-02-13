@@ -7,6 +7,9 @@ require "async/rspec"
 
 ENV['PATH'] = [File.expand_path('../bin', __dir__), ENV['PATH']].join(':')
 
+require 'openssl'
+$stderr.puts "OpenSSL::OPENSSL_LIBRARY_VERSION: #{OpenSSL::OPENSSL_LIBRARY_VERSION}"
+
 RSpec.configure do |config|
 	# Enable flags like --only-failures and --next-failure
 	config.example_status_persistence_file_path = ".rspec_status"

@@ -77,6 +77,8 @@ module Falcon
 					buffer.puts "- To reload all sites: kill -HUP #{Process.pid}"
 				end
 				
+				ENV['CONSOLE_LEVEL'] = 'debug'
+				
 				self.controller.run
 			end
 			
