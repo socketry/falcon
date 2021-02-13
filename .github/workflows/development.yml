@@ -42,7 +42,7 @@ jobs:
     
     - name: Installing packages (ubuntu)
       if: matrix.os == 'ubuntu'
-      run: sudo apt-get install apache2-utils
+      run: sudo apt-get install apache2-utils openssl
     
     - name: Run tests
       timeout-minutes: 5
