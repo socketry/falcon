@@ -60,6 +60,10 @@ module Falcon
 			RACK_IS_HIJACK = 'rack.hijack?'
 			RACK_HIJACK_IO = 'rack.hijack_io'
 			
+			# Raised back up through the middleware when the underlying connection is hijacked.
+			class FullHijack < StandardError
+			end
+			
 			# Async::HTTP specific metadata:
 			
 			ASYNC_HTTP_REQUEST = "async.http.request"
@@ -202,7 +206,7 @@ module Falcon
 				
 				# If there was a full hijack:
 				if full_hijack
-					return nil
+					raise FullHijack, "The connection was hijacked."
 				else
 					return Response.wrap(status, headers, body, request)
 				end
