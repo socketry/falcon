@@ -28,7 +28,7 @@ run lambda {|env|
 	
 	[
 		200,
-		[["trailers", "server-timing"], ["server-timing", server_timing]],
+		[["trailer", "server-timing"], ["server-timing", server_timing]],
 		["Hello World"]
 	]
 }
