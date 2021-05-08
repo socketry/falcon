@@ -25,7 +25,7 @@ require 'falcon/command/serve'
 RSpec.shared_examples_for Falcon::Command::Serve do
 	let(:command) do
 		described_class[
-			"--port", 8090,
+			"--port", port,
 			"--config", File.expand_path("config.ru", __dir__), *options
 		]
 	end
@@ -55,21 +55,25 @@ RSpec.describe Falcon::Command::Serve do
 	let(:options) { [] }
 
 	context "with custom port" do
+		let(:port) {8090}
 		include_examples Falcon::Command::Serve
 	end
 	
 	context "with one instance" do
+		let(:port) {8091}
 		let(:options) {["--count", 1]}
 		include_examples Falcon::Command::Serve
 	end
 	
 	context "with threaded container" do
-		let(:options) {["--count", 8, "--threaded"]}
+		let(:port) {8092}
+		let(:options) {["--count", 4, "--threaded"]}
 		include_examples Falcon::Command::Serve
 	end
 	
 	context "with forked container", if: Process.respond_to?(:fork) do
-		let(:options) {["--count", 8, "--forked"]}
+		let(:port) {8093}
+		let(:options) {["--count", 4, "--forked"]}
 		include_examples Falcon::Command::Serve
 	end
 end
