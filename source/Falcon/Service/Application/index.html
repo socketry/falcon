@@ -107,7 +107,7 @@ end</code></pre>
 	run_options[:count] = count unless count.nil?
 	
 	container.run(**run_options) do |instance|
-		Async(logger: logger) do |task|
+		Async do |task|
 			Console.logger.info(self) {&quot;Starting application server for #{self.root}...&quot;}
 			
 			server = Server.new(self.middleware, @bound_endpoint, protocol: protocol, scheme: scheme)
