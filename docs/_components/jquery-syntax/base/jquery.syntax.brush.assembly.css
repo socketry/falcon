@@ -1,8 +1,0 @@
-.syntax-theme-base .assembly .register {
-  color: #3caa20;
-  font-style: italic; }
-.syntax-theme-base .assembly .label {
-  font-weight: bold;
-  color: #2a85b3; }
-.syntax-theme-base .assembly .directive {
-  color: #828a3d; }

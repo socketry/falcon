@@ -1,2 +1,0 @@
-// This file is part of the "jQuery.Syntax" project, and is distributed under the MIT License.
-Syntax.register("nginx",function(a){a.push({pattern:/((\w+).*?);/g,matches:Syntax.extractMatches({klass:"directive",allow:"*"},{klass:"function",process:Syntax.lib.webLinkProcess("http://nginx.org/r/")})});a.push({pattern:/(\w+).*?{/g,matches:Syntax.extractMatches({klass:"keyword"})});a.push({pattern:/(\$)[\w]+/g,klass:"variable"});a.push(Syntax.lib.perlStyleComment);a.push(Syntax.lib.singleQuotedString);a.push(Syntax.lib.doubleQuotedString);a.push(Syntax.lib.webLink)});
