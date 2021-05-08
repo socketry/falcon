@@ -1,0 +1,5 @@
+.syntax-theme-base .html .doctype {
+  font-weight: bold;
+  color: #938; }
+.syntax-theme-base .html .javascript, .syntax-theme-base .html .css {
+  font-style: italic; }

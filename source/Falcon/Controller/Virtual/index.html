@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		
+			<title>Falcon::Controller::Virtual</title>
+		
+		<meta charset="UTF-8"/>
+		<meta name="viewport" content="width=device-width, initial-scale=1"/>
+		
+		<link rel="icon" type="image/png" href="../../../../_static/icon.png"/>
+		<link rel="stylesheet" href="../../../../_static/site.css" type="text/css" media="screen"/>
+		
+		<script src="../../../../_components/jquery/jquery.min.js"></script>
+		<script src="../../../../_components/jquery-syntax/jquery.syntax.min.js"></script>
+		
+		<script src="../../../../_static/links.js"></script>
+		
+		<script type="text/javascript">
+		//<![CDATA[
+			jQuery(function($) {
+				$.syntax();
+			});
+		//]]>
+		</script>
+	</head>
+
+	<body>
+		<header> › <a class="link" href="../../../../index.html">Project</a> › <a class="link" href="../../../index.html">Source</a></header>
+		
+		<main>
+			
+	<h1><code class="language-ruby">Falcon::Controller::Virtual</code></h1>
+	
+	<p>A controller which mananages several virtual hosts.
+Spawns instances of <a href="../Proxy/index.html" title="Proxy"><code class="language-ruby">class Falcon::Controller::Proxy</code></a> and <a href="../Redirect/index.html" title="Redirect"><code class="language-ruby">class Falcon::Controller::Redirect</code></a> to handle incoming requests.</p>
+<p>A virtual host is an application bound to a specific authority (essentially a hostname). The virtual controller manages multiple hosts and allows a single server to host multiple applications easily.</p>
+	
+	
+	<section>
+	<h2>Definitions</h2>
+	
+	<section id="Falcon::Controller::Virtual#initialize"><h3><code class="language-ruby">def initialize(command, **options)</code></h3><p>Initialize the virtual controller.</p>
+<details open>
+	<summary><h4>Signature</h4></summary>
+	<dl><dt>
+					<strong>parameter</strong>　<code class="syntax">command</code>　<code class="language-ruby">Command::<a href="../../Command/Virtual/index.html" title="Falcon::Command::Virtual">Virtual</a></code></dt><dd><p>The user-specified command-line options.</p>
+</dd></dl>
+</details>
+<details>
+						<summary><h4>Implementation</h4></summary>
+						<pre><code class="language-ruby">def initialize(command, **options)
+	@command = command
+	
+	super(**options)
+	
+	trap(SIGHUP, &amp;self.method(:reload))
+end</code></pre>
+					</details></section><section id="Falcon::Controller::Virtual#assume_privileges"><h3><code class="language-ruby">def assume_privileges(path)</code></h3><p>Drop privileges according to the user and group of the specified path.</p>
+<details open>
+	<summary><h4>Signature</h4></summary>
+	<dl><dt>
+					<strong>parameter</strong>　<code class="syntax">path</code>　<code class="language-ruby">String</code></dt><dd><p>The path to the application directory.</p>
+</dd></dl>
+</details>
+<details>
+						<summary><h4>Implementation</h4></summary>
+						<pre><code class="language-ruby">def assume_privileges(path)
+	stat = File.stat(path)
+	
+	Process::GID.change_privilege(stat.gid)
+	Process::UID.change_privilege(stat.uid)
+	
+	home = Etc.getpwuid(stat.uid).dir
+	
+	return {
+		'HOME' =&gt; home,
+	}
+end</code></pre>
+					</details></section><section id="Falcon::Controller::Virtual#spawn"><h3><code class="language-ruby">def spawn(path, container, **options)</code></h3><p>Spawn an application instance from the specified path.</p>
+<details open>
+	<summary><h4>Signature</h4></summary>
+	<dl><dt>
+					<strong>parameter</strong>　<code class="syntax">path</code>　<code class="language-ruby">String</code></dt><dd><p>The path to the application directory.</p>
+</dd><dt>
+					<strong>parameter</strong>　<code class="syntax">container</code>　<code class="language-ruby">Async::Container::Generic</code></dt><dd><p>The container to spawn into.</p>
+</dd><dt>
+					<strong>parameter</strong>　<code class="syntax">options</code>　<code class="language-ruby">Options</code></dt><dd><p>The options which are passed to <code>exec</code>.</p>
+</dd></dl>
+</details>
+<details>
+						<summary><h4>Implementation</h4></summary>
+						<pre><code class="language-ruby">def spawn(path, container, **options)
+	container.spawn(name: &quot;Falcon Application&quot;, restart: true, key: path) do |instance|
+		env = assume_privileges(path)
+		
+		instance.exec(env,
+			&quot;bundle&quot;, &quot;exec&quot;, &quot;--keep-file-descriptors&quot;,
+			path, ready: false, **options)
+	end
+end</code></pre>
+					</details></section><section id="Falcon::Controller::Virtual#falcon_path"><h3><code class="language-ruby">def falcon_path</code></h3><p>The path to the falcon executable from this gem.</p>
+<details open>
+	<summary><h4>Signature</h4></summary>
+	<dl><dt>
+					<strong>returns</strong>　<code class="language-ruby">String</code></dt></dl>
+</details>
+<details>
+						<summary><h4>Implementation</h4></summary>
+						<pre><code class="language-ruby">def falcon_path
+	File.expand_path(&quot;../../../bin/falcon&quot;, __dir__)
+end</code></pre>
+					</details></section><section id="Falcon::Controller::Virtual#setup"><h3><code class="language-ruby">def setup(container)</code></h3><p>Setup the container with <a href="../Redirect/index.html" title="Redirect"><code class="language-ruby">class Falcon::Controller::Redirect</code></a> and <a href="../Proxy/index.html" title="Proxy"><code class="language-ruby">class Falcon::Controller::Proxy</code></a> child processes.
+These processes are gracefully restarted if they are already running.</p>
+<details open>
+	<summary><h4>Signature</h4></summary>
+	<dl><dt>
+					<strong>parameter</strong>　<code class="syntax">container</code>　<code class="language-ruby">Async::Container::Generic</code></dt></dl>
+</details>
+<details>
+						<summary><h4>Implementation</h4></summary>
+						<pre><code class="language-ruby">def setup(container)
+	if proxy = container[:proxy]
+		proxy.kill(:HUP)
+	end
+	
+	if redirect = container[:redirect]
+		redirect.kill(:HUP)
+	end
+	
+	container.reload do
+		@command.resolved_paths do |path|
+			path = File.expand_path(path)
+			root = File.dirname(path)
+			
+			spawn(path, container, chdir: root)
+		end
+		
+		container.spawn(name: &quot;Falcon Redirector&quot;, restart: true, key: :redirect) do |instance|
+			instance.exec(falcon_path, &quot;redirect&quot;,
+				&quot;--bind&quot;, @command.bind_insecure,
+				&quot;--timeout&quot;, @command.timeout.to_s,
+				&quot;--redirect&quot;, @command.bind_secure,
+				*@command.paths, ready: false
+			)
+		end
+		
+		container.spawn(name: &quot;Falcon Proxy&quot;, restart: true, key: :proxy) do |instance|
+			instance.exec(falcon_path, &quot;proxy&quot;,
+				&quot;--bind&quot;, @command.bind_secure,
+				&quot;--timeout&quot;, @command.timeout.to_s,
+				*@command.paths, ready: false
+			)
+		end
+	end
+end</code></pre>
+					</details></section>	</section>
+
+				
+			<footer>Documentation generated by <a href="https://github.com/socketry/utopia-project">Utopia::Project</a>.</footer>
+		</main>
+	</body>
+</html>

@@ -1,0 +1,261 @@
+
+html {
+	font-family: "PT Sans", Verdana, Helvetica, Arial, sans-serif;
+	font-size: 16px;
+	
+	/* Fix odd text-size in `display: flex` elements on Safari iOS */
+	text-size-adjust: 100%;
+	-webkit-text-size-adjust: 100%;
+	
+	line-height: 1.5;
+}
+
+@media (min-width: 40em) {
+	html {
+		font-size: 18px;
+		--tab-size: 4;
+	}
+	
+	main > pre {
+		margin: 2rem;
+	}
+}
+
+@media (min-width: 80em) {
+	html {
+		font-size: 20px;
+	}
+}
+
+p code {
+	padding: 0 0.2rem;
+}
+
+p code:first-child, p code:last-child {
+	padding: 0;
+}
+
+p img {
+	max-width: 100%;
+}
+
+pre {
+	/* -moz-tab-size is still required by Firefox */
+	--tab-size: 2;
+	tab-size: var(--tab-size);
+	-moz-tab-size: var(--tab-size);
+}
+
+html {
+	--main-color: #111;
+	--main-background-color: #fff;
+	
+	--header-color: #dfebff;
+	--underlay-color: #ddd;
+	
+	--accent-color: #1a73e8;
+	--accent-hover-color: #33a3ff;
+	
+	--overlay-color: rgba(255, 255, 255, 0.9);
+	--underlay-color: rgba(0, 0, 0, 0.2);
+}
+
+@media (prefers-color-scheme: dark) {
+	html {
+		--main-color: #e1e1e1;
+		--main-background-color: #111;
+		
+		--header-color: #222;
+		--overlay-color: #333;
+		
+		--accent-color: #01b9ff;
+		--accent-hover-color: #80dcff;
+		
+		--overlay-color: rgba(0, 0, 0, 0.8);
+		--underlay-color: rgba(255, 255, 255, 0.9);
+		
+		background-color: black;
+	}
+}
+
+html {
+	color: var(--main-color);
+	background-color: var(--main-background-color);
+}
+
+body {
+	margin: 0;
+	padding: 0;
+}
+
+header {
+	padding: 0.5rem;
+	
+	background-color: var(--header-color);
+	border-bottom: 0.2rem solid var(--accent-color);
+}
+
+main {
+	scroll-margin-top: 2rem;
+	
+	/* Force the element to contain margins */
+	display: flow-root;
+	
+	margin: 0 auto;
+	max-width: 48rem;
+}
+
+:target {
+	background-color: var(--header-color);
+}
+
+section {
+	border-radius: 1rem;
+	padding: 0.1rem 0;
+}
+
+main > section {
+	border-radius: 1rem;
+	margin: 4rem 0;
+}
+
+section > section {
+	margin: 1rem 0;
+}
+
+footer {
+	text-align: right;
+	font-size: 0.8rem;
+	
+	padding: 1rem;
+	margin-top: 5rem;
+}
+
+h1, h2, h3, h4, h5, h6, p, pre, ul, dl, ol {
+	margin: 1rem;
+}
+
+pre {
+	margin: 2rem 1rem;
+}
+
+h1 span {
+	display: inline-block;
+}
+
+header img {
+	max-height: 50vh;
+}
+
+li, dt, dd {
+	margin: 0.5rem 0;
+}
+
+details dt, details dd {
+	margin: 1rem 0;
+}
+
+ul.index {
+	padding: 0;
+	list-style: none;
+}
+
+li ul, li ol {
+	margin: 0;
+	margin-left: 1rem;
+}
+
+h1 {
+	margin-bottom: 4rem;
+}
+
+img {
+	border: none;
+}
+
+a {
+	color: var(--accent-color);
+	text-decoration: none;
+}
+
+a.self {
+	visibility: hidden;
+}
+
+*:hover > a.self {
+	visibility: visible;
+}
+
+a:hover {
+	color: var(--accent-hover-color);
+}
+
+pre {
+	overflow: auto;
+}
+
+details {
+	margin: 1rem;
+	border: 1px solid #aaa;
+	border-radius: 0.5rem;
+	
+	padding: .5em .5em 0;
+}
+
+summary > * {
+	margin: 0;
+	display: inline-block;
+}
+
+summary {
+	font-weight: bold;
+	margin: -.5rem -.5rem 0;
+	padding: .5rem;
+	cursor: pointer;
+}
+
+details[open] {
+	/* padding: .5rem; */
+}
+
+details[open] summary {
+	border-bottom: 1px solid #aaa;
+	/* margin-bottom: .5rem; */
+}
+
+figure {
+	text-align: center;
+	margin: 1rem;
+}
+
+figure.youtube-wrapper {
+	position: relative;
+	overflow: hidden;
+	padding-top: 56.25%;
+}
+
+figure.youtube-wrapper iframe {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	border: 0;
+}
+
+table {
+	width: 100%;
+	margin: 1rem;
+	
+	border-collapse: collapse;
+	width: calc(100% - 2rem);
+}
+
+table thead {
+	background-color: var(--header-color);
+	border-bottom: 0.2rem solid var(--accent-color);
+}
+
+table tr:hover {
+	background-color: var(--header-color);
+}

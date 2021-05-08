@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		
+			<title>Falcon::Command::Virtual</title>
+		
+		<meta charset="UTF-8"/>
+		<meta name="viewport" content="width=device-width, initial-scale=1"/>
+		
+		<link rel="icon" type="image/png" href="../../../../_static/icon.png"/>
+		<link rel="stylesheet" href="../../../../_static/site.css" type="text/css" media="screen"/>
+		
+		<script src="../../../../_components/jquery/jquery.min.js"></script>
+		<script src="../../../../_components/jquery-syntax/jquery.syntax.min.js"></script>
+		
+		<script src="../../../../_static/links.js"></script>
+		
+		<script type="text/javascript">
+		//<![CDATA[
+			jQuery(function($) {
+				$.syntax();
+			});
+		//]]>
+		</script>
+	</head>
+
+	<body>
+		<header> › <a class="link" href="../../../../index.html">Project</a> › <a class="link" href="../../../index.html">Source</a></header>
+		
+		<main>
+			
+	<h1><code class="language-ruby">Falcon::Command::Virtual</code></h1>
+	
+	<p>Implements the <code>falcon virtual</code> command. Designed for <em>deployment</em>.</p>
+<p>Manages a <a href="../../Controller/Virtual/index.html" title="Controller::Virtual"><code class="language-ruby">class Falcon::Controller::Virtual</code></a> instance which is responsible for running the <a href="../Proxy/index.html" title="Proxy"><code class="language-ruby">class Falcon::Command::Proxy</code></a> and <a href="../Redirect/index.html" title="Redirect"><code class="language-ruby">class Falcon::Command::Redirect</code></a> instances.</p>
+	
+	
+	<section>
+	<h2>Definitions</h2>
+	
+	<section id="Falcon::Command::Virtual#options"><h3><code class="language-ruby">options { ... }</code></h3><p>The command line options.</p>
+<details open>
+	<summary><h4>Signature</h4></summary>
+	<dl><dt>
+					<strong>attribute</strong>　<code class="language-ruby">Samovar::Options</code></dt></dl>
+</details>
+<details>
+						<summary><h4>Implementation</h4></summary>
+						<pre><code class="language-ruby">options do
+	option '--bind-insecure &lt;address&gt;', &quot;Bind redirection to the given hostname/address&quot;, default: &quot;http://[::]:80&quot;
+	option '--bind-secure &lt;address&gt;', &quot;Bind proxy to the given hostname/address&quot;, default: &quot;https://[::]:443&quot;
+	
+	option '-t/--timeout &lt;duration&gt;', &quot;Specify the maximum time to wait for non-blocking operations.&quot;, type: Float, default: 30
+end</code></pre>
+					</details></section><section id="Falcon::Command::Virtual#paths"><h3><code class="language-ruby">many :paths</code></h3><p>One or more paths to the configuration files.</p>
+<details open>
+	<summary><h4>Signature</h4></summary>
+	<dl><dt>
+					<strong>attribute</strong>　<code class="language-ruby">Array(String)</code></dt></dl>
+</details>
+</section><section id="Falcon::Command::Virtual#controller"><h3><code class="language-ruby">def controller</code></h3><p>Prepare a new controller for the command.</p>
+<details>
+						<summary><h4>Implementation</h4></summary>
+						<pre><code class="language-ruby">def controller
+	Controller::Virtual.new(self)
+end</code></pre>
+					</details></section><section id="Falcon::Command::Virtual#bind_secure"><h3><code class="language-ruby">def bind_secure</code></h3><p>The URI to bind the <code>HTTPS</code> -&gt; <code>falcon host</code> proxy.</p>
+<details>
+						<summary><h4>Implementation</h4></summary>
+						<pre><code class="language-ruby">def bind_secure
+	@options[:bind_secure]
+end</code></pre>
+					</details></section><section id="Falcon::Command::Virtual#bind_insecure"><h3><code class="language-ruby">def bind_insecure</code></h3><p>The URI to bind the <code>HTTP</code> -&gt; <code>HTTPS</code> redirector.</p>
+<details>
+						<summary><h4>Implementation</h4></summary>
+						<pre><code class="language-ruby">def bind_insecure
+	@options[:bind_insecure]
+end</code></pre>
+					</details></section><section id="Falcon::Command::Virtual#timeout"><h3><code class="language-ruby">def timeout</code></h3><p>The connection timeout to use for incoming connections.</p>
+<details>
+						<summary><h4>Implementation</h4></summary>
+						<pre><code class="language-ruby">def timeout
+	@options[:timeout]
+end</code></pre>
+					</details></section><section id="Falcon::Command::Virtual#call"><h3><code class="language-ruby">def call</code></h3><p>Prepare the environment and run the controller.</p>
+<details>
+						<summary><h4>Implementation</h4></summary>
+						<pre><code class="language-ruby">def call
+	Console.logger.info(self) do |buffer|
+		buffer.puts &quot;Falcon Virtual v#{VERSION} taking flight!&quot;
+		buffer.puts &quot;- To terminate: Ctrl-C or kill #{Process.pid}&quot;
+		buffer.puts &quot;- To reload all sites: kill -HUP #{Process.pid}&quot;
+	end
+	
+	ENV['CONSOLE_LEVEL'] = 'debug'
+	
+	self.controller.run
+end</code></pre>
+					</details></section><section id="Falcon::Command::Virtual#insecure_endpoint"><h3><code class="language-ruby">def insecure_endpoint(**options)</code></h3><p>The insecure endpoint for connecting to the <a href="../Redirect/index.html" title="Redirect"><code class="language-ruby">class Falcon::Command::Redirect</code></a> instance.</p>
+<details>
+						<summary><h4>Implementation</h4></summary>
+						<pre><code class="language-ruby">def insecure_endpoint(**options)
+	Async::HTTP::Endpoint.parse(@options[:bind_insecure], **options)
+end</code></pre>
+					</details></section><section id="Falcon::Command::Virtual#secure_endpoint"><h3><code class="language-ruby">def secure_endpoint(**options)</code></h3><p>The secure endpoint for connecting to the <a href="../Proxy/index.html" title="Proxy"><code class="language-ruby">class Falcon::Command::Proxy</code></a> instance.</p>
+<details>
+						<summary><h4>Implementation</h4></summary>
+						<pre><code class="language-ruby">def secure_endpoint(**options)
+	Async::HTTP::Endpoint.parse(@options[:bind_secure], **options)
+end</code></pre>
+					</details></section><section id="Falcon::Command::Virtual#host_endpoint"><h3><code class="language-ruby">def host_endpoint(hostname, **options)</code></h3><p>An endpoint suitable for connecting to the specified hostname.</p>
+<details>
+						<summary><h4>Implementation</h4></summary>
+						<pre><code class="language-ruby">def host_endpoint(hostname, **options)
+	endpoint = secure_endpoint(**options)
+	
+	url = URI.parse(@options[:bind_secure])
+	url.hostname = hostname
+	
+	return Async::HTTP::Endpoint.new(url, hostname: endpoint.hostname)
+end</code></pre>
+					</details></section>	</section>
+
+				
+			<footer>Documentation generated by <a href="https://github.com/socketry/utopia-project">Utopia::Project</a>.</footer>
+		</main>
+	</body>
+</html>

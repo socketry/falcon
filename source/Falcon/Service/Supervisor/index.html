@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		
+			<title>Falcon::Service::Supervisor</title>
+		
+		<meta charset="UTF-8"/>
+		<meta name="viewport" content="width=device-width, initial-scale=1"/>
+		
+		<link rel="icon" type="image/png" href="../../../../_static/icon.png"/>
+		<link rel="stylesheet" href="../../../../_static/site.css" type="text/css" media="screen"/>
+		
+		<script src="../../../../_components/jquery/jquery.min.js"></script>
+		<script src="../../../../_components/jquery-syntax/jquery.syntax.min.js"></script>
+		
+		<script src="../../../../_static/links.js"></script>
+		
+		<script type="text/javascript">
+		//<![CDATA[
+			jQuery(function($) {
+				$.syntax();
+			});
+		//]]>
+		</script>
+	</head>
+
+	<body>
+		<header> › <a class="link" href="../../../../index.html">Project</a> › <a class="link" href="../../../index.html">Source</a></header>
+		
+		<main>
+			
+	<h1><code class="language-ruby">Falcon::Service::Supervisor</code></h1>
+	
+	<p>Implements a host supervisor which can restart the host services and provide various metrics about the running processes.</p>
+	
+	
+	<section>
+	<h2>Definitions</h2>
+	
+	<section id="Falcon::Service::Supervisor#initialize"><h3><code class="language-ruby">def initialize(environment)</code></h3><p>Initialize the supervisor using the given environment.</p>
+<details open>
+	<summary><h4>Signature</h4></summary>
+	<dl><dt>
+					<strong>parameter</strong>　<code class="syntax">environment</code>　<code class="language-ruby">Build::Environment</code></dt></dl>
+</details>
+<details>
+						<summary><h4>Implementation</h4></summary>
+						<pre><code class="language-ruby">def initialize(environment)
+	super
+	
+	@bound_endpoint = nil
+end</code></pre>
+					</details></section><section id="Falcon::Service::Supervisor#endpoint"><h3><code class="language-ruby">def endpoint</code></h3><p>The endpoint which the supervisor will bind to.
+Typically a unix pipe in the same directory as the host.</p>
+<details>
+						<summary><h4>Implementation</h4></summary>
+						<pre><code class="language-ruby">def endpoint
+	@evaluator.endpoint
+end</code></pre>
+					</details></section><section id="Falcon::Service::Supervisor#do_restart"><h3><code class="language-ruby">def do_restart(message)</code></h3><p>Restart the process group that the supervisor belongs to.</p>
+<details>
+						<summary><h4>Implementation</h4></summary>
+						<pre><code class="language-ruby">def do_restart(message)
+	# Tell the parent of this process group to spin up a new process group/container.
+	# Wait for that to start accepting new connections.
+	# Stop accepting connections.
+	# Wait for existing connnections to drain.
+	# Terminate this process group.
+	signal = message[:signal] || :INT
+	
+	Process.kill(signal, Process.ppid)
+end</code></pre>
+					</details></section><section id="Falcon::Service::Supervisor#do_metrics"><h3><code class="language-ruby">def do_metrics(message)</code></h3><p>Capture process metrics relating to the process group that the supervisor belongs to.</p>
+<details>
+						<summary><h4>Implementation</h4></summary>
+						<pre><code class="language-ruby">def do_metrics(message)
+	Process::Metrics::General.capture(pid: Process.ppid, ppid: Process.ppid)
+end</code></pre>
+					</details></section><section id="Falcon::Service::Supervisor#handle"><h3><code class="language-ruby">def handle(message)</code></h3><p>Handle an incoming request.</p>
+<details open>
+	<summary><h4>Signature</h4></summary>
+	<dl><dt>
+					<strong>parameter</strong>　<code class="syntax">message</code>　<code class="language-ruby">Hash</code></dt><dd><p>The decoded message.</p>
+</dd></dl>
+</details>
+<details>
+						<summary><h4>Implementation</h4></summary>
+						<pre><code class="language-ruby">def handle(message)
+	case message[:please]
+	when 'restart'
+		self.do_restart(message)
+	when 'metrics'
+		self.do_metrics(message)
+	end
+end</code></pre>
+					</details></section><section id="Falcon::Service::Supervisor#start"><h3><code class="language-ruby">def start</code></h3><p>Bind the supervisor to the specified endpoint.</p>
+<details>
+						<summary><h4>Implementation</h4></summary>
+						<pre><code class="language-ruby">def start
+	Console.logger.info(self) {&quot;Binding to #{self.endpoint}...&quot;}
+	
+	@bound_endpoint = Async::Reactor.run do
+		Async::IO::SharedEndpoint.bound(self.endpoint)
+	end.wait
+	
+	super
+end</code></pre>
+					</details></section><section id="Falcon::Service::Supervisor#setup"><h3><code class="language-ruby">def setup(container)</code></h3><p>Start the supervisor process which accepts connections from the bound endpoint and processes JSON formatted messages.</p>
+<details open>
+	<summary><h4>Signature</h4></summary>
+	<dl><dt>
+					<strong>parameter</strong>　<code class="syntax">container</code>　<code class="language-ruby">Async::Container::Generic</code></dt></dl>
+</details>
+<details>
+						<summary><h4>Implementation</h4></summary>
+						<pre><code class="language-ruby">def setup(container)
+	container.run(name: self.name, restart: true, count: 1) do |instance|
+		Async do
+			@bound_endpoint.accept do |peer|
+				stream = Async::IO::Stream.new(peer)
+				
+				while message = stream.gets(&quot;\0&quot;)
+					response = handle(JSON.parse(message, symbolize_names: true))
+					stream.puts(response.to_json, separator: &quot;\0&quot;)
+				end
+			end
+			
+			instance.ready!
+		end
+	end
+	
+	super
+end</code></pre>
+					</details></section><section id="Falcon::Service::Supervisor#stop"><h3><code class="language-ruby">def stop</code></h3><p>Release the bound endpoint.</p>
+<details>
+						<summary><h4>Implementation</h4></summary>
+						<pre><code class="language-ruby">def stop
+	@bound_endpoint&amp;.close
+	@bound_endpoint = nil
+	
+	super
+end</code></pre>
+					</details></section>	</section>
+
+				
+			<footer>Documentation generated by <a href="https://github.com/socketry/utopia-project">Utopia::Project</a>.</footer>
+		</main>
+	</body>
+</html>

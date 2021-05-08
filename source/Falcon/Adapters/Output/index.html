@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		
+			<title>Falcon::Adapters::Output</title>
+		
+		<meta charset="UTF-8"/>
+		<meta name="viewport" content="width=device-width, initial-scale=1"/>
+		
+		<link rel="icon" type="image/png" href="../../../../_static/icon.png"/>
+		<link rel="stylesheet" href="../../../../_static/site.css" type="text/css" media="screen"/>
+		
+		<script src="../../../../_components/jquery/jquery.min.js"></script>
+		<script src="../../../../_components/jquery-syntax/jquery.syntax.min.js"></script>
+		
+		<script src="../../../../_static/links.js"></script>
+		
+		<script type="text/javascript">
+		//<![CDATA[
+			jQuery(function($) {
+				$.syntax();
+			});
+		//]]>
+		</script>
+	</head>
+
+	<body>
+		<header> › <a class="link" href="../../../../index.html">Project</a> › <a class="link" href="../../../index.html">Source</a></header>
+		
+		<main>
+			
+	<h1><code class="language-ruby">Falcon::Adapters::Output</code></h1>
+	
+	<p>Wraps the rack response body.</p>
+<p>The <code>rack</code> body must respond to <code>each</code> and must only yield <code>String</code> values. If the body responds to <code>close</code>, it will be called after iteration. If the body is replaced by a middleware after action, the original body must be closed first, if it responds to <code>close</code>. If the body responds to <code>to_path</code>, it must return a String identifying the location of a file whose contents are identical to that produced by calling <code>each</code>; this may be used by the server as an alternative, possibly more efficient way to transport the response. The body commonly is an <code>Array</code> of strings, the application instance itself, or a <code>File</code>-like object.</p>
+	
+	
+	<section>
+	<h2>Definitions</h2>
+	
+	<section id="Falcon::Adapters::Output.wrap"><h3><code class="language-ruby">def self.wrap(status, headers, body)</code></h3><p>Wraps an array into a buffered body.</p>
+<details open>
+	<summary><h4>Signature</h4></summary>
+	<dl><dt>
+					<strong>parameter</strong>　<code class="syntax">status</code>　<code class="language-ruby">Integer</code></dt><dd><p>The response status.</p>
+</dd><dt>
+					<strong>parameter</strong>　<code class="syntax">headers</code>　<code class="language-ruby">Protocol::HTTP::Headers</code></dt><dd><p>The response headers.</p>
+</dd><dt>
+					<strong>parameter</strong>　<code class="syntax">body</code>　<code class="language-ruby">Object</code></dt><dd><p>The <code>rack</code> response body.</p>
+</dd></dl>
+</details>
+<details>
+						<summary><h4>Implementation</h4></summary>
+						<pre><code class="language-ruby">def self.wrap(status, headers, body)
+	# In no circumstance do we want this header propagating out:
+	if length = headers.delete(CONTENT_LENGTH)
+		# We don't really trust the user to provide the right length to the transport.
+		length = Integer(length)
+	end
+	
+	if body.is_a?(::Protocol::HTTP::Body::Readable)
+		return body
+	elsif status == 200 and body.respond_to?(:to_path)
+		# Don't mangle partial responsese (206)
+		return ::Protocol::HTTP::Body::File.open(body.to_path)
+	elsif body.is_a?(Array)
+		length ||= body.sum(&amp;:bytesize)
+		return self.new(body, length)
+	else
+		return self.new(body, length)
+	end
+end</code></pre>
+					</details></section><section id="Falcon::Adapters::Output#initialize"><h3><code class="language-ruby">def initialize(body, length)</code></h3><p>Initialize the output wrapper.</p>
+<details open>
+	<summary><h4>Signature</h4></summary>
+	<dl><dt>
+					<strong>parameter</strong>　<code class="syntax">body</code>　<code class="language-ruby">Object</code></dt><dd><p>The rack response body.</p>
+</dd><dt>
+					<strong>parameter</strong>　<code class="syntax">length</code>　<code class="language-ruby">Integer</code></dt><dd><p>The rack response length.</p>
+</dd></dl>
+</details>
+<details>
+						<summary><h4>Implementation</h4></summary>
+						<pre><code class="language-ruby">def initialize(body, length)
+	@length = length
+	@body = body
+	
+	@chunks = nil
+end</code></pre>
+					</details></section><section id="Falcon::Adapters::Output#body"><h3><code class="language-ruby">attr :body</code></h3><p>The rack response body.</p>
+</section><section id="Falcon::Adapters::Output#length"><h3><code class="language-ruby">attr :length</code></h3><p>The content length of the rack response body.</p>
+</section><section id="Falcon::Adapters::Output#empty?"><h3><code class="language-ruby">def empty?</code></h3><p>Whether the body is empty.</p>
+<details>
+						<summary><h4>Implementation</h4></summary>
+						<pre><code class="language-ruby">def empty?
+	@length == 0 or (@body.respond_to?(:empty?) and @body.empty?)
+end</code></pre>
+					</details></section><section id="Falcon::Adapters::Output#ready?"><h3><code class="language-ruby">def ready?</code></h3><p>Whether the body can be read immediately.</p>
+<details>
+						<summary><h4>Implementation</h4></summary>
+						<pre><code class="language-ruby">def ready?
+	true
+end</code></pre>
+					</details></section><section id="Falcon::Adapters::Output#close"><h3><code class="language-ruby">def close(error = nil)</code></h3><p>Close the response body.</p>
+<details>
+						<summary><h4>Implementation</h4></summary>
+						<pre><code class="language-ruby">def close(error = nil)
+	if @body and @body.respond_to?(:close)
+		@body.close
+	end
+	
+	@body = nil
+	@chunks = nil
+	
+	super
+end</code></pre>
+					</details></section><section id="Falcon::Adapters::Output#each"><h3><code class="language-ruby">def each(&amp;block)</code></h3><p>Enumerate the response body.</p>
+<details open>
+	<summary><h4>Signature</h4></summary>
+	<dl><dt>
+					<strong>yields</strong>　<code class="syntax language-ruby">{|chunk| ...}</code></dt><dd><dl>
+<dt>
+					<strong>parameter</strong>　<code class="syntax">chunk</code>　<code class="language-ruby">String</code></dt>					</dl></dd></dl>
+</details>
+<details>
+						<summary><h4>Implementation</h4></summary>
+						<pre><code class="language-ruby">def each(&amp;block)
+	@body.each(&amp;block)
+ensure
+	self.close($!)
+end</code></pre>
+					</details></section><section id="Falcon::Adapters::Output#read"><h3><code class="language-ruby">def read</code></h3><p>Read the next chunk from the response body.</p>
+<details open>
+	<summary><h4>Signature</h4></summary>
+	<dl><dt>
+					<strong>returns</strong>　<code class="language-ruby">String | Nil</code></dt></dl>
+</details>
+<details>
+						<summary><h4>Implementation</h4></summary>
+						<pre><code class="language-ruby">def read
+	@chunks ||= @body.to_enum(:each)
+	
+	return @chunks.next
+rescue StopIteration
+	return nil
+end</code></pre>
+					</details></section>	</section>
+
+				
+			<footer>Documentation generated by <a href="https://github.com/socketry/utopia-project">Utopia::Project</a>.</footer>
+		</main>
+	</body>
+</html>

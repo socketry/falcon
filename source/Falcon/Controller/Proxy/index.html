@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		
+			<title>Falcon::Controller::Proxy</title>
+		
+		<meta charset="UTF-8"/>
+		<meta name="viewport" content="width=device-width, initial-scale=1"/>
+		
+		<link rel="icon" type="image/png" href="../../../../_static/icon.png"/>
+		<link rel="stylesheet" href="../../../../_static/site.css" type="text/css" media="screen"/>
+		
+		<script src="../../../../_components/jquery/jquery.min.js"></script>
+		<script src="../../../../_components/jquery-syntax/jquery.syntax.min.js"></script>
+		
+		<script src="../../../../_static/links.js"></script>
+		
+		<script type="text/javascript">
+		//<![CDATA[
+			jQuery(function($) {
+				$.syntax();
+			});
+		//]]>
+		</script>
+	</head>
+
+	<body>
+		<header> › <a class="link" href="../../../../index.html">Project</a> › <a class="link" href="../../../index.html">Source</a></header>
+		
+		<main>
+			
+	<h1><code class="language-ruby">Falcon::Controller::Proxy</code></h1>
+	
+	<p>A controller for proxying requests.</p>
+	
+	
+	<section>
+	<h2>Definitions</h2>
+	
+	<section id="Falcon::Controller::Proxy::DEFAULT_SESSION_ID"><h3><code class="language-ruby">DEFAULT_SESSION_ID = &quot;falcon&quot;</code></h3><p>The default SSL session identifier.</p>
+</section><section id="Falcon::Controller::Proxy#initialize"><h3><code class="language-ruby">def initialize(command, session_id: DEFAULT_SESSION_ID, **options)</code></h3><p>Initialize the proxy controller.</p>
+<details open>
+	<summary><h4>Signature</h4></summary>
+	<dl><dt>
+					<strong>parameter</strong>　<code class="syntax">command</code>　<code class="language-ruby">Command::<a href="../../Command/Proxy/index.html" title="Falcon::Command::Proxy">Proxy</a></code></dt><dd><p>The user-specified command-line options.</p>
+</dd><dt>
+					<strong>parameter</strong>　<code class="syntax">session_id</code>　<code class="language-ruby">String</code></dt><dd><p>The SSL session identifier to use for the session cache.</p>
+</dd></dl>
+</details>
+<details>
+						<summary><h4>Implementation</h4></summary>
+						<pre><code class="language-ruby">def initialize(command, session_id: DEFAULT_SESSION_ID, **options)
+	super(command, **options)
+	
+	@session_id = session_id
+	@hosts = {}
+end</code></pre>
+					</details></section><section id="Falcon::Controller::Proxy#load_app"><h3><code class="language-ruby">def load_app</code></h3><p>Load the <a href="../../Middleware/Proxy/index.html" title="Middleware::Proxy"><code class="language-ruby">class Falcon::Middleware::Proxy</code></a> application with the specified hosts.</p>
+<details>
+						<summary><h4>Implementation</h4></summary>
+						<pre><code class="language-ruby">def load_app
+	return Middleware::Proxy.new(Middleware::BadRequest, @hosts)
+end</code></pre>
+					</details></section><section id="Falcon::Controller::Proxy#name"><h3><code class="language-ruby">def name</code></h3><p>The name of the controller which is used for the process title.</p>
+<details>
+						<summary><h4>Implementation</h4></summary>
+						<pre><code class="language-ruby">def name
+	&quot;Falcon Proxy Server&quot;
+end</code></pre>
+					</details></section><section id="Falcon::Controller::Proxy#host_context"><h3><code class="language-ruby">def host_context(socket, hostname)</code></h3><p>Look up the host context for the given hostname, and update the socket hostname if necessary.</p>
+<details open>
+	<summary><h4>Signature</h4></summary>
+	<dl><dt>
+					<strong>parameter</strong>　<code class="syntax">socket</code>　<code class="language-ruby">OpenSSL::SSL::SSLSocket</code></dt><dd><p>The incoming connection.</p>
+</dd><dt>
+					<strong>parameter</strong>　<code class="syntax">hostname</code>　<code class="language-ruby">String</code></dt><dd><p>The negotiated hostname.</p>
+</dd></dl>
+</details>
+<details>
+						<summary><h4>Implementation</h4></summary>
+						<pre><code class="language-ruby">def host_context(socket, hostname)
+	if host = @hosts[hostname]
+		Console.logger.debug(self) {&quot;Resolving #{hostname} -&gt; #{host}&quot;}
+		
+		socket.hostname = hostname
+		
+		return host.ssl_context
+	else
+		Console.logger.warn(self) {&quot;Unable to resolve #{hostname}!&quot;}
+		
+		return nil
+	end
+end</code></pre>
+					</details></section><section id="Falcon::Controller::Proxy#ssl_context"><h3><code class="language-ruby">def ssl_context</code></h3><p>Generate an SSL context which delegates to <a href="index.html#Falcon%3A%3AController%3A%3AProxy%23host_context" title="host_context"><code class="language-ruby">Falcon::Controller::Proxy#host_context</code></a> to multiplex based on hostname.</p>
+<details>
+						<summary><h4>Implementation</h4></summary>
+						<pre><code class="language-ruby">def ssl_context
+	@server_context ||= OpenSSL::SSL::SSLContext.new.tap do |context|
+		context.servername_cb = Proc.new do |socket, hostname|
+			self.host_context(socket, hostname)
+		end
+		
+		context.session_id_context = @session_id
+		
+		context.ssl_version = :TLSv1_2_server
+		
+		context.set_params(
+			ciphers: TLS::SERVER_CIPHERS,
+			verify_mode: OpenSSL::SSL::VERIFY_NONE,
+		)
+		
+		context.setup
+	end
+end</code></pre>
+					</details></section><section id="Falcon::Controller::Proxy#endpoint"><h3><code class="language-ruby">def endpoint</code></h3><p>The endpoint the server will bind to.</p>
+<details>
+						<summary><h4>Implementation</h4></summary>
+						<pre><code class="language-ruby">def endpoint
+	@command.endpoint.with(
+		ssl_context: self.ssl_context,
+		reuse_address: true,
+	)
+end</code></pre>
+					</details></section><section id="Falcon::Controller::Proxy#start"><h3><code class="language-ruby">def start</code></h3><p>Builds a map of host redirections.</p>
+<details>
+						<summary><h4>Implementation</h4></summary>
+						<pre><code class="language-ruby">def start
+	configuration = @command.configuration
+	
+	services = Services.new(configuration)
+	
+	@hosts = {}
+	
+	services.each do |service|
+		if service.is_a?(Service::Proxy)
+			Console.logger.info(self) {&quot;Proxying #{service.authority} to #{service.endpoint}&quot;}
+			@hosts[service.authority] = service
+			
+			# Pre-cache the ssl contexts:
+			# It seems some OpenSSL objects don't like event-driven I/O.
+			service.ssl_context
+		end
+	end
+	
+	super
+end</code></pre>
+					</details></section>	</section>
+
+				
+			<footer>Documentation generated by <a href="https://github.com/socketry/utopia-project">Utopia::Project</a>.</footer>
+		</main>
+	</body>
+</html>

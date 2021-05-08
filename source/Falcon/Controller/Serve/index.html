@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		
+			<title>Falcon::Controller::Serve</title>
+		
+		<meta charset="UTF-8"/>
+		<meta name="viewport" content="width=device-width, initial-scale=1"/>
+		
+		<link rel="icon" type="image/png" href="../../../../_static/icon.png"/>
+		<link rel="stylesheet" href="../../../../_static/site.css" type="text/css" media="screen"/>
+		
+		<script src="../../../../_components/jquery/jquery.min.js"></script>
+		<script src="../../../../_components/jquery-syntax/jquery.syntax.min.js"></script>
+		
+		<script src="../../../../_static/links.js"></script>
+		
+		<script type="text/javascript">
+		//<![CDATA[
+			jQuery(function($) {
+				$.syntax();
+			});
+		//]]>
+		</script>
+	</head>
+
+	<body>
+		<header> › <a class="link" href="../../../../index.html">Project</a> › <a class="link" href="../../../index.html">Source</a></header>
+		
+		<main>
+			
+	<h1><code class="language-ruby">Falcon::Controller::Serve</code></h1>
+	
+	<p>A generic controller for serving an application.
+Uses <a href="../../Server/index.html" title="Server"><code class="language-ruby">class Falcon::Server</code></a> for handling incoming requests.</p>
+	
+	
+	<section>
+	<h2>Definitions</h2>
+	
+	<section id="Falcon::Controller::Serve#initialize"><h3><code class="language-ruby">def initialize(command, **options)</code></h3><p>Initialize the server controller.</p>
+<details open>
+	<summary><h4>Signature</h4></summary>
+	<dl><dt>
+					<strong>parameter</strong>　<code class="syntax">command</code>　<code class="language-ruby">Command::<a href="../../Command/Serve/index.html" title="Falcon::Command::Serve">Serve</a></code></dt><dd><p>The user-specified command-line options.</p>
+</dd></dl>
+</details>
+<details>
+						<summary><h4>Implementation</h4></summary>
+						<pre><code class="language-ruby">def initialize(command, **options)
+	@command = command
+	
+	@endpoint = nil
+	@bound_endpoint = nil
+	@debug_trap = Async::IO::Trap.new(:USR1)
+	
+	super(**options)
+end</code></pre>
+					</details></section><section id="Falcon::Controller::Serve#create_container"><h3><code class="language-ruby">def create_container</code></h3><p>Create the controller as specified by the command.
+e.g. <code>Async::Container::Forked</code>.</p>
+<details>
+						<summary><h4>Implementation</h4></summary>
+						<pre><code class="language-ruby">def create_container
+	@command.container_class.new
+end</code></pre>
+					</details></section><section id="Falcon::Controller::Serve#endpoint"><h3><code class="language-ruby">def endpoint</code></h3><p>The endpoint the server will bind to.</p>
+<details>
+						<summary><h4>Implementation</h4></summary>
+						<pre><code class="language-ruby">def endpoint
+	@command.endpoint
+end</code></pre>
+					</details></section><section id="Falcon::Controller::Serve#load_app"><h3><code class="language-ruby">def load_app</code></h3><details open>
+	<summary><h4>Signature</h4></summary>
+	<dl><dt>
+					<strong>returns</strong>　<code class="language-ruby">Protocol::HTTP::Middleware</code></dt><dd><p>an instance of the application to be served.</p>
+</dd></dl>
+</details>
+<details>
+						<summary><h4>Implementation</h4></summary>
+						<pre><code class="language-ruby">def load_app
+	@command.load_app
+end</code></pre>
+					</details></section><section id="Falcon::Controller::Serve#start"><h3><code class="language-ruby">def start</code></h3><p>Prepare the bound endpoint for the server.</p>
+<details>
+						<summary><h4>Implementation</h4></summary>
+						<pre><code class="language-ruby">def start
+	@endpoint ||= self.endpoint
+	
+	@bound_endpoint = Async do
+		Async::IO::SharedEndpoint.bound(@endpoint)
+	end.wait
+	
+	Console.logger.info(self) { &quot;Starting #{name} on #{@endpoint.to_url}&quot; }
+	
+	@debug_trap.ignore!
+	
+	super
+end</code></pre>
+					</details></section><section id="Falcon::Controller::Serve#name"><h3><code class="language-ruby">def name</code></h3><p>The name of the controller which is used for the process title.</p>
+<details>
+						<summary><h4>Implementation</h4></summary>
+						<pre><code class="language-ruby">def name
+	&quot;Falcon Server&quot;
+end</code></pre>
+					</details></section><section id="Falcon::Controller::Serve#setup"><h3><code class="language-ruby">def setup(container)</code></h3><p>Setup the container with the application instance.</p>
+<details open>
+	<summary><h4>Signature</h4></summary>
+	<dl><dt>
+					<strong>parameter</strong>　<code class="syntax">container</code>　<code class="language-ruby">Async::Container::Generic</code></dt></dl>
+</details>
+<details>
+						<summary><h4>Implementation</h4></summary>
+						<pre><code class="language-ruby">def setup(container)
+	container.run(name: self.name, restart: true, **@command.container_options) do |instance|
+		Async do |task|
+			# Load one app instance per container:
+			app = self.load_app
+			
+			task.async do
+				if @debug_trap.install!
+					Console.logger.info(instance) do
+						&quot;- Per-process status: kill -USR1 #{Process.pid}&quot;
+					end
+				end
+				
+				@debug_trap.trap do
+					Console.logger.info(self) do |buffer|
+						task.reactor.print_hierarchy(buffer)
+					end
+				end
+			end
+			
+			server = Falcon::Server.new(app, @bound_endpoint, protocol: @endpoint.protocol, scheme: @endpoint.scheme)
+			
+			server.run
+			
+			instance.ready!
+			
+			task.children.each(&amp;:wait)
+		end
+	end
+end</code></pre>
+					</details></section><section id="Falcon::Controller::Serve#stop"><h3><code class="language-ruby">def stop(*)</code></h3><p>Close the bound endpoint.</p>
+<details>
+						<summary><h4>Implementation</h4></summary>
+						<pre><code class="language-ruby">def stop(*)
+	@bound_endpoint&amp;.close
+	
+	@debug_trap.default!
+	
+	super
+end</code></pre>
+					</details></section>	</section>
+
+				
+			<footer>Documentation generated by <a href="https://github.com/socketry/utopia-project">Utopia::Project</a>.</footer>
+		</main>
+	</body>
+</html>
