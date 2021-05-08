@@ -13,7 +13,7 @@ class MyApp
 		
 		Async do |task|
 			@words.each do |words|
-				Async.logger.debug("Sending #{words.inspect}")
+				Console.logger.debug("Sending #{words.inspect}")
 				body.write(words.join(",") + "\n")
 				task.sleep(1)
 			end

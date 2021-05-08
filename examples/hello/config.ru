@@ -3,17 +3,15 @@
 
 require 'async'
 
+Console.logger.debug!
+
 class RequestLogger
 	def initialize(app)
 		@app = app
 	end
 	
 	def call(env)
-		logger = Console.logger.with(level: :debug)
-		
-		Async(logger: logger) do
-			@app.call(env)
-		end.wait
+		@app.call(env)
 	end
 end
 

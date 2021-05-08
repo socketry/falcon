@@ -64,7 +64,7 @@ module Falcon
 			
 			# Prepare the environment and run the controller.
 			def call
-				Async.logger.info(self) do |buffer|
+				Console.logger.info(self) do |buffer|
 					buffer.puts "Falcon Host v#{VERSION} taking flight!"
 					buffer.puts "- Configuration: #{@paths.join(', ')}"
 					buffer.puts "- To terminate: Ctrl-C or kill #{Process.pid}"

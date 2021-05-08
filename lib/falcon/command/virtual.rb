@@ -71,7 +71,7 @@ module Falcon
 			
 			# Prepare the environment and run the controller.
 			def call
-				Async.logger.info(self) do |buffer|
+				Console.logger.info(self) do |buffer|
 					buffer.puts "Falcon Virtual v#{VERSION} taking flight!"
 					buffer.puts "- To terminate: Ctrl-C or kill #{Process.pid}"
 					buffer.puts "- To reload all sites: kill -HUP #{Process.pid}"

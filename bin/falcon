@@ -27,6 +27,6 @@ begin
 rescue Interrupt
 	# Ignore.
 rescue => error
-	Async.logger.error(Falcon::Command) {error}
+	Console.logger.error(Falcon::Command) {error}
 	exit! 1
 end

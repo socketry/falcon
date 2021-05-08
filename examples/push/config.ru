@@ -10,7 +10,7 @@ class EarlyHints
 		path = env['PATH_INFO']
 		early_hints = early_hints = env['rack.early_hints']
 		
-		Async.logger.debug("path: #{path} #{early_hints}")
+		Console.logger.debug("path: #{path} #{early_hints}")
 		
 		if path == "/index.html" and early_hints
 			early_hints.push("/style.css")

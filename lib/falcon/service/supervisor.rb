@@ -74,7 +74,7 @@ module Falcon
 			
 			# Bind the supervisor to the specified endpoint.
 			def start
-				Async.logger.info(self) {"Binding to #{self.endpoint}..."}
+				Console.logger.info(self) {"Binding to #{self.endpoint}..."}
 				
 				@bound_endpoint = Async::Reactor.run do
 					Async::IO::SharedEndpoint.bound(self.endpoint)

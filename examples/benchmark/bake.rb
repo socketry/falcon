@@ -38,7 +38,7 @@ def compare
 		[*strace, "../../bin/falcon", "serve", "--bind", host, "--config"],
 	]
 	
-	Async.logger.info!
+	Console.logger.info!
 	
 	endpoint = Async::HTTP::Endpoint.parse(host)
 	
@@ -69,7 +69,7 @@ def compare
 					
 					response = protocol.call(request)
 					
-					Async.logger.info(response, "Headers:", response.headers.to_h) {"Response body size: #{response.read.bytesize}"}
+					Console.logger.info(response, "Headers:", response.headers.to_h) {"Response body size: #{response.read.bytesize}"}
 					
 					response.close
 					
@@ -82,7 +82,7 @@ def compare
 				
 				end_time = Async::Clock.now
 				
-				Async.logger.info(command) {"** Took #{end_time - start_time}s to first response."}
+				Console.logger.info(command) {"** Took #{end_time - start_time}s to first response."}
 				
 				n = 2
 				

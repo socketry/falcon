@@ -61,7 +61,7 @@ module Falcon
 		# Start all named services.
 		def start
 			@named.each do |name, service|
-				Async.logger.debug(self) {"Starting #{name}..."}
+				Console.logger.debug(self) {"Starting #{name}..."}
 				service.start
 			end
 		end
@@ -71,7 +71,7 @@ module Falcon
 		# @parameter container [Async::Container::Generic]
 		def setup(container)
 			@named.each do |name, service|
-				Async.logger.debug(self) {"Setup #{name} into #{container}..."}
+				Console.logger.debug(self) {"Setup #{name} into #{container}..."}
 				service.setup(container)
 			end
 			
@@ -83,13 +83,13 @@ module Falcon
 			failed = false
 			
 			@named.each do |name, service|
-				Async.logger.debug(self) {"Stopping #{name}..."}
+				Console.logger.debug(self) {"Stopping #{name}..."}
 				
 				begin
 					service.stop
 				rescue
 					failed = true
-					Async.logger.error(self, $!)
+					Console.logger.error(self, $!)
 				end
 			end
 			

@@ -52,7 +52,7 @@ module Falcon
 			def preload!
 				if scripts = @evaluator.preload
 					scripts.each do |path|
-						Async.logger.info(self) {"Preloading #{path}..."}
+						Console.logger.info(self) {"Preloading #{path}..."}
 						full_path = File.expand_path(path, self.root)
 						load(full_path)
 					end
@@ -62,7 +62,7 @@ module Falcon
 			# Prepare the bound endpoint for the application instances.
 			# Invoke {preload!} to load shared resources into the parent process.
 			def start
-				Async.logger.info(self) {"Binding to #{self.endpoint}..."}
+				Console.logger.info(self) {"Binding to #{self.endpoint}..."}
 				
 				@bound_endpoint = Async::Reactor.run do
 					Async::IO::SharedEndpoint.bound(self.endpoint)
@@ -87,8 +87,8 @@ module Falcon
 				run_options[:count] = count unless count.nil?
 				
 				container.run(**run_options) do |instance|
-					Async(logger: logger) do |task|
-						Async.logger.info(self) {"Starting application server for #{self.root}..."}
+					Async do |task|
+						Console.logger.info(self) {"Starting application server for #{self.root}..."}
 						
 						server = Server.new(self.middleware, @bound_endpoint, protocol: protocol, scheme: scheme)
 						

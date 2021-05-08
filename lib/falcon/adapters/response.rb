@@ -78,7 +78,7 @@ module Falcon
 					ignored = headers.extract(IGNORE_HEADERS)
 					
 					unless ignored.empty?
-						Async.logger.warn("Ignoring protocol-level headers: #{ignored.inspect}")
+						Console.logger.warn("Ignoring protocol-level headers: #{ignored.inspect}")
 					end
 					
 					body = Output.wrap(status, headers, body)

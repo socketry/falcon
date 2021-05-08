@@ -9,11 +9,7 @@ class RequestLogger
 	end
 	
 	def call(env)
-		logger = Async.logger.with(level: :debug, name: "middleware")
-		
-		Async(logger: logger) do
-			@app.call(env)
-		end.wait
+		@app.call(env)
 	end
 end
 

@@ -60,13 +60,13 @@ module Falcon
 			# @parameter hostname [String] The negotiated hostname.
 			def host_context(socket, hostname)
 				if host = @hosts[hostname]
-					Async.logger.debug(self) {"Resolving #{hostname} -> #{host}"}
+					Console.logger.debug(self) {"Resolving #{hostname} -> #{host}"}
 					
 					socket.hostname = hostname
 					
 					return host.ssl_context
 				else
-					Async.logger.warn(self) {"Unable to resolve #{hostname}!"}
+					Console.logger.warn(self) {"Unable to resolve #{hostname}!"}
 					
 					return nil
 				end
@@ -110,7 +110,7 @@ module Falcon
 				
 				services.each do |service|
 					if service.is_a?(Service::Proxy)
-						Async.logger.info(self) {"Proxying #{service.authority} to #{service.endpoint}"}
+						Console.logger.info(self) {"Proxying #{service.authority} to #{service.endpoint}"}
 						@hosts[service.authority] = service
 						
 						# Pre-cache the ssl contexts:

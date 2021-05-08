@@ -25,7 +25,7 @@ require 'rack'
 require_relative 'input'
 require_relative 'response'
 
-require 'async/logger'
+require 'console'
 
 module Falcon
 	module Adapters
@@ -74,13 +74,10 @@ module Falcon
 			
 			# Initialize the rack adaptor middleware.
 			# @parameter app [Object] The rack middleware.
-			# @parameter logger [Console::Logger] The logger to use.
-			def initialize(app, logger = Async.logger)
+			def initialize(app)
 				@app = app
 				
 				raise ArgumentError, "App must be callable!" unless @app.respond_to?(:call)
-				
-				@logger = logger
 			end
 			
 			# Unwrap raw HTTP headers into the CGI-style expected by Rack middleware.
@@ -150,7 +147,7 @@ module Falcon
 					
 					RACK_INPUT => Input.new(request.body),
 					RACK_ERRORS => $stderr,
-					RACK_LOGGER => Async.logger,
+					RACK_LOGGER => Console.logger,
 					
 					RACK_MULTITHREAD => true,
 					RACK_MULTIPROCESS => true,
@@ -211,7 +208,7 @@ module Falcon
 					return Response.wrap(status, headers, body, request)
 				end
 			rescue => exception
-				@logger.error(self) {exception}
+				Console.logger.error(self) {exception}
 				
 				return failure_response(exception)
 			end

@@ -20,7 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-require 'async/logger'
+require 'console'
 require 'async/http/statistics'
 
 module Falcon
@@ -30,7 +30,7 @@ module Falcon
 			# Initialize the verbose middleware.
 			# @parameter app [Protocol::HTTP::Middleware] The middleware to wrap.
 			# @parameter logger [Console::Logger] The logger to use.
-			def initialize(app, logger = Async.logger)
+			def initialize(app, logger = Console.logger)
 				super(app)
 				
 				@logger = logger

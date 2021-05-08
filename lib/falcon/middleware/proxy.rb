@@ -112,7 +112,7 @@ module Falcon
 			def prepare_request(request, host)
 				forwarded = []
 				
-				Async.logger.debug(self) do |buffer|
+				Console.logger.debug(self) do |buffer|
 					buffer.puts "Request authority: #{request.authority}"
 					buffer.puts "Host authority: #{host.authority}"
 					buffer.puts "Request: #{request.method} #{request.path} #{request.version}"
@@ -158,7 +158,7 @@ module Falcon
 					super
 				end
 			rescue
-				Async.logger.error(self) {$!}
+				Console.logger.error(self) {$!}
 				return Protocol::HTTP::Response[502, {'content-type' => 'text/plain'}, ["#{$!.inspect}: #{$!.backtrace.join("\n")}"]]
 			end
 		end

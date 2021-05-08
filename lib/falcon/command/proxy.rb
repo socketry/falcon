@@ -66,7 +66,7 @@ module Falcon
 			
 			# Prepare the environment and run the controller.
 			def call
-				Async.logger.info(self) do |buffer|
+				Console.logger.info(self) do |buffer|
 					buffer.puts "Falcon Proxy v#{VERSION} taking flight!"
 					buffer.puts "- Binding to: #{@options[:bind]}"
 					buffer.puts "- To terminate: Ctrl-C or kill #{Process.pid}"

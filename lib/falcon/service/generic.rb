@@ -58,7 +58,7 @@ module Falcon
 			# The logger to use for this service.
 			# @returns [Console::Logger]
 			def logger
-				return Async.logger # .with(name: name)
+				return Console.logger # .with(name: name)
 			end
 			
 			# Start the service.

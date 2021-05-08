@@ -68,7 +68,7 @@ module Falcon
 					Async::IO::SharedEndpoint.bound(@endpoint)
 				end.wait
 				
-				Async.logger.info(self) { "Starting #{name} on #{@endpoint.to_url}" }
+				Console.logger.info(self) { "Starting #{name} on #{@endpoint.to_url}" }
 				
 				@debug_trap.ignore!
 				
@@ -90,13 +90,13 @@ module Falcon
 						
 						task.async do
 							if @debug_trap.install!
-								Async.logger.info(instance) do
+								Console.logger.info(instance) do
 									"- Per-process status: kill -USR1 #{Process.pid}"
 								end
 							end
 							
 							@debug_trap.trap do
-								Async.logger.info(self) do |buffer|
+								Console.logger.info(self) do |buffer|
 									task.reactor.print_hierarchy(buffer)
 								end
 							end
