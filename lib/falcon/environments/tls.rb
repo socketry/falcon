@@ -46,7 +46,7 @@ environment(:tls) do
 	# The list of certificates loaded from that path.
 	# @attribute [Array(OpenSSL::X509::Certificate)]
 	ssl_certificates do
-		OpenSSL::X509.load_certificates(ssl_certificate_path)
+		OpenSSL::X509::Certificate.load_file(ssl_certificate_path)
 	end
 	
 	# The main certificate.
