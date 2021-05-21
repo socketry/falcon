@@ -4,6 +4,10 @@ Falcon is a multi-process, multi-fiber rack-compatible HTTP server built on top 
 
 [![Development Status](https://github.com/socketry/falcon/workflows/Development/badge.svg)](https://github.com/socketry/falcon/actions?workflow=Development)
 
+## Usage
+
+Please see the <a href="https://socketry.github.io/falcon/">project documentation</a> or run it locally using `bake utopia:project:serve`.
+
 ## Motivation
 
 Initially, when I developed [async](https://github.com/socketry/async), I saw an opportunity to implement [async-http](https://github.com/socketry/async-http): providing both client and server components. After experimenting with these ideas, I decided to build an actual web server for comparing and validating performance primarily out of interest. Falcon grew out of those experiments and permitted the ability to test existing real-world code on top of [async](https://github.com/socketry/async).
@@ -24,10 +28,6 @@ Falcon can be an important part of your business or project, both improving perf
   - Better software by funding development and testing.
 
 Please visit [Socketry.io](https://socketry.io) to register and subscribe.
-
-## Usage
-
-Please see the <a href="https://socketry.github.io/falcon/">project documentation</a> or run it locally using `bake utopia:project:serve`.
 
 ## Contributing
 
