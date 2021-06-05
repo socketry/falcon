@@ -140,7 +140,7 @@ Adds <code>root</code> and <code>authority</code> keys.</p>
 <details>
 						<summary><h4>Implementation</h4></summary>
 						<pre><code class="language-ruby">def host(name, *parents, &amp;block)
-	environment = merge(name, :host, *parents, &amp;block)
+	environment = merge(name, *parents, &amp;block)
 	
 	environment[:root] = @root
 	environment[:authority] = name
