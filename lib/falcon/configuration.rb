@@ -157,7 +157,7 @@ module Falcon
 			# Adds `root` and `authority` keys.
 			# @parameter name [String] The name of the environment, usually a hostname.
 			def host(name, *parents, &block)
-				environment = merge(name, :host, *parents, &block)
+				environment = merge(name, *parents, &block)
 				
 				environment[:root] = @root
 				environment[:authority] = name
