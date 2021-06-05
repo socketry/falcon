@@ -127,11 +127,20 @@ module Falcon
 				features.each do |feature|
 					next if @loaded.include?(feature)
 					
-					relative_path = File.join(__dir__, "environments", "#{feature}.rb")
-					
-					self.instance_eval(File.read(relative_path), relative_path)
-					
-					@loaded[feature] = relative_path
+					case feature
+					when Symbol
+						relative_path = File.join(__dir__, "environments", "#{feature}.rb")
+						
+						self.instance_eval(File.read(relative_path), relative_path)
+						
+						@loaded[feature] = relative_path
+					when Module
+						feature.load(self)
+						
+						@loaded[feature] = feature
+					else
+						raise LoadError, "Unsure about how to load #{feature}!"
+					end
 				end
 			end
 			
