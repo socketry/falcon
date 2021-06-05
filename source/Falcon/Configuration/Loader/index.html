@@ -96,11 +96,20 @@ end</code></pre>
 	features.each do |feature|
 		next if @loaded.include?(feature)
 		
-		relative_path = File.join(__dir__, &quot;environments&quot;, &quot;#{feature}.rb&quot;)
-		
-		self.instance_eval(File.read(relative_path), relative_path)
-		
-		@loaded[feature] = relative_path
+		case feature
+		when Symbol
+			relative_path = File.join(__dir__, &quot;environments&quot;, &quot;#{feature}.rb&quot;)
+			
+			self.instance_eval(File.read(relative_path), relative_path)
+			
+			@loaded[feature] = relative_path
+		when Module
+			feature.load(self)
+			
+			@loaded[feature] = feature
+		else
+			raise LoadError, &quot;Unsure about how to load #{feature}!&quot;
+		end
 	end
 end</code></pre>
 					</details></section><section id="Falcon::Configuration::Loader#environment"><h3><code class="language-ruby">def environment(name, *parents, &amp;block)</code></h3><p>Add the named environment, with zero or more parent environments, defined using the specified <code>block</code>.</p>
