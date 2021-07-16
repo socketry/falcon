@@ -1,0 +1,29 @@
+name: Async head
+
+on: [push, pull_request]
+
+jobs:
+  test:
+    runs-on: ${{matrix.os}}-latest
+    
+    strategy:
+      matrix:
+        os:
+          - ubuntu
+        
+        ruby:
+          - head
+    
+    env:
+      BUNDLE_GEMFILE: gems/async-head.rb
+    
+    steps:
+    - uses: actions/checkout@v2
+    - uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: ${{matrix.ruby}}
+        bundler-cache: true
+    
+    - name: Run tests
+      timeout-minutes: 5
+      run: bundle exec rspec
