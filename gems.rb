@@ -4,6 +4,8 @@ source 'https://rubygems.org'
 
 gemspec
 
+gem "rack", git: 'https://github.com/ioquatix/rack', branch: 'streaming'
+
 # gem "async-container", path: "../async-container"
 # gem "async-websocket", path: "../async-websocket"
 # gem "async-http", path: "../async-http"
