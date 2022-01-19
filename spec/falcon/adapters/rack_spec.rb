@@ -128,4 +128,25 @@ RSpec.describe Falcon::Adapters::Rack do
 			connection.close
 		end
 	end
+	
+	context 'streaming' do
+		include_context Falcon::Server
+		
+		let(:app) do
+			lambda do |env|
+				body = lambda do |stream|
+					stream.write("Hello Streaming World")
+					stream.close
+				end
+				
+				[200, {}, body]
+			end
+		end
+		
+		let(:response) {client.get("/")}
+		
+		it "can read streaming response" do
+			expect(response.read).to be == "Hello Streaming World"
+		end
+	end
 end
