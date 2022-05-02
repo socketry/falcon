@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		
+			<title>Falcon::Adapters::Rack</title>
+		
+		<meta charset="UTF-8"/>
+		<meta name="viewport" content="width=device-width, initial-scale=1"/>
+		
+		<link rel="icon" type="image/png" href="../../../../_static/icon.png"/>
+		<link rel="stylesheet" href="../../../../_static/site.css" type="text/css" media="screen"/>
+		
+		<script src="../../../../_components/jquery/jquery.min.js"></script>
+		<script src="../../../../_components/jquery-syntax/jquery.syntax.min.js"></script>
+		<script src="../../../../_components/mermaid/mermaid.min.js"></script>
+		
+		<script src="../../../../_static/links.js"></script>
+		
+		<script type="text/javascript">
+		//<![CDATA[
+			jQuery(function($) {
+				$.syntax();
+			});
+			
+			let isDarkMode = window.matchMedia("(prefers-color-scheme: dark)").matches
+			let config = {theme: 'light'};
+			if (isDarkMode) config.theme = 'dark';
+			else config.theme = 'forest';
+			mermaid.initialize(config);
+		//]]>
+		</script>
+	</head>
+
+	<body>
+		<header> › <a class="link" href="../../../../index.html">Project</a> › <a class="link" href="../../../index.html">Source</a></header>
+		
+		<main>
+			
+	<h1><code class="language-ruby">Falcon::Adapters::Rack</code></h1>
+	
+		
+	
+	
+	<section>
+	<h2>Nested</h2>
+	
+	<ul>
+		<li><a href="FullHijack/index.html"><code class="language-ruby">Falcon::Adapters::Rack::FullHijack</code></a></li>
+	</ul>
+	</section>
+	
+	<section>
+	<h2>Definitions</h2>
+	
+	<section id="Falcon::Adapters::Rack#initialize"><h3><code class="language-ruby">def initialize(app)</code></h3><p>Initialize the rack adaptor middleware.</p>
+<details open>
+	<summary><h4>Signature</h4></summary>
+	<dl><dt>
+					<strong>parameter</strong>　<code class="syntax">app</code>　<code class="language-ruby">Object</code></dt><dd><p>The rack middleware.</p>
+</dd></dl>
+</details>
+<details>
+						<summary><h4>Implementation</h4></summary>
+						<pre><code class="language-ruby">def initialize(app)
+	@app = app
+	
+	raise ArgumentError, &quot;App must be callable!&quot; unless @app.respond_to?(:call)
+end</code></pre>
+					</details></section><section id="Falcon::Adapters::Rack#unwrap_headers"><h3><code class="language-ruby">def unwrap_headers(headers, env)</code></h3><p>Unwrap raw HTTP headers into the CGI-style expected by Rack middleware.</p>
+<p>Rack separates multiple headers with the same key, into a single field with multiple lines.</p>
+<details open>
+	<summary><h4>Signature</h4></summary>
+	<dl><dt>
+					<strong>parameter</strong>　<code class="syntax">headers</code>　<code class="language-ruby">Protocol::HTTP::Headers</code></dt><dd><p>The raw HTTP request headers.</p>
+</dd><dt>
+					<strong>parameter</strong>　<code class="syntax">env</code>　<code class="language-ruby">Hash</code></dt><dd><p>The rack request <code>env</code>.</p>
+</dd></dl>
+</details>
+<details>
+						<summary><h4>Implementation</h4></summary>
+						<pre><code class="language-ruby">def unwrap_headers(headers, env)
+	headers.each do |key, value|
+		http_key = &quot;HTTP_#{key.upcase.tr('-', '_')}&quot;
+		
+		if current_value = env[http_key]
+			env[http_key] = &quot;#{current_value};#{value}&quot;
+		else
+			env[http_key] = value
+		end
+	end
+end</code></pre>
+					</details></section><section id="Falcon::Adapters::Rack#unwrap_request"><h3><code class="language-ruby">def unwrap_request(request, env)</code></h3><p>Process the incoming request into a valid rack <code>env</code>.</p>
+<ul>
+<li>Set the <code>env['CONTENT_TYPE']</code> and <code>env['CONTENT_LENGTH']</code> based on the incoming request body.</li>
+<li>Set the <code>env['HTTP_HOST']</code> header to the request authority.</li>
+<li>Set the <code>env['HTTP_X_FORWARDED_PROTO']</code> header to the request scheme.</li>
+<li>Set <code>env['REMOTE_ADDR']</code> to the request remote adress.</li>
+</ul>
+<details open>
+	<summary><h4>Signature</h4></summary>
+	<dl><dt>
+					<strong>parameter</strong>　<code class="syntax">request</code>　<code class="language-ruby">Protocol::HTTP::Request</code></dt><dd><p>The incoming request.</p>
+</dd><dt>
+					<strong>parameter</strong>　<code class="syntax">env</code>　<code class="language-ruby">Hash</code></dt><dd><p>The rack <code>env</code>.</p>
+</dd></dl>
+</details>
+<details>
+						<summary><h4>Implementation</h4></summary>
+						<pre><code class="language-ruby">def unwrap_request(request, env)
+	if content_type = request.headers.delete('content-type')
+		env[CONTENT_TYPE] = content_type
+	end
+	
+	# In some situations we don't know the content length, e.g. when using chunked encoding, or when decompressing the body.
+	if body = request.body and length = body.length
+		env[CONTENT_LENGTH] = length.to_s
+	end
+	
+	self.unwrap_headers(request.headers, env)
+	
+	# HTTP/2 prefers `:authority` over `host`, so we do this for backwards compatibility.
+	env[HTTP_HOST] ||= request.authority
+	
+	# This is the HTTP/1 header for the scheme of the request and is used by Rack.
+	# Technically it should use the Forwarded header but this is not common yet.
+	# https://tools.ietf.org/html/rfc7239#section-5.4
+	# https://github.com/rack/rack/issues/1310
+	env[HTTP_X_FORWARDED_PROTO] ||= request.scheme
+	
+	if remote_address = request.remote_address
+		env[REMOTE_ADDR] = remote_address.ip_address if remote_address.ip?
+	end
+end</code></pre>
+					</details></section><section id="Falcon::Adapters::Rack#call"><h3><code class="language-ruby">def call(request)</code></h3><p>Build a rack <code>env</code> from the incoming request and apply it to the rack middleware.</p>
+<details open>
+	<summary><h4>Signature</h4></summary>
+	<dl><dt>
+					<strong>parameter</strong>　<code class="syntax">request</code>　<code class="language-ruby">Protocol::HTTP::Request</code></dt><dd><p>The incoming request.</p>
+</dd></dl>
+</details>
+<details>
+						<summary><h4>Implementation</h4></summary>
+						<pre><code class="language-ruby">def call(request)
+	request_path, query_string = request.path.split('?', 2)
+	server_name, server_port = (request.authority || '').split(':', 2)
+	
+	env = {
+		RACK_VERSION =&gt; [2, 0, 0],
+		
+		ASYNC_HTTP_REQUEST =&gt; request,
+		
+		RACK_INPUT =&gt; Input.new(request.body),
+		RACK_ERRORS =&gt; $stderr,
+		RACK_LOGGER =&gt; Console.logger,
+		
+		RACK_MULTITHREAD =&gt; true,
+		RACK_MULTIPROCESS =&gt; true,
+		RACK_RUNONCE =&gt; false,
+		
+		# The HTTP request method, such as “GET” or “POST”. This cannot ever be an empty string, and so is always required.
+		REQUEST_METHOD =&gt; request.method,
+		
+		# The initial portion of the request URL's “path” that corresponds to the application object, so that the application knows its virtual “location”. This may be an empty string, if the application corresponds to the “root” of the server.
+		SCRIPT_NAME =&gt; '',
+		
+		# The remainder of the request URL's “path”, designating the virtual “location” of the request's target within the application. This may be an empty string, if the request URL targets the application root and does not have a trailing slash. This value may be percent-encoded when originating from a URL.
+		PATH_INFO =&gt; request_path,
+		REQUEST_PATH =&gt; request_path,
+		REQUEST_URI =&gt; request.path,
+
+		# The portion of the request URL that follows the ?, if any. May be empty, but is always required!
+		QUERY_STRING =&gt; query_string || '',
+		
+		# The server protocol (e.g. HTTP/1.1):
+		SERVER_PROTOCOL =&gt; request.version,
+		
+		# The request scheme:
+		RACK_URL_SCHEME =&gt; request.scheme,
+		
+		# I'm not sure what sane defaults should be here:
+		SERVER_NAME =&gt; server_name,
+		SERVER_PORT =&gt; server_port,
+		
+		# We support both request and response hijack.
+		RACK_IS_HIJACK =&gt; true,
+	}
+	
+	self.unwrap_request(request, env)
+	
+	full_hijack = false
+	
+	if request.hijack?
+		env[RACK_HIJACK] = lambda do
+			wrapper = request.hijack!
+			full_hijack = true
+			
+			# We dup this as it might be taken out of the normal control flow, and the io will be closed shortly after returning from this method.
+			io = wrapper.io.dup
+			wrapper.close
+			
+			# This is implicitly returned:
+			env[RACK_HIJACK_IO] = io
+		end
+	end
+	
+	status, headers, body = @app.call(env)
+	
+	# If there was a full hijack:
+	if full_hijack
+		raise FullHijack, &quot;The connection was hijacked.&quot;
+	else
+		return Response.wrap(status, headers, body, request)
+	end
+rescue =&gt; exception
+	Console.logger.error(self) {exception}
+	
+	return failure_response(exception)
+end</code></pre>
+					</details></section><section id="Falcon::Adapters::Rack#failure_response"><h3><code class="language-ruby">def failure_response(exception)</code></h3><p>Generate a suitable response for the given exception.</p>
+<details open>
+	<summary><h4>Signature</h4></summary>
+	<dl><dt>
+					<strong>parameter</strong>　<code class="syntax">exception</code>　<code class="language-ruby">Exception</code></dt><dt>
+					<strong>returns</strong>　<code class="language-ruby">Protocol::HTTP::Response</code></dt></dl>
+</details>
+<details>
+						<summary><h4>Implementation</h4></summary>
+						<pre><code class="language-ruby">def failure_response(exception)
+	Protocol::HTTP::Response.for_exception(exception)
+end</code></pre>
+					</details></section>	</section>
+	
+	
+
+				
+			<footer>Documentation generated by <a href="https://github.com/socketry/utopia-project">Utopia::Project</a>.</footer>
+		</main>
+	</body>
+</html>
+

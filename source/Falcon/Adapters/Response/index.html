@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		
+			<title>Falcon::Adapters::Response</title>
+		
+		<meta charset="UTF-8"/>
+		<meta name="viewport" content="width=device-width, initial-scale=1"/>
+		
+		<link rel="icon" type="image/png" href="../../../../_static/icon.png"/>
+		<link rel="stylesheet" href="../../../../_static/site.css" type="text/css" media="screen"/>
+		
+		<script src="../../../../_components/jquery/jquery.min.js"></script>
+		<script src="../../../../_components/jquery-syntax/jquery.syntax.min.js"></script>
+		<script src="../../../../_components/mermaid/mermaid.min.js"></script>
+		
+		<script src="../../../../_static/links.js"></script>
+		
+		<script type="text/javascript">
+		//<![CDATA[
+			jQuery(function($) {
+				$.syntax();
+			});
+			
+			let isDarkMode = window.matchMedia("(prefers-color-scheme: dark)").matches
+			let config = {theme: 'light'};
+			if (isDarkMode) config.theme = 'dark';
+			else config.theme = 'forest';
+			mermaid.initialize(config);
+		//]]>
+		</script>
+	</head>
+
+	<body>
+		<header> › <a class="link" href="../../../../index.html">Project</a> › <a class="link" href="../../../index.html">Source</a></header>
+		
+		<main>
+			
+	<h1><code class="language-ruby">Falcon::Adapters::Response</code></h1>
+	
+	<p>A wrapper for a <code>Rack</code> response.</p>
+<p>A Rack response consisting of <code>[status, headers, body]</code> includes various rack-specific elements, including:</p>
+<ul>
+<li>A <code>headers['rack.hijack']</code> callback which bypasses normal response handling.</li>
+<li>Potentially invalid content length.</li>
+<li>Potentially invalid body when processing a <code>HEAD</code> request.</li>
+<li>Newline-separated header values.</li>
+<li>Other <code>rack.</code> specific header key/value pairs.</li>
+</ul>
+<p>This wrapper takes those issues into account and adapts the rack response tuple into a <code class="language-ruby">Protocol::HTTP::Response</code>.</p>
+	
+	
+	
+	
+	<section>
+	<h2>Definitions</h2>
+	
+	<section id="Falcon::Adapters::Response.wrap_headers"><h3><code class="language-ruby">def self.wrap_headers(fields)</code></h3><p>Process the rack response headers into into a <code class="language-ruby">Protocol::HTTP::Headers</code> instance, along with any extra <code>rack.</code> metadata.</p>
+<details open>
+	<summary><h4>Signature</h4></summary>
+	<dl><dt>
+					<strong>returns</strong>　<code class="language-ruby">Tuple(Protocol::HTTP::Headers, Hash)</code></dt></dl>
+</details>
+<details>
+						<summary><h4>Implementation</h4></summary>
+						<pre><code class="language-ruby">def self.wrap_headers(fields)
+	headers = ::Protocol::HTTP::Headers.new
+	meta = {}
+	
+	fields.each do |key, value|
+		key = key.downcase
+		
+		if key.start_with?('rack.')
+			meta[key] = value
+		else
+			value.to_s.split(&quot;\n&quot;).each do |part|
+				headers.add(key, part)
+			end
+		end
+	end
+	
+	return headers, meta
+end</code></pre>
+					</details></section><section id="Falcon::Adapters::Response.wrap"><h3><code class="language-ruby">def self.wrap(status, headers, body, request = nil)</code></h3><p>Wrap a rack response.</p>
+<details open>
+	<summary><h4>Signature</h4></summary>
+	<dl><dt>
+					<strong>parameter</strong>　<code class="syntax">status</code>　<code class="language-ruby">Integer</code></dt><dd><p>The rack response status.</p>
+</dd><dt>
+					<strong>parameter</strong>　<code class="syntax">headers</code>　<code class="language-ruby">Duck(:each)</code></dt><dd><p>The rack response headers.</p>
+</dd><dt>
+					<strong>parameter</strong>　<code class="syntax">body</code>　<code class="language-ruby">Duck(:each, :close) | Nil</code></dt><dd><p>The rack response body.</p>
+</dd><dt>
+					<strong>parameter</strong>　<code class="syntax">request</code>　<code class="language-ruby">Protocol::HTTP::Request</code></dt><dd><p>The original request.</p>
+</dd></dl>
+</details>
+<details>
+						<summary><h4>Implementation</h4></summary>
+						<pre><code class="language-ruby">def self.wrap(status, headers, body, request = nil)
+	headers, meta = wrap_headers(headers)
+	
+	if block = meta['rack.hijack']
+		body = Async::HTTP::Body::Hijack.wrap(request, &amp;block)
+	else
+		ignored = headers.extract(IGNORE_HEADERS)
+		
+		unless ignored.empty?
+			Console.logger.warn(&quot;Ignoring protocol-level headers: #{ignored.inspect}&quot;)
+		end
+		
+		body = Output.wrap(status, headers, body)
+	end
+	
+	if request&amp;.head?
+		# I thought about doing this in Output.wrap, but decided the semantics are too tricky. Specifically, the various ways a rack response body can be wrapped, and the need to invoke #close at the right point.
+		body = ::Protocol::HTTP::Body::Head.for(body)
+	end
+	
+	protocol = meta['rack.protocol']
+	
+	# https://tools.ietf.org/html/rfc7231#section-7.4.2
+	# headers.add('server', &quot;falcon/#{Falcon::VERSION}&quot;)
+	
+	# https://tools.ietf.org/html/rfc7231#section-7.1.1.2
+	# headers.add('date', Time.now.httpdate)
+	
+	return self.new(status, headers, body, protocol)
+end</code></pre>
+					</details></section><section id="Falcon::Adapters::Response#initialize"><h3><code class="language-ruby">def initialize(status, headers, body, protocol = nil)</code></h3><p>Initialize the response wrapper.</p>
+<details open>
+	<summary><h4>Signature</h4></summary>
+	<dl><dt>
+					<strong>parameter</strong>　<code class="syntax">status</code>　<code class="language-ruby">Integer</code></dt><dd><p>The response status.</p>
+</dd><dt>
+					<strong>parameter</strong>　<code class="syntax">headers</code>　<code class="language-ruby">Protocol::HTTP::Headers</code></dt><dd><p>The response headers.</p>
+</dd><dt>
+					<strong>parameter</strong>　<code class="syntax">body</code>　<code class="language-ruby">Protocol::HTTP::Body</code></dt><dd><p>The response body.</p>
+</dd><dt>
+					<strong>parameter</strong>　<code class="syntax">protocol</code>　<code class="language-ruby">String</code></dt><dd><p>The response protocol for upgraded requests.</p>
+</dd></dl>
+</details>
+<details>
+						<summary><h4>Implementation</h4></summary>
+						<pre><code class="language-ruby">def initialize(status, headers, body, protocol = nil)
+	super(nil, status, headers, body, protocol)
+end</code></pre>
+					</details></section>	</section>
+	
+	
+
+				
+			<footer>Documentation generated by <a href="https://github.com/socketry/utopia-project">Utopia::Project</a>.</footer>
+		</main>
+	</body>
+</html>
+

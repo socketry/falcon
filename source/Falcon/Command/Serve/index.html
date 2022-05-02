@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		
+			<title>Falcon::Command::Serve</title>
+		
+		<meta charset="UTF-8"/>
+		<meta name="viewport" content="width=device-width, initial-scale=1"/>
+		
+		<link rel="icon" type="image/png" href="../../../../_static/icon.png"/>
+		<link rel="stylesheet" href="../../../../_static/site.css" type="text/css" media="screen"/>
+		
+		<script src="../../../../_components/jquery/jquery.min.js"></script>
+		<script src="../../../../_components/jquery-syntax/jquery.syntax.min.js"></script>
+		<script src="../../../../_components/mermaid/mermaid.min.js"></script>
+		
+		<script src="../../../../_static/links.js"></script>
+		
+		<script type="text/javascript">
+		//<![CDATA[
+			jQuery(function($) {
+				$.syntax();
+			});
+			
+			let isDarkMode = window.matchMedia("(prefers-color-scheme: dark)").matches
+			let config = {theme: 'light'};
+			if (isDarkMode) config.theme = 'dark';
+			else config.theme = 'forest';
+			mermaid.initialize(config);
+		//]]>
+		</script>
+	</head>
+
+	<body>
+		<header> › <a class="link" href="../../../../index.html">Project</a> › <a class="link" href="../../../index.html">Source</a></header>
+		
+		<main>
+			
+	<h1><code class="language-ruby">Falcon::Command::Serve</code></h1>
+	
+	<p>Implements the <code>falcon serve</code> command. Designed for <em>development</em>.</p>
+<p>Manages a <a href="../../Controller/Serve/index.html" title="Controller::Serve"><code class="language-ruby">class Falcon::Controller::Serve</code></a> instance which is responsible for running applications in a development environment.</p>
+	
+	
+	
+	
+	<section>
+	<h2>Definitions</h2>
+	
+	<section id="Falcon::Command::Serve#options"><h3><code class="language-ruby">options { ... }</code></h3><p>The command line options.</p>
+<details open>
+	<summary><h4>Signature</h4></summary>
+	<dl><dt>
+					<strong>attribute</strong>　<code class="language-ruby">Samovar::Options</code></dt></dl>
+</details>
+<details>
+						<summary><h4>Implementation</h4></summary>
+						<pre><code class="language-ruby">options do
+	option '-b/--bind &lt;address&gt;', &quot;Bind to the given hostname/address.&quot;, default: &quot;https://localhost:9292&quot;
+	
+	option '-p/--port &lt;number&gt;', &quot;Override the specified port.&quot;, type: Integer
+	option '-h/--hostname &lt;hostname&gt;', &quot;Specify the hostname which would be used for certificates, etc.&quot;
+	option '-t/--timeout &lt;duration&gt;', &quot;Specify the maximum time to wait for non-blocking operations.&quot;, type: Float, default: nil
+	
+	option '-c/--config &lt;path&gt;', &quot;Rackup configuration file to load.&quot;, default: 'config.ru'
+	option '--preload &lt;path&gt;', &quot;Preload the specified path before creating containers.&quot;
+	
+	option '--cache', &quot;Enable the response cache.&quot;
+	
+	option '--forked | --threaded | --hybrid', &quot;Select a specific parallelism model.&quot;, key: :container, default: :forked
+	
+	option '-n/--count &lt;count&gt;', &quot;Number of instances to start.&quot;, default: Async::Container.processor_count, type: Integer
+	
+	option '--forks &lt;count&gt;', &quot;Number of forks (hybrid only).&quot;, type: Integer
+	option '--threads &lt;count&gt;', &quot;Number of threads (hybrid only).&quot;, type: Integer
+end</code></pre>
+					</details></section><section id="Falcon::Command::Serve#container_class"><h3><code class="language-ruby">def container_class</code></h3><p>The container class to use.</p>
+<details>
+						<summary><h4>Implementation</h4></summary>
+						<pre><code class="language-ruby">def container_class
+	case @options[:container]
+	when :threaded
+		return Async::Container::Threaded
+	when :forked
+		return Async::Container::Forked
+	when :hybrid
+		return Async::Container::Hybrid
+	end
+end</code></pre>
+					</details></section><section id="Falcon::Command::Serve#verbose?"><h3><code class="language-ruby">def verbose?</code></h3><p>Whether verbose logging is enabled.</p>
+<details open>
+	<summary><h4>Signature</h4></summary>
+	<dl><dt>
+					<strong>returns</strong>　<code class="language-ruby">Boolean</code></dt></dl>
+</details>
+<details>
+						<summary><h4>Implementation</h4></summary>
+						<pre><code class="language-ruby">def verbose?
+	@parent&amp;.verbose?
+end</code></pre>
+					</details></section><section id="Falcon::Command::Serve#cache?"><h3><code class="language-ruby">def cache?</code></h3><p>Whether to enable the application HTTP cache.</p>
+<details open>
+	<summary><h4>Signature</h4></summary>
+	<dl><dt>
+					<strong>returns</strong>　<code class="language-ruby">Boolean</code></dt></dl>
+</details>
+<details>
+						<summary><h4>Implementation</h4></summary>
+						<pre><code class="language-ruby">def cache?
+	@options[:cache]
+end</code></pre>
+					</details></section><section id="Falcon::Command::Serve#load_app"><h3><code class="language-ruby">def load_app</code></h3><p>Load the rack application from the specified configuration path.</p>
+<details open>
+	<summary><h4>Signature</h4></summary>
+	<dl><dt>
+					<strong>returns</strong>　<code class="language-ruby">Protocol::HTTP::Middleware</code></dt></dl>
+</details>
+<details>
+						<summary><h4>Implementation</h4></summary>
+						<pre><code class="language-ruby">def load_app
+	rack_app, _ = Rack::Builder.parse_file(@options[:config])
+	
+	return Server.middleware(rack_app, verbose: self.verbose?, cache: self.cache?)
+end</code></pre>
+					</details></section><section id="Falcon::Command::Serve#container_options"><h3><code class="language-ruby">def container_options</code></h3><p>Options for the container.
+See <a href="../../Controller/Serve/index.html#Falcon%3A%3AController%3A%3AServe%23setup" title="Controller::Serve#setup"><code class="language-ruby">Falcon::Controller::Serve#setup</code></a>.</p>
+<details>
+						<summary><h4>Implementation</h4></summary>
+						<pre><code class="language-ruby">def container_options
+	@options.slice(:count, :forks, :threads)
+end</code></pre>
+					</details></section><section id="Falcon::Command::Serve#endpoint_options"><h3><code class="language-ruby">def endpoint_options</code></h3><p>Options for the <a href="index.html#Falcon%3A%3ACommand%3A%3AServe%23endpoint" title="endpoint"><code class="language-ruby">Falcon::Command::Serve#endpoint</code></a>.</p>
+<details>
+						<summary><h4>Implementation</h4></summary>
+						<pre><code class="language-ruby">def endpoint_options
+	@options.slice(:hostname, :port, :reuse_port, :timeout)
+end</code></pre>
+					</details></section><section id="Falcon::Command::Serve#endpoint"><h3><code class="language-ruby">def endpoint</code></h3><p>The endpoint to bind to.</p>
+<details>
+						<summary><h4>Implementation</h4></summary>
+						<pre><code class="language-ruby">def endpoint
+	Endpoint.parse(@options[:bind], **endpoint_options)
+end</code></pre>
+					</details></section><section id="Falcon::Command::Serve#client_endpoint"><h3><code class="language-ruby">def client_endpoint</code></h3><p>The endpoint suitable for a client to connect.</p>
+<details>
+						<summary><h4>Implementation</h4></summary>
+						<pre><code class="language-ruby">def client_endpoint
+	Async::HTTP::Endpoint.parse(@options[:bind], **endpoint_options)
+end</code></pre>
+					</details></section><section id="Falcon::Command::Serve#client"><h3><code class="language-ruby">def client</code></h3><p>Create a new client suitable for accessing the application.</p>
+<details>
+						<summary><h4>Implementation</h4></summary>
+						<pre><code class="language-ruby">def client
+	Async::HTTP::Client.new(client_endpoint)
+end</code></pre>
+					</details></section><section id="Falcon::Command::Serve#controller"><h3><code class="language-ruby">def controller</code></h3><p>Prepare a new controller for the command.</p>
+<details>
+						<summary><h4>Implementation</h4></summary>
+						<pre><code class="language-ruby">def controller
+	Controller::Serve.new(self)
+end</code></pre>
+					</details></section><section id="Falcon::Command::Serve#call"><h3><code class="language-ruby">def call</code></h3><p>Prepare the environment and run the controller.</p>
+<details>
+						<summary><h4>Implementation</h4></summary>
+						<pre><code class="language-ruby">def call
+	Console.logger.info(self) do |buffer|
+		buffer.puts &quot;Falcon v#{VERSION} taking flight! Using #{self.container_class} #{self.container_options}.&quot;
+		buffer.puts &quot;- Binding to: #{self.endpoint}&quot;
+		buffer.puts &quot;- To terminate: Ctrl-C or kill #{Process.pid}&quot;
+		buffer.puts &quot;- To reload configuration: kill -HUP #{Process.pid}&quot;
+	end
+	
+	if path = @options[:preload]
+		full_path = File.expand_path(path)
+		load(full_path)
+	end
+	
+	begin
+		Bundler.require(:preload)
+	rescue Bundler::GemfileNotFound
+		# Ignore.
+	end
+	
+	if GC.respond_to?(:compact)
+		GC.compact
+	end
+	
+	self.controller.run
+end</code></pre>
+					</details></section>	</section>
+	
+	
+
+				
+			<footer>Documentation generated by <a href="https://github.com/socketry/utopia-project">Utopia::Project</a>.</footer>
+		</main>
+	</body>
+</html>
+

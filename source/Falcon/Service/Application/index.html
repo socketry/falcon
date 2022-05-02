@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		
+			<title>Falcon::Service::Application</title>
+		
+		<meta charset="UTF-8"/>
+		<meta name="viewport" content="width=device-width, initial-scale=1"/>
+		
+		<link rel="icon" type="image/png" href="../../../../_static/icon.png"/>
+		<link rel="stylesheet" href="../../../../_static/site.css" type="text/css" media="screen"/>
+		
+		<script src="../../../../_components/jquery/jquery.min.js"></script>
+		<script src="../../../../_components/jquery-syntax/jquery.syntax.min.js"></script>
+		<script src="../../../../_components/mermaid/mermaid.min.js"></script>
+		
+		<script src="../../../../_static/links.js"></script>
+		
+		<script type="text/javascript">
+		//<![CDATA[
+			jQuery(function($) {
+				$.syntax();
+			});
+			
+			let isDarkMode = window.matchMedia("(prefers-color-scheme: dark)").matches
+			let config = {theme: 'light'};
+			if (isDarkMode) config.theme = 'dark';
+			else config.theme = 'forest';
+			mermaid.initialize(config);
+		//]]>
+		</script>
+	</head>
+
+	<body>
+		<header> › <a class="link" href="../../../../index.html">Project</a> › <a class="link" href="../../../index.html">Source</a></header>
+		
+		<main>
+			
+	<h1><code class="language-ruby">Falcon::Service::Application</code></h1>
+	
+	<p>Implements an application server using an internal clear-text proxy.</p>
+	
+	
+	
+	
+	<section>
+	<h2>Definitions</h2>
+	
+	<section id="Falcon::Service::Application#middleware"><h3><code class="language-ruby">def middleware</code></h3><p>The middleware that will be served by this application.</p>
+<details open>
+	<summary><h4>Signature</h4></summary>
+	<dl><dt>
+					<strong>returns</strong>　<code class="language-ruby">Protocol::HTTP::Middleware</code></dt></dl>
+</details>
+<details>
+						<summary><h4>Implementation</h4></summary>
+						<pre><code class="language-ruby">def middleware
+	# In a multi-threaded container, we don't want to modify the shared evaluator's cache, so we create a new evaluator:
+	@environment.evaluator.middleware
+end</code></pre>
+					</details></section><section id="Falcon::Service::Application#count"><h3><code class="language-ruby">def count</code></h3><p>Number of instances to start.</p>
+<details open>
+	<summary><h4>Signature</h4></summary>
+	<dl><dt>
+					<strong>returns</strong>　<code class="language-ruby">Integer | nil</code></dt></dl>
+</details>
+<details>
+						<summary><h4>Implementation</h4></summary>
+						<pre><code class="language-ruby">def count
+  @environment.evaluator.count
+end</code></pre>
+					</details></section><section id="Falcon::Service::Application#preload!"><h3><code class="language-ruby">def preload!</code></h3><p>Preload any resources specified by the environment.</p>
+<details>
+						<summary><h4>Implementation</h4></summary>
+						<pre><code class="language-ruby">def preload!
+	if scripts = @evaluator.preload
+		scripts.each do |path|
+			Console.logger.info(self) {&quot;Preloading #{path}...&quot;}
+			full_path = File.expand_path(path, self.root)
+			load(full_path)
+		end
+	end
+end</code></pre>
+					</details></section><section id="Falcon::Service::Application#start"><h3><code class="language-ruby">def start</code></h3><p>Prepare the bound endpoint for the application instances.
+Invoke <a href="index.html#Falcon%3A%3AService%3A%3AApplication%23preload%21" title="preload!"><code class="language-ruby">Falcon::Service::Application#preload!</code></a> to load shared resources into the parent process.</p>
+<details>
+						<summary><h4>Implementation</h4></summary>
+						<pre><code class="language-ruby">def start
+	Console.logger.info(self) {&quot;Binding to #{self.endpoint}...&quot;}
+	
+	@bound_endpoint = Async::Reactor.run do
+		Async::IO::SharedEndpoint.bound(self.endpoint)
+	end.wait
+	
+	preload!
+	
+	super
+end</code></pre>
+					</details></section><section id="Falcon::Service::Application#setup"><h3><code class="language-ruby">def setup(container)</code></h3><p>Setup instances of the application into the container.</p>
+<details open>
+	<summary><h4>Signature</h4></summary>
+	<dl><dt>
+					<strong>parameter</strong>　<code class="syntax">container</code>　<code class="language-ruby">Async::Container::Generic</code></dt></dl>
+</details>
+<details>
+						<summary><h4>Implementation</h4></summary>
+						<pre><code class="language-ruby">def setup(container)
+	protocol = self.protocol
+	scheme = self.scheme
+	
+	run_options = {
+		name: self.name,
+		restart: true,
+	}
+	
+	run_options[:count] = count unless count.nil?
+	
+	container.run(**run_options) do |instance|
+		Async do |task|
+			Console.logger.info(self) {&quot;Starting application server for #{self.root}...&quot;}
+			
+			server = Server.new(self.middleware, @bound_endpoint, protocol: protocol, scheme: scheme)
+			
+			server.run
+			
+			instance.ready!
+			
+			task.children.each(&amp;:wait)
+		end
+	end
+	
+	super
+end</code></pre>
+					</details></section><section id="Falcon::Service::Application#stop"><h3><code class="language-ruby">def stop</code></h3><p>Close the bound endpoint.</p>
+<details>
+						<summary><h4>Implementation</h4></summary>
+						<pre><code class="language-ruby">def stop
+	@bound_endpoint&amp;.close
+	@bound_endpoint = nil
+	
+	super
+end</code></pre>
+					</details></section>	</section>
+	
+	
+
+				
+			<footer>Documentation generated by <a href="https://github.com/socketry/utopia-project">Utopia::Project</a>.</footer>
+		</main>
+	</body>
+</html>
+

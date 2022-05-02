@@ -1,0 +1,1 @@
+Syntax.themes["base"] = []

@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		
+			<title>Falcon::Environments.tls</title>
+		
+		<meta charset="UTF-8"/>
+		<meta name="viewport" content="width=device-width, initial-scale=1"/>
+		
+		<link rel="icon" type="image/png" href="../../../../_static/icon.png"/>
+		<link rel="stylesheet" href="../../../../_static/site.css" type="text/css" media="screen"/>
+		
+		<script src="../../../../_components/jquery/jquery.min.js"></script>
+		<script src="../../../../_components/jquery-syntax/jquery.syntax.min.js"></script>
+		<script src="../../../../_components/mermaid/mermaid.min.js"></script>
+		
+		<script src="../../../../_static/links.js"></script>
+		
+		<script type="text/javascript">
+		//<![CDATA[
+			jQuery(function($) {
+				$.syntax();
+			});
+			
+			let isDarkMode = window.matchMedia("(prefers-color-scheme: dark)").matches
+			let config = {theme: 'light'};
+			if (isDarkMode) config.theme = 'dark';
+			else config.theme = 'forest';
+			mermaid.initialize(config);
+		//]]>
+		</script>
+	</head>
+
+	<body>
+		<header> › <a class="link" href="../../../../index.html">Project</a> › <a class="link" href="../../../index.html">Source</a></header>
+		
+		<main>
+			
+	<h1><code class="language-ruby">Falcon::Environments.tls</code></h1>
+	
+	<p>A general SSL context environment.</p>
+	
+	
+	
+	
+	<section>
+	<h2>Definitions</h2>
+	
+	<section id="Falcon::Environments.tls#ssl_session_id"><h3><code class="language-ruby">ssl_session_id &quot;falcon&quot;</code></h3><p>The default session identifier for the session cache.</p>
+<details open>
+	<summary><h4>Signature</h4></summary>
+	<dl><dt>
+					<strong>attribute</strong>　<code class="language-ruby">String</code></dt></dl>
+</details>
+</section><section id="Falcon::Environments.tls#ssl_ciphers"><h3><code class="language-ruby">ssl_ciphers Falcon::TLS::SERVER_CIPHERS</code></h3><p>The supported ciphers.</p>
+<details open>
+	<summary><h4>Signature</h4></summary>
+	<dl><dt>
+					<strong>attribute</strong>　<code class="language-ruby">Array(String)</code></dt></dl>
+</details>
+</section><section id="Falcon::Environments.tls#ssl_certificate_path"><h3><code class="language-ruby">ssl_certificate_path { ... }</code></h3><p>The public certificate path.</p>
+<details open>
+	<summary><h4>Signature</h4></summary>
+	<dl><dt>
+					<strong>attribute</strong>　<code class="language-ruby">String</code></dt></dl>
+</details>
+<details>
+						<summary><h4>Implementation</h4></summary>
+						<pre><code class="language-ruby">ssl_certificate_path do
+	File.expand_path(&quot;ssl/certificate.pem&quot;, root)
+end</code></pre>
+					</details></section><section id="Falcon::Environments.tls#ssl_certificates"><h3><code class="language-ruby">ssl_certificates { ... }</code></h3><p>The list of certificates loaded from that path.</p>
+<details open>
+	<summary><h4>Signature</h4></summary>
+	<dl><dt>
+					<strong>attribute</strong>　<code class="language-ruby">Array(OpenSSL::X509::Certificate)</code></dt></dl>
+</details>
+<details>
+						<summary><h4>Implementation</h4></summary>
+						<pre><code class="language-ruby">ssl_certificates do
+	OpenSSL::X509.load_certificates(ssl_certificate_path)
+end</code></pre>
+					</details></section><section id="Falcon::Environments.tls#ssl_certificate"><h3><code class="language-ruby">ssl_certificate {ssl_certificates[0]}</code></h3><p>The main certificate.</p>
+<details open>
+	<summary><h4>Signature</h4></summary>
+	<dl><dt>
+					<strong>attribute</strong>　<code class="language-ruby">OpenSSL::X509::Certificate</code></dt></dl>
+</details>
+</section><section id="Falcon::Environments.tls#ssl_certificate_chain"><h3><code class="language-ruby">ssl_certificate_chain {ssl_certificates[1..-1]}</code></h3><p>The certificate chain.</p>
+<details open>
+	<summary><h4>Signature</h4></summary>
+	<dl><dt>
+					<strong>attribute</strong>　<code class="language-ruby">Array(OpenSSL::X509::Certificate)</code></dt></dl>
+</details>
+</section><section id="Falcon::Environments.tls#ssl_private_key_path"><h3><code class="language-ruby">ssl_private_key_path { ... }</code></h3><p>The private key path.</p>
+<details open>
+	<summary><h4>Signature</h4></summary>
+	<dl><dt>
+					<strong>attribute</strong>　<code class="language-ruby">String</code></dt></dl>
+</details>
+<details>
+						<summary><h4>Implementation</h4></summary>
+						<pre><code class="language-ruby">ssl_private_key_path do
+	File.expand_path(&quot;ssl/private.key&quot;, root)
+end</code></pre>
+					</details></section><section id="Falcon::Environments.tls#ssl_private_key"><h3><code class="language-ruby">ssl_private_key { ... }</code></h3><p>The private key.</p>
+<details open>
+	<summary><h4>Signature</h4></summary>
+	<dl><dt>
+					<strong>attribute</strong>　<code class="language-ruby">OpenSSL::PKey::RSA</code></dt></dl>
+</details>
+<details>
+						<summary><h4>Implementation</h4></summary>
+						<pre><code class="language-ruby">ssl_private_key do
+	OpenSSL::PKey::RSA.new(File.read(ssl_private_key_path))
+end</code></pre>
+					</details></section><section id="Falcon::Environments.tls#ssl_context"><h3><code class="language-ruby">ssl_context { ... }</code></h3><p>The SSL context to use for incoming connections.</p>
+<details open>
+	<summary><h4>Signature</h4></summary>
+	<dl><dt>
+					<strong>attribute</strong>　<code class="language-ruby">OpenSSL::SSL::SSLContext</code></dt></dl>
+</details>
+<details>
+						<summary><h4>Implementation</h4></summary>
+						<pre><code class="language-ruby">ssl_context do
+	OpenSSL::SSL::SSLContext.new.tap do |context|
+		context.add_certificate(ssl_certificate, ssl_private_key, ssl_certificate_chain)
+		
+		context.session_cache_mode = OpenSSL::SSL::SSLContext::SESSION_CACHE_CLIENT
+		context.session_id_context = ssl_session_id
+		
+		context.alpn_select_cb = lambda do |protocols|
+			if protocols.include? &quot;h2&quot;
+				return &quot;h2&quot;
+			elsif protocols.include? &quot;http/1.1&quot;
+				return &quot;http/1.1&quot;
+			elsif protocols.include? &quot;http/1.0&quot;
+				return &quot;http/1.0&quot;
+			else
+				return nil
+			end
+		end
+		
+		# TODO Ruby 2.4 requires using ssl_version.
+		context.ssl_version = :TLSv1_2_server
+		
+		context.set_params(
+			ciphers: ssl_ciphers,
+			verify_mode: OpenSSL::SSL::VERIFY_NONE,
+		)
+		
+		context.setup
+	end
+end</code></pre>
+					</details></section>	</section>
+	
+	
+
+				
+			<footer>Documentation generated by <a href="https://github.com/socketry/utopia-project">Utopia::Project</a>.</footer>
+		</main>
+	</body>
+</html>
+

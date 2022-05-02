@@ -1,0 +1,910 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		
+			<title>Overview</title>
+		
+		<meta charset="UTF-8"/>
+		<meta name="viewport" content="width=device-width, initial-scale=1"/>
+		
+		<link rel="icon" type="image/png" href="../_static/icon.png"/>
+		<link rel="stylesheet" href="../_static/site.css" type="text/css" media="screen"/>
+		
+		<script src="../_components/jquery/jquery.min.js"></script>
+		<script src="../_components/jquery-syntax/jquery.syntax.min.js"></script>
+		<script src="../_components/mermaid/mermaid.min.js"></script>
+		
+		<script src="../_static/links.js"></script>
+		
+		<script type="text/javascript">
+		//<![CDATA[
+			jQuery(function($) {
+				$.syntax();
+			});
+			
+			let isDarkMode = window.matchMedia("(prefers-color-scheme: dark)").matches
+			let config = {theme: 'light'};
+			if (isDarkMode) config.theme = 'dark';
+			else config.theme = 'forest';
+			mermaid.initialize(config);
+		//]]>
+		</script>
+	</head>
+
+	<body>
+		<header> › <a class="link" href="../index.html">Project</a> › <a class="link" href="index.html">Source</a></header>
+		
+		<main>
+			
+	<h1>Overview</h1>
+	
+	<ul class="index"><li>
+						<a href="Falcon/index.html"><code class="language-ruby">module Falcon</code></a>
+						
+						
+						
+					
+					<ul class="index"><li>
+						<a href="Falcon/Adapters/index.html"><code class="language-ruby">module Adapters</code></a>
+						
+						
+						
+					
+					<ul class="index"><li>
+						<a href="Falcon/Adapters/Input/index.html"><code class="language-ruby">class Input</code></a>
+						
+						
+						
+							<p>Wraps a streaming input body into the interface required by <code>rack.input</code>.</p>
+
+					
+					<ul class="index"><li>
+					
+									</li><li>
+					
+									</li><li>
+					
+									</li><li>
+					
+									</li><li>
+					
+									</li><li>
+					
+									</li><li>
+					
+									</li><li>
+					
+									</li></ul>				</li><li>
+						<a href="Falcon/Adapters/Output/index.html"><code class="language-ruby">class Output &lt; ::Protocol::HTTP::Body::Readable</code></a>
+						
+						
+						
+							<p>Wraps the rack response body.</p>
+
+					
+					<ul class="index"><li>
+					
+									</li><li>
+					
+									</li><li>
+					
+									</li><li>
+					
+									</li><li>
+					
+									</li><li>
+					
+									</li><li>
+					
+									</li><li>
+					
+									</li><li>
+					
+									</li></ul>				</li><li>
+						<a href="Falcon/Adapters/Rack/index.html"><code class="language-ruby">class Rack</code></a>
+						
+						
+						
+					
+					<ul class="index"><li>
+						<a href="Falcon/Adapters/Rack/FullHijack/index.html"><code class="language-ruby">class FullHijack &lt; StandardError</code></a>
+						
+						
+						
+							<p>Raised back up through the middleware when the underlying connection is hijacked.</p>
+
+					
+					<ul class="index"></ul>				</li><li>
+					
+									</li><li>
+					
+									</li><li>
+					
+									</li><li>
+					
+									</li><li>
+					
+									</li></ul>				</li><li>
+						<a href="Falcon/Adapters/Response/index.html"><code class="language-ruby">class Response &lt; ::Protocol::HTTP::Response</code></a>
+						
+						
+						
+							<p>A wrapper for a <code>Rack</code> response.</p>
+
+					
+					<ul class="index"><li>
+					
+									</li><li>
+					
+									</li><li>
+					
+									</li></ul>				</li><li>
+						<a href="Falcon/Adapters/Rewindable/index.html"><code class="language-ruby">class Rewindable &lt; ::Protocol::HTTP::Middleware</code></a>
+						
+						
+						
+							<p>Content-type driven input buffering, specific to the needs of <code>rack</code>.</p>
+
+					
+					<ul class="index"><li>
+					
+									</li><li>
+					
+									</li><li>
+					
+									</li><li>
+					
+									</li></ul>				</li></ul>				</li><li>
+						<a href="Falcon/Command/index.html"><code class="language-ruby">module Command</code></a>
+						
+						
+						
+					
+					<ul class="index"><li>
+						<a href="Falcon/Command/Host/index.html"><code class="language-ruby">class Host &lt; Samovar::Command</code></a>
+						
+						
+						
+							<p>Implements the <code>falcon host</code> command. Designed for <em>deployment</em>.</p>
+
+					
+					<ul class="index"><li>
+					
+									</li><li>
+					
+									</li><li>
+					
+									</li><li>
+					
+									</li><li>
+					
+									</li></ul>				</li><li>
+						<a href="Falcon/Command/Paths/index.html"><code class="language-ruby">module Paths</code></a>
+						
+						
+						
+							<p>A helper for resolving wildcard configuration paths.</p>
+
+					
+					<ul class="index"><li>
+					
+									</li><li>
+					
+									</li></ul>				</li><li>
+						<a href="Falcon/Command/Proxy/index.html"><code class="language-ruby">class Proxy &lt; Samovar::Command</code></a>
+						
+						
+						
+							<p>Implements the <code>falcon proxy</code> command.</p>
+
+					
+					<ul class="index"><li>
+					
+									</li><li>
+					
+									</li><li>
+					
+									</li><li>
+					
+									</li><li>
+					
+									</li><li>
+					
+									</li><li>
+					
+									</li></ul>				</li><li>
+						<a href="Falcon/Command/Redirect/index.html"><code class="language-ruby">class Redirect &lt; Samovar::Command</code></a>
+						
+						
+						
+					
+					<ul class="index"><li>
+					
+									</li><li>
+					
+									</li><li>
+					
+									</li><li>
+					
+									</li><li>
+					
+									</li><li>
+					
+									</li><li>
+					
+									</li><li>
+					
+									</li></ul>				</li><li>
+						<a href="Falcon/Command/Serve/index.html"><code class="language-ruby">class Serve &lt; Samovar::Command</code></a>
+						
+						
+						
+							<p>Implements the <code>falcon serve</code> command. Designed for <em>development</em>.</p>
+
+					
+					<ul class="index"><li>
+					
+									</li><li>
+					
+									</li><li>
+					
+									</li><li>
+					
+									</li><li>
+					
+									</li><li>
+					
+									</li><li>
+					
+									</li><li>
+					
+									</li><li>
+					
+									</li><li>
+					
+									</li><li>
+					
+									</li><li>
+					
+									</li></ul>				</li><li>
+						<a href="Falcon/Command/Supervisor/index.html"><code class="language-ruby">class Supervisor &lt; Samovar::Command</code></a>
+						
+						
+						
+							<p>Implements the <code>falcon supervisor</code> command.</p>
+
+					
+					<ul class="index"><li>
+					
+									</li><li>
+						<a href="Falcon/Command/Supervisor/Restart/index.html"><code class="language-ruby">class Restart &lt; Samovar::Command</code></a>
+						
+						
+						
+							<p>Implements the <code>falcon supervisor restart</code> command.</p>
+
+					
+					<ul class="index"><li>
+					
+									</li></ul>				</li><li>
+						<a href="Falcon/Command/Supervisor/Metrics/index.html"><code class="language-ruby">class Metrics &lt; Samovar::Command</code></a>
+						
+						
+						
+							<p>Implements the <code>falcon supervisor metrics</code> command.</p>
+
+					
+					<ul class="index"><li>
+					
+									</li></ul>				</li><li>
+					
+									</li><li>
+					
+									</li><li>
+					
+									</li></ul>				</li><li>
+						<a href="Falcon/Command/Top/index.html"><code class="language-ruby">class Top &lt; Samovar::Command</code></a>
+						
+						
+						
+							<p>The top level command for the <code>falcon</code> executable.</p>
+
+					
+					<ul class="index"><li>
+					
+									</li><li>
+					
+									</li><li>
+					
+									</li><li>
+					
+									</li><li>
+					
+									</li><li>
+					
+									</li><li>
+					
+									</li></ul>				</li><li>
+						<a href="Falcon/Command/Virtual/index.html"><code class="language-ruby">class Virtual &lt; Samovar::Command</code></a>
+						
+						
+						
+							<p>Implements the <code>falcon virtual</code> command. Designed for <em>deployment</em>.</p>
+
+					
+					<ul class="index"><li>
+					
+									</li><li>
+					
+									</li><li>
+					
+									</li><li>
+					
+									</li><li>
+					
+									</li><li>
+					
+									</li><li>
+					
+									</li><li>
+					
+									</li><li>
+					
+									</li><li>
+					
+									</li></ul>				</li><li>
+					
+									</li></ul>				</li><li>
+						<a href="Falcon/Configuration/index.html"><code class="language-ruby">class Configuration</code></a>
+						
+						
+						
+							<p>Manages environments which describes how to host a specific application.</p>
+
+					
+					<ul class="index"><li>
+					
+									</li><li>
+					
+									</li><li>
+					
+									</li><li>
+					
+									</li><li>
+					
+									</li><li>
+						<a href="Falcon/Configuration/Loader/index.html"><code class="language-ruby">class Loader</code></a>
+						
+						
+						
+							<p>The domain specific language for loading configuration files.</p>
+
+					
+					<ul class="index"><li>
+					
+									</li><li>
+					
+									</li><li>
+					
+									</li><li>
+					
+									</li><li>
+					
+									</li><li>
+					
+									</li><li>
+					
+									</li><li>
+					
+									</li><li>
+					
+									</li><li>
+					
+									</li><li>
+					
+									</li></ul>				</li></ul>				</li><li>
+						<a href="Falcon/Controller/index.html"><code class="language-ruby">module Controller</code></a>
+						
+						
+						
+					
+					<ul class="index"><li>
+						<a href="Falcon/Controller/Host/index.html"><code class="language-ruby">class Host &lt; Async::Container::Controller</code></a>
+						
+						
+						
+							<p>A generic controller for serving an application.</p>
+
+					
+					<ul class="index"><li>
+					
+									</li><li>
+					
+									</li><li>
+					
+									</li><li>
+					
+									</li><li>
+					
+									</li></ul>				</li><li>
+						<a href="Falcon/Controller/Proxy/index.html"><code class="language-ruby">class Proxy &lt; Serve</code></a>
+						
+						
+						
+							<p>A controller for proxying requests.</p>
+
+					
+					<ul class="index"><li>
+					
+									</li><li>
+					
+									</li><li>
+					
+									</li><li>
+					
+									</li><li>
+					
+									</li><li>
+					
+									</li><li>
+					
+									</li><li>
+					
+									</li></ul>				</li><li>
+						<a href="Falcon/Controller/Redirect/index.html"><code class="language-ruby">class Redirect &lt; Serve</code></a>
+						
+						
+						
+							<p>A controller for redirecting requests.</p>
+
+					
+					<ul class="index"><li>
+					
+									</li><li>
+					
+									</li><li>
+					
+									</li><li>
+					
+									</li><li>
+					
+									</li></ul>				</li><li>
+						<a href="Falcon/Controller/Serve/index.html"><code class="language-ruby">class Serve &lt; Async::Container::Controller</code></a>
+						
+						
+						
+							<p>A generic controller for serving an application.</p>
+
+					
+					<ul class="index"><li>
+					
+									</li><li>
+					
+									</li><li>
+					
+									</li><li>
+					
+									</li><li>
+					
+									</li><li>
+					
+									</li><li>
+					
+									</li><li>
+					
+									</li></ul>				</li><li>
+						<a href="Falcon/Controller/Virtual/index.html"><code class="language-ruby">class Virtual &lt; Async::Container::Controller</code></a>
+						
+						
+						
+							<p>A controller which mananages several virtual hosts.</p>
+
+					
+					<ul class="index"><li>
+					
+									</li><li>
+					
+									</li><li>
+					
+									</li><li>
+					
+									</li><li>
+					
+									</li></ul>				</li></ul>				</li><li>
+						<a href="Falcon/Endpoint/index.html"><code class="language-ruby">class Endpoint &lt; Async::HTTP::Endpoint</code></a>
+						
+						
+						
+							<p>An HTTP-specific endpoint which adds localhost TLS.</p>
+
+					
+					<ul class="index"><li>
+					
+									</li><li>
+					
+									</li></ul>				</li><li>
+						<a href="Falcon/Environments/index.html"><code class="language-ruby">module Environments</code></a>
+						
+						
+						
+							<p>Pre-defined environments for hosting web applications.</p>
+
+					
+					<ul class="index"><li>
+						<a href="Falcon/Environments/application/index.html"><code class="language-ruby">environment(:application)</code></a>
+						
+						
+						
+							<p>A general application environment.</p>
+
+					
+					<ul class="index"><li>
+					
+									</li><li>
+					
+									</li><li>
+					
+									</li><li>
+					
+									</li><li>
+					
+									</li><li>
+					
+									</li><li>
+					
+									</li></ul>				</li><li>
+						<a href="Falcon/Environments/lets_encrypt_tls/index.html"><code class="language-ruby">environment(:lets_encrypt_tls, :tls)</code></a>
+						
+						
+						
+							<p>A Lets Encrypt SSL context environment.</p>
+
+					
+					<ul class="index"><li>
+					
+									</li><li>
+					
+									</li></ul>				</li><li>
+						<a href="Falcon/Environments/rack/index.html"><code class="language-ruby">environment(:proxy)</code></a>
+						
+						
+						
+							<p>A HTTP proxy environment.</p>
+
+					
+					<ul class="index"><li>
+					
+									</li><li>
+					
+									</li><li>
+					
+									</li><li>
+					
+									</li><li>
+					
+									</li></ul>				</li><li>
+						<a href="Falcon/Environments/self_signed_tls/index.html"><code class="language-ruby">environment(:self_signed_tls)</code></a>
+						
+						
+						
+							<p>A self-signed SSL context environment.</p>
+
+					
+					<ul class="index"><li>
+					
+									</li><li>
+					
+									</li></ul>				</li><li>
+						<a href="Falcon/Environments/supervisor/index.html"><code class="language-ruby">environment(:supervisor)</code></a>
+						
+						
+						
+							<p>A application process monitor environment.</p>
+
+					
+					<ul class="index"><li>
+					
+									</li><li>
+					
+									</li><li>
+					
+									</li><li>
+					
+									</li></ul>				</li><li>
+						<a href="Falcon/Environments/tls/index.html"><code class="language-ruby">environment(:tls)</code></a>
+						
+						
+						
+							<p>A general SSL context environment.</p>
+
+					
+					<ul class="index"><li>
+					
+									</li><li>
+					
+									</li><li>
+					
+									</li><li>
+					
+									</li><li>
+					
+									</li><li>
+					
+									</li><li>
+					
+									</li><li>
+					
+									</li><li>
+					
+									</li></ul>				</li></ul>				</li><li>
+						<a href="Falcon/Middleware/index.html"><code class="language-ruby">module Middleware</code></a>
+						
+						
+						
+					
+					<ul class="index"><li>
+						<a href="Falcon/Middleware/BadRequest/index.html"><code class="language-ruby">module BadRequest</code></a>
+						
+						
+						
+							<p>A static middleware which always returns a 400 bad request response.</p>
+
+					
+					<ul class="index"></ul>				</li><li>
+						<a href="Falcon/Middleware/Proxy/index.html"><code class="language-ruby">class Proxy &lt; Protocol::HTTP::Middleware</code></a>
+						
+						
+						
+							<p>A HTTP middleware for proxying requests to a given set of hosts.</p>
+
+					
+					<ul class="index"><li>
+					
+									</li><li>
+					
+									</li><li>
+					
+									</li><li>
+					
+									</li><li>
+					
+									</li><li>
+					
+									</li><li>
+					
+									</li><li>
+					
+									</li><li>
+					
+									</li></ul>				</li><li>
+						<a href="Falcon/Middleware/NotFound/index.html"><code class="language-ruby">module NotFound</code></a>
+						
+						
+						
+							<p>A static middleware which always returns a 404 not found response.</p>
+
+					
+					<ul class="index"></ul>				</li><li>
+						<a href="Falcon/Middleware/Redirect/index.html"><code class="language-ruby">class Redirect &lt; Protocol::HTTP::Middleware</code></a>
+						
+						
+						
+							<p>A HTTP middleware for redirecting a given set of hosts to a different endpoint.</p>
+
+					
+					<ul class="index"><li>
+					
+									</li><li>
+					
+									</li><li>
+					
+									</li></ul>				</li><li>
+						<a href="Falcon/Middleware/Verbose/index.html"><code class="language-ruby">class Verbose &lt; Protocol::HTTP::Middleware</code></a>
+						
+						
+						
+							<p>A HTTP middleware for logging requests and responses.</p>
+
+					
+					<ul class="index"><li>
+					
+									</li><li>
+					
+									</li><li>
+					
+									</li></ul>				</li></ul>				</li><li>
+						<a href="Falcon/ProxyEndpoint/index.html"><code class="language-ruby">class ProxyEndpoint &lt; Async::IO::Endpoint</code></a>
+						
+						
+						
+							<p>An endpoint suitable for proxing requests, typically via a unix pipe.</p>
+
+					
+					<ul class="index"><li>
+					
+									</li><li>
+					
+									</li><li>
+					
+									</li><li>
+					
+									</li><li>
+					
+									</li><li>
+					
+									</li><li>
+					
+									</li><li>
+					
+									</li><li>
+					
+									</li></ul>				</li><li>
+						<a href="Falcon/Server/index.html"><code class="language-ruby">class Server &lt; Async::HTTP::Server</code></a>
+						
+						
+						
+							<p>A server listening on a specific endpoint, hosting a specific middleware.</p>
+
+					
+					<ul class="index"><li>
+					
+									</li></ul>				</li><li>
+						<a href="Falcon/Service/index.html"><code class="language-ruby">module Service</code></a>
+						
+						
+						
+					
+					<ul class="index"><li>
+						<a href="Falcon/Service/Application/index.html"><code class="language-ruby">class Application &lt; Proxy</code></a>
+						
+						
+						
+							<p>Implements an application server using an internal clear-text proxy.</p>
+
+					
+					<ul class="index"><li>
+					
+									</li><li>
+					
+									</li><li>
+					
+									</li><li>
+					
+									</li><li>
+					
+									</li><li>
+					
+									</li></ul>				</li><li>
+						<a href="Falcon/Service/Generic/index.html"><code class="language-ruby">class Generic</code></a>
+						
+						
+						
+							<p>Captures the stateful behaviour of a specific service.</p>
+
+					
+					<ul class="index"><li>
+					
+									</li><li>
+					
+									</li><li>
+					
+									</li><li>
+					
+									</li><li>
+					
+									</li><li>
+					
+									</li><li>
+					
+									</li><li>
+					
+									</li></ul>				</li><li>
+						<a href="Falcon/Service/Proxy/index.html"><code class="language-ruby">class Proxy &lt; Generic</code></a>
+						
+						
+						
+					
+					<ul class="index"><li>
+					
+									</li><li>
+					
+									</li><li>
+					
+									</li><li>
+					
+									</li><li>
+					
+									</li><li>
+					
+									</li></ul>				</li><li>
+						<a href="Falcon/Service/Supervisor/index.html"><code class="language-ruby">class Supervisor &lt; Generic</code></a>
+						
+						
+						
+							<p>Implements a host supervisor which can restart the host services and provide various metrics about the running processes.</p>
+
+					
+					<ul class="index"><li>
+					
+									</li><li>
+					
+									</li><li>
+					
+									</li><li>
+					
+									</li><li>
+					
+									</li><li>
+					
+									</li><li>
+					
+									</li><li>
+					
+									</li></ul>				</li></ul>				</li><li>
+						<a href="Falcon/Services/index.html"><code class="language-ruby">class Services</code></a>
+						
+						
+						
+							<p>Represents one or more services associated with a host.</p>
+
+					
+					<ul class="index"><li>
+					
+									</li><li>
+					
+									</li><li>
+					
+									</li><li>
+					
+									</li><li>
+					
+									</li><li>
+					
+									</li></ul>				</li><li>
+						<a href="Falcon/TLS/index.html"><code class="language-ruby">module TLS</code></a>
+						
+						
+						
+					
+					<ul class="index"><li>
+					
+									</li></ul>				</li></ul>				</li><li>
+						<a href="./OpenSSL::X509/index.html"><code class="language-ruby">module OpenSSL::X509</code></a>
+						
+						
+						
+					
+					<ul class="index"><li>
+					
+									</li></ul>				</li><li>
+						<a href="Rack/index.html"><code class="language-ruby">module Rack</code></a>
+						
+						
+						
+					
+					<ul class="index"><li>
+						<a href="Rack/Handler/index.html"><code class="language-ruby">module Handler</code></a>
+						
+						
+						
+					
+					<ul class="index"><li>
+						<a href="Rack/Handler/Falcon/index.html"><code class="language-ruby">module Falcon</code></a>
+						
+						
+						
+							<p>The falcon adaptor for the <code>rackup</code> executable.</p>
+
+					
+					<ul class="index"><li>
+					
+									</li><li>
+					
+									</li><li>
+					
+									</li></ul>				</li></ul>				</li></ul>				</li></ul>
+				
+			<footer>Documentation generated by <a href="https://github.com/socketry/utopia-project">Utopia::Project</a>.</footer>
+		</main>
+	</body>
+</html>

@@ -1,0 +1,48 @@
+
+.gallery {
+	padding: 0.5rem;
+	
+	display: flex;
+	flex-flow: row wrap;
+	align-items: center;
+	justify-content: center;
+}
+
+.gallery figure {
+	margin: 1rem;
+	
+	background-color: rgb(250, 250, 250);
+	box-shadow: 0 0 1rem rgba(0, 0, 0, 0.2);
+	
+	/* This ensures that our figures never grow bigger than desired. */
+	flex-basis: 400px;
+}
+
+.gallery figure a {
+	display: block;
+	margin: 0.5rem;
+}
+
+.gallery img {
+	border: none;
+	display: block;
+	
+	width: 100%;
+}
+
+.gallery figcaption {
+	display: block;
+	margin: 0.5rem;
+	
+	font-size: 1rem;
+	text-align: center;
+	
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	
+	/* The figure caption should have a minimum height, if there are multiple
+	lines of caption, the total size of the figure is likely to be the same as
+	others. */
+	min-height: 4rem;
+}

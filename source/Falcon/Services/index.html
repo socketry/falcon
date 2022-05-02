@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		
+			<title>Falcon::Services</title>
+		
+		<meta charset="UTF-8"/>
+		<meta name="viewport" content="width=device-width, initial-scale=1"/>
+		
+		<link rel="icon" type="image/png" href="../../../_static/icon.png"/>
+		<link rel="stylesheet" href="../../../_static/site.css" type="text/css" media="screen"/>
+		
+		<script src="../../../_components/jquery/jquery.min.js"></script>
+		<script src="../../../_components/jquery-syntax/jquery.syntax.min.js"></script>
+		<script src="../../../_components/mermaid/mermaid.min.js"></script>
+		
+		<script src="../../../_static/links.js"></script>
+		
+		<script type="text/javascript">
+		//<![CDATA[
+			jQuery(function($) {
+				$.syntax();
+			});
+			
+			let isDarkMode = window.matchMedia("(prefers-color-scheme: dark)").matches
+			let config = {theme: 'light'};
+			if (isDarkMode) config.theme = 'dark';
+			else config.theme = 'forest';
+			mermaid.initialize(config);
+		//]]>
+		</script>
+	</head>
+
+	<body>
+		<header> › <a class="link" href="../../../index.html">Project</a> › <a class="link" href="../../index.html">Source</a></header>
+		
+		<main>
+			
+	<h1><code class="language-ruby">Falcon::Services</code></h1>
+	
+	<p>Represents one or more services associated with a host.</p>
+<p>The services model allows falcon to manage one more more service associated with a given host. Some examples of services include:</p>
+<ul>
+<li>Rack applications wrapped by <a href="../Service/Application/index.html" title="Service::Application"><code class="language-ruby">class Falcon::Service::Application</code></a>.</li>
+<li>Host supervisor implemented in <a href="../Service/Supervisor/index.html" title="Service::Supervisor"><code class="language-ruby">class Falcon::Service::Supervisor</code></a>.</li>
+<li>Proxy services wrapped by <a href="../Service/Proxy/index.html" title="Service::Proxy"><code class="language-ruby">class Falcon::Service::Proxy</code></a>.</li>
+</ul>
+<p>The list of services is typically generated from the user supplied <code>falcon.rb</code> configuration file, which is loaded into an immutable <a href="../Configuration/index.html" title="Configuration"><code class="language-ruby">class Falcon::Configuration</code></a> instance, which is mapped into a list of services.</p>
+	
+	
+	
+	
+	<section>
+	<h2>Definitions</h2>
+	
+	<section id="Falcon::Services#initialize"><h3><code class="language-ruby">def initialize(configuration)</code></h3><p>Initialize the services from the given configuration.</p>
+<details open>
+	<summary><h4>Signature</h4></summary>
+	<dl><dt>
+					<strong>parameter</strong>　<code class="syntax">configuration</code>　<code class="language-ruby"><a href="../Configuration/index.html" title="Falcon::Configuration">Configuration</a></code></dt></dl>
+</details>
+<details>
+						<summary><h4>Implementation</h4></summary>
+						<pre><code class="language-ruby">def initialize(configuration)
+	@named = {}
+	
+	configuration.each(:service) do |environment|
+		service = Service::Generic.wrap(environment)
+		
+		add(service)
+	end
+end</code></pre>
+					</details></section><section id="Falcon::Services#each"><h3><code class="language-ruby">def each(&amp;block)</code></h3><p>Enumerate all named services.</p>
+<details>
+						<summary><h4>Implementation</h4></summary>
+						<pre><code class="language-ruby">def each(&amp;block)
+	@named.each_value(&amp;block)
+end</code></pre>
+					</details></section><section id="Falcon::Services#add"><h3><code class="language-ruby">def add(service)</code></h3><p>Add a named service.</p>
+<details open>
+	<summary><h4>Signature</h4></summary>
+	<dl><dt>
+					<strong>parameter</strong>　<code class="syntax">service</code>　<code class="language-ruby"><a href="../Service/index.html" title="Falcon::Service">Service</a></code></dt></dl>
+</details>
+<details>
+						<summary><h4>Implementation</h4></summary>
+						<pre><code class="language-ruby">def add(service)
+	@named[service.name] = service
+end</code></pre>
+					</details></section><section id="Falcon::Services#start"><h3><code class="language-ruby">def start</code></h3><p>Start all named services.</p>
+<details>
+						<summary><h4>Implementation</h4></summary>
+						<pre><code class="language-ruby">def start
+	@named.each do |name, service|
+		Console.logger.debug(self) {&quot;Starting #{name}...&quot;}
+		service.start
+	end
+end</code></pre>
+					</details></section><section id="Falcon::Services#setup"><h3><code class="language-ruby">def setup(container)</code></h3><p>Setup all named services into the given container.</p>
+<details open>
+	<summary><h4>Signature</h4></summary>
+	<dl><dt>
+					<strong>parameter</strong>　<code class="syntax">container</code>　<code class="language-ruby">Async::Container::Generic</code></dt></dl>
+</details>
+<details>
+						<summary><h4>Implementation</h4></summary>
+						<pre><code class="language-ruby">def setup(container)
+	@named.each do |name, service|
+		Console.logger.debug(self) {&quot;Setup #{name} into #{container}...&quot;}
+		service.setup(container)
+	end
+	
+	return container
+end</code></pre>
+					</details></section><section id="Falcon::Services#stop"><h3><code class="language-ruby">def stop</code></h3><p>Stop all named services.</p>
+<details>
+						<summary><h4>Implementation</h4></summary>
+						<pre><code class="language-ruby">def stop
+	failed = false
+	
+	@named.each do |name, service|
+		Console.logger.debug(self) {&quot;Stopping #{name}...&quot;}
+		
+		begin
+			service.stop
+		rescue
+			failed = true
+			Console.logger.error(self, $!)
+		end
+	end
+	
+	return failed
+end</code></pre>
+					</details></section>	</section>
+	
+	
+
+				
+			<footer>Documentation generated by <a href="https://github.com/socketry/utopia-project">Utopia::Project</a>.</footer>
+		</main>
+	</body>
+</html>
+

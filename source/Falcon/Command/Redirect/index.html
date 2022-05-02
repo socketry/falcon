@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		
+			<title>Falcon::Command::Redirect</title>
+		
+		<meta charset="UTF-8"/>
+		<meta name="viewport" content="width=device-width, initial-scale=1"/>
+		
+		<link rel="icon" type="image/png" href="../../../../_static/icon.png"/>
+		<link rel="stylesheet" href="../../../../_static/site.css" type="text/css" media="screen"/>
+		
+		<script src="../../../../_components/jquery/jquery.min.js"></script>
+		<script src="../../../../_components/jquery-syntax/jquery.syntax.min.js"></script>
+		<script src="../../../../_components/mermaid/mermaid.min.js"></script>
+		
+		<script src="../../../../_static/links.js"></script>
+		
+		<script type="text/javascript">
+		//<![CDATA[
+			jQuery(function($) {
+				$.syntax();
+			});
+			
+			let isDarkMode = window.matchMedia("(prefers-color-scheme: dark)").matches
+			let config = {theme: 'light'};
+			if (isDarkMode) config.theme = 'dark';
+			else config.theme = 'forest';
+			mermaid.initialize(config);
+		//]]>
+		</script>
+	</head>
+
+	<body>
+		<header> › <a class="link" href="../../../../index.html">Project</a> › <a class="link" href="../../../index.html">Source</a></header>
+		
+		<main>
+			
+	<h1><code class="language-ruby">Falcon::Command::Redirect</code></h1>
+	
+		
+	
+	
+	
+	<section>
+	<h2>Definitions</h2>
+	
+	<section id="Falcon::Command::Redirect#options"><h3><code class="language-ruby">options { ... }</code></h3><p>The command line options.</p>
+<details open>
+	<summary><h4>Signature</h4></summary>
+	<dl><dt>
+					<strong>attribute</strong>　<code class="language-ruby">Samovar::Options</code></dt></dl>
+</details>
+<details>
+						<summary><h4>Implementation</h4></summary>
+						<pre><code class="language-ruby">options do
+	option '--bind &lt;address&gt;', &quot;Bind to the given hostname/address&quot;, default: &quot;http://[::]:80&quot;
+	option '--redirect &lt;address&gt;', &quot;Redirect using this address as a template.&quot;, default: &quot;https://[::]:443&quot;
+	
+	option '-t/--timeout &lt;duration&gt;', &quot;Specify the maximum time to wait for non-blocking operations.&quot;, type: Float, default: nil
+end</code></pre>
+					</details></section><section id="Falcon::Command::Redirect#paths"><h3><code class="language-ruby">many :paths</code></h3><p>One or more paths to the configuration files.</p>
+<details open>
+	<summary><h4>Signature</h4></summary>
+	<dl><dt>
+					<strong>attribute</strong>　<code class="language-ruby">Array(String)</code></dt></dl>
+</details>
+</section><section id="Falcon::Command::Redirect#controller"><h3><code class="language-ruby">def controller</code></h3><p>Prepare a new controller for the command.</p>
+<details>
+						<summary><h4>Implementation</h4></summary>
+						<pre><code class="language-ruby">def controller
+	Controller::Redirect.new(self)
+end</code></pre>
+					</details></section><section id="Falcon::Command::Redirect#container_class"><h3><code class="language-ruby">def container_class</code></h3><p>The container class to use.</p>
+<details>
+						<summary><h4>Implementation</h4></summary>
+						<pre><code class="language-ruby">def container_class
+	Async::Container.best_container_class
+end</code></pre>
+					</details></section><section id="Falcon::Command::Redirect#container_options"><h3><code class="language-ruby">def container_options</code></h3><p>Options for the container.
+See <a href="../../Controller/Serve/index.html#Falcon%3A%3AController%3A%3AServe%23setup" title="Controller::Serve#setup"><code class="language-ruby">Falcon::Controller::Serve#setup</code></a>.</p>
+<details>
+						<summary><h4>Implementation</h4></summary>
+						<pre><code class="language-ruby">def container_options
+	{}
+end</code></pre>
+					</details></section><section id="Falcon::Command::Redirect#call"><h3><code class="language-ruby">def call</code></h3><p>Prepare the environment and run the controller.</p>
+<details>
+						<summary><h4>Implementation</h4></summary>
+						<pre><code class="language-ruby">def call
+	Console.logger.info(self) do |buffer|
+		buffer.puts &quot;Falcon Redirect v#{VERSION} taking flight!&quot;
+		buffer.puts &quot;- Binding to: #{@options[:bind]}&quot;
+		buffer.puts &quot;- To terminate: Ctrl-C or kill #{Process.pid}&quot;
+		buffer.puts &quot;- To reload: kill -HUP #{Process.pid}&quot;
+	end
+	
+	self.controller.run
+end</code></pre>
+					</details></section><section id="Falcon::Command::Redirect#endpoint"><h3><code class="language-ruby">def endpoint(**options)</code></h3><p>The endpoint to bind to.</p>
+<details>
+						<summary><h4>Implementation</h4></summary>
+						<pre><code class="language-ruby">def endpoint(**options)
+	Async::HTTP::Endpoint.parse(@options[:bind], timeout: @options[:timeout], **options)
+end</code></pre>
+					</details></section><section id="Falcon::Command::Redirect#redirect_endpoint"><h3><code class="language-ruby">def redirect_endpoint(**options)</code></h3><p>The template endpoint to redirect to.</p>
+<details>
+						<summary><h4>Implementation</h4></summary>
+						<pre><code class="language-ruby">def redirect_endpoint(**options)
+	Async::HTTP::Endpoint.parse(@options[:redirect], **options)
+end</code></pre>
+					</details></section>	</section>
+	
+	
+
+				
+			<footer>Documentation generated by <a href="https://github.com/socketry/utopia-project">Utopia::Project</a>.</footer>
+		</main>
+	</body>
+</html>
+

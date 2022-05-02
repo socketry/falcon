@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		
+			<title>Falcon
+</title>
+		
+		<meta charset="UTF-8"/>
+		<meta name="viewport" content="width=device-width, initial-scale=1"/>
+		
+		<link rel="icon" type="image/png" href="_static/icon.png"/>
+		<link rel="stylesheet" href="_static/site.css" type="text/css" media="screen"/>
+		
+		<script src="_components/jquery/jquery.min.js"></script>
+		<script src="_components/jquery-syntax/jquery.syntax.min.js"></script>
+		<script src="_components/mermaid/mermaid.min.js"></script>
+		
+		<script src="_static/links.js"></script>
+		
+		<script type="text/javascript">
+		//<![CDATA[
+			jQuery(function($) {
+				$.syntax();
+			});
+			
+			let isDarkMode = window.matchMedia("(prefers-color-scheme: dark)").matches
+			let config = {theme: 'light'};
+			if (isDarkMode) config.theme = 'dark';
+			else config.theme = 'forest';
+			mermaid.initialize(config);
+		//]]>
+		</script>
+	</head>
+
+	<body>
+		<header> › <a class="link" href="index.html">Project</a></header>
+		
+		<main>
+			
+	<h1 style="text-align: center"><object type="image/svg+xml" data="logo.svg"></object></h1><p>Falcon is a multi-process, multi-fiber rack-compatible HTTP server built on top of <a href="https://github.com/socketry/async">async</a>, <a href="https://github.com/socketry/async-io">async-io</a>, <a href="https://github.com/socketry/async-container">async-container</a> and <a href="https://github.com/socketry/async-http">async-http</a>. Each request is executed within a lightweight fiber and can block on up-stream requests without stalling the entire server process. Falcon supports HTTP/1 and HTTP/2 natively.</p>
+<p><a href="https://github.com/socketry/falcon/actions?workflow=Development"><img src="https://github.com/socketry/falcon/workflows/Development/badge.svg" alt="Development Status"/></a></p>
+<section id="motivation"><h2>Motivation</h2>
+<p>Initially, when I developed <a href="https://github.com/socketry/async">async</a>, I saw an opportunity to implement <a href="https://github.com/socketry/async-http">async-http</a>: providing both client and server components. After experimenting with these ideas, I decided to build an actual web server for comparing and validating performance primarily out of interest. Falcon grew out of those experiments and permitted the ability to test existing real-world code on top of <a href="https://github.com/socketry/async">async</a>.</p>
+<p>Once I had something working, I saw an opportunity to simplify my development, testing and production environments, replacing production (Nginx+Passenger) and development (Puma) with Falcon. Not only does this simplify deployment, it helps minimize environment-specific bugs.</p>
+<p>My long term vision for Falcon is to make a web application platform which trivializes server deployment. Ideally, a web application can fully describe all it's components: HTTP servers, databases, periodic jobs, background jobs, remote management, etc. Currently, it is not uncommon for all these facets to be handled independently in platform specific ways. This can make it difficult to set up new instances as well as make changes to underlying infrastructure. I hope Falcon can address some of these issues in a platform agnostic way.</p>
+<p>As web development is something I'm passionate about, having a server like Falcon is empowering.</p>
+</section><section id="priority-business-support"><h2>Priority Business Support</h2>
+<p>Falcon can be an important part of your business or project, both improving performance and saving money. As such, priority business support is available to make every project a success. The support agreement will give you:</p>
+<ul>
+<li>Direct support and assistance via Slack and email.</li>
+<li>Advance notification of bugs and security issues.</li>
+<li>Priority consideration of feature requests and bug reports.</li>
+<li>Better software by funding development and testing.</li>
+</ul>
+<p>Please visit <a href="https://socketry.io">Socketry.io</a> to register and subscribe.</p>
+</section><section id="usage"><h2>Usage</h2>
+<p>Please browse the <a href="source/index.html">source code index</a> or refer to the guides below.</p>
+
+	<section>
+		<h3><a href="guides/getting-started/index.html">Getting Started</a></h3>
+		
+			<p>This guide explains how to use Falcon for Ruby web application development.</p>
+
+	</section>
+	<section>
+		<h3><a href="guides/rails-integration/index.html">Rails Integration</a></h3>
+		
+			<p>This guide explains how to host Rails applications with Falcon.</p>
+
+	</section>
+	<section>
+		<h3><a href="guides/deployment/index.html">Deployment</a></h3>
+		
+			<p>This guide explains how to use Falcon in production environments.</p>
+
+	</section>
+	<section>
+		<h3><a href="guides/extended-features/index.html">Extended Features</a></h3>
+		
+			<p>This guide explains some of the extended features and functionality of Falcon.</p>
+
+	</section>
+	<section>
+		<h3><a href="guides/performance-tuning/index.html">Performance Tuning</a></h3>
+		
+			<p>This guide explains the performance characteristics of Falcon.</p>
+
+	</section>
+	<section>
+		<h3><a href="guides/how-it-works/index.html">How It Works</a></h3>
+		
+			<p>This guide gives an overview of how Falcon handles an incoming web request.</p>
+
+	</section>
+
+</section><section id="contributing"><h2>Contributing</h2>
+<p>We welcome contributions to this project.</p>
+<ol>
+<li>Fork it</li>
+<li>Create your feature branch (<code>git checkout -b my-new-feature</code>)</li>
+<li>Commit your changes (<code>git commit -am 'Add some feature'</code>)</li>
+<li>Push to the branch (<code>git push origin my-new-feature</code>)</li>
+<li>Create new Pull Request</li>
+</ol>
+</section><section id="responsible-disclosure"><h3>Responsible Disclosure</h3>
+<p>We take the security of our systems seriously, and we value input from the security community. The disclosure of security vulnerabilities helps us ensure the security and privacy of our users. If you believe you've found a security vulnerability in one of our products or platforms please <a href="mailto:contact@oriontransfer.co.nz?subject=Falcon%20Security">tell us via email</a>.</p>
+</section><section id="websites-using-falcon"><h2>Websites using Falcon</h2>
+<p>Websites below are listed in alphabetical order.</p>
+<ul>
+<li>iCook - <a href="https://icook.tw">https://icook.tw</a></li>
+<li>RubyAPI - <a href="https://rubyapi.org">https://rubyapi.org</a></li>
+<li>YonderBook - <a href="https://www.yonderbook.com/">https://www.yonderbook.com/</a></li>
+</ul>
+<p>You're welcome to file a PR if you want to add your sites here.</p>
+</section><section id="license"><h2>License</h2>
+<p>Released under the MIT license.</p>
+<p>Copyright, 2018, by <a href="http://www.codeotaku.com">Samuel G. D. Williams</a>.</p>
+<p>Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the &quot;Software&quot;), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:</p>
+<p>The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.</p>
+<p>THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.</p>
+</section>
+				
+			<footer>Documentation generated by <a href="https://github.com/socketry/utopia-project">Utopia::Project</a>.</footer>
+		</main>
+	</body>
+</html>

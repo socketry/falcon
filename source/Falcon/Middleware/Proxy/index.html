@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		
+			<title>Falcon::Middleware::Proxy</title>
+		
+		<meta charset="UTF-8"/>
+		<meta name="viewport" content="width=device-width, initial-scale=1"/>
+		
+		<link rel="icon" type="image/png" href="../../../../_static/icon.png"/>
+		<link rel="stylesheet" href="../../../../_static/site.css" type="text/css" media="screen"/>
+		
+		<script src="../../../../_components/jquery/jquery.min.js"></script>
+		<script src="../../../../_components/jquery-syntax/jquery.syntax.min.js"></script>
+		<script src="../../../../_components/mermaid/mermaid.min.js"></script>
+		
+		<script src="../../../../_static/links.js"></script>
+		
+		<script type="text/javascript">
+		//<![CDATA[
+			jQuery(function($) {
+				$.syntax();
+			});
+			
+			let isDarkMode = window.matchMedia("(prefers-color-scheme: dark)").matches
+			let config = {theme: 'light'};
+			if (isDarkMode) config.theme = 'dark';
+			else config.theme = 'forest';
+			mermaid.initialize(config);
+		//]]>
+		</script>
+	</head>
+
+	<body>
+		<header> › <a class="link" href="../../../../index.html">Project</a> › <a class="link" href="../../../index.html">Source</a></header>
+		
+		<main>
+			
+	<h1><code class="language-ruby">Falcon::Middleware::Proxy</code></h1>
+	
+	<p>A HTTP middleware for proxying requests to a given set of hosts.
+Typically used for implementing virtual servers.</p>
+	
+	
+	
+	
+	<section>
+	<h2>Definitions</h2>
+	
+	<section id="Falcon::Middleware::Proxy::HOP_HEADERS"><h3><code class="language-ruby">HOP_HEADERS = [...]</code></h3><p>HTTP hop headers which <em>should</em> not be passed through the proxy.</p>
+<details>
+						<summary><h4>Implementation</h4></summary>
+						<pre><code class="language-ruby">HOP_HEADERS = [
+	'connection',
+	'keep-alive',
+	'public',
+	'proxy-authenticate',
+	'transfer-encoding',
+	'upgrade',
+]</code></pre>
+					</details></section><section id="Falcon::Middleware::Proxy#initialize"><h3><code class="language-ruby">def initialize(app, hosts)</code></h3><p>Initialize the proxy middleware.</p>
+<details open>
+	<summary><h4>Signature</h4></summary>
+	<dl><dt>
+					<strong>parameter</strong>　<code class="syntax">app</code>　<code class="language-ruby">Protocol::HTTP::Middleware</code></dt><dd><p>The middleware to use if a request can't be proxied.</p>
+</dd><dt>
+					<strong>parameter</strong>　<code class="syntax">hosts</code>　<code class="language-ruby">Array(Service::<a href="../../Service/Proxy/index.html" title="Falcon::Service::Proxy">Proxy</a>)</code></dt><dd><p>The host applications to proxy to.</p>
+</dd></dl>
+</details>
+<details>
+						<summary><h4>Implementation</h4></summary>
+						<pre><code class="language-ruby">def initialize(app, hosts)
+	super(app)
+	
+	@server_context = nil
+	
+	@hosts = hosts
+	@clients = {}
+	
+	@count = 0
+end</code></pre>
+					</details></section><section id="Falcon::Middleware::Proxy#count"><h3><code class="language-ruby">attr :count</code></h3><p>The number of requests that have been proxied.</p>
+<details open>
+	<summary><h4>Signature</h4></summary>
+	<dl><dt>
+					<strong>attribute</strong>　<code class="language-ruby">Integer</code></dt></dl>
+</details>
+</section><section id="Falcon::Middleware::Proxy#close"><h3><code class="language-ruby">def close</code></h3><p>Close all the connections to the upstream hosts.</p>
+<details>
+						<summary><h4>Implementation</h4></summary>
+						<pre><code class="language-ruby">def close
+	@clients.each_value(&amp;:close)
+	
+	super
+end</code></pre>
+					</details></section><section id="Falcon::Middleware::Proxy#connect"><h3><code class="language-ruby">def connect(endpoint)</code></h3><p>Establish a connection to the specified upstream endpoint.</p>
+<details open>
+	<summary><h4>Signature</h4></summary>
+	<dl><dt>
+					<strong>parameter</strong>　<code class="syntax">endpoint</code>　<code class="language-ruby">Async::HTTP::Endpoint</code></dt></dl>
+</details>
+<details>
+						<summary><h4>Implementation</h4></summary>
+						<pre><code class="language-ruby">def connect(endpoint)
+	@clients[endpoint] ||= Async::HTTP::Client.new(endpoint)
+end</code></pre>
+					</details></section><section id="Falcon::Middleware::Proxy#lookup"><h3><code class="language-ruby">def lookup(request)</code></h3><p>Lookup the appropriate host for the given request.</p>
+<details open>
+	<summary><h4>Signature</h4></summary>
+	<dl><dt>
+					<strong>parameter</strong>　<code class="syntax">request</code>　<code class="language-ruby">Protocol::HTTP::Request</code></dt><dt>
+					<strong>returns</strong>　<code class="language-ruby">Service::<a href="../../Service/Proxy/index.html" title="Falcon::Service::Proxy">Proxy</a></code></dt></dl>
+</details>
+<details>
+						<summary><h4>Implementation</h4></summary>
+						<pre><code class="language-ruby">def lookup(request)
+	# Trailing dot and port is ignored/normalized.
+	if authority = request.authority&amp;.sub(/(\.)?(:\d+)?$/, '')
+		return @hosts[authority]
+	end
+end</code></pre>
+					</details></section><section id="Falcon::Middleware::Proxy#prepare_headers"><h3><code class="language-ruby">def prepare_headers(headers)</code></h3><p>Prepare the headers to be sent to an upstream host.
+In particular, we delete all connection and hop headers.</p>
+<details>
+						<summary><h4>Implementation</h4></summary>
+						<pre><code class="language-ruby">def prepare_headers(headers)
+	if connection = headers[CONNECTION]
+		headers.extract(connection)
+	end
+	
+	headers.extract(HOP_HEADERS)
+end</code></pre>
+					</details></section><section id="Falcon::Middleware::Proxy#prepare_request"><h3><code class="language-ruby">def prepare_request(request, host)</code></h3><p>Prepare the request to be proxied to the specified host.
+In particular, we set appropriate <a href="index.html#Falcon%3A%3AMiddleware%3A%3AProxy%3A%3AVIA" title="VIA"><code class="language-ruby">VIA = 'via'</code></a>, <a href="index.html#Falcon%3A%3AMiddleware%3A%3AProxy%3A%3AFORWARDED" title="FORWARDED"><code class="language-ruby">FORWARDED = 'forwarded'</code></a>, <a href="index.html#Falcon%3A%3AMiddleware%3A%3AProxy%3A%3AX_FORWARDED_FOR" title="X_FORWARDED_FOR"><code class="language-ruby">X_FORWARDED_FOR = 'x-forwarded-for'</code></a> and <a href="index.html#Falcon%3A%3AMiddleware%3A%3AProxy%3A%3AX_FORWARDED_PROTO" title="X_FORWARDED_PROTO"><code class="language-ruby">X_FORWARDED_PROTO = 'x-forwarded-proto'</code></a> headers.</p>
+<details>
+						<summary><h4>Implementation</h4></summary>
+						<pre><code class="language-ruby">def prepare_request(request, host)
+	forwarded = []
+	
+	Console.logger.debug(self) do |buffer|
+		buffer.puts &quot;Request authority: #{request.authority}&quot;
+		buffer.puts &quot;Host authority: #{host.authority}&quot;
+		buffer.puts &quot;Request: #{request.method} #{request.path} #{request.version}&quot;
+		buffer.puts &quot;Request headers: #{request.headers.inspect}&quot;
+	end
+	
+	# The authority of the request must match the authority of the endpoint we are proxying to, otherwise SNI and other things won't work correctly.
+	request.authority = host.authority
+	
+	if address = request.remote_address
+		request.headers.add(X_FORWARDED_FOR, address.ip_address)
+		forwarded &lt;&lt; &quot;for=#{address.ip_address}&quot;
+	end
+	
+	if scheme = request.scheme
+		request.headers.add(X_FORWARDED_PROTO, scheme)
+		forwarded &lt;&lt; &quot;proto=#{scheme}&quot;
+	end
+	
+	unless forwarded.empty?
+		request.headers.add(FORWARDED, forwarded.join(';'))
+	end
+	
+	request.headers.add(VIA, &quot;#{request.version} #{self.class}&quot;)
+	
+	self.prepare_headers(request.headers)
+	
+	return request
+end</code></pre>
+					</details></section><section id="Falcon::Middleware::Proxy#call"><h3><code class="language-ruby">def call(request)</code></h3><p>Proxy the request if the authority matches a specific host.</p>
+<details open>
+	<summary><h4>Signature</h4></summary>
+	<dl><dt>
+					<strong>parameter</strong>　<code class="syntax">request</code>　<code class="language-ruby">Protocol::HTTP::Request</code></dt></dl>
+</details>
+<details>
+						<summary><h4>Implementation</h4></summary>
+						<pre><code class="language-ruby">def call(request)
+	if host = lookup(request)
+		@count += 1
+		
+		request = self.prepare_request(request, host)
+		
+		client = connect(host.endpoint)
+		
+		client.call(request)
+	else
+		super
+	end
+rescue
+	Console.logger.error(self) {$!}
+	return Protocol::HTTP::Response[502, {'content-type' =&gt; 'text/plain'}, [&quot;#{$!.inspect}: #{$!.backtrace.join(&quot;\n&quot;)}&quot;]]
+end</code></pre>
+					</details></section>	</section>
+	
+	
+
+				
+			<footer>Documentation generated by <a href="https://github.com/socketry/utopia-project">Utopia::Project</a>.</footer>
+		</main>
+	</body>
+</html>
+
