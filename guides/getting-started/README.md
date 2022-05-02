@@ -4,7 +4,7 @@ This guide explains how to use Falcon for Ruby web application development.
 
 ## Falcon Serve
 
-You can run `falcon serve` directly. It will load the `config.ru` and start serving on <a href="https://localhost:9292">https://localhost:9292</a>.
+You can run `falcon serve` directly. It will load the `config.ru` and start serving on `https://localhost:9292`.
 
 To run on a different port:
 
