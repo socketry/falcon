@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 
 require_relative "lib/falcon/version"
 
@@ -6,8 +7,11 @@ Gem::Specification.new do |spec|
 	spec.version = Falcon::VERSION
 	
 	spec.summary = "A fast, asynchronous, rack-compatible web server."
-	spec.authors = ["Samuel Williams"]
+	spec.authors = ["Samuel Williams", "Janko Marohnić", "Bryan Powell", "dependabot[bot]", "Sho Ito", "claudiu", "takkanm", "tamkylet", "Colby Swandale", "Daniel Evans", "Kent Gruber", "Michael Adams", "Mikel Kew", "Olle Jonsson", "Sh Lin", "Tad Thorley", "Tasos Latsas", "deepj"]
 	spec.license = "MIT"
+	
+	spec.cert_chain  = ['release.cert']
+	spec.signing_key = File.expand_path('~/.gem/release.pem')
 	
 	spec.homepage = "https://github.com/socketry/falcon"
 	

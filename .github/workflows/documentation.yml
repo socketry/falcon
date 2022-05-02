@@ -3,30 +3,32 @@ name: Documentation
 on:
   push:
     branches:
-      - master
+      - main
+
+env:
+  BUNDLE_WITH: maintenance
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
     
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
+
     - uses: ruby/setup-ruby@v1
-      env:
-        BUNDLE_WITH: maintenance
       with:
-        ruby-version: 2.7
+        ruby-version: 3.1
         bundler-cache: true
     
     - name: Installing packages
       run: sudo apt-get install wget
     
+    - name: Prepare GitHub Pages
+      run: bundle exec bake github:pages:prepare --directory docs
+    
     - name: Generate documentation
       timeout-minutes: 5
-      run: bundle exec bake utopia:project:static
+      run: bundle exec bake utopia:project:static --force no
     
-    - name: Deploy documentation
-      uses: JamesIves/github-pages-deploy-action@4.0.0
-      with:
-        branch: docs
-        folder: docs
+    - name: Deploy GitHub Pages
+      run: bundle exec bake github:pages:commit --directory docs
