@@ -83,7 +83,7 @@ module Falcon
 			# Setup the container with the application instance.
 			# @parameter container [Async::Container::Generic]
 			def setup(container)
-				container.run(name: self.name, restart: true, **@command.container_options) do |instance|
+				container.run(name: self.name, **@command.container_options) do |instance|
 					Async do |task|
 						# Load one app instance per container:
 						app = self.load_app

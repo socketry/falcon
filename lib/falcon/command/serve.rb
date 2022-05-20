@@ -66,6 +66,7 @@ module Falcon
 				
 				option '--forks <count>', "Number of forks (hybrid only).", type: Integer
 				option '--threads <count>', "Number of threads (hybrid only).", type: Integer
+				option '--restart <true|false>', "Enable or disable automatic restart. Enabled by default.", default: true
 			end
 			
 			# The container class to use.
@@ -103,7 +104,7 @@ module Falcon
 			# Options for the container.
 			# See {Controller::Serve#setup}.
 			def container_options
-				@options.slice(:count, :forks, :threads)
+				@options.slice(:count, :forks, :threads).merge(restart: @options[:restart] != "false")
 			end
 			
 			# Options for the {endpoint}.
