@@ -2,6 +2,12 @@ name: Rack V1
 
 on: [push, pull_request]
 
+permissions:
+  contents: read
+
+env:
+  CONSOLE_OUTPUT: XTerm
+
 jobs:
   test:
     runs-on: ${{matrix.os}}-latest
@@ -12,7 +18,7 @@ jobs:
           - ubuntu
         
         ruby:
-          - 2.7
+          - "2.7"
     
     env:
       BUNDLE_GEMFILE: gems/rack-v1.rb
