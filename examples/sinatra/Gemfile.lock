@@ -25,7 +25,7 @@ GEM
     mustermann (1.1.1)
       ruby2_keywords (~> 0.0.1)
     nio4r (2.3.1)
-    rack (2.2.3)
+    rack (2.2.4)
     rack-protection (2.2.0)
       rack
     rainbow (2.2.2)
