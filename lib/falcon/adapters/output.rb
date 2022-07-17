@@ -78,7 +78,7 @@ module Falcon
 			
 			# Whether the body can be read immediately.
 			def ready?
-				true
+				body.is_a?(Array) or body.respond_to?(:to_ary)
 			end
 			
 			# Close the response body.
