@@ -7,7 +7,7 @@ Gem::Specification.new do |spec|
 	spec.version = Falcon::VERSION
 	
 	spec.summary = "A fast, asynchronous, rack-compatible web server."
-	spec.authors = ["Samuel Williams", "Janko Marohnić", "Bryan Powell", "dependabot[bot]", "Sho Ito", "claudiu", "takkanm", "tamkylet", "Colby Swandale", "Daniel Evans", "Kent Gruber", "Michael Adams", "Mikel Kew", "Olle Jonsson", "Sh Lin", "Tad Thorley", "Tasos Latsas", "deepj"]
+	spec.authors = ["Samuel Williams", "Janko Marohnić", "dependabot[bot]", "Bryan Powell", "Sho Ito", "claudiu", "takkanm", "tamkylet", "Colby Swandale", "Daniel Evans", "Kent Gruber", "Michael Adams", "Mikel Kew", "Olle Jonsson", "Sh Lin", "Tad Thorley", "Tasos Latsas", "deepj"]
 	spec.license = "MIT"
 	
 	spec.cert_chain  = ['release.cert']

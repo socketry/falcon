@@ -5,7 +5,11 @@ on:
     branches:
       - main
 
+permissions:
+  contents: write
+
 env:
+  CONSOLE_OUTPUT: XTerm
   BUNDLE_WITH: maintenance
 
 jobs:
@@ -17,7 +21,7 @@ jobs:
 
     - uses: ruby/setup-ruby@v1
       with:
-        ruby-version: 3.1
+        ruby-version: "3.1"
         bundler-cache: true
     
     - name: Installing packages

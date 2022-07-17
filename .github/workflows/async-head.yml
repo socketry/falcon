@@ -2,6 +2,12 @@ name: Async head
 
 on: [push, pull_request]
 
+permissions:
+  contents: read
+
+env:
+  CONSOLE_OUTPUT: XTerm
+
 jobs:
   test:
     runs-on: ${{matrix.os}}-latest
@@ -12,7 +18,7 @@ jobs:
           - ubuntu
         
         ruby:
-          - head
+          - "3.1"
     
     env:
       BUNDLE_GEMFILE: gems/async-head.rb
