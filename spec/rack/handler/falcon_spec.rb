@@ -25,27 +25,12 @@ require 'rack/handler/falcon'
 
 RSpec.describe Rack::Handler::Falcon do
 	it_behaves_like Rack::Handler, 'falcon'
-	
-	let(:server_double) {instance_double(Falcon::Server)}
-	
-	before do
-		allow(Async::Reactor).to receive(:run)
-		allow(Falcon::Server).to receive(:new).and_return(server_double)
-	end
-	
-	context 'block is given' do
-		it 'yields server' do
-			expect do |block|
-				described_class.run(double(call: true), &block)
-			end.to yield_with_args(server_double)
-		end
-	end
-	
-	context 'block is not given' do
-		it 'does not fail' do
-			expect do |block|
-				described_class.run(double(call: true), &block)
-			end.not_to raise_error
+
+	let(:app) {lambda {|env| [200, {}, ["Hello World"]]}}
+
+	it "can start and stop server" do
+		Rack::Handler::Falcon.run(app) do |server|
+			server.stop
 		end
 	end
 end
