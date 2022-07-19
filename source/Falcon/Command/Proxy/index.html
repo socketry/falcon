@@ -32,22 +32,22 @@
 	</head>
 
 	<body>
-		<header> › <a class="link" href="../../../../index.html">Project</a> › <a class="link" href="../../../index.html">Source</a></header>
+		<header> › <a class="link" href="../../../../index.html">Project</a> › <a class="link" href="../../../index.html">Source</a> › <a href="../../index.html">Falcon</a>  › <a href="../index.html">Command</a>  › <a href="index.html">Proxy</a> </header>
 		
 		<main>
 			
-	<h1><code class="language-ruby">Falcon::Command::Proxy</code></h1>
+
+	<h1>
+		<code class="language-ruby">class Proxy</code>
+	</h1>
 	
 	<p>Implements the <code>falcon proxy</code> command.</p>
 <p>Manages a <a href="../../Controller/Proxy/index.html" title="Controller::Proxy"><code class="language-ruby">class Falcon::Controller::Proxy</code></a> instance which is responsible for proxing incoming requests.</p>
 	
-	
-	
-	
 	<section>
-	<h2>Definitions</h2>
-	
-	<section id="Falcon::Command::Proxy#options"><h3><code class="language-ruby">options { ... }</code></h3><p>The command line options.</p>
+		<h2>Definitions</h2>
+		
+		<section id="Falcon::Command::Proxy#options"><h3><code class="language-ruby">options { ... }</code></h3><p>The command line options.</p>
 <details open>
 	<summary><h4>Signature</h4></summary>
 	<dl><dt>
@@ -105,7 +105,6 @@ end</code></pre>
 	Async::HTTP::Endpoint.parse(@options[:bind], timeout: @options[:timeout], **options)
 end</code></pre>
 					</details></section>	</section>
-	
 	
 
 				

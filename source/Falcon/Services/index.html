@@ -32,11 +32,14 @@
 	</head>
 
 	<body>
-		<header> › <a class="link" href="../../../index.html">Project</a> › <a class="link" href="../../index.html">Source</a></header>
+		<header> › <a class="link" href="../../../index.html">Project</a> › <a class="link" href="../../index.html">Source</a> › <a href="../index.html">Falcon</a>  › <a href="index.html">Services</a> </header>
 		
 		<main>
 			
-	<h1><code class="language-ruby">Falcon::Services</code></h1>
+
+	<h1>
+		<code class="language-ruby">class Services</code>
+	</h1>
 	
 	<p>Represents one or more services associated with a host.</p>
 <p>The services model allows falcon to manage one more more service associated with a given host. Some examples of services include:</p>
@@ -47,13 +50,10 @@
 </ul>
 <p>The list of services is typically generated from the user supplied <code>falcon.rb</code> configuration file, which is loaded into an immutable <a href="../Configuration/index.html" title="Configuration"><code class="language-ruby">class Falcon::Configuration</code></a> instance, which is mapped into a list of services.</p>
 	
-	
-	
-	
 	<section>
-	<h2>Definitions</h2>
-	
-	<section id="Falcon::Services#initialize"><h3><code class="language-ruby">def initialize(configuration)</code></h3><p>Initialize the services from the given configuration.</p>
+		<h2>Definitions</h2>
+		
+		<section id="Falcon::Services#initialize"><h3><code class="language-ruby">def initialize(configuration)</code></h3><p>Initialize the services from the given configuration.</p>
 <details open>
 	<summary><h4>Signature</h4></summary>
 	<dl><dt>
@@ -123,16 +123,15 @@ end</code></pre>
 		
 		begin
 			service.stop
-		rescue
+		rescue =&gt; error
 			failed = true
-			Console.logger.error(self, $!)
+			Console.logger.error(self, error)
 		end
 	end
 	
 	return failed
 end</code></pre>
 					</details></section>	</section>
-	
 	
 
 				

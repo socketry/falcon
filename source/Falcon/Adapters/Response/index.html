@@ -32,11 +32,14 @@
 	</head>
 
 	<body>
-		<header> › <a class="link" href="../../../../index.html">Project</a> › <a class="link" href="../../../index.html">Source</a></header>
+		<header> › <a class="link" href="../../../../index.html">Project</a> › <a class="link" href="../../../index.html">Source</a> › <a href="../../index.html">Falcon</a>  › <a href="../index.html">Adapters</a>  › <a href="index.html">Response</a> </header>
 		
 		<main>
 			
-	<h1><code class="language-ruby">Falcon::Adapters::Response</code></h1>
+
+	<h1>
+		<code class="language-ruby">class Response</code>
+	</h1>
 	
 	<p>A wrapper for a <code>Rack</code> response.</p>
 <p>A Rack response consisting of <code>[status, headers, body]</code> includes various rack-specific elements, including:</p>
@@ -49,13 +52,10 @@
 </ul>
 <p>This wrapper takes those issues into account and adapts the rack response tuple into a <code class="language-ruby">Protocol::HTTP::Response</code>.</p>
 	
-	
-	
-	
 	<section>
-	<h2>Definitions</h2>
-	
-	<section id="Falcon::Adapters::Response.wrap_headers"><h3><code class="language-ruby">def self.wrap_headers(fields)</code></h3><p>Process the rack response headers into into a <code class="language-ruby">Protocol::HTTP::Headers</code> instance, along with any extra <code>rack.</code> metadata.</p>
+		<h2>Definitions</h2>
+		
+		<section id="Falcon::Adapters::Response.wrap_headers"><h3><code class="language-ruby">def self.wrap_headers(fields)</code></h3><p>Process the rack response headers into into a <code class="language-ruby">Protocol::HTTP::Headers</code> instance, along with any extra <code>rack.</code> metadata.</p>
 <details open>
 	<summary><h4>Signature</h4></summary>
 	<dl><dt>
@@ -145,7 +145,6 @@ end</code></pre>
 	super(nil, status, headers, body, protocol)
 end</code></pre>
 					</details></section>	</section>
-	
 	
 
 				

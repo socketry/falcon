@@ -32,22 +32,22 @@
 	</head>
 
 	<body>
-		<header> › <a class="link" href="../../../../index.html">Project</a> › <a class="link" href="../../../index.html">Source</a></header>
+		<header> › <a class="link" href="../../../../index.html">Project</a> › <a class="link" href="../../../index.html">Source</a> › <a href="../../index.html">Falcon</a>  › <a href="../index.html">Adapters</a>  › <a href="index.html">Output</a> </header>
 		
 		<main>
 			
-	<h1><code class="language-ruby">Falcon::Adapters::Output</code></h1>
+
+	<h1>
+		<code class="language-ruby">class Output</code>
+	</h1>
 	
 	<p>Wraps the rack response body.</p>
 <p>The <code>rack</code> body must respond to <code>each</code> and must only yield <code>String</code> values. If the body responds to <code>close</code>, it will be called after iteration. If the body is replaced by a middleware after action, the original body must be closed first, if it responds to <code>close</code>. If the body responds to <code>to_path</code>, it must return a String identifying the location of a file whose contents are identical to that produced by calling <code>each</code>; this may be used by the server as an alternative, possibly more efficient way to transport the response. The body commonly is an <code>Array</code> of strings, the application instance itself, or a <code>File</code>-like object.</p>
 	
-	
-	
-	
 	<section>
-	<h2>Definitions</h2>
-	
-	<section id="Falcon::Adapters::Output.wrap"><h3><code class="language-ruby">def self.wrap(status, headers, body)</code></h3><p>Wraps an array into a buffered body.</p>
+		<h2>Definitions</h2>
+		
+		<section id="Falcon::Adapters::Output.wrap"><h3><code class="language-ruby">def self.wrap(status, headers, body)</code></h3><p>Wraps an array into a buffered body.</p>
 <details open>
 	<summary><h4>Signature</h4></summary>
 	<dl><dt>
@@ -108,7 +108,7 @@ end</code></pre>
 <details>
 						<summary><h4>Implementation</h4></summary>
 						<pre><code class="language-ruby">def ready?
-	true
+	body.is_a?(Array) or body.respond_to?(:to_ary)
 end</code></pre>
 					</details></section><section id="Falcon::Adapters::Output#close"><h3><code class="language-ruby">def close(error = nil)</code></h3><p>Close the response body.</p>
 <details>
@@ -154,7 +154,6 @@ rescue StopIteration
 	return nil
 end</code></pre>
 					</details></section>	</section>
-	
 	
 
 				

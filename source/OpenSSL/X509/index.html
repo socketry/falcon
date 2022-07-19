@@ -2,7 +2,7 @@
 <html>
 	<head>
 		
-			<title>Falcon::Controller</title>
+			<title>OpenSSL::X509</title>
 		
 		<meta charset="UTF-8"/>
 		<meta name="viewport" content="width=device-width, initial-scale=1"/>
@@ -32,27 +32,28 @@
 	</head>
 
 	<body>
-		<header> › <a class="link" href="../../../index.html">Project</a> › <a class="link" href="../../index.html">Source</a> › <a href="../index.html">Falcon</a>  › <a href="index.html">Controller</a> </header>
+		<header> › <a class="link" href="../../../index.html">Project</a> › <a class="link" href="../../index.html">Source</a> › <a href="../index.html">OpenSSL</a>  › <a href="index.html">X509</a> </header>
 		
 		<main>
 			
 
 	<h1>
-		<code class="language-ruby">module Controller</code>
+		<code class="language-ruby">module X509</code>
 	</h1>
 	
 		
 	<section>
-		<h2>Nested</h2>
+		<h2>Definitions</h2>
 		
-		<ul>
-			<li><a href="Host/index.html"><code class="language-ruby">::Host</code></a></li>
-			<li><a href="Proxy/index.html"><code class="language-ruby">::Proxy</code></a></li>
-			<li><a href="Redirect/index.html"><code class="language-ruby">::Redirect</code></a></li>
-			<li><a href="Serve/index.html"><code class="language-ruby">::Serve</code></a></li>
-			<li><a href="Virtual/index.html"><code class="language-ruby">::Virtual</code></a></li>
-		</ul>
-	</section>
+		<section id="OpenSSL::X509.load_certificates"><h3><code class="language-ruby">def self.load_certificates(path)</code></h3><p>An extension to load an array of certificates from a file at the given path.</p>
+<details>
+						<summary><h4>Implementation</h4></summary>
+						<pre><code class="language-ruby">def self.load_certificates(path)
+	File.read(path).scan(CERTIFICATE_PATTERN).collect do |text|
+		Certificate.new(text)
+	end
+end</code></pre>
+					</details></section>	</section>
 	
 
 				

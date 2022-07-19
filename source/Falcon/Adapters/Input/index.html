@@ -32,23 +32,23 @@
 	</head>
 
 	<body>
-		<header> › <a class="link" href="../../../../index.html">Project</a> › <a class="link" href="../../../index.html">Source</a></header>
+		<header> › <a class="link" href="../../../../index.html">Project</a> › <a class="link" href="../../../index.html">Source</a> › <a href="../../index.html">Falcon</a>  › <a href="../index.html">Adapters</a>  › <a href="index.html">Input</a> </header>
 		
 		<main>
 			
-	<h1><code class="language-ruby">Falcon::Adapters::Input</code></h1>
+
+	<h1>
+		<code class="language-ruby">class Input</code>
+	</h1>
 	
 	<p>Wraps a streaming input body into the interface required by <code>rack.input</code>.</p>
 <p>The input stream is an <code>IO</code>-like object which contains the raw HTTP POST data. When applicable, its external encoding must be <code>ASCII-8BIT</code> and it must be opened in binary mode, for Ruby 1.9 compatibility. The input stream must respond to <code>gets</code>, <code>each</code>, <code>read</code> and <code>rewind</code>.</p>
 <p>This implementation is not always rewindable, to avoid buffering the input when handling large uploads. See <a href="../Rewindable/index.html" title="Rewindable"><code class="language-ruby">class Falcon::Adapters::Rewindable</code></a> for more details.</p>
 	
-	
-	
-	
 	<section>
-	<h2>Definitions</h2>
-	
-	<section id="Falcon::Adapters::Input#initialize"><h3><code class="language-ruby">def initialize(body)</code></h3><p>Initialize the input wrapper.</p>
+		<h2>Definitions</h2>
+		
+		<section id="Falcon::Adapters::Input#initialize"><h3><code class="language-ruby">def initialize(body)</code></h3><p>Initialize the input wrapper.</p>
 <details open>
 	<summary><h4>Signature</h4></summary>
 	<dl><dt>
@@ -184,7 +184,6 @@ end</code></pre>
 	@body&amp;.close
 end</code></pre>
 					</details></section>	</section>
-	
 	
 
 				

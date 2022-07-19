@@ -32,23 +32,23 @@
 	</head>
 
 	<body>
-		<header> › <a class="link" href="../../../../index.html">Project</a> › <a class="link" href="../../../index.html">Source</a></header>
+		<header> › <a class="link" href="../../../../index.html">Project</a> › <a class="link" href="../../../index.html">Source</a> › <a href="../../index.html">Falcon</a>  › <a href="../index.html">Controller</a>  › <a href="index.html">Virtual</a> </header>
 		
 		<main>
 			
-	<h1><code class="language-ruby">Falcon::Controller::Virtual</code></h1>
+
+	<h1>
+		<code class="language-ruby">class Virtual</code>
+	</h1>
 	
 	<p>A controller which mananages several virtual hosts.
 Spawns instances of <a href="../Proxy/index.html" title="Proxy"><code class="language-ruby">class Falcon::Controller::Proxy</code></a> and <a href="../Redirect/index.html" title="Redirect"><code class="language-ruby">class Falcon::Controller::Redirect</code></a> to handle incoming requests.</p>
 <p>A virtual host is an application bound to a specific authority (essentially a hostname). The virtual controller manages multiple hosts and allows a single server to host multiple applications easily.</p>
 	
-	
-	
-	
 	<section>
-	<h2>Definitions</h2>
-	
-	<section id="Falcon::Controller::Virtual#initialize"><h3><code class="language-ruby">def initialize(command, **options)</code></h3><p>Initialize the virtual controller.</p>
+		<h2>Definitions</h2>
+		
+		<section id="Falcon::Controller::Virtual#initialize"><h3><code class="language-ruby">def initialize(command, **options)</code></h3><p>Initialize the virtual controller.</p>
 <details open>
 	<summary><h4>Signature</h4></summary>
 	<dl><dt>
@@ -163,7 +163,6 @@ These processes are gracefully restarted if they are already running.</p>
 	end
 end</code></pre>
 					</details></section>	</section>
-	
 	
 
 				

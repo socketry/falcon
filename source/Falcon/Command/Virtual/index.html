@@ -32,22 +32,22 @@
 	</head>
 
 	<body>
-		<header> › <a class="link" href="../../../../index.html">Project</a> › <a class="link" href="../../../index.html">Source</a></header>
+		<header> › <a class="link" href="../../../../index.html">Project</a> › <a class="link" href="../../../index.html">Source</a> › <a href="../../index.html">Falcon</a>  › <a href="../index.html">Command</a>  › <a href="index.html">Virtual</a> </header>
 		
 		<main>
 			
-	<h1><code class="language-ruby">Falcon::Command::Virtual</code></h1>
+
+	<h1>
+		<code class="language-ruby">class Virtual</code>
+	</h1>
 	
 	<p>Implements the <code>falcon virtual</code> command. Designed for <em>deployment</em>.</p>
 <p>Manages a <a href="../../Controller/Virtual/index.html" title="Controller::Virtual"><code class="language-ruby">class Falcon::Controller::Virtual</code></a> instance which is responsible for running the <a href="../Proxy/index.html" title="Proxy"><code class="language-ruby">class Falcon::Command::Proxy</code></a> and <a href="../Redirect/index.html" title="Redirect"><code class="language-ruby">class Falcon::Command::Redirect</code></a> instances.</p>
 	
-	
-	
-	
 	<section>
-	<h2>Definitions</h2>
-	
-	<section id="Falcon::Command::Virtual#options"><h3><code class="language-ruby">options { ... }</code></h3><p>The command line options.</p>
+		<h2>Definitions</h2>
+		
+		<section id="Falcon::Command::Virtual#options"><h3><code class="language-ruby">options { ... }</code></h3><p>The command line options.</p>
 <details open>
 	<summary><h4>Signature</h4></summary>
 	<dl><dt>
@@ -129,7 +129,6 @@ end</code></pre>
 	return Async::HTTP::Endpoint.new(url, hostname: endpoint.hostname)
 end</code></pre>
 					</details></section>	</section>
-	
 	
 
 				

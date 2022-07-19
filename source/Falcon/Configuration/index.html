@@ -32,11 +32,14 @@
 	</head>
 
 	<body>
-		<header> › <a class="link" href="../../../index.html">Project</a> › <a class="link" href="../../index.html">Source</a></header>
+		<header> › <a class="link" href="../../../index.html">Project</a> › <a class="link" href="../../index.html">Source</a> › <a href="../index.html">Falcon</a>  › <a href="index.html">Configuration</a> </header>
 		
 		<main>
 			
-	<h1><code class="language-ruby">Falcon::Configuration</code></h1>
+
+	<h1>
+		<code class="language-ruby">class Configuration</code>
+	</h1>
 	
 	<p>Manages environments which describes how to host a specific application.</p>
 <p>Environments are key-value maps with lazy value resolution. An environment can inherit from a parent environment, which can provide defaults</p>
@@ -52,20 +55,17 @@ rack 'hello.localhost', :self_signed_tls do
 end
 </code></pre>
 	
-	
-	
 	<section>
-	<h2>Nested</h2>
-	
-	<ul>
-		<li><a href="Loader/index.html"><code class="language-ruby">Falcon::Configuration::Loader</code></a></li>
-	</ul>
+		<h2>Nested</h2>
+		
+		<ul>
+			<li><a href="Loader/index.html"><code class="language-ruby">::Loader</code></a></li>
+		</ul>
 	</section>
-	
 	<section>
-	<h2>Definitions</h2>
-	
-	<section id="Falcon::Configuration#initialize"><h3><code class="language-ruby">def initialize</code></h3><p>Initialize an empty configuration.</p>
+		<h2>Definitions</h2>
+		
+		<section id="Falcon::Configuration#initialize"><h3><code class="language-ruby">def initialize</code></h3><p>Initialize an empty configuration.</p>
 <details>
 						<summary><h4>Implementation</h4></summary>
 						<pre><code class="language-ruby">def initialize
@@ -120,7 +120,6 @@ end</code></pre>
 	Loader.load_file(self, path)
 end</code></pre>
 					</details></section>	</section>
-	
 	
 
 				

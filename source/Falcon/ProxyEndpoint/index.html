@@ -32,21 +32,21 @@
 	</head>
 
 	<body>
-		<header> › <a class="link" href="../../../index.html">Project</a> › <a class="link" href="../../index.html">Source</a></header>
+		<header> › <a class="link" href="../../../index.html">Project</a> › <a class="link" href="../../index.html">Source</a> › <a href="../index.html">Falcon</a>  › <a href="index.html">ProxyEndpoint</a> </header>
 		
 		<main>
 			
-	<h1><code class="language-ruby">Falcon::ProxyEndpoint</code></h1>
+
+	<h1>
+		<code class="language-ruby">class ProxyEndpoint</code>
+	</h1>
 	
 	<p>An endpoint suitable for proxing requests, typically via a unix pipe.</p>
 	
-	
-	
-	
 	<section>
-	<h2>Definitions</h2>
-	
-	<section id="Falcon::ProxyEndpoint#initialize"><h3><code class="language-ruby">def initialize(endpoint, **options)</code></h3><p>Initialize the proxy endpoint.</p>
+		<h2>Definitions</h2>
+		
+		<section id="Falcon::ProxyEndpoint#initialize"><h3><code class="language-ruby">def initialize(endpoint, **options)</code></h3><p>Initialize the proxy endpoint.</p>
 <details open>
 	<summary><h4>Signature</h4></summary>
 	<dl><dt>
@@ -144,7 +144,6 @@ end</code></pre>
 	self.new(::Async::IO::Endpoint.unix(path), **options)
 end</code></pre>
 					</details></section>	</section>
-	
 	
 
 				

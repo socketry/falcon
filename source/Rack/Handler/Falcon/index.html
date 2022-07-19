@@ -32,21 +32,21 @@
 	</head>
 
 	<body>
-		<header> › <a class="link" href="../../../../index.html">Project</a> › <a class="link" href="../../../index.html">Source</a></header>
+		<header> › <a class="link" href="../../../../index.html">Project</a> › <a class="link" href="../../../index.html">Source</a> › <a href="../../index.html">Rack</a>  › <a href="../index.html">Handler</a>  › <a href="index.html">Falcon</a> </header>
 		
 		<main>
 			
-	<h1><code class="language-ruby">Rack::Handler::Falcon</code></h1>
+
+	<h1>
+		<code class="language-ruby">class Falcon</code>
+	</h1>
 	
 	<p>The falcon adaptor for the <code>rackup</code> executable.</p>
 	
-	
-	
-	
 	<section>
-	<h2>Definitions</h2>
-	
-	<section id="Rack::Handler::Falcon::SCHEME"><h3><code class="language-ruby">SCHEME = &quot;http&quot;</code></h3><p>The default scheme.</p>
+		<h2>Definitions</h2>
+		
+		<section id="Rack::Handler::Falcon::SCHEME"><h3><code class="language-ruby">SCHEME = &quot;http&quot;</code></h3><p>The default scheme.</p>
 </section><section id="Rack::Handler::Falcon.endpoint_for"><h3><code class="language-ruby">def self.endpoint_for(**options)</code></h3><p>Generate an endpoint for the given <code>rackup</code> options.</p>
 <details open>
 	<summary><h4>Signature</h4></summary>
@@ -71,20 +71,28 @@ end</code></pre>
 <details>
 						<summary><h4>Implementation</h4></summary>
 						<pre><code class="language-ruby">def self.run(app, **options)
-	endpoint = endpoint_for(**options)
-	
 	app = ::Falcon::Adapters::Rack.new(app)
 	app = ::Falcon::Adapters::Rewindable.new(app)
-	
-	server = ::Falcon::Server.new(app, endpoint, protocol: Async::HTTP::Protocol::HTTP1, scheme: SCHEME)
-	yield server if block_given?
-	
-	Async::Reactor.run do
-		server.run
+			
+	Sync do |task|
+		endpoint = endpoint_for(**options)
+		server = ::Falcon::Server.new(app, endpoint, protocol: Async::HTTP::Protocol::HTTP1, scheme: SCHEME)
+
+		server_task = task.async do
+			server.run.each(&amp;:wait)
+		end
+
+		wrapper = self.new(server, task)
+		
+		yield wrapper if block_given?
+
+		server_task.wait
+	ensure
+		server_task.stop
+		wrapper.close
 	end
 end</code></pre>
 					</details></section>	</section>
-	
 	
 
 				

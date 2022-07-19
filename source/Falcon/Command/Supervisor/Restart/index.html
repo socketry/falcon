@@ -32,28 +32,27 @@
 	</head>
 
 	<body>
-		<header> › <a class="link" href="../../../../../index.html">Project</a> › <a class="link" href="../../../../index.html">Source</a></header>
+		<header> › <a class="link" href="../../../../../index.html">Project</a> › <a class="link" href="../../../../index.html">Source</a> › <a href="../../../index.html">Falcon</a>  › <a href="../../index.html">Command</a>  › <a href="../index.html">Supervisor</a>  › <a href="index.html">Restart</a> </header>
 		
 		<main>
 			
-	<h1><code class="language-ruby">Falcon::Command::Supervisor::Restart</code></h1>
+
+	<h1>
+		<code class="language-ruby">class Restart</code>
+	</h1>
 	
 	<p>Implements the <code>falcon supervisor restart</code> command.</p>
 	
-	
-	
-	
 	<section>
-	<h2>Definitions</h2>
-	
-	<section id="Falcon::Command::Supervisor::Restart#call"><h3><code class="language-ruby">def call(stream)</code></h3><p>Send the restart message to the supervisor.</p>
+		<h2>Definitions</h2>
+		
+		<section id="Falcon::Command::Supervisor::Restart#call"><h3><code class="language-ruby">def call(stream)</code></h3><p>Send the restart message to the supervisor.</p>
 <details>
 						<summary><h4>Implementation</h4></summary>
 						<pre><code class="language-ruby">def call(stream)
 	stream.puts({please: 'restart'}.to_json, separator: &quot;\0&quot;)
 end</code></pre>
 					</details></section>	</section>
-	
 	
 
 				

@@ -32,22 +32,22 @@
 	</head>
 
 	<body>
-		<header> › <a class="link" href="../../../../index.html">Project</a> › <a class="link" href="../../../index.html">Source</a></header>
+		<header> › <a class="link" href="../../../../index.html">Project</a> › <a class="link" href="../../../index.html">Source</a> › <a href="../../index.html">Falcon</a>  › <a href="../index.html">Middleware</a>  › <a href="index.html">Proxy</a> </header>
 		
 		<main>
 			
-	<h1><code class="language-ruby">Falcon::Middleware::Proxy</code></h1>
+
+	<h1>
+		<code class="language-ruby">class Proxy</code>
+	</h1>
 	
 	<p>A HTTP middleware for proxying requests to a given set of hosts.
 Typically used for implementing virtual servers.</p>
 	
-	
-	
-	
 	<section>
-	<h2>Definitions</h2>
-	
-	<section id="Falcon::Middleware::Proxy::HOP_HEADERS"><h3><code class="language-ruby">HOP_HEADERS = [...]</code></h3><p>HTTP hop headers which <em>should</em> not be passed through the proxy.</p>
+		<h2>Definitions</h2>
+		
+		<section id="Falcon::Middleware::Proxy::HOP_HEADERS"><h3><code class="language-ruby">HOP_HEADERS = [...]</code></h3><p>HTTP hop headers which <em>should</em> not be passed through the proxy.</p>
 <details>
 						<summary><h4>Implementation</h4></summary>
 						<pre><code class="language-ruby">HOP_HEADERS = [
@@ -192,7 +192,6 @@ rescue
 	return Protocol::HTTP::Response[502, {'content-type' =&gt; 'text/plain'}, [&quot;#{$!.inspect}: #{$!.backtrace.join(&quot;\n&quot;)}&quot;]]
 end</code></pre>
 					</details></section>	</section>
-	
 	
 
 				
