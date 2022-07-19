@@ -45,7 +45,7 @@ module Falcon
 			# Number of instances to start.
 			# @returns [Integer | nil]
 			def count
-			  @environment.evaluator.count
+				@environment.evaluator.count
 			end
 			
 			# Preload any resources specified by the environment.
@@ -91,6 +91,11 @@ module Falcon
 						Console.logger.info(self) {"Starting application server for #{self.root}..."}
 						
 						server = Server.new(self.middleware, @bound_endpoint, protocol: protocol, scheme: scheme)
+						
+						self.supervise do |connection|
+							connection.bind(:service, self)
+							connection.bind(:server, server)
+						end
 						
 						server.run
 						

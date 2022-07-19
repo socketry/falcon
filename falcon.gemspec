@@ -26,6 +26,7 @@ Gem::Specification.new do |spec|
 	spec.add_dependency "async-http", "~> 0.56.0"
 	spec.add_dependency "async-http-cache", "~> 0.4.0"
 	spec.add_dependency "async-io", "~> 1.22"
+	spec.add_dependency "async-bus"
 	spec.add_dependency "build-environment", "~> 1.13"
 	spec.add_dependency "bundler"
 	spec.add_dependency "localhost", "~> 1.1"

@@ -20,6 +20,8 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
+require 'async/bus/client'
+
 module Falcon
 	module Service
 		# Captures the stateful behaviour of a specific service.
@@ -59,6 +61,25 @@ module Falcon
 			# @returns [Console::Logger]
 			def logger
 				return Console.logger # .with(name: name)
+			end
+			
+			def supervise(reconnect_timeout: 1.0, &block)
+				if endpoint = @evaluator.supervisor_endpoint
+					Console.logger.debug(self, "supervise: #{endpoint}")
+					client = Async::Bus::Client.new(endpoint)
+					
+					Async do |task|
+						while true
+							begin
+								client.connect(true, &block)
+							rescue => error
+								Console.logger.error(self, error)
+							end
+							
+							task.sleep(reconnect_timeout)
+						end
+					end
+				end
 			end
 			
 			# Start the service.

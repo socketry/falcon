@@ -25,6 +25,9 @@ require 'json'
 
 require 'async/io/endpoint'
 require 'async/io/shared_endpoint'
+require 'async/bus/server'
+
+require 'delegate'
 
 module Falcon
 	module Service
@@ -44,31 +47,27 @@ module Falcon
 				@evaluator.endpoint
 			end
 			
-			# Restart the process group that the supervisor belongs to.
-			def do_restart(message)
-				# Tell the parent of this process group to spin up a new process group/container.
-				# Wait for that to start accepting new connections.
-				# Stop accepting connections.
-				# Wait for existing connnections to drain.
-				# Terminate this process group.
-				signal = message[:signal] || :INT
+			class Interface
+				def initialize
+					@services = {}
+				end
 				
-				Process.kill(signal, Process.ppid)
-			end
-			
-			# Capture process metrics relating to the process group that the supervisor belongs to.
-			def do_metrics(message)
-				Process::Metrics::General.capture(pid: Process.ppid, ppid: Process.ppid)
-			end
-			
-			# Handle an incoming request.
-			# @parameter message [Hash] The decoded message.
-			def handle(message)
-				case message[:please]
-				when 'restart'
-					self.do_restart(message)
-				when 'metrics'
-					self.do_metrics(message)
+				attr :services
+				
+				# Restart the process group that the supervisor belongs to.
+				def restart(signal = :INT)
+					# Tell the parent of this process group to spin up a new process group/container.
+					# Wait for that to start accepting new connections.
+					# Stop accepting connections.
+					# Wait for existing connnections to drain.
+					# Terminate this process group.
+					
+					Process.kill(signal, Process.ppid)
+				end
+				
+				# Capture process metrics relating to the process group that the supervisor belongs to.
+				def metrics
+					Process::Metrics::General.capture(pid: Process.ppid, ppid: Process.ppid)
 				end
 			end
 			
@@ -88,16 +87,14 @@ module Falcon
 			def setup(container)
 				container.run(name: self.name, restart: true, count: 1) do |instance|
 					Async do
-						@bound_endpoint.accept do |peer|
-							stream = Async::IO::Stream.new(peer)
-							
-							while message = stream.gets("\0")
-								response = handle(JSON.parse(message, symbolize_names: true))
-								stream.puts(response.to_json, separator: "\0")
-							end
-						end
+						server = Async::Bus::Server.new(@bound_endpoint)
+						interface = Interface.new
 						
 						instance.ready!
+						
+						server.accept do |connection|
+							connection.bind(:supervisor, interface)
+						end
 					end
 				end
 				
