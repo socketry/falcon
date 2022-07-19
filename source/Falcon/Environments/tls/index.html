@@ -78,7 +78,7 @@ end</code></pre>
 <details>
 						<summary><h4>Implementation</h4></summary>
 						<pre><code class="language-ruby">ssl_certificates do
-	OpenSSL::X509.load_certificates(ssl_certificate_path)
+	OpenSSL::X509::Certificate.load_file(ssl_certificate_path)
 end</code></pre>
 					</details></section><section id="Falcon::Environments.tls#ssl_certificate"><h3><code class="language-ruby">ssl_certificate {ssl_certificates[0]}</code></h3><p>The main certificate.</p>
 <details open>
