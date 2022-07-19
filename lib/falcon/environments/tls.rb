@@ -20,7 +20,6 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-require_relative '../extensions/openssl'
 require_relative '../controller/proxy'
 require_relative '../tls'
 
@@ -46,7 +45,7 @@ environment(:tls) do
 	# The list of certificates loaded from that path.
 	# @attribute [Array(OpenSSL::X509::Certificate)]
 	ssl_certificates do
-		OpenSSL::X509.load_certificates(ssl_certificate_path)
+		OpenSSL::X509::Certificate.load_file(ssl_certificate_path)
 	end
 	
 	# The main certificate.
