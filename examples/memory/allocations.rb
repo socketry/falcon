@@ -15,24 +15,26 @@ class Allocations
 		return counts
 	end
 	
-	def print_allocations(minimum = 100)
-		buffer = StringIO.new
-		
+	def print_allocations(minimum = 100, output: StringIO.new)
 		total = allocations.values.sum
 		
-		allocations.select{|k,v| v >= minimum}.sort_by{|k,v| -v}.each do |key, value|
-			buffer.puts "#{key}: #{value} allocations"
+		allocations.select{|k,v| v >= minimum}.sort_by{|k,v| k.name}.each do |key, value|
+			output.puts "#{key}: #{value} allocations"
 		end
 		
-		buffer.puts "** Total: #{total} allocations."
+		output.puts "** Total: #{total} allocations."
 		
-		return buffer.string
+		return output
 	end
 	
 	def call(env)
+		GC.start
+		
 		if env["PATH_INFO"] == "/allocations"
-			return [200, [], [print_allocations]]
+			return [200, [], [print_allocations.string]]
 		else
+			print_allocations(output: $stderr)
+			
 			return @app.call(env)
 		end
 	end
