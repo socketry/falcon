@@ -87,9 +87,9 @@ module Falcon
 				
 				begin
 					service.stop
-				rescue
+				rescue => error
 					failed = true
-					Console.logger.error(self, $!)
+					Console.logger.error(self, error)
 				end
 			end
 			
