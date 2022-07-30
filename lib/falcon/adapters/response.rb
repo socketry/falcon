@@ -69,7 +69,7 @@ module Falcon
 			# @parameter headers [Duck(:each)] The rack response headers.
 			# @parameter body [Duck(:each, :close) | Nil] The rack response body.
 			# @parameter request [Protocol::HTTP::Request] The original request.
-			def self.wrap(status, headers, body, request = nil)
+			def self.wrap(status, headers, body, request = nil, closed_callbacks = nil)
 				headers, meta = wrap_headers(headers)
 				
 				if block = meta['rack.hijack']
@@ -97,6 +97,25 @@ module Falcon
 				# https://tools.ietf.org/html/rfc7231#section-7.1.1.2
 				# headers.add('date', Time.now.httpdate)
 				
+				if closed_callbacks&.any?
+					unless body
+						body = Protocol::HTTP::Body::Buffered.new
+					end
+
+					closed_callback = proc do |error|
+						closed_callbacks.each do |callback|
+							begin
+								callback.call(error)
+							rescue => callback_error
+								Console.logger.error(self, callback_error)
+							end
+						end
+					end
+
+					# If the body is nil, the callbacks are executed right here... this is probably undesirable.
+					body = Protocol::HTTP::Body::Completable.new(body, closed_callback)
+				end
+
 				return self.new(status, headers, body, protocol)
 			end
 			

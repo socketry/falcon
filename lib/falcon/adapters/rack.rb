@@ -59,6 +59,7 @@ module Falcon
 			RACK_HIJACK = 'rack.hijack'
 			RACK_IS_HIJACK = 'rack.hijack?'
 			RACK_HIJACK_IO = 'rack.hijack_io'
+			RACK_CLOSED = 'rack.closed'
 			
 			# Raised back up through the middleware when the underlying connection is hijacked.
 			class FullHijack < StandardError
@@ -139,7 +140,8 @@ module Falcon
 			def call(request)
 				request_path, query_string = request.path.split('?', 2)
 				server_name, server_port = (request.authority || '').split(':', 2)
-				
+				closed_callbacks = []
+
 				env = {
 					RACK_VERSION => [2, 0, 0],
 					
@@ -179,6 +181,8 @@ module Falcon
 					
 					# We support both request and response hijack.
 					RACK_IS_HIJACK => true,
+
+					RACK_CLOSED => closed_callbacks,
 				}
 				
 				self.unwrap_request(request, env)
@@ -205,7 +209,7 @@ module Falcon
 				if full_hijack
 					raise FullHijack, "The connection was hijacked."
 				else
-					return Response.wrap(status, headers, body, request)
+					return Response.wrap(status, headers, body, request, closed_callbacks)
 				end
 			rescue => exception
 				Console.logger.error(self) {exception}

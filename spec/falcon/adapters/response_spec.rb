@@ -87,4 +87,33 @@ RSpec.describe Falcon::Adapters::Response do
 			expect(response.read).to be == text
 		end
 	end
+
+	context 'with rack.closed' do
+		include_context Falcon::Server
+		
+		let(:text) {"Hello World!"}
+
+		def closed
+			@closed ||= Array.new
+		end
+		
+		let(:app) do
+			lambda do |env|
+				env['rack.closed'] << proc do |error|
+					closed << error
+				end
+
+				[200, {}, []]
+			end
+		end
+		
+		let(:response) {client.get("/")}
+		
+		it "generates successful response and promise" do
+			expect(response).to be_success
+			response.finish
+
+			expect(closed).to be == [nil]
+		end
+	end
 end
