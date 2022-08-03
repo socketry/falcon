@@ -35,7 +35,7 @@ RSpec.shared_examples_for Rack::Handler do |server_name|
 	
 	it "can start rackup --server #{server_name}" do
 		server_task = reactor.async do
-			Async::Process.spawn("rackup", "--server", server_name, "--host", endpoint.hostname, "--port", endpoint.port.to_s, config_path)
+			Async::Process.spawn("bundle", "exec", "rackup", "--server", server_name, "--host", endpoint.hostname, "--port", endpoint.port.to_s, config_path)
 		end
 		
 		response = nil
