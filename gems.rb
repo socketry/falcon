@@ -10,7 +10,6 @@ gemspec
 # gem "protocol-http1", path: "../protocol-http1"
 # gem "utopia-project", path: "../utopia-project"
 gem "rack", "~> 3.0", git: "https://github.com/rack/rack.git"
-gem "utopia", path: "../utopia"
 
 group :maintenance, optional: true do
 	gem "bake-modernize"
