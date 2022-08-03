@@ -64,7 +64,7 @@ RSpec.describe Falcon::Adapters::Response do
 		end
 	end
 	
-	context 'with rack.hijack' do
+	context 'with streaming body' do
 		include_context Falcon::Server
 		
 		let(:text) {"Hello World!"}
@@ -76,7 +76,7 @@ RSpec.describe Falcon::Adapters::Response do
 					stream.close
 				end
 				
-				[200, {'rack.hijack' => response}, nil]
+				[200, {}, response]
 			end
 		end
 		

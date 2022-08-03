@@ -33,7 +33,6 @@ module Falcon
 		#
 		# A Rack response consisting of `[status, headers, body]` includes various rack-specific elements, including:
 		#
-		# - A `headers['rack.hijack']` callback which bypasses normal response handling.
 		# - Potentially invalid content length.
 		# - Potentially invalid body when processing a `HEAD` request.
 		# - Newline-separated header values.
@@ -72,18 +71,18 @@ module Falcon
 			def self.wrap(status, headers, body, request = nil)
 				headers, meta = wrap_headers(headers)
 				
-				if block = meta['rack.hijack']
-					body = Async::HTTP::Body::Hijack.wrap(request, &block)
-				else
+				if body.respond_to?(:each)
 					ignored = headers.extract(IGNORE_HEADERS)
 					
 					unless ignored.empty?
 						Console.logger.warn("Ignoring protocol-level headers: #{ignored.inspect}")
 					end
 					
-					body = Output.wrap(status, headers, body, request)
+					body = Output.wrap(status, headers, body)
+				else
+					body = Async::HTTP::Body::Hijack.wrap(request, &body)
 				end
-				
+
 				if request&.head?
 					# I thought about doing this in Output.wrap, but decided the semantics are too tricky. Specifically, the various ways a rack response body can be wrapped, and the need to invoke #close at the right point.
 					body = ::Protocol::HTTP::Body::Head.for(body)

@@ -48,21 +48,10 @@ module Falcon
 			
 			# Rack environment variables:
 			
-			RACK_VERSION = 'rack.version'
 			RACK_ERRORS = 'rack.errors'
 			RACK_LOGGER = 'rack.logger'
 			RACK_INPUT = 'rack.input'
-			RACK_MULTITHREAD = 'rack.multithread'
-			RACK_MULTIPROCESS = 'rack.multiprocess'
-			RACK_RUNONCE = 'rack.run_once'
 			RACK_URL_SCHEME = 'rack.url_scheme'
-			RACK_HIJACK = 'rack.hijack'
-			RACK_IS_HIJACK = 'rack.hijack?'
-			RACK_HIJACK_IO = 'rack.hijack_io'
-			
-			# Raised back up through the middleware when the underlying connection is hijacked.
-			class FullHijack < StandardError
-			end
 			
 			# Async::HTTP specific metadata:
 			
@@ -141,17 +130,11 @@ module Falcon
 				server_name, server_port = (request.authority || '').split(':', 2)
 				
 				env = {
-					RACK_VERSION => [2, 0, 0],
-					
 					ASYNC_HTTP_REQUEST => request,
 					
 					RACK_INPUT => Input.new(request.body),
 					RACK_ERRORS => $stderr,
 					RACK_LOGGER => Console.logger,
-					
-					RACK_MULTITHREAD => true,
-					RACK_MULTIPROCESS => true,
-					RACK_RUNONCE => false,
 					
 					# The HTTP request method, such as “GET” or “POST”. This cannot ever be an empty string, and so is always required.
 					REQUEST_METHOD => request.method,
@@ -176,37 +159,13 @@ module Falcon
 					# I'm not sure what sane defaults should be here:
 					SERVER_NAME => server_name,
 					SERVER_PORT => server_port,
-					
-					# We support both request and response hijack.
-					RACK_IS_HIJACK => true,
 				}
 				
 				self.unwrap_request(request, env)
 				
-				full_hijack = false
-				
-				if request.hijack?
-					env[RACK_HIJACK] = lambda do
-						wrapper = request.hijack!
-						full_hijack = true
-						
-						# We dup this as it might be taken out of the normal control flow, and the io will be closed shortly after returning from this method.
-						io = wrapper.io.dup
-						wrapper.close
-						
-						# This is implicitly returned:
-						env[RACK_HIJACK_IO] = io
-					end
-				end
-				
 				status, headers, body = @app.call(env)
 				
-				# If there was a full hijack:
-				if full_hijack
-					raise FullHijack, "The connection was hijacked."
-				else
-					return Response.wrap(status, headers, body, request)
-				end
+				return Response.wrap(status, headers, body, request)
 			rescue => exception
 				Console.logger.error(self) {exception}
 				
