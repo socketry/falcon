@@ -26,4 +26,5 @@ end
 
 group :test do
 	gem 'puma'
+	gem 'rackup'
 end
