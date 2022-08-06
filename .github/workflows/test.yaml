@@ -1,4 +1,4 @@
-name: Development
+name: Test
 
 on: [push, pull_request]
 
@@ -46,5 +46,5 @@ jobs:
         bundler-cache: true
     
     - name: Run tests
-      timeout-minutes: 5
-      run: bundle exec rspec
+      timeout-minutes: 10
+      run: bundle exec bake test

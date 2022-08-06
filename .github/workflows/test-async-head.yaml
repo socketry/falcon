@@ -1,4 +1,4 @@
-name: Async head
+name: Test Async HEAD
 
 on: [push, pull_request]
 
