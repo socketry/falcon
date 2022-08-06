@@ -1,4 +1,4 @@
-name: Async v1
+name: Test Async v1
 
 on: [push, pull_request]
 

@@ -24,4 +24,6 @@ end
 
 group :test do
 	gem 'puma'
+	gem 'bake-test'
+	gem 'bake-test-external'
 end

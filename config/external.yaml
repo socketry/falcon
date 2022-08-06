@@ -1,0 +1,3 @@
+async-websocket:
+  url: https://github.com/socketry/async-websocket.git
+  command: bundle exec rspec

@@ -1,4 +1,4 @@
-name: Rack V1
+name: Test External
 
 on: [push, pull_request]
 
@@ -10,30 +10,27 @@ env:
 
 jobs:
   test:
+    name: ${{matrix.ruby}} on ${{matrix.os}}
     runs-on: ${{matrix.os}}-latest
     
     strategy:
       matrix:
         os:
           - ubuntu
+          - macos
         
         ruby:
           - "2.7"
-    
-    env:
-      BUNDLE_GEMFILE: gems/rack-v1.rb
+          - "3.0"
+          - "3.1"
     
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
     - uses: ruby/setup-ruby@v1
       with:
         ruby-version: ${{matrix.ruby}}
         bundler-cache: true
     
-    - name: Installing packages (ubuntu)
-      if: matrix.os == 'ubuntu'
-      run: sudo apt-get install apache2-utils
-    
     - name: Run tests
-      timeout-minutes: 5
-      run: bundle exec rspec
+      timeout-minutes: 10
+      run: bundle exec bake test:external

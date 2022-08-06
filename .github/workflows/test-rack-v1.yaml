@@ -1,4 +1,4 @@
-name: Rack Head
+name: Test Rack v1
 
 on: [push, pull_request]
 
@@ -19,11 +19,9 @@ jobs:
         
         ruby:
           - "2.7"
-          - "3.0"
-          - "3.1"
     
     env:
-      BUNDLE_GEMFILE: gems/rack-head.rb
+      BUNDLE_GEMFILE: gems/rack-v1.rb
     
     steps:
     - uses: actions/checkout@v2
