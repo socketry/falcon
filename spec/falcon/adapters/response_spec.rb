@@ -39,7 +39,7 @@ RSpec.describe Falcon::Adapters::Response do
 	end
 	
 	context 'with #to_path' do
-		let(:body) {double}
+		let(:body) {Array.new}
 		
 		it "should generate file body" do
 			expect(body).to receive(:to_path).and_return("/dev/null")

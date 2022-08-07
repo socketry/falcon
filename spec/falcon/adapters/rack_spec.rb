@@ -117,15 +117,33 @@ RSpec.describe Falcon::Adapters::Rack do
 		end
 		
 		it "can send and receive messages using websockets" do
-			client = Async::WebSocket::Client.open(endpoint)
-			connection = client.connect(endpoint.path)
-			
-			connection.write(test_message)
-			
-			message = connection.read
-			expect(message).to be == test_message
-			
-			connection.close
+			Async::WebSocket::Client.connect(endpoint) do |connection|
+				connection.write(test_message)
+				
+				message = connection.read
+				expect(message).to be == test_message
+			end
+		end
+	end
+	
+	context 'streaming' do
+		include_context Falcon::Server
+		
+		let(:app) do
+			lambda do |env|
+				body = lambda do |stream|
+					stream.write("Hello Streaming World")
+					stream.close
+				end
+				
+				[200, {}, body]
+			end
+		end
+		
+		let(:response) {client.get("/")}
+		
+		it "can read streaming response" do
+			expect(response.read).to be == "Hello Streaming World"
 		end
 	end
 end

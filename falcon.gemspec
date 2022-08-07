@@ -23,7 +23,7 @@ Gem::Specification.new do |spec|
 	
 	spec.add_dependency "async"
 	spec.add_dependency "async-container", "~> 0.16.0"
-	spec.add_dependency "async-http", "~> 0.56.0"
+	spec.add_dependency "async-http", "~> 0.57.0"
 	spec.add_dependency "async-http-cache", "~> 0.4.0"
 	spec.add_dependency "async-io", "~> 1.22"
 	spec.add_dependency "build-environment", "~> 1.13"
@@ -36,7 +36,7 @@ Gem::Specification.new do |spec|
 	
 	spec.add_development_dependency "async-process", "~> 1.1"
 	spec.add_development_dependency "async-rspec", "~> 1.7"
-	spec.add_development_dependency "async-websocket", "~> 0.14.0"
+	spec.add_development_dependency "async-websocket", "~> 0.19.2"
 	spec.add_development_dependency "bake"
 	spec.add_development_dependency "covered"
 	spec.add_development_dependency "rspec", "~> 3.6"
