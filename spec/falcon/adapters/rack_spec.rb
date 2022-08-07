@@ -117,15 +117,12 @@ RSpec.describe Falcon::Adapters::Rack do
 		end
 		
 		it "can send and receive messages using websockets" do
-			client = Async::WebSocket::Client.open(endpoint)
-			connection = client.connect(endpoint.path)
-			
-			connection.write(test_message)
-			
-			message = connection.read
-			expect(message).to be == test_message
-			
-			connection.close
+			Async::WebSocket::Client.connect(endpoint) do |connection|
+				connection.write(test_message)
+				
+				message = connection.read
+				expect(message).to be == test_message
+			end
 		end
 	end
 	

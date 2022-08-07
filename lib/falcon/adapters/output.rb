@@ -44,13 +44,20 @@ module Falcon
 				
 				# If we have an Async::HTTP body, we return it directly:
 				if body.is_a?(::Protocol::HTTP::Body::Readable)
+					# warn "Returning #{body.class} as body is falcon-specific and may be removed in the future!"
 					return body
 				end
 				
 				# Otherwise, we have a more typical response body:
 				if status == 200 and body.respond_to?(:to_path)
-					# Don't mangle partial responses (206)
-					return ::Protocol::HTTP::Body::File.open(body.to_path)
+					begin
+						# Don't mangle partial responses (206)
+						return ::Protocol::HTTP::Body::File.open(body.to_path).tap do
+							body.close if body.respond_to?(:close) # Close the original body.
+						end
+					rescue Errno::ENOENT
+						# If the file is not available, ignore.
+					end
 				end
 				
 				# If we have a streaming body, we hijack the connection:
