@@ -12,6 +12,8 @@ jobs:
   test:
     name: ${{matrix.ruby}} on ${{matrix.os}}
     runs-on: ${{matrix.os}}-latest
+    env:
+      BUNDLER_GEMFILE: ${{matrix.gemfile}}
     
     strategy:
       matrix:
@@ -23,6 +25,12 @@ jobs:
           - "2.7"
           - "3.0"
           - "3.1"
+          
+        gemfile:
+          - gems/rack-v1.rb
+          - gems/rack-v2.rb
+          - gems/rack-v3.rb
+          - gems/rack-head.rb
         
         experimental: [false]
         

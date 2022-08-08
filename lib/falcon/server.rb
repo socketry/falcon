@@ -28,9 +28,7 @@ require 'protocol/http/content_encoding'
 require 'async/http/cache'
 
 require_relative 'middleware/verbose'
-
-require_relative 'adapters/rewindable'
-require_relative 'adapters/rack'
+require 'protocol/rack'
 
 module Falcon
 	# A server listening on a specific endpoint, hosting a specific middleware.
@@ -50,8 +48,7 @@ module Falcon
 				end
 				
 				use ::Protocol::HTTP::ContentEncoding
-				use Adapters::Rewindable
-				use Adapters::Rack
+				use ::Protocol::Rack::Adapter
 				
 				run rack_app
 			end

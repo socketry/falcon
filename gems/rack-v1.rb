@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-source 'https://rubygems.org'
+eval_gemfile("../gems.rb")
 
-gemspec path: "../"
-
-gem 'rack', '~> 1.0'
+gem "rack", "~> 1.0"

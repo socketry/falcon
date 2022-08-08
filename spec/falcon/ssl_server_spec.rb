@@ -41,7 +41,7 @@ RSpec.describe "Falcon::Server with SSL", timeout: 1 do
 	let(:bound_endpoint) {Async::IO::SharedEndpoint.bound(server_endpoint)}
 	let(:client_endpoint) {Async::HTTP::Endpoint.parse("https://localhost:6365", ssl_context: client_context)}
 	
-	let(:server) {Falcon::Server.new(Falcon::Adapters::Rack.new(app), bound_endpoint, protocol: protocol, scheme: server_endpoint.scheme)}
+	let(:server) {Falcon::Server.new(Protocol::Rack::Adapter.new(app), bound_endpoint, protocol: protocol, scheme: server_endpoint.scheme)}
 	let(:client) {Async::HTTP::Client.new(client_endpoint, protocol: protocol)}
 	after(:each) {client.close}
 	

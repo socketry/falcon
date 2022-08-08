@@ -27,8 +27,7 @@ module Rack
 			# Run the specified app using the given options:
 			# @parameter app [Object] The rack middleware.
 			def self.run(app, **options)
-				app = ::Falcon::Adapters::Rack.new(app)
-				app = ::Falcon::Adapters::Rewindable.new(app)
+				app = ::Protocol::Rack::Adapter.new(app)
 						
 				Sync do |task|
 					endpoint = endpoint_for(**options)

@@ -2,6 +2,6 @@
 
 source 'https://rubygems.org'
 
-gemspec path: "../"
+eval_gemfile("../gems.rb")
 
 gem 'rack', github: 'rack/rack'
