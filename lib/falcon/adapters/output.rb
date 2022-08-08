@@ -36,6 +36,8 @@ module Falcon
 			# @parameter headers [Protocol::HTTP::Headers] The response headers.
 			# @parameter body [Object] The `rack` response body.
 			def self.wrap(status, headers, body, request = nil)
+				Console.logger.info(self, "Output wrapping body", body: body)
+
 				# In no circumstance do we want this header propagating out:
 				if length = headers.delete(CONTENT_LENGTH)
 					# We don't really trust the user to provide the right length to the transport.
@@ -62,6 +64,7 @@ module Falcon
 				
 				# If we have a streaming body, we hijack the connection:
 				unless body.respond_to?(:each)
+					Console.logger.info(self, "Hijacking response because it doesn't respond to #each!")
 					return Async::HTTP::Body::Hijack.new(body, request&.body)
 				end
 				

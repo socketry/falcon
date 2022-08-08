@@ -52,6 +52,7 @@ module Falcon
 			RACK_ERRORS = 'rack.errors'
 			RACK_LOGGER = 'rack.logger'
 			RACK_INPUT = 'rack.input'
+			RACK_PROTOCOL = 'rack.protocol'
 			RACK_MULTITHREAD = 'rack.multithread'
 			RACK_MULTIPROCESS = 'rack.multiprocess'
 			RACK_RUNONCE = 'rack.run_once'
@@ -148,7 +149,10 @@ module Falcon
 					RACK_INPUT => Input.new(request.body),
 					RACK_ERRORS => $stderr,
 					RACK_LOGGER => Console.logger,
-					
+
+					# The request protocol, either from the upgrade header or the HTTP/2 pseudo header of the same name.
+					RACK_PROTOCOL => request.protocol,
+
 					RACK_MULTITHREAD => true,
 					RACK_MULTIPROCESS => true,
 					RACK_RUNONCE => false,
