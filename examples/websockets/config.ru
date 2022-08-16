@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 
 require 'async/websocket'
 require 'async/websocket/adapters/rack'

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "cgi"
 
 # curl 'http://localhost:9292/?xid=1%0DSet-Cookie:%20foo%3Dbar'
