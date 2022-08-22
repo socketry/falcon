@@ -12,6 +12,8 @@ jobs:
   test:
     name: ${{matrix.ruby}} on ${{matrix.os}} ${{matrix.gemfile}}
     runs-on: ${{matrix.os}}-latest
+    continue-on-error: ${{matrix.experimental}}
+    
     env:
       BUNDLER_GEMFILE: ${{matrix.gemfile}}
     
@@ -19,7 +21,7 @@ jobs:
       matrix:
         os:
           - ubuntu
-          - macos
+          # - macos
         
         ruby:
           - "2.7"
@@ -44,6 +46,8 @@ jobs:
           - os: ubuntu
             ruby: head
             experimental: true
+          - os: macos
+            ruby: "3.1"
     
     steps:
     - uses: actions/checkout@v3
