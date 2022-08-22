@@ -10,7 +10,7 @@ env:
 
 jobs:
   test:
-    name: ${{matrix.ruby}} on ${{matrix.os}}
+    name: ${{matrix.ruby}} on ${{matrix.os}} ${{matrix.gemfile}}
     runs-on: ${{matrix.os}}-latest
     continue-on-error: ${{matrix.experimental}}
     
