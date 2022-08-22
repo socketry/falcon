@@ -48,6 +48,7 @@ jobs:
             experimental: true
           - os: macos
             ruby: "3.1"
+            experimental: false
     
     steps:
     - uses: actions/checkout@v3
