@@ -34,7 +34,6 @@ require 'async/io/ssl_endpoint'
 require 'samovar'
 
 require 'rack/builder'
-require 'rack/server'
 
 require 'bundler'
 
