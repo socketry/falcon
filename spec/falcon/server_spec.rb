@@ -120,4 +120,28 @@ RSpec.describe Falcon::Server, timeout: 1 do
 			expect(response.read).to be =~ /RuntimeError: Middleware is broken/
 		end
 	end
+	
+	context 'streaming response', timeout: nil do
+		let(:app) do
+			lambda do |env|
+				body = proc do |stream|
+					10.times do
+						stream.write "Hello World!"
+					end
+				ensure
+					stream.close
+				end
+				
+				[200, {}, body]
+			end
+		end
+		
+		it "can stream response" do
+			response = client.get("/")
+			
+			expect(response).to be_success
+			expect(response.status).to be == 200
+			expect(response.read).to be =~ /Hello World!/
+		end
+	end
 end
