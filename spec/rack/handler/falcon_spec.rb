@@ -23,13 +23,13 @@
 require_relative 'shared_examples'
 require 'rack/handler/falcon'
 
-RSpec.describe Rack::Handler::Falcon do
-	it_behaves_like Rack::Handler, 'falcon'
+RSpec.describe Rackup::Handler::Falcon do
+	it_behaves_like Rackup::Handler, 'falcon'
 
 	let(:app) {lambda {|env| [200, {}, ["Hello World"]]}}
 
 	it "can start and stop server" do
-		Rack::Handler::Falcon.run(app) do |server|
+		Rackup::Handler::Falcon.run(app) do |server|
 			server.stop
 		end
 	end
