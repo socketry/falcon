@@ -24,8 +24,9 @@ require 'falcon/server'
 require 'async/http/endpoint'
 require 'async/http/client'
 require 'async/process'
+require 'rackup/handler'
 
-RSpec.shared_examples_for Rack::Handler do |server_name|
+RSpec.shared_examples_for Rackup::Handler do |server_name|
 	include_context Async::RSpec::Reactor
 	
 	let(:config_path) {File.join(__dir__, "config.ru")}

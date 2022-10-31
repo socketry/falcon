@@ -29,4 +29,6 @@ group :test do
 	gem 'puma'
 	gem 'bake-test'
 	gem 'bake-test-external'
+	
+	gem "rackup"
 end
