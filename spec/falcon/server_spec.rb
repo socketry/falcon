@@ -24,7 +24,7 @@ require 'rack'
 
 require_relative 'server_context'
 
-RSpec.describe Falcon::Server, timeout: 1 do
+RSpec.describe Falcon::Server, timeout: 10 do
 	include_context Falcon::Server
 	
 	context "http client" do

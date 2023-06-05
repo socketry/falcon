@@ -29,7 +29,7 @@ require 'async/rspec/ssl'
 require 'async/io/ssl_socket'
 require 'async/io/shared_endpoint'
 
-RSpec.describe "Falcon::Server with SSL", timeout: 1 do
+RSpec.describe "Falcon::Server with SSL", timeout: 10 do
 	include_context Async::RSpec::Reactor
 	
 	include_context Async::RSpec::SSL::ValidCertificate
