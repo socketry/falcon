@@ -10,7 +10,7 @@ Initially, when I developed [async](https://github.com/socketry/async), I saw an
 
 Once I had something working, I saw an opportunity to simplify my development, testing and production environments, replacing production (Nginx+Passenger) and development (Puma) with Falcon. Not only does this simplify deployment, it helps minimize environment-specific bugs.
 
-My long term vision for Falcon is to make a web application platform which trivializes server deployment. Ideally, a web application can fully describe all it's components: HTTP servers, databases, periodic jobs, background jobs, remote management, etc. Currently, it is not uncommon for all these facets to be handled independently in platform specific ways. This can make it difficult to set up new instances as well as make changes to underlying infrastructure. I hope Falcon can address some of these issues in a platform agnostic way.
+My long term vision for Falcon is to make a web application platform which trivializes server deployment. Ideally, a web application can fully describe all its components: HTTP servers, databases, periodic jobs, background jobs, remote management, etc. Currently, it is not uncommon for all these facets to be handled independently in platform specific ways. This can make it difficult to set up new instances as well as make changes to underlying infrastructure. I hope Falcon can address some of these issues in a platform agnostic way.
 
 As web development is something I'm passionate about, having a server like Falcon is empowering.
 
