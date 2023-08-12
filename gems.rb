@@ -6,6 +6,7 @@ gemspec
 
 # gem "async-container", path: "../async-container"
 # gem "async-websocket", path: "../async-websocket"
+gem "async-bus", path: "../async-bus"
 # gem "async-http", path: "../async-http"
 # gem "async-http-cache", path: "../async-http-cache"
 # gem "protocol-http", path: "../protocol-http"

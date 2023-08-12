@@ -24,6 +24,9 @@ require 'samovar'
 require 'async'
 require 'json'
 
+require 'irb'
+require 'delegate'
+
 require 'async/io/stream'
 require 'async/io/unix_endpoint'
 
@@ -64,12 +67,24 @@ module Falcon
 				end
 			end
 			
+			class Shell < Samovar::Command
+				self.description = "Connect a shell to the currently running supervisor."
+				
+				# Send the metrics message to the supervisor and print the results.
+				def call(client)
+					client.connect do |connection|
+						binding.irb
+					end
+				end
+			end
+			
 			# The nested command to execute.
 			# @name nested
 			# @attribute [Command]
 			nested :command, {
 				'restart' => Restart,
 				'metrics' => Metrics,
+				'shell' => Shell,
 			}, default: 'metrics'
 			
 			# The endpoint the supervisor is bound to.
@@ -79,12 +94,10 @@ module Falcon
 			
 			# Connect to the supervisor and execute the requested command.
 			def call
-				Async do
-					endpoint.connect do |socket|
-						stream = Async::IO::Stream.new(socket)
-						
-						@command.call(stream)
-					end
+				Sync do
+					client = Async::Bus::Client.new(endpoint)
+					
+					@command.call(client)
 				end
 			end
 		end
