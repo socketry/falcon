@@ -20,6 +20,11 @@ class Benchmark
 		BIG
 	end
 	
+	def sleep(env)
+		Kernel::sleep(0.1)
+		[200, {}, []]
+	end
+	
 	def call(env)
 		_, name, *path = env[PATH_INFO].split("/")
 		

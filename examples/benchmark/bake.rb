@@ -35,10 +35,10 @@ def compare
 	strace = ["strace", "-f", "-e", "network,read,write", "-c", "--"]
 	
 	servers = [
-		# ["puma", "--bind", host.gsub("http", "tcp")],
-		[*strace, "puma", "--workers", threads.to_s, "--bind", host.gsub("http", "tcp")],
+		["puma", "--bind", host.gsub("http", "tcp")],
+		# [*strace, "puma", "--workers", threads.to_s, "--bind", host.gsub("http", "tcp")],
 		# ["rbspy", "record", "--", "falcon", "serve", "--threaded", "--bind", host, "--config"]
-		[*strace, "../../bin/falcon", "serve", "--bind", host, "--config"],
+		["../../bin/falcon", "serve", "--bind", host, "--config"],
 	]
 	
 	Console.logger.info!
@@ -93,11 +93,11 @@ def compare
 					c = (n*n).to_s
 					puts "Running #{command.first} with #{c} concurrent connections..."
 					
-					# Async::Process.spawn("curl", "-o", "/dev/null", "#{host}#{@request_path}")
+					Async::Process.spawn("curl", "-o", "/dev/null", "#{host}#{@request_path}")
 					
-					Async::Process.spawn("ab", "-k", "-n", "1000", "#{host}#{@request_path}")
+					# Async::Process.spawn("ab", "-k", "-n", "1000", "#{host}#{@request_path}")
 					
-					#Async::Process.spawn("wrk", "-c", c.to_s, "-t", (n).to_s, "-d", "2", "#{host}#{@request_path}")
+					Async::Process.spawn("wrk", "-c", c.to_s, "-t", (n).to_s, "-d", "10", "#{host}#{@request_path}")
 				# end
 			ensure
 				child_process.kill(:INT)
