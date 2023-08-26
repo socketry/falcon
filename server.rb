@@ -1,8 +1,8 @@
 #!/usr/bin/env -S ./bin/falcon virtual --bind-insecure http://[::]:1080 --bind-secure https://[::]:1443
 # frozen_string_literal: true
 
-# You will want edit your `/etc/hosts`, adding the following:
-# 127.0.0.1 benchmark.localhost beer.localhost hello.localhost
+# Released under the MIT License.
+# Copyright, 2018-2020, by Samuel Williams.
 
 rack 'benchmark.localhost', :self_signed do
 	root File.expand_path("examples/benchmark/", __dir__)

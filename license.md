@@ -1,9 +1,12 @@
 # MIT License
 
-Copyright, 2017-2022, by Samuel Williams.  
+Copyright, 2017-2023, by Samuel Williams.  
+Copyright, 2018, by Kent Gruber.  
 Copyright, 2018, by Janko Marohnić.  
-Copyright, 2018, by tamkylet.  
-Copyright, 2018, by claudiu.  
+Copyright, 2018, by Tad Thorley.  
+Copyright, 2018, by Mitsutaka Mimura.  
+Copyright, 2018, by Kyle Tam.  
+Copyright, 2018, by Claudiu Garba.  
 Copyright, 2018, by deepj.  
 Copyright, 2019, by Bryan Powell.  
 Copyright, 2019, by Sh Lin.  

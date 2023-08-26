@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
-# Restart the application server via the supervisor.
+# Released under the MIT License.
+# Copyright, 2020, by Samuel Williams.
+
 def restart
 	require_relative '../../lib/falcon/command/supervisor'
 	

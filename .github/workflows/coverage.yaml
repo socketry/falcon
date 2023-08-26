@@ -1,0 +1,57 @@
+name: Coverage
+
+on: [push, pull_request]
+
+permissions:
+  contents: read
+
+env:
+  CONSOLE_OUTPUT: XTerm
+  COVERAGE: PartialSummary
+
+jobs:
+  test:
+    name: ${{matrix.ruby}} on ${{matrix.os}}
+    runs-on: ${{matrix.os}}-latest
+    
+    strategy:
+      matrix:
+        os:
+          - ubuntu
+          - macos
+        
+        ruby:
+          - "3.2"
+    
+    steps:
+    - uses: actions/checkout@v3
+    - uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: ${{matrix.ruby}}
+        bundler-cache: true
+    
+    - name: Run tests
+      timeout-minutes: 5
+      run: bundle exec bake test
+
+    - uses: actions/upload-artifact@v2
+      with:
+        name: coverage-${{matrix.os}}-${{matrix.ruby}}
+        path: .covered.db
+  
+  validate:
+    needs: test
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+    - uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: "3.2"
+        bundler-cache: true
+    
+    - uses: actions/download-artifact@v3
+    
+    - name: Validate coverage
+      timeout-minutes: 5
+      run: bundle exec bake covered:validate --paths */.covered.db \;

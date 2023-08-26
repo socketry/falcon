@@ -10,29 +10,20 @@ env:
 
 jobs:
   test:
-    name: ${{matrix.ruby}} on ${{matrix.os}} ${{matrix.gemfile}}
+    name: ${{matrix.ruby}} on ${{matrix.os}}
     runs-on: ${{matrix.os}}-latest
     continue-on-error: ${{matrix.experimental}}
-    
-    env:
-      BUNDLER_GEMFILE: ${{matrix.gemfile}}
     
     strategy:
       matrix:
         os:
           - ubuntu
-          # - macos
+          - macos
         
         ruby:
-          - "2.7"
           - "3.0"
           - "3.1"
-          
-        gemfile:
-          - gems/rack-v1.rb
-          - gems/rack-v2.rb
-          - gems/rack-v3.rb
-          - gems/rack-head.rb
+          - "3.2"
         
         experimental: [false]
         
@@ -46,9 +37,6 @@ jobs:
           - os: ubuntu
             ruby: head
             experimental: true
-          - os: macos
-            ruby: "3.1"
-            experimental: false
     
     steps:
     - uses: actions/checkout@v3
