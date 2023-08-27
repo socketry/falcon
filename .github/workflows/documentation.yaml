@@ -1,22 +1,30 @@
 name: Documentation
 
-permissions:
-  contents: write
-
 on:
   push:
     branches:
       - main
 
+    # Allows you to run this workflow manually from the Actions tab:
+    workflow_dispatch:
+
+# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages:
 permissions:
-  contents: write
+  contents: read
+  pages: write
+  id-token: write
+
+# Allow one concurrent deployment:
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
 
 env:
   CONSOLE_OUTPUT: XTerm
   BUNDLE_WITH: maintenance
 
 jobs:
-  deploy:
+  generate:
     runs-on: ubuntu-latest
     
     steps:
@@ -24,18 +32,30 @@ jobs:
 
     - uses: ruby/setup-ruby@v1
       with:
-        ruby-version: "3.1"
+        ruby-version: "3.2"
         bundler-cache: true
     
     - name: Installing packages
       run: sudo apt-get install wget
     
-    - name: Prepare GitHub Pages
-      run: bundle exec bake github:pages:prepare --directory docs
-    
     - name: Generate documentation
       timeout-minutes: 5
       run: bundle exec bake utopia:project:static --force no
     
-    - name: Deploy GitHub Pages
-      run: bundle exec bake github:pages:commit --directory docs
+    - name: Upload documentation artifact
+      uses: actions/upload-pages-artifact@v1
+      with:
+        path: docs
+  
+  deploy:
+    runs-on: ubuntu-latest
+    
+    environment:
+      name: github-pages
+      url: ${{steps.deployment.outputs.page_url}}
+    
+    needs: generate
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v1

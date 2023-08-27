@@ -1,6 +1,9 @@
 #!/usr/bin/env falcon-host
 # frozen_string_literal: true
 
+# Released under the MIT License.
+# Copyright, 2020-2023, by Samuel Williams.
+
 load :proxy, :self_signed_tls, :supervisor
 
 supervisor

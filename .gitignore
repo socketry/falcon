@@ -1,4 +1,8 @@
-.tags
+/.bundle/
+/pkg/
+/gems.locked
+/.covered.db
+/external
 
 /.bundle/
 /.yardoc

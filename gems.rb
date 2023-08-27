@@ -1,5 +1,8 @@
 # frozen_string_literal: true
 
+# Released under the MIT License.
+# Copyright, 2017-2023, by Samuel Williams.
+
 source 'https://rubygems.org'
 
 gemspec
@@ -26,9 +29,20 @@ group :development do
 end
 
 group :test do
-	gem 'puma'
+	gem 'sus'
+	gem 'covered'
+	
+	gem 'sus-fixtures-async'
+	gem 'sus-fixtures-async-http'
+	gem 'sus-fixtures-openssl'
+	
+	gem "bake"
 	gem 'bake-test'
 	gem 'bake-test-external'
 	
+	gem 'puma'
 	gem "rackup"
+	
+	gem "async-process", "~> 1.1"
+	gem "async-websocket", "~> 0.19.2"
 end
