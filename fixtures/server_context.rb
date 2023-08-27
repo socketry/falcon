@@ -15,10 +15,6 @@ require 'async/io/shared_endpoint'
 module ServerContext
 	include Sus::Fixtures::Async::ReactorContext
 	
-	def timeout
-		10
-	end
-	
 	def protocol
 		::Async::HTTP::Protocol::HTTP1
 	end
