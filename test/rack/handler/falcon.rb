@@ -2,8 +2,6 @@
 
 # Released under the MIT License.
 # Copyright, 2019-2023, by Samuel Williams.
-# Copyright, 2018, by Mitsutaka Mimura.
-# Copyright, 2019, by Bryan Powell.
 
 require 'sus/fixtures/async'
 

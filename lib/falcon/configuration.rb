@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # Released under the MIT License.
-# Copyright, 2019-2021, by Samuel Williams.
+# Copyright, 2019-2023, by Samuel Williams.
 # Copyright, 2019, by Sho Ito.
 
 require 'build/environment'

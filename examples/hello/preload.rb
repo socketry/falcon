@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # Released under the MIT License.
-# Copyright, 2020, by Samuel Williams.
+# Copyright, 2020-2023, by Samuel Williams.
 
 if GC.respond_to?(:compact)
 	Console.logger.warn(self, "Compacting the mainframe...")

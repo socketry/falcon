@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # Released under the MIT License.
-# Copyright, 2017-2020, by Samuel Williams.
+# Copyright, 2017-2023, by Samuel Williams.
 # Copyright, 2018, by Mitsutaka Mimura.
 
 require_relative 'command/top'

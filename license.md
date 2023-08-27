@@ -7,12 +7,10 @@ Copyright, 2018, by Tad Thorley.
 Copyright, 2018, by Mitsutaka Mimura.  
 Copyright, 2018, by Kyle Tam.  
 Copyright, 2018, by Claudiu Garba.  
-Copyright, 2018, by deepj.  
 Copyright, 2019, by Bryan Powell.  
 Copyright, 2019, by Sh Lin.  
 Copyright, 2019, by Sho Ito.  
 Copyright, 2019, by Colby Swandale.  
-Copyright, 2019-2022, by dependabot[bot].  
 Copyright, 2020, by Daniel Evans.  
 Copyright, 2020, by Mikel Kew.  
 Copyright, 2020, by Michael Adams.  
