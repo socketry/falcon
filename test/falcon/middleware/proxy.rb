@@ -4,17 +4,26 @@
 # Copyright, 2018-2020, by Samuel Williams.
 
 require 'falcon/middleware/proxy'
+require 'falcon/service/proxy'
+require 'build/environment'
 
+require 'sus/fixtures/async'
 require 'async/http/client'
 require 'async/http/endpoint'
 
-RSpec.describe Falcon::Middleware::Proxy do
-	include_context Async::RSpec::Reactor
+describe Falcon::Middleware::Proxy do
+	include Sus::Fixtures::Async::ReactorContext
 	
-	subject do
-		described_class.new(Falcon::Middleware::BadRequest, {
-			'www.google.com' => double(authority: "www.google.com", endpoint: Async::HTTP::Endpoint.parse('https://www.google.com')),
-			'www.yahoo.com' => double(authority: "www.yahoo.com", endpoint: Async::HTTP::Endpoint.parse('https://www.yahoo.com')),
+	def proxy_for(**options)
+		Falcon::Service::Proxy.new(
+			Build::Environment.new(nil, options)
+		)
+	end
+	
+	let(:proxy) do
+		subject.new(Falcon::Middleware::BadRequest, {
+			'www.google.com' => proxy_for(authority: "www.google.com", endpoint: Async::HTTP::Endpoint.parse('https://www.google.com')),
+			'www.yahoo.com' => proxy_for(authority: "www.yahoo.com", endpoint: Async::HTTP::Endpoint.parse('https://www.yahoo.com')),
 		})
 	end
 	
@@ -25,24 +34,24 @@ RSpec.describe Falcon::Middleware::Proxy do
 		
 		expect(request).to receive(:remote_address).and_return(Addrinfo.ip("127.0.0.1"))
 		
-		response = subject.call(request)
+		response = proxy.call(request)
 		response.finish
 		
-		expect(response).to_not be_failure
+		expect(response).not.to be(:failure?)
 		
 		expect(request.headers['x-forwarded-for']).to be == ["127.0.0.1"]
 		
-		subject.close
+		proxy.close
 	end
 	
 	it 'defers if no host is available' do
 		request = Protocol::HTTP::Request.new('www.groogle.com', 'GET', '/', nil, headers, nil)
 		
-		response = subject.call(request)
+		response = proxy.call(request)
 		response.finish
 		
-		expect(response).to be_failure
+		expect(response).to be(:failure?)
 		
-		subject.close
+		proxy.close
 	end
 end

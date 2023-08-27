@@ -3,6 +3,8 @@
 # Released under the MIT License.
 # Copyright, 2019-2020, by Samuel Williams.
 
+require_relative '../service/proxy'
+
 # A HTTP proxy environment.
 #
 # Derived from {.application}.

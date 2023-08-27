@@ -41,7 +41,7 @@ module Falcon
 			
 			# Initialize the proxy middleware.
 			# @parameter app [Protocol::HTTP::Middleware] The middleware to use if a request can't be proxied.
-			# @parameter hosts [Array(Service::Proxy)] The host applications to proxy to.
+			# @parameter hosts [Hash(String, Service::Proxy)] The host applications to proxy to.
 			def initialize(app, hosts)
 				super(app)
 				

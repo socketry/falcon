@@ -1,16 +1,17 @@
 # frozen_string_literal: true
 
 # Released under the MIT License.
-# Copyright, 2017-2023, by Samuel Williams.
+# Copyright, 2018-2023, by Samuel Williams.
+# Copyright, 2020, by Tasos Latsas.
 
-require 'rack'
+require 'server_context'
+require 'sus/fixtures/openssl/valid_certificate_context'
+require 'sus/fixtures/openssl/verified_certificate_context'
 
-require_relative 'server_context'
-
-RSpec.describe Falcon::Server, timeout: 10 do
-	include_context Falcon::Server
+describe Falcon::Server do
+	include ServerContext
 	
-	context "http client" do
+	with "http client" do
 		let(:protocol) {Async::HTTP::Protocol::HTTP2}
 		
 		let(:app) do
@@ -25,43 +26,41 @@ RSpec.describe Falcon::Server, timeout: 10 do
 			end
 		end
 		
-		context "GET /" do
-			let!(:response) {client.get("/")}
-			after {response.finish}
+		with "GET /" do
+			let(:response) {client.get("/")}
 			
 			it "generates successful response" do
-				expect(response).to be_success
+				expect(response).to be(:success?)
 				expect(response.read).to be == "Hello World"
 			end
 		end
 		
-		context "HEAD /" do
-			let!(:response) {client.head("/")}
-			after {response.finish}
+		with "HEAD /" do
+			let(:response) {client.head("/")}
 			
 			it "generates successful response" do
-				expect(response).to be_success
-				expect(response.body).to be_empty
-				expect(response.body).to have_attributes(length: 11)
+				expect(response).to be(:success?)
+				expect(response.body).to be(:empty?)
+				expect(response.body).to have_attributes(length: be == 11)
 			end
 		end
 		
 		it "can POST application/x-www-form-urlencoded" do
 			response = client.post("/", {'content-type' => 'application/x-www-form-urlencoded'}, ['hello=world'])
 			
-			expect(response).to be_success
+			expect(response).to be(:success?)
 			expect(response.read).to be == 'POST: {"hello"=>"world"}'
 		end
 		
 		it "can POST multipart/form-data" do
 			response = client.post("/", {'content-type' => 'multipart/form-data; boundary=multipart'}, ["--multipart\r\n", "Content-Disposition: form-data; name=\"hello\"\r\n\r\n", "world\r\n", "--multipart--"])
 			
-			expect(response).to be_success
+			expect(response).to be(:success?)
 			expect(response.read).to be == 'POST: {"hello"=>"world"}'
 		end
 	end
 	
-	context ::Rack::BodyProxy do
+	with ::Rack::BodyProxy do
 		let(:callback) {Proc.new{}}
 		let(:content) {Array.new}
 		
@@ -76,7 +75,7 @@ RSpec.describe Falcon::Server, timeout: 10 do
 		it "should close non-empty body" do
 			content << "Hello World"
 			
-			expect(callback).to receive(:call).and_call_original
+			expect(callback).to receive(:call)
 			
 			expect(client.get("/").read).to be == "Hello World"
 		end
@@ -84,11 +83,11 @@ RSpec.describe Falcon::Server, timeout: 10 do
 		it "should close empty body" do
 			expect(callback).to receive(:call)
 			
-			expect(client.get("/").read).to be nil
+			expect(client.get("/").read).to be == nil
 		end
 	end
 	
-	context "broken middleware" do
+	with "broken middleware" do
 		let(:app) do
 			lambda do |env|
 				raise RuntimeError, "Middleware is broken"
@@ -98,13 +97,13 @@ RSpec.describe Falcon::Server, timeout: 10 do
 		it "results in a 500 error if middleware raises an exception" do
 			response = client.get("/", {})
 			
-			expect(response).to_not be_success
+			expect(response).not.to be(:success?)
 			expect(response.status).to be == 500
 			expect(response.read).to be =~ /RuntimeError: Middleware is broken/
 		end
 	end
 	
-	context 'streaming response', timeout: nil do
+	with 'streaming response', timeout: nil do
 		let(:app) do
 			lambda do |env|
 				body = proc do |stream|
@@ -122,7 +121,7 @@ RSpec.describe Falcon::Server, timeout: 10 do
 		it "can stream response" do
 			response = client.get("/")
 			
-			expect(response).to be_success
+			expect(response).to be(:success?)
 			expect(response.status).to be == 200
 			expect(response.read).to be =~ /Hello World!/
 		end

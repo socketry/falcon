@@ -5,10 +5,10 @@
 
 require 'falcon/command'
 
-RSpec.describe Falcon::Command::Top do
-	context "basic server" do
+describe Falcon::Command::Top do
+	with "basic server configuration" do
 		it "can listen on specified port" do
-			top = described_class[
+			top = subject[
 				"--verbose",
 				"serve",
 				"--threaded",
@@ -23,7 +23,7 @@ RSpec.describe Falcon::Command::Top do
 				client = serve.client
 				
 				response = client.get("/")
-				expect(response).to be_success
+				expect(response).to be(:success?)
 				
 				response.finish
 				client.close

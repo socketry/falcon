@@ -6,9 +6,9 @@
 
 require 'falcon/command/serve'
 
-RSpec.shared_examples_for Falcon::Command::Serve do
+ServeCommand = Sus::Shared("falcon serve") do
 	let(:command) do
-		described_class[
+		subject[
 			"--port", port,
 			"--config", File.expand_path("config.ru", __dir__), *options
 		]
@@ -24,7 +24,7 @@ RSpec.shared_examples_for Falcon::Command::Serve do
 				client = command.client
 				
 				response = client.get("/")
-				expect(response).to be_success
+				expect(response).to be(:success?)
 				
 				response.finish
 				client.close
@@ -35,29 +35,29 @@ RSpec.shared_examples_for Falcon::Command::Serve do
 	end
 end
 
-RSpec.describe Falcon::Command::Serve do
+describe Falcon::Command::Serve do
 	let(:options) { [] }
 
-	context "with custom port" do
+	with "custom port" do
 		let(:port) {8090}
-		include_examples Falcon::Command::Serve
+		it_behaves_like ServeCommand
 	end
 	
-	context "with one instance" do
+	with "one instance" do
 		let(:port) {8091}
 		let(:options) {["--count", 1]}
-		include_examples Falcon::Command::Serve
+		it_behaves_like ServeCommand
 	end
 	
-	context "with threaded container" do
+	with "threaded container" do
 		let(:port) {8092}
 		let(:options) {["--count", 4, "--threaded"]}
-		include_examples Falcon::Command::Serve
+		it_behaves_like ServeCommand
 	end
 	
-	context "with forked container", if: Process.respond_to?(:fork) do
+	with "forked container", if: Process.respond_to?(:fork) do
 		let(:port) {8093}
 		let(:options) {["--count", 4, "--forked"]}
-		include_examples Falcon::Command::Serve
+		it_behaves_like ServeCommand
 	end
 end

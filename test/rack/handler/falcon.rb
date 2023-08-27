@@ -1,7 +1,11 @@
 # frozen_string_literal: true
 
 # Released under the MIT License.
-# Copyright, 2019-2022, by Samuel Williams.
+# Copyright, 2019-2023, by Samuel Williams.
+# Copyright, 2018, by Mitsutaka Mimura.
+# Copyright, 2019, by Bryan Powell.
+
+require 'sus/fixtures/async'
 
 require 'falcon/server'
 require 'async/http/endpoint'
@@ -9,8 +13,10 @@ require 'async/http/client'
 require 'async/process'
 require 'rackup/handler'
 
-RSpec.shared_examples_for Rackup::Handler do |server_name|
-	include_context Async::RSpec::Reactor
+require 'rack/handler/falcon'
+
+RackupHandler = Sus::Shared("rackup handler") do |server_name|
+	include Sus::Fixtures::Async::ReactorContext
 	
 	let(:config_path) {File.join(__dir__, "config.ru")}
 	
@@ -36,7 +42,7 @@ RSpec.shared_examples_for Rackup::Handler do |server_name|
 			end
 		end
 		
-		expect(response).to be_success
+		expect(response).to be(:success?)
 		expect(response.read).to be == "Hello World"
 		
 		client.close
@@ -44,3 +50,16 @@ RSpec.shared_examples_for Rackup::Handler do |server_name|
 		server_task.wait
 	end
 end
+
+describe Rackup::Handler::Falcon do
+	it_behaves_like RackupHandler, 'falcon'
+
+	let(:app) {lambda {|env| [200, {}, ["Hello World"]]}}
+
+	it "can start and stop server" do
+		Rackup::Handler::Falcon.run(app) do |server|
+			server.stop
+		end
+	end
+end
+

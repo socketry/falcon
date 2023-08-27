@@ -15,6 +15,8 @@ require 'async/io/host_endpoint'
 require 'async/io/shared_endpoint'
 require 'async/io/ssl_endpoint'
 
+require 'async/http/client'
+
 require 'samovar'
 
 require 'rack/builder'

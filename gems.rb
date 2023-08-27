@@ -32,6 +32,10 @@ group :test do
 	gem 'sus'
 	gem 'covered'
 	
+	gem 'sus-fixtures-async'
+	gem 'sus-fixtures-async-http'
+	gem 'sus-fixtures-openssl'
+	
 	gem "bake"
 	gem 'bake-test'
 	gem 'bake-test-external'
@@ -40,6 +44,5 @@ group :test do
 	gem "rackup"
 	
 	gem "async-process", "~> 1.1"
-	gem "async-rspec", "~> 1.7"
 	gem "async-websocket", "~> 0.19.2"
 end
