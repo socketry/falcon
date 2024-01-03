@@ -21,10 +21,10 @@ jobs:
           - macos
         
         ruby:
-          - "3.2"
+          - "3.3"
     
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - uses: ruby/setup-ruby@v1
       with:
         ruby-version: ${{matrix.ruby}}
@@ -34,7 +34,7 @@ jobs:
       timeout-minutes: 5
       run: bundle exec bake test
 
-    - uses: actions/upload-artifact@v2
+    - uses: actions/upload-artifact@v3
       with:
         name: coverage-${{matrix.os}}-${{matrix.ruby}}
         path: .covered.db
@@ -44,10 +44,10 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - uses: ruby/setup-ruby@v1
       with:
-        ruby-version: "3.2"
+        ruby-version: "3.3"
         bundler-cache: true
     
     - uses: actions/download-artifact@v3

@@ -1,3 +1,8 @@
+# frozen_string_literal: true
+
+# Released under the MIT License.
+# Copyright, 2024, by Peter Schrammel.
+
 load :rack, :supervisor
 
 hostname = File.basename(__dir__)

@@ -16,6 +16,8 @@ Copyright, 2020, by Mikel Kew.
 Copyright, 2020, by Michael Adams.  
 Copyright, 2020, by Tasos Latsas.  
 Copyright, 2021, by Olle Jonsson.  
+Copyright, 2023, by Nick Janetakis.  
+Copyright, 2024, by Peter Schrammel.  
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

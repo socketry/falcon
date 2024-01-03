@@ -45,7 +45,7 @@ This project uses the [Developer Certificate of Origin](https://developercertifi
 
 ### Contributor Covenant
 
-This project is governed by [Contributor Covenant](https://www.contributor-covenant.org/). All contributors and participants agree to abide by its terms.
+This project is governed by the [Contributor Covenant](https://www.contributor-covenant.org/). All contributors and participants agree to abide by its terms.
 
 ## Websites using Falcon
 
