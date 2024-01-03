@@ -12,12 +12,23 @@ The filesize was 82078050 bytes.
 
 ```
 > dd if=/dev/zero of=./testfile bs=82078050 count=1
-> ab -n 100 -c 8 -p ./testfile -H "Expect: 100-continue" http://localhost:9292/
-This is ApacheBench, Version 2.3 <$Revision: 1879490 $>
+> time ab -n 1000 -c 32 -p ./testfile -H "Expect: 100-continue" http://localhost:9292/
+This is ApacheBench, Version 2.3 <$Revision: 1903618 $>
 Copyright 1996 Adam Twiss, Zeus Technology Ltd, http://www.zeustech.net/
 Licensed to The Apache Software Foundation, http://www.apache.org/
 
-Benchmarking localhost (be patient).....done
+Benchmarking localhost (be patient)
+Completed 100 requests
+Completed 200 requests
+Completed 300 requests
+Completed 400 requests
+Completed 500 requests
+Completed 600 requests
+Completed 700 requests
+Completed 800 requests
+Completed 900 requests
+Completed 1000 requests
+Finished 1000 requests
 
 
 Server Software:        
@@ -25,40 +36,47 @@ Server Hostname:        localhost
 Server Port:            9292
 
 Document Path:          /
-Document Length:        100 bytes
+Document Length:        163 bytes
 
-Concurrency Level:      20
-Time taken for tests:   7.873 seconds
-Complete requests:      100
-Failed requests:        9
-   (Connect: 0, Receive: 0, Length: 9, Exceptions: 0)
-Total transferred:      16280 bytes
-Total body sent:        8628660682
-HTML transferred:       9989 bytes
-Requests per second:    12.70 [#/sec] (mean)
-Time per request:       1574.576 [ms] (mean)
-Time per request:       78.729 [ms] (mean, across all concurrent requests)
-Transfer rate:          2.02 [Kbytes/sec] received
-                        1070310.40 kb/s sent
-                        1070312.42 kb/s total
+Concurrency Level:      32
+Time taken for tests:   23.320 seconds
+Complete requests:      1000
+Failed requests:        94
+   (Connect: 0, Receive: 0, Length: 94, Exceptions: 0)
+Non-2xx responses:      25
+Total transferred:      180172 bytes
+Total body sent:        83232690408
+HTML transferred:       162798 bytes
+Requests per second:    42.88 [#/sec] (mean)
+Time per request:       746.253 [ms] (mean)
+Time per request:       23.320 [ms] (mean, across all concurrent requests)
+Transfer rate:          7.54 [Kbytes/sec] received
+                        3485442.37 kb/s sent
+                        3485449.92 kb/s total
 
 Connection Times (ms)
               min  mean[+/-sd] median   max
-Connect:        0   56  44.6     52     141
-Processing:   296 1384 725.4   1159    4456
-Waiting:       33  126  89.2    121     886
-Total:        297 1440 720.8   1236    4464
+Connect:        0   43   8.1     44      61
+Processing:   185  690  93.6    679    1064
+Waiting:        0   43   6.4     44      59
+Total:        185  733  93.6    723    1081
 
 Percentage of the requests served within a certain time (ms)
-  50%   1236
-  66%   1458
-  75%   1627
-  80%   1711
-  90%   2020
-  95%   3883
-  98%   4463
-  99%   4464
- 100%   4464 (longest request)
+  50%    723
+  66%    759
+  75%    787
+  80%    806
+  90%    853
+  95%    907
+  98%    963
+  99%    989
+ 100%   1081 (longest request)
+
+________________________________________________________
+Executed in   23.36 secs    fish           external
+   usr time    0.07 secs  242.00 micros    0.07 secs
+   sys time   20.28 secs  104.00 micros   20.28 secs
+
 ```
 
 EOFError errors cause the failed uploads....have to figure out why.
