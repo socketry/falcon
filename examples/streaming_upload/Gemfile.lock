@@ -8,14 +8,14 @@ GEM
     async-container (0.16.12)
       async
       async-io
-    async-http (0.60.1)
+    async-http (0.61.0)
       async (>= 1.25)
       async-io (>= 1.28)
       async-pool (>= 0.2)
-      protocol-http (~> 0.24.0)
-      protocol-http1 (~> 0.15.0)
+      protocol-http (~> 0.25.0)
+      protocol-http1 (~> 0.16.0)
       protocol-http2 (~> 0.15.0)
-      traces (>= 0.8.0)
+      traces (>= 0.10.0)
     async-http-cache (0.4.3)
       async-http (~> 0.56)
     async-io (1.34.3)
@@ -47,8 +47,8 @@ GEM
       console (~> 1.8)
       samovar (~> 2.1)
     protocol-hpack (1.4.2)
-    protocol-http (0.24.1)
-    protocol-http1 (0.15.0)
+    protocol-http (0.25.0)
+    protocol-http1 (0.16.1)
       protocol-http (~> 0.22)
     protocol-http2 (0.15.1)
       protocol-hpack (~> 1.4)
@@ -61,7 +61,7 @@ GEM
       console (~> 1.0)
       mapping (~> 1.0)
     timers (4.3.5)
-    traces (0.9.1)
+    traces (0.11.1)
 
 PLATFORMS
   x86_64-linux
