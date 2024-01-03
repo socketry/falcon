@@ -4,17 +4,15 @@
 
 The filesize was 82078050 bytes.
 
-
-
-
 ## concurrent requests
 
 ```
-bundle exec falcon host ./falcon.rb
+> bundle exec falcon host ./falcon.rb
 ```
 
-
 ```
+> dd if=/dev/zero of=./testfile bs=82078050 count=1
+> ab -n 100 -c 8 -p ./testfile -H "Expect: 100-continue" http://localhost:9292/
 This is ApacheBench, Version 2.3 <$Revision: 1879490 $>
 Copyright 1996 Adam Twiss, Zeus Technology Ltd, http://www.zeustech.net/
 Licensed to The Apache Software Foundation, http://www.apache.org/
