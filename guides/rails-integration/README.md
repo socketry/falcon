@@ -9,6 +9,17 @@ Because `rails` apps are built on top of `rack`, they are compatible with `falco
 1. Add `gem 'falcon'` to your `Gemfile` and perhaps remove `gem 'puma'` once you are satisfied with the change.
 2. Run `falcon serve` to start a local development server.
 
+## Isolation Level
+
+Rails 7.1 introduced the ability to change its internal isolation level from threads (default) to fibers.
+
+Make sure to configure it to fibers:
+```ruby
+# config/application.rb
+
+config.active_support.isolation_level = :fiber
+```
+
 ## Thread Safety
 
 With older versions of Rails, the `Rack::Lock` middleware can be inserted into your app by Rails. `Rack::Lock` will cause both poor performance and deadlocks due to the highly concurrent nature of `falcon`. Other web frameworks are generally unaffected.
