@@ -1,6 +1,6 @@
 # MIT License
 
-Copyright, 2017-2023, by Samuel Williams.  
+Copyright, 2017-2024, by Samuel Williams.  
 Copyright, 2018, by Kent Gruber.  
 Copyright, 2018, by Janko Marohnić.  
 Copyright, 2018, by Tad Thorley.  
@@ -18,6 +18,7 @@ Copyright, 2020, by Tasos Latsas.
 Copyright, 2021, by Olle Jonsson.  
 Copyright, 2023, by Nick Janetakis.  
 Copyright, 2024, by Peter Schrammel.  
+Copyright, 2024, by Santiago Bartesaghi.  
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
