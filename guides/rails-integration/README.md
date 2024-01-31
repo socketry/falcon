@@ -11,14 +11,7 @@ Because `rails` apps are built on top of `rack`, they are compatible with `falco
 
 ## Isolation Level
 
-Rails 7.1 introduced the ability to change its internal isolation level from threads (default) to fibers.
-
-Make sure to configure it to fibers:
-```ruby
-# config/application.rb
-
-config.active_support.isolation_level = :fiber
-```
+Rails 7.1 introduced the ability to change its internal isolation level from threads (default) to fibers. When you use `falcon` with Rails, it will automatically set the isolation level to fibers.
 
 ## Thread Safety
 
