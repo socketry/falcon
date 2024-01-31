@@ -27,7 +27,19 @@ Please visit [Socketry.io](https://socketry.io) to register and subscribe.
 
 ## Usage
 
-Please see the <a href="https://socketry.github.io/falcon/">project documentation</a> or run it locally using `bake utopia:project:serve`.
+Please see the [project documentation](https://socketry.github.io/falcon/) for more details.
+
+  - [Getting Started](https://socketry.github.io/falcon/guides/getting-started/index) - This guide explains how to use Falcon for Ruby web application development.
+
+  - [Rails Integration](https://socketry.github.io/falcon/guides/rails-integration/index) - This guide explains how to host Rails applications with Falcon.
+
+  - [Deployment](https://socketry.github.io/falcon/guides/deployment/index) - This guide explains how to use Falcon in production environments.
+
+  - [Extended Features](https://socketry.github.io/falcon/guides/extended-features/index) - This guide explains some of the extended features and functionality of Falcon.
+
+  - [Performance Tuning](https://socketry.github.io/falcon/guides/performance-tuning/index) - This guide explains the performance characteristics of Falcon.
+
+  - [How It Works](https://socketry.github.io/falcon/guides/how-it-works/index) - This guide gives an overview of how Falcon handles an incoming web request.
 
 ## Contributing
 

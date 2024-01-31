@@ -15,6 +15,10 @@ Gem::Specification.new do |spec|
 	
 	spec.homepage = "https://github.com/socketry/falcon"
 	
+	spec.metadata = {
+		"documentation_uri" => "https://socketry.github.io/falcon/",
+	}
+	
 	spec.files = Dir.glob(['{bake,bin,lib}/**/*', '*.md'], File::FNM_DOTMATCH, base: __dir__)
 	
 	spec.executables = ["falcon", "falcon-host"]
