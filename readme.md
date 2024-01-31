@@ -58,13 +58,3 @@ This project uses the [Developer Certificate of Origin](https://developercertifi
 ### Contributor Covenant
 
 This project is governed by the [Contributor Covenant](https://www.contributor-covenant.org/). All contributors and participants agree to abide by its terms.
-
-## Websites using Falcon
-
-Websites below are listed in alphabetical order.
-
-  - iCook - <https://icook.tw>
-  - RubyAPI - <https://rubyapi.org>
-  - YonderBook - <https://www.yonderbook.com/>
-
-You're welcome to file a PR if you want to add your sites here.
