@@ -13,6 +13,12 @@ Because `rails` apps are built on top of `rack`, they are compatible with `falco
 
 Rails 7.1 introduced the ability to change its internal isolation level from threads (default) to fibers. When you use `falcon` with Rails, it will automatically set the isolation level to fibers.
 
+Beware that this change may increase the utilization of shared resources such as Active Record's connection pool. If you'd like to retain the default behavior, add the following to `config/application.rb` to reset the isolation level to threads:
+
+~~~ ruby
+config.active_support.isolation_level = :thread
+~~~
+
 ## Thread Safety
 
 With older versions of Rails, the `Rack::Lock` middleware can be inserted into your app by Rails. `Rack::Lock` will cause both poor performance and deadlocks due to the highly concurrent nature of `falcon`. Other web frameworks are generally unaffected.
@@ -25,7 +31,7 @@ Please ensure you specify `config.threadsafe!` in your `config/application.rb`:
 module MySite
 	class Application < Rails::Application
 		# ...
-		
+
 		# Enable threaded mode
 		config.threadsafe!
 	end
