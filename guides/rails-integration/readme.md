@@ -11,7 +11,23 @@ Because `rails` apps are built on top of `rack`, they are compatible with `falco
 
 ## Isolation Level
 
-Rails 7.1 introduced the ability to change its internal isolation level from threads (default) to fibers. When you use `falcon` with Rails, it will automatically set the isolation level to fibers.
+Rails 7.1 introduced the ability to change its internal isolation level from threads (default) to fibers. When you use `falcon` with Rails, it will automatically set the isolation level to fibers to improve performance.
+
+Beware that this change may increase the utilization of shared resources such as Active Record's connection pool, since you'll likely be running many more fibers than threads. In the future, Rails is likely to adjust connection pool handling so this shouldn't be an issue in practice.
+
+To mitigate the issue in the meantime, you can wrap Active Record calls in a `with_connection` block so they're released at the end of the block, as opposed to the default behavior where Rails keeps the connection checked out until its finished returning the response:
+
+~~~ ruby
+ActiveRecord::Base.connection_pool.with_connection do
+  Example.find(1)
+end
+~~~
+
+Or to simply retain the default Rails behavior, add the following to `config/application.rb` to reset the isolation level to threads:
+
+~~~ ruby
+config.active_support.isolation_level = :thread
+~~~
 
 ## Thread Safety
 
@@ -25,7 +41,7 @@ Please ensure you specify `config.threadsafe!` in your `config/application.rb`:
 module MySite
 	class Application < Rails::Application
 		# ...
-		
+
 		# Enable threaded mode
 		config.threadsafe!
 	end
