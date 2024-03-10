@@ -15,6 +15,7 @@ gemspec
 # gem "protocol-http1", path: "../protocol-http1"
 # gem "utopia-project", path: "../utopia-project"
 # gem "protocol-rack", path: "../protocol-rack"
+# gem "async-service", path: "../async-service"
 
 group :maintenance, optional: true do
 	gem "bake-modernize"

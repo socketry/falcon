@@ -4,35 +4,42 @@
 # Copyright, 2019-2023, by Samuel Williams.
 
 require 'localhost/authority'
+require_relative 'tls'
+require_relative '../environments'
 
-# A self-signed SSL context environment.
-#
-# @scope Falcon Environments
-# @name self_signed_tls
-environment(:self_signed_tls) do
-	# The default session identifier for the session cache.
-	# @attribute [String]
-	ssl_session_id {"falcon"}
-	
-	# The SSL context to use for incoming connections.
-	# @attribute [OpenSSL::SSL::SSLContext]
-	ssl_context do
-		contexts = Localhost::Authority.fetch(authority)
-		
-		contexts.server_context.tap do |context|
-			context.alpn_select_cb = lambda do |protocols|
-				if protocols.include? "h2"
-					return "h2"
-				elsif protocols.include? "http/1.1"
-					return "http/1.1"
-				elsif protocols.include? "http/1.0"
-					return "http/1.0"
-				else
-					return nil
-				end
+module Falcon
+	module Environments
+		# A general SSL context environment.
+		module SelfSignedTLS
+			# The default session identifier for the session cache.
+			# @returns [String]
+			def ssl_session_id
+				"falcon"
 			end
 			
-			context.session_id_context = ssl_session_id
+			# The SSL context to use for incoming connections.
+			# @returns [OpenSSL::SSL::SSLContext]
+			def ssl_context
+				contexts = Localhost::Authority.fetch(authority)
+				
+				contexts.server_context.tap do |context|
+					context.alpn_select_cb = lambda do |protocols|
+						if protocols.include? "h2"
+							return "h2"
+						elsif protocols.include? "http/1.1"
+							return "http/1.1"
+						elsif protocols.include? "http/1.0"
+							return "http/1.0"
+						else
+							return nil
+						end
+					end
+					
+					context.session_id_context = ssl_session_id
+				end
+			end
 		end
+		
+		LEGACY_ENVIRONMENTS[:self_signed_tls] = SelfSignedTLS
 	end
 end

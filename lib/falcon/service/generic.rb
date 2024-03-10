@@ -14,7 +14,7 @@ module Falcon
 			# @parameter environment [Build::Environment] The environment to use to construct the service.
 			def self.wrap(environment)
 				evaluator = environment.evaluator
-				service = evaluator.service || self
+				service = evaluator.service_class || self
 				
 				return service.new(environment)
 			end

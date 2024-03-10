@@ -4,31 +4,37 @@
 # Copyright, 2019-2023, by Samuel Williams.
 
 require_relative '../service/supervisor'
+require_relative '../environments'
 
-# A application process monitor environment.
-#
-# @scope Falcon Environments
-# @name supervisor
-environment(:supervisor) do
-	# The name of the supervisor
-	# @attribute [String]
-	name "supervisor"
-	
-	# The IPC path to use for communication with the supervisor.
-	# @attribute [String]
-	ipc_path do
-		::File.expand_path("supervisor.ipc", root)
-	end
-	
-	# The endpoint the supervisor will bind to.
-	# @attribute [Async::IO::Endpoint]
-	endpoint do
-		Async::IO::Endpoint.unix(ipc_path)
-	end
-	
-	# The service class to use for the supervisor.
-	# @attribute [Class]
-	service do
-		::Falcon::Service::Supervisor
+module Falcon
+	module Environments
+		# A application process monitor environment.
+		module Supervisor
+			# The name of the supervisor
+			# @returns [String]
+			def name
+				"supervisor"
+			end
+			
+			# The IPC path to use for communication with the supervisor.
+			# @returns [String]
+			def ipc_path
+				::File.expand_path("supervisor.ipc", root)
+			end
+			
+			# The endpoint the supervisor will bind to.
+			# @returns [Async::IO::Endpoint]
+			def endpoint
+				Async::IO::Endpoint.unix(ipc_path)
+			end
+			
+			# The service class to use for the supervisor.
+			# @returns [Class]
+			def service_class
+				::Falcon::Service::Supervisor
+			end
+		end
+		
+		LEGACY_ENVIRONMENTS[:supervisor] = Supervisor
 	end
 end

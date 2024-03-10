@@ -4,19 +4,25 @@
 # Copyright, 2019-2023, by Samuel Williams.
 
 require_relative '../service/proxy'
+require_relative '../environments'
 
-# A HTTP proxy environment.
-#
-# Derived from {.application}.
-#
-# @scope Falcon Environments
-# @name rack
-environment(:proxy) do
-	# The upstream endpoint that will handle incoming requests.
-	# @attribute [Async::HTTP::Endpoint]
-	endpoint {::Async::HTTP::Endpoint.parse(url)}
-	
-	# The service class to use for the proxy.
-	# @attribute [Class]
-	service ::Falcon::Service::Proxy
+module Falcon
+	module Environments
+		# A HTTP proxy environment.
+		module Proxy
+			# The upstream endpoint that will handle incoming requests.
+			# @attribute [Async::HTTP::Endpoint]
+			def endpoint
+				::Async::HTTP::Endpoint.parse(url)
+			end
+			
+			# The service class to use for the proxy.
+			# @attribute [Class]
+			def service_class
+				::Falcon::Service::Proxy
+			end
+		end
+		
+		LEGACY_ENVIRONMENTS[:proxy] = Proxy
+	end
 end

@@ -3,31 +3,43 @@
 # Released under the MIT License.
 # Copyright, 2019-2023, by Samuel Williams.
 
-load :application
+require_relative 'application'
+require_relative '../environments'
 
-# A rack application environment.
-#
-# Derived from {.application}.
-#
-# @scope Falcon Environments
-# @name rack
-environment(:rack, :application) do
-	# The rack configuration path.
-	# @attribute [String]
-	config_path {::File.expand_path("config.ru", root)}
-	
-	# Whether to enable the application layer cache.
-	# @attribute [String]
-	cache false
-	
-	# The middleware stack for the rack application.
-	# @attribute [Protocol::HTTP::Middleware]
-	middleware do
-		app, _ = ::Rack::Builder.parse_file(config_path)
+module Falcon
+	module Environments
+		# A rack application environment.
+		module Rack
+			include Application
+			
+			# The rack configuration path e.g. `config.ru`.
+			# @returns [String]
+			def config_path
+				::File.expand_path("config.ru", root)
+			end
+			
+			# Whether to enable the application layer cache.
+			# @returns [String]
+			def cache
+				false
+			end
+			
+			def verbose
+				false
+			end
+			
+			# The middleware stack for the rack application.
+			# @returns [Protocol::HTTP::Middleware]
+			def middleware
+				app, _ = ::Rack::Builder.parse_file(config_path)
+				
+				::Falcon::Server.middleware(app,
+					verbose: verbose,
+					cache: cache
+				)
+			end
+		end
 		
-		::Falcon::Server.middleware(app,
-			verbose: verbose,
-			cache: cache
-		)
+		LEGACY_ENVIRONMENTS[:rack] = Rack
 	end
 end

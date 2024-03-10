@@ -5,7 +5,6 @@
 
 require 'falcon/middleware/proxy'
 require 'falcon/service/proxy'
-require 'build/environment'
 
 require 'sus/fixtures/async'
 require 'async/http/client'
@@ -16,7 +15,7 @@ describe Falcon::Middleware::Proxy do
 	
 	def proxy_for(**options)
 		Falcon::Service::Proxy.new(
-			Build::Environment.new(nil, options)
+			Async::Service::Environment.build(**options)
 		)
 	end
 	

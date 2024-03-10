@@ -22,7 +22,7 @@ module Falcon
 		def initialize(configuration)
 			@named = {}
 			
-			configuration.each(:service) do |environment|
+			configuration.each(:service_class) do |environment|
 				service = Service::Generic.wrap(environment)
 				
 				add(service)

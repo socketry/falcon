@@ -3,28 +3,32 @@
 # Released under the MIT License.
 # Copyright, 2020-2023, by Samuel Williams.
 
-load(:tls)
+require_relative 'tls'
+require_relative '../environments'
 
-# A Lets Encrypt SSL context environment.
-#
-# Derived from {.tls}.
-#
-# @scope Falcon Environments
-# @name lets_encrypt_tls
-environment(:lets_encrypt_tls, :tls) do
-	# The Lets Encrypt certificate store path.
-	# @parameter [String]
-	lets_encrypt_root '/etc/letsencrypt/live'
-	
-	# The public certificate path.
-	# @attribute [String]
-	ssl_certificate_path do
-		File.join(lets_encrypt_root, authority, "fullchain.pem")
-	end
-	
-	# The private key path.
-	# @attribute [String]
-	ssl_private_key_path do
-		File.join(lets_encrypt_root, authority, "privkey.pem")
+module Falcon
+	module Environments
+		# A Lets Encrypt SSL context environment.
+		module LetsEncryptTLS
+			# The Lets Encrypt certificate store path.
+			# @parameter [String]
+			def lets_encrypt_root
+				'/etc/letsencrypt/live'
+			end
+			
+			# The public certificate path.
+			# @attribute [String]
+			def ssl_certificate_path
+				File.join(lets_encrypt_root, authority, "fullchain.pem")
+			end
+			
+			# The private key path.
+			# @attribute [String]
+			def ssl_private_key_path
+				File.join(lets_encrypt_root, authority, "privkey.pem")
+			end
+		end
+		
+		LEGACY_ENVIRONMENTS[:tls] = TLS
 	end
 end
