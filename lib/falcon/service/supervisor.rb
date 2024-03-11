@@ -8,11 +8,12 @@ require 'json'
 
 require 'async/io/endpoint'
 require 'async/io/shared_endpoint'
+require 'async/service/generic'
 
 module Falcon
 	module Service
 		# Implements a host supervisor which can restart the host services and provide various metrics about the running processes.
-		class Supervisor < Generic
+		class Supervisor < Async::Service::Generic
 			# Initialize the supervisor using the given environment.
 			# @parameter environment [Build::Environment]
 			def initialize(environment)

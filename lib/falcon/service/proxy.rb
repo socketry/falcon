@@ -3,14 +3,37 @@
 # Released under the MIT License.
 # Copyright, 2020-2023, by Samuel Williams.
 
-require_relative 'generic'
+require 'async/service/generic'
 
 require 'async/http/endpoint'
 require 'async/io/shared_endpoint'
 
 module Falcon
 	module Service
-		class Proxy < Generic
+		class Proxy < Async::Service::Generic
+			module Environment
+				# The host that this proxy will receive connections for.
+				def url
+					"https://[::]:443"
+				end
+				
+				# The upstream endpoint that will handle incoming requests.
+				# @attribute [Async::HTTP::Endpoint]
+				def endpoint
+					::Async::HTTP::Endpoint.parse(url)
+				end
+				
+				# The service class to use for the proxy.
+				# @attribute [Class]
+				def service_class
+					::Falcon::Service::Proxy
+				end
+			end
+			
+			def self.included(target)
+				target.include(Environment)
+			end
+			
 			def name
 				"#{self.class} for #{self.authority}"
 			end
