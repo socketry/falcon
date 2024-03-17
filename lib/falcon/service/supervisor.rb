@@ -16,7 +16,7 @@ module Falcon
 		class Supervisor < Async::Service::Generic
 			# Initialize the supervisor using the given environment.
 			# @parameter environment [Build::Environment]
-			def initialize(environment)
+			def initialize(...)
 				super
 				
 				@bound_endpoint = nil

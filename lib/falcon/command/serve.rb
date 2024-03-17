@@ -6,7 +6,7 @@
 
 require_relative '../server'
 require_relative '../endpoint'
-require_relative '../service/server'
+require_relative '../service/rackup'
 
 require 'async/container'
 require 'async/http/client'
@@ -51,7 +51,9 @@ module Falcon
 			end
 			
 			def service
-				Async::Service::Environment.new(Falcon::Service::Server).with(
+				Async::Service::Environment.new(Falcon::Service::Rackup::Environment).with(
+					root: Dir.pwd,
+					
 					verbose: self.parent&.verbose?,
 					cache: @options[:cache],
 					
@@ -59,7 +61,7 @@ module Falcon
 					endpoint_options: self.endpoint_options,
 					
 					rackup_path: @options[:config],
-					preload: [@options[:preload]],
+					preload: [@options[:preload]].compact,
 					bind: @options[:bind],
 					
 					name: "server",

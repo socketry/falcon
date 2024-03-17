@@ -60,10 +60,14 @@ module Falcon
 			
 			# Preload any resources specified by the environment.
 			def preload!
+				root = @evaluator.root
+				
 				if scripts = @evaluator.preload
+					scripts = Array(scripts)
+					
 					scripts.each do |path|
 						Console.logger.info(self) {"Preloading #{path}..."}
-						full_path = File.expand_path(path, self.root)
+						full_path = File.expand_path(path, root)
 						load(full_path)
 					end
 				end

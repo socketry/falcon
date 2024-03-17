@@ -6,8 +6,6 @@
 require_relative 'serve'
 require_relative 'host'
 require_relative 'virtual'
-require_relative 'proxy'
-require_relative 'redirect'
 require_relative 'supervisor'
 
 require_relative '../version'
@@ -36,8 +34,6 @@ module Falcon
 				'serve' => Serve,
 				'host' => Host,
 				'virtual' => Virtual,
-				'proxy' => Proxy,
-				'redirect' => Redirect,
 				'supervisor' => Supervisor,
 			}, default: 'serve'
 			
