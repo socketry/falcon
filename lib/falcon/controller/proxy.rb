@@ -5,7 +5,6 @@
 
 require 'async/container/controller'
 
-require_relative 'serve'
 require_relative '../middleware/proxy'
 require_relative '../service/proxy'
 
@@ -14,9 +13,8 @@ require_relative '../tls'
 module Falcon
 	module Controller
 		# A controller for proxying requests.
-		class Proxy < Serve
-			# The default SSL session identifier.
-			DEFAULT_SESSION_ID = "falcon"
+		class Proxy
+			
 			
 			# Initialize the proxy controller.
 			# @parameter command [Command::Proxy] The user-specified command-line options.
@@ -30,7 +28,7 @@ module Falcon
 			
 			# Load the {Middleware::Proxy} application with the specified hosts.
 			def load_app
-				return Middleware::Proxy.new(Middleware::BadRequest, @hosts)
+				
 			end
 			
 			# The name of the controller which is used for the process title.

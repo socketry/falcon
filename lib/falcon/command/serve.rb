@@ -6,22 +6,11 @@
 
 require_relative '../server'
 require_relative '../endpoint'
-require_relative '../controller/serve'
+require_relative '../service/server'
 
 require 'async/container'
-
-require 'async/io/trap'
-require 'async/io/host_endpoint'
-require 'async/io/shared_endpoint'
-require 'async/io/ssl_endpoint'
-
 require 'async/http/client'
-
 require 'samovar'
-
-require 'rack/builder'
-
-require 'bundler'
 
 module Falcon
 	module Command
@@ -53,29 +42,30 @@ module Falcon
 				option '--threads <count>', "Number of threads (hybrid only).", type: Integer
 			end
 			
-			# Options for the {endpoint}.
-			def endpoint_options
-				@options.slice(:hostname, :port, :reuse_port, :timeout)
+			def container_options
+				@options.slice(:count, :forks, :threads)
 			end
 			
-			def environment
-				Async::Service::Environment.build do
-					include Falcon::Service::Server
+			def endpoint_options
+				@options.slice(:hostname, :port, :timeout)
+			end
+			
+			def service
+				Async::Service::Environment.new(Falcon::Service::Server).with(
+					verbose: self.parent&.verbose?,
+					cache: @options[:cache],
 					
-					rackup_path @options[:config]
+					container_options: self.container_options,
+					endpoint_options: self.endpoint_options,
 					
-					container_options @options.slice(:count, :forks, :threads)
+					rackup_path: @options[:config],
+					preload: [@options[:preload]],
+					bind: @options[:bind],
 					
-					preload @options[:preload]
+					name: "server",
 					
-					verbose @parent&.verbose?
-					
-					cache @options[:cache]
-					
-					endpoint do
-						Endpoint.parse(@options[:bind], **endpoint_options)
-					end
-				end
+					endpoint: ->{Endpoint.parse(bind, **endpoint_options)}
+				)
 			end
 			
 			# The container class to use.
@@ -114,20 +104,10 @@ module Falcon
 					buffer.puts "- To reload configuration: kill -HUP #{Process.pid}"
 				end
 				
-				begin
-					Bundler.require(:preload)
-				rescue Bundler::GemfileNotFound
-					# Ignore.
-				end
+				configuration = Async::Service::Configuration.new
+				configuration.add(self.service)
 				
-				if Process.respond_to?(:warmup)
-					Process.warmup
-				elsif GC.respond_to?(:compact)
-					3.times{GC.start}
-					GC.compact
-				end
-				
-				controller = Async::Service::Controller.new(container_class: self.container_class, environment: environment)
+				Async::Service::Controller.run(configuration, container_class: self.container_class)
 			end
 		end
 	end

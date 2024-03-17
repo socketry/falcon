@@ -26,11 +26,11 @@ Gem::Specification.new do |spec|
 	spec.required_ruby_version = ">= 3.0"
 	
 	spec.add_dependency "async"
-	spec.add_dependency "async-container", "~> 0.16.0"
+	spec.add_dependency "async-container", "~> 0.17.0"
 	spec.add_dependency "async-http", "~> 0.57"
 	spec.add_dependency "async-http-cache", "~> 0.4.0"
 	spec.add_dependency "async-io", "~> 1.22"
-	spec.add_dependency "async-service"
+	spec.add_dependency "async-service", "~> 0.6.0"
 	spec.add_dependency "bundler"
 	spec.add_dependency "localhost", "~> 1.1"
 	spec.add_dependency "openssl", "~> 3.0"

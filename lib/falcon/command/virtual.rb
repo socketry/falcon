@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
 # Released under the MIT License.
-# Copyright, 2018-2023, by Samuel Williams.
+# Copyright, 2018-2024, by Samuel Williams.
 
-require_relative '../controller/virtual'
+require_relative '../service/virtual'
 require_relative 'paths'
 
 require 'samovar'
@@ -32,24 +32,14 @@ module Falcon
 			
 			include Paths
 			
-			# Prepare a new controller for the command.
-			def controller
-				Controller::Virtual.new(self)
-			end
-			
-			# The URI to bind the `HTTPS` -> `falcon host` proxy.
-			def bind_secure
-				@options[:bind_secure]
-			end
-			
-			# The URI to bind the `HTTP` -> `HTTPS` redirector.
-			def bind_insecure
-				@options[:bind_insecure]
-			end
-			
-			# The connection timeout to use for incoming connections.
-			def timeout
-				@options[:timeout]
+			def service
+				Async::Service::Environment.new(Falcon::Service::Virtual).with(
+					verbose: self.parent&.verbose?,
+					configuration_paths: self.paths,
+					bind_insecure: @options[:bind_insecure],
+					bind_secure: @options[:bind_secure],
+					timeout: @options[:timeout]
+				)
 			end
 			
 			# Prepare the environment and run the controller.
@@ -60,29 +50,10 @@ module Falcon
 					buffer.puts "- To reload all sites: kill -HUP #{Process.pid}"
 				end
 				
-				ENV['CONSOLE_LEVEL'] = 'debug'
+				configuration = self.configuration
+				configuration.add(self.service)
 				
-				self.controller.run
-			end
-			
-			# The insecure endpoint for connecting to the {Redirect} instance.
-			def insecure_endpoint(**options)
-				Async::HTTP::Endpoint.parse(@options[:bind_insecure], **options)
-			end
-			
-			# The secure endpoint for connecting to the {Proxy} instance.
-			def secure_endpoint(**options)
-				Async::HTTP::Endpoint.parse(@options[:bind_secure], **options)
-			end
-			
-			# An endpoint suitable for connecting to the specified hostname.
-			def host_endpoint(hostname, **options)
-				endpoint = secure_endpoint(**options)
-				
-				url = URI.parse(@options[:bind_secure])
-				url.hostname = hostname
-				
-				return Async::HTTP::Endpoint.new(url, hostname: endpoint.hostname)
+				Async::Service::Controller.run(configuration)
 			end
 		end
 	end

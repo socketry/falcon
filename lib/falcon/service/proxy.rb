@@ -28,6 +28,28 @@ module Falcon
 				def service_class
 					::Falcon::Service::Proxy
 				end
+				
+				# The default SSL session identifier.
+				def tls_session_id
+					"falcon"
+				end
+				
+				def hosts
+					services.each do |service|
+						if service.is_a?(Service::Proxy)
+							Console.logger.info(self) {"Proxying #{service.authority} to #{service.endpoint}"}
+							@hosts[service.authority] = service
+							
+							# Pre-cache the ssl contexts:
+							# It seems some OpenSSL objects don't like event-driven I/O.
+							service.ssl_context
+						end
+					end
+				end
+				
+				def middleware
+					return Middleware::Proxy.new(Middleware::BadRequest, hosts)
+				end
 			end
 			
 			def self.included(target)

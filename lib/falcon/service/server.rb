@@ -17,7 +17,7 @@ module Falcon
 					{restart: true}
 				end
 				
-				# The host that this proxy will receive connections for.
+				# The host that this server will receive connections for.
 				def url
 					"http://[::]:9292"
 				end
@@ -34,14 +34,6 @@ module Falcon
 					::Falcon::Service::Server
 				end
 				
-				def rackup_path
-					'config.ru'
-				end
-				
-				def rack_app
-					Rack::Builder.parse_file(rackup_path)
-				end
-				
 				def verbose
 					false
 				end
@@ -50,8 +42,8 @@ module Falcon
 					false
 				end
 				
-				def middleware
-					Falcon::Server.middleware(rack_app, verbose: verbose, cache: cache)
+				def client_endpoint
+					::Async::HTTP::Endpoint.parse(url)
 				end
 			end
 			
@@ -66,6 +58,17 @@ module Falcon
 				@bound_endpoint = nil
 			end
 			
+			# Preload any resources specified by the environment.
+			def preload!
+				if scripts = @evaluator.preload
+					scripts.each do |path|
+						Console.logger.info(self) {"Preloading #{path}..."}
+						full_path = File.expand_path(path, self.root)
+						load(full_path)
+					end
+				end
+			end
+			
 			# Prepare the bound endpoint for the server.
 			def start
 				@endpoint ||= @evaluator.endpoint
@@ -73,6 +76,8 @@ module Falcon
 				Sync do
 					@bound_endpoint = @endpoint.bound
 				end
+				
+				preload!
 				
 				Console.logger.info(self) {"Starting #{name} on #{@endpoint.to_url}"}
 				

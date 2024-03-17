@@ -12,7 +12,7 @@ require 'async/io/shared_endpoint'
 module Falcon
 	module Service
 		# Implements an application server using an internal clear-text proxy.
-		class Application < Proxy
+		class Application < Server
 			def initialize(environment)
 				super
 				
@@ -30,17 +30,6 @@ module Falcon
 			# @returns [Integer | nil]
 			def count
 			  @environment.evaluator.count
-			end
-			
-			# Preload any resources specified by the environment.
-			def preload!
-				if scripts = @evaluator.preload
-					scripts.each do |path|
-						Console.logger.info(self) {"Preloading #{path}..."}
-						full_path = File.expand_path(path, self.root)
-						load(full_path)
-					end
-				end
 			end
 			
 			# Prepare the bound endpoint for the application instances.

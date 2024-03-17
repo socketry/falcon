@@ -19,6 +19,10 @@ module Falcon
 					File.glob("/srv/http/*/falcon.rb")
 				end
 				
+				def configuration
+					::Async::Service::Configuration.load(configuration_paths)
+				end
+				
 				# The URI to bind the `HTTPS` -> `falcon host` proxy.
 				def bind_secure
 					"https://[::]:443"
@@ -33,6 +37,44 @@ module Falcon
 				def timeout
 					10.0
 				end
+				
+				# # The insecure endpoint for connecting to the {Redirect} instance.
+				# def insecure_endpoint(**options)
+				# 	Async::HTTP::Endpoint.parse(bind_insecure, **options)
+				# end
+				
+				# # The secure endpoint for connecting to the {Proxy} instance.
+				# def secure_endpoint(**options)
+				# 	Async::HTTP::Endpoint.parse(bind_secure, **options)
+				# end
+				
+				# # An endpoint suitable for connecting to the specified hostname.
+				# def host_endpoint(hostname, **options)
+				# 	endpoint = secure_endpoint(**options)
+					
+				# 	url = URI.parse(bind_secure)
+				# 	url.hostname = hostname
+					
+				# 	return Async::HTTP::Endpoint.new(url, hostname: endpoint.hostname)
+				# end
+			end
+			
+			def redirect_service
+				hosts = {}
+				
+				@evaluator.configuration.services do |service|
+					if service.is_a?(Service::Server)
+						hosts[service.authority] = service
+					end
+				end
+				
+				Async::Service::Environment.new(Falcon::Service::Redirect).with(
+					hosts: hosts,
+				)
+			end
+			
+			def proxy_service
+				
 			end
 			
 			def self.included(target)
