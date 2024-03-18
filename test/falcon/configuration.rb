@@ -12,12 +12,30 @@ describe Falcon::Configuration do
 	it "can configurure proxy" do
 		configuration.load_file(File.expand_path(".configuration/proxy.rb", __dir__))
 		
-		expect(configuration.environments).to be(:include?, 'localhost')
+		expect(configuration.environments).to be(:any?)
+		
+		environment = configuration.environments.first
+		evaluator = environment.evaluator
+		
+		expect(evaluator).to have_attributes(
+			service_class: be == Falcon::Service::Proxy,
+			authority: be == "localhost",
+			url: be == "https://www.google.com"
+		)
 	end
 	
 	it "can configure rack" do
 		configuration.load_file(File.expand_path(".configuration/rack.rb", __dir__))
 		
-		expect(configuration.environments).to be(:include?, 'localhost')
+		expect(configuration.environments).to be(:any?)
+		
+		environment = configuration.environments.first
+		evaluator = environment.evaluator
+		
+		expect(evaluator).to have_attributes(
+			service_class: be == Falcon::Service::Server,
+			authority: be == "localhost",
+			count: be == 3
+		)
 	end
 end

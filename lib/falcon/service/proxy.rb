@@ -3,7 +3,7 @@
 # Released under the MIT License.
 # Copyright, 2020-2023, by Samuel Williams.
 
-require 'async/service/generic'
+require_relative 'server'
 
 require 'async/http/endpoint'
 require 'async/io/shared_endpoint'

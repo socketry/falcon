@@ -59,24 +59,6 @@ module Falcon
 				# end
 			end
 			
-			def redirect_service
-				hosts = {}
-				
-				@evaluator.configuration.services do |service|
-					if service.is_a?(Service::Server)
-						hosts[service.authority] = service
-					end
-				end
-				
-				Async::Service::Environment.new(Falcon::Service::Redirect).with(
-					hosts: hosts,
-				)
-			end
-			
-			def proxy_service
-				
-			end
-			
 			def self.included(target)
 				target.include(Environnment)
 			end

@@ -9,14 +9,13 @@ require 'falcon/service/proxy'
 require 'sus/fixtures/async'
 require 'async/http/client'
 require 'async/http/endpoint'
+require 'async/service/environment'
 
 describe Falcon::Middleware::Proxy do
 	include Sus::Fixtures::Async::ReactorContext
 	
 	def proxy_for(**options)
-		Falcon::Service::Proxy.new(
-			Async::Service::Environment.build(**options)
-		)
+		Async::Service::Environment.build(**options).evaluator
 	end
 	
 	let(:proxy) do
