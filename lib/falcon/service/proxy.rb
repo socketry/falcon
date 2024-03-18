@@ -10,18 +10,9 @@ require 'async/io/shared_endpoint'
 
 module Falcon
 	module Service
-		class Proxy < Async::Service::Generic
+		class Proxy < Server
 			module Environment
-				# The host that this proxy will receive connections for.
-				def url
-					"https://[::]:443"
-				end
-				
-				# The upstream endpoint that will handle incoming requests.
-				# @attribute [Async::HTTP::Endpoint]
-				def endpoint
-					::Async::HTTP::Endpoint.parse(url)
-				end
+				include Server::Environment
 				
 				# The service class to use for the proxy.
 				# @attribute [Class]
@@ -29,65 +20,94 @@ module Falcon
 					::Falcon::Service::Proxy
 				end
 				
+				# The host that this proxy will receive connections for.
+				def url
+					"https://[::]:443"
+				end
+				
 				# The default SSL session identifier.
 				def tls_session_id
 					"falcon"
 				end
 				
+				# The services we will proxy to.
+				# @returns [Array(Async::Service::Environment)]
+				def environments
+					[]
+				end
+				
 				def hosts
-					services.each do |service|
-						if service.is_a?(Service::Proxy)
-							Console.logger.info(self) {"Proxying #{service.authority} to #{service.endpoint}"}
-							@hosts[service.authority] = service
+					hosts = {}
+					
+					environments.each do |environment|
+						evaluator = environment.evaluator
+						
+						if evaluator.key?(:authority) and evaluator.key?(:ssl_context) and evaluator.key?(:endpoint)
+							Console.logger.info(self) {"Proxying #{self.url} to #{evaluator.authority} using #{evaluator.endpoint}"}
+							hosts[evaluator.authority] = evaluator
 							
 							# Pre-cache the ssl contexts:
 							# It seems some OpenSSL objects don't like event-driven I/O.
-							service.ssl_context
+							# service.ssl_context
+						else
+							Console.logger.warn(self) {"Ignoring environment: #{environment}, missing authority, ssl_context, or endpoint."}
 						end
+					end
+					
+					return hosts
+				end
+				
+				# Look up the host context for the given hostname, and update the socket hostname if necessary.
+				# @parameter socket [OpenSSL::SSL::SSLSocket] The incoming connection.
+				# @parameter hostname [String] The negotiated hostname.
+				def host_context(socket, hostname)
+					if host = self.hosts[hostname]
+						Console.logger.debug(self) {"Resolving #{hostname} -> #{host}"}
+						
+						socket.hostname = hostname
+						
+						return host.ssl_context
+					else
+						Console.logger.warn(self) {"Unable to resolve #{hostname}!"}
+						
+						return nil
 					end
 				end
 				
+				# Generate an SSL context which delegates to {host_context} to multiplex based on hostname.
+				def ssl_context
+					@server_context ||= OpenSSL::SSL::SSLContext.new.tap do |context|
+						context.servername_cb = Proc.new do |socket, hostname|
+							self.host_context(socket, hostname)
+						end
+						
+						context.session_id_context = @session_id
+						
+						context.ssl_version = :TLSv1_2_server
+						
+						context.set_params(
+							ciphers: TLS::SERVER_CIPHERS,
+							verify_mode: OpenSSL::SSL::VERIFY_NONE,
+						)
+						
+						context.setup
+					end
+				end
+				
+				# The endpoint the server will bind to.
+				def endpoint
+					super.with(
+						ssl_context: self.ssl_context,
+					)
+				end
+				
 				def middleware
-					return Middleware::Proxy.new(Middleware::BadRequest, hosts)
+					return Middleware::Proxy.new(Middleware::BadRequest, self.hosts)
 				end
 			end
 			
 			def self.included(target)
 				target.include(Environment)
-			end
-			
-			def name
-				"#{self.class} for #{self.authority}"
-			end
-			
-			# The host that this proxy will receive connections for.
-			def authority
-				@evaluator.authority
-			end
-			
-			# The upstream endpoint that this proxy will connect to.
-			def endpoint
-				@evaluator.endpoint
-			end
-			
-			# The {OpenSSL::SSL::SSLContext} that will be used for incoming connections.
-			def ssl_context
-				@evaluator.ssl_context
-			end
-			
-			# The root
-			def root
-				@evaluator.root
-			end
-			
-			# The protocol this proxy will use to talk to the upstream host.
-			def protocol
-				endpoint.protocol
-			end
-			
-			# The scheme this proxy will use to talk to the upstream host.
-			def scheme
-				endpoint.scheme
 			end
 		end
 	end

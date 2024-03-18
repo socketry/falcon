@@ -3,7 +3,6 @@
 # Released under the MIT License.
 # Copyright, 2019-2023, by Samuel Williams.
 
-require_relative '../controller/proxy'
 require_relative '../tls'
 require_relative '../environments'
 

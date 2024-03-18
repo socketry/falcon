@@ -12,6 +12,12 @@ module Falcon
 	module Service
 		class Server < Async::Service::Generic
 			module Environment
+				# The service class to use for the proxy.
+				# @returns [Class]
+				def service_class
+					::Falcon::Service::Server
+				end
+				
 				# Options to use when creating the container.
 				def container_options
 					{restart: true}
@@ -23,15 +29,11 @@ module Falcon
 				end
 				
 				# The upstream endpoint that will handle incoming requests.
-				# @attribute [Async::HTTP::Endpoint]
+				# @returns [Async::HTTP::Endpoint]
 				def endpoint
-					::Async::HTTP::Endpoint.parse(url)
-				end
-				
-				# The service class to use for the proxy.
-				# @attribute [Class]
-				def service_class
-					::Falcon::Service::Server
+					::Async::HTTP::Endpoint.parse(url).with(
+						reuse_address: true,
+					)
 				end
 				
 				def verbose
@@ -93,7 +95,7 @@ module Falcon
 			def setup(container)
 				container_options = @evaluator.container_options
 				
-				container.run(name: self.name, restart: true, **container_options) do |instance|
+				container.run(name: self.name, **container_options) do |instance|
 					evaluator = @environment.evaluator
 					
 					Async do |task|
