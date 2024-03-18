@@ -28,8 +28,8 @@ VirtualCommand = Sus::Shared("falcon virtual") do
 	}
 	
 	def around
-		# Wait for the container to start...
-		controller = command.controller
+		configuration = command.configuration
+		controller = Async::Service::Controller.new(configuration.services.to_a)
 		
 		controller.start
 		

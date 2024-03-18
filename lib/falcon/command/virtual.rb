@@ -32,14 +32,20 @@ module Falcon
 			
 			include Paths
 			
-			def service
-				Async::Service::Environment.new(Falcon::Service::Virtual).with(
+			def environment
+				Async::Service::Environment.new(Falcon::Service::Virtual::Environment).with(
 					verbose: self.parent&.verbose?,
 					configuration_paths: self.paths,
 					bind_insecure: @options[:bind_insecure],
 					bind_secure: @options[:bind_secure],
 					timeout: @options[:timeout]
 				)
+			end
+			
+			def configuration
+				super.tap do |configuration|
+					configuration.add(self.environment)
+				end
 			end
 			
 			# Prepare the environment and run the controller.
@@ -50,10 +56,7 @@ module Falcon
 					buffer.puts "- To reload all sites: kill -HUP #{Process.pid}"
 				end
 				
-				configuration = self.configuration
-				configuration.add(self.service)
-				
-				Async::Service::Controller.run(configuration)
+				Async::Service::Controller.run(self.configuration)
 			end
 		end
 	end

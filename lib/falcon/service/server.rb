@@ -15,7 +15,7 @@ module Falcon
 				# The service class to use for the proxy.
 				# @returns [Class]
 				def service_class
-					::Falcon::Service::Server
+					Server
 				end
 				
 				# Options to use when creating the container.

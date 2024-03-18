@@ -50,7 +50,7 @@ module Falcon
 				@options.slice(:hostname, :port, :timeout)
 			end
 			
-			def service
+			def environment
 				Async::Service::Environment.new(Falcon::Service::Rackup::Environment).with(
 					root: Dir.pwd,
 					
@@ -68,6 +68,12 @@ module Falcon
 					
 					endpoint: ->{Endpoint.parse(bind, **endpoint_options)}
 				)
+			end
+			
+			def configuration
+				Configuration.new.tap do |configuration|
+					configuration.add(self.environment)
+				end
 			end
 			
 			# The container class to use.
@@ -106,10 +112,7 @@ module Falcon
 					buffer.puts "- To reload configuration: kill -HUP #{Process.pid}"
 				end
 				
-				configuration = Async::Service::Configuration.new
-				configuration.add(self.service)
-				
-				Async::Service::Controller.run(configuration, container_class: self.container_class)
+				Async::Service::Controller.run(self.configuration, container_class: self.container_class)
 			end
 		end
 	end

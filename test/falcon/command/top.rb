@@ -16,8 +16,8 @@ describe Falcon::Command::Top do
 			]
 			
 			serve = top.command
-			container = serve.controller
-			container.start
+			controller = Async::Service::Controller.new(serve.configuration)
+			controller.start
 			
 			Async do
 				client = serve.client
@@ -29,7 +29,7 @@ describe Falcon::Command::Top do
 				client.close
 			end
 			
-			container.stop
+			controller.stop
 		end
 	end
 end

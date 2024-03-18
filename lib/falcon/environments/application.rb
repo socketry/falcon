@@ -14,6 +14,12 @@ module Falcon
 	module Environments
 		# A general application environment. Suitable for use with any {Protocol::HTTP::Middleware}.
 		module Application
+			# The service class to use for the application.
+			# @returns [Class]
+			def service_class
+				::Falcon::Service::Application
+			end
+			
 			# The middleware stack for the application.
 			# @returns [Protocol::HTTP::Middleware]
 			def middleware
@@ -49,12 +55,6 @@ module Falcon
 					scheme: scheme,
 					authority: authority
 				)
-			end
-			
-			# The service class to use for the application.
-			# @returns [Class]
-			def service_class
-				::Falcon::Service::Application
 			end
 			
 			# Number of instances to start.

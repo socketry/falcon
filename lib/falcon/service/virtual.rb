@@ -13,6 +13,12 @@ module Falcon
 		# A virtual host is an application bound to a specific authority (essentially a hostname). The virtual controller manages multiple hosts and allows a single server to host multiple applications easily.
 		class Virtual < Async::Service::Generic
 			module Environment
+				# The service class to use for the virtual host.
+				# @returns [Class]
+				def service_class
+					Virtual
+				end
+				
 				# All the falcon application configuration paths.
 				# @returns [Array(String)] Paths to the falcon application configuration files.
 				def configuration_paths

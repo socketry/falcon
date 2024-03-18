@@ -17,7 +17,7 @@ module Falcon
 				# The service class to use for the proxy.
 				# @attribute [Class]
 				def service_class
-					::Falcon::Service::Proxy
+					Proxy
 				end
 				
 				# The host that this proxy will receive connections for.
