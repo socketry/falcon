@@ -4,6 +4,8 @@
 # Copyright, 2020-2023, by Samuel Williams.
 
 require_relative 'server'
+require_relative '../tls'
+require_relative '../middleware/proxy'
 
 require 'async/http/endpoint'
 require 'async/io/shared_endpoint'

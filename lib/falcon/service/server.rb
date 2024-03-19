@@ -47,6 +47,11 @@ module Falcon
 				def client_endpoint
 					::Async::HTTP::Endpoint.parse(url)
 				end
+				
+				# Any scripts to preload before starting the server.
+				def preload
+					[]
+				end
 			end
 			
 			def self.included(target)

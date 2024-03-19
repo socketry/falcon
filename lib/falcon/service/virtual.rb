@@ -22,7 +22,7 @@ module Falcon
 				# All the falcon application configuration paths.
 				# @returns [Array(String)] Paths to the falcon application configuration files.
 				def configuration_paths
-					File.glob("/srv/http/*/falcon.rb")
+					["/srv/http/*/falcon.rb"]
 				end
 				
 				def configuration
@@ -128,18 +128,18 @@ module Falcon
 					
 					container.spawn(name: "Falcon Redirector", restart: true, key: :redirect) do |instance|
 						instance.exec(falcon_path, "redirect",
-							"--bind", @command.bind_insecure,
-							"--timeout", @command.timeout.to_s,
-							"--redirect", @command.bind_secure,
-							*@command.paths, ready: false
+							"--bind", evaluator.bind_insecure,
+							"--timeout", evaluator.timeout.to_s,
+							"--redirect", evaluator.bind_secure,
+							*evaluator.configuration_paths, ready: false
 						)
 					end
 					
 					container.spawn(name: "Falcon Proxy", restart: true, key: :proxy) do |instance|
 						instance.exec(falcon_path, "proxy",
-							"--bind", @command.bind_secure,
-							"--timeout", @command.timeout.to_s,
-							*@command.paths, ready: false
+							"--bind", evaluator.bind_secure,
+							"--timeout", evaluator.timeout.to_s,
+							*evaluator.configuration_paths, ready: false
 						)
 					end
 				end

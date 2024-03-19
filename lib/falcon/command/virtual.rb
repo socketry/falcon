@@ -30,8 +30,6 @@ module Falcon
 			# @attribute [Array(String)]
 			many :paths
 			
-			include Paths
-			
 			def environment
 				Async::Service::Environment.new(Falcon::Service::Virtual::Environment).with(
 					verbose: self.parent&.verbose?,
@@ -43,7 +41,7 @@ module Falcon
 			end
 			
 			def configuration
-				super.tap do |configuration|
+				Async::Service::Configuration.new.tap do |configuration|
 					configuration.add(self.environment)
 				end
 			end
