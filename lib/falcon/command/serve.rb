@@ -62,11 +62,11 @@ module Falcon
 					
 					rackup_path: @options[:config],
 					preload: [@options[:preload]].compact,
-					bind: @options[:bind],
+					url: @options[:bind],
 					
 					name: "server",
 					
-					endpoint: ->{Endpoint.parse(bind, **endpoint_options)}
+					endpoint: ->{Endpoint.parse(url, **endpoint_options)}
 				)
 			end
 			
