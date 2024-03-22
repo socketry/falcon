@@ -29,19 +29,38 @@ module Falcon
 			
 			include Paths
 			
-			def environment
-				Async::Service::Environment.new(Falcon::Service::Proxy::Environment).with(
+			def environment(**options)
+				Async::Service::Environment.new(Falcon::Service::Redirect::Environment).with(
 					root: Dir.pwd,
 					verbose: self.parent&.verbose?,
-					name: "proxy",
-					
 					url: @options[:bind],
+					redirect_url: @options[:redirect],
+					timeout: @options[:timeout],
+					**options
 				)
 			end
 			
+			def host_map(environments)
+				hosts = {}
+				
+				environments.each do |environment|
+					next unless environment.implements?(Falcon::Service::Application::Environment)
+					evaluator = environment.evaluator
+					hosts[evaluator.authority] = evaluator
+				end
+				
+				Console.info(self) {"Hosts: #{hosts}"}
+				
+				return hosts
+			end
+			
 			def configuration
+				configuration = super
+				hosts = host_map(configuration.environments)
+				
 				Configuration.new.tap do |configuration|
-					configuration.add(self.environment)
+					environment = self.environment(hosts: hosts)
+					configuration.add(environment)
 				end
 			end
 			
@@ -57,6 +76,10 @@ module Falcon
 					buffer.puts "- Binding to: #{@options[:bind]}"
 					buffer.puts "- To terminate: Ctrl-C or kill #{Process.pid}"
 					buffer.puts "- To reload: kill -HUP #{Process.pid}"
+					
+					self.resolved_paths.each do |path|
+						buffer.puts "- Loading configuration from #{path}"
+					end
 				end
 				
 				Async::Service::Controller.run(self.configuration, container_class: self.container_class)

@@ -18,6 +18,10 @@ module Falcon
 					Server
 				end
 				
+				def name
+					"#{service_class.name} (#{url})"
+				end
+				
 				# Options to use when creating the container.
 				def container_options
 					{restart: true}
@@ -28,11 +32,16 @@ module Falcon
 					"http://[::]:9292"
 				end
 				
+				def timeout
+					nil
+				end
+				
 				# The upstream endpoint that will handle incoming requests.
 				# @returns [Async::HTTP::Endpoint]
 				def endpoint
 					::Async::HTTP::Endpoint.parse(url).with(
 						reuse_address: true,
+						timeout: timeout,
 					)
 				end
 				
@@ -81,15 +90,15 @@ module Falcon
 			
 			# Prepare the bound endpoint for the server.
 			def start
-				endpoint = @evaluator.endpoint
+				@endpoint = @evaluator.endpoint
 				
 				Sync do
-					@bound_endpoint = endpoint.bound
+					@bound_endpoint = @endpoint.bound
 				end
 				
 				preload!
 				
-				Console.logger.info(self) {"Starting #{name} on #{@endpoint.to_url}"}
+				Console.logger.info(self) {"Starting #{name} on #{@endpoint}"}
 				
 				super
 			end
@@ -120,6 +129,8 @@ module Falcon
 					@bound_endpoint.close
 					@bound_endpoint = nil
 				end
+				
+				@endpoint = nil
 				
 				super
 			end

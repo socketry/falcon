@@ -19,6 +19,10 @@ module Falcon
 					Virtual
 				end
 				
+				def name
+					service_class.name
+				end
+				
 				# All the falcon application configuration paths.
 				# @returns [Array(String)] Paths to the falcon application configuration files.
 				def configuration_paths

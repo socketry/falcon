@@ -66,66 +66,6 @@ module Falcon
 					nil
 				end
 			end
-			
-			def initialize(...)
-				super
-				
-				@bound_endpoint = nil
-			end
-			
-			# Prepare the bound endpoint for the application instances.
-			# Invoke {preload!} to load shared resources into the parent process.
-			def start
-				endpoint = @evaluator.endpoint
-				
-				Console.logger.info(self) {"Binding to #{endpoint}..."}
-				
-				@bound_endpoint = Async::Reactor.run do
-					Async::IO::SharedEndpoint.bound(endpoint)
-				end.wait
-				
-				preload!
-				
-				super
-			end
-			
-			# Setup instances of the application into the container.
-			# @parameter container [Async::Container::Generic]
-			def setup(container)
-				protocol = self.protocol
-				scheme = self.scheme
-				
-				run_options = {
-					name: self.name,
-					restart: true,
-				}
-				
-				run_options[:count] = count unless count.nil?
-				
-				container.run(**run_options) do |instance|
-					Async do |task|
-						Console.logger.info(self) {"Starting application server for #{self.root}..."}
-						
-						server = Server.new(self.middleware, @bound_endpoint, protocol: protocol, scheme: scheme)
-						
-						server.run
-						
-						instance.ready!
-						
-						task.children.each(&:wait)
-					end
-				end
-				
-				super
-			end
-			
-			# Close the bound endpoint.
-			def stop
-				@bound_endpoint&.close
-				@bound_endpoint = nil
-				
-				super
-			end
 		end
 	end
 end

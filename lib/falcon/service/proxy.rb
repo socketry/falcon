@@ -22,6 +22,10 @@ module Falcon
 					Proxy
 				end
 				
+				def name
+					service_class.name
+				end
+				
 				# The host that this proxy will receive connections for.
 				def url
 					"https://[::]:443"
@@ -63,14 +67,16 @@ module Falcon
 				# @parameter socket [OpenSSL::SSL::SSLSocket] The incoming connection.
 				# @parameter hostname [String] The negotiated hostname.
 				def host_context(socket, hostname)
-					if host = self.hosts[hostname]
+					hosts = self.hosts
+					
+					if host = hosts[hostname]
 						Console.logger.debug(self) {"Resolving #{hostname} -> #{host}"}
 						
 						socket.hostname = hostname
 						
 						return host.ssl_context
 					else
-						Console.logger.warn(self) {"Unable to resolve #{hostname}!"}
+						Console.logger.warn(self, hosts: hosts.keys) {"Unable to resolve #{hostname}!"}
 						
 						return nil
 					end

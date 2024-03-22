@@ -56,6 +56,26 @@ module Falcon
 				
 				Async::Service::Controller.run(self.configuration)
 			end
+			
+			# The insecure endpoint for connecting to the {Redirect} instance.
+			def insecure_endpoint(**options)
+				Async::HTTP::Endpoint.parse(@options[:bind_insecure], **options)
+			end
+			
+			# The secure endpoint for connecting to the {Proxy} instance.
+			def secure_endpoint(**options)
+				Async::HTTP::Endpoint.parse(@options[:bind_secure], **options)
+			end
+			
+			# An endpoint suitable for connecting to the specified hostname.
+			def host_endpoint(hostname, **options)
+				endpoint = secure_endpoint(**options)
+				
+				url = URI.parse(@options[:bind_secure])
+				url.hostname = hostname
+				
+				return Async::HTTP::Endpoint.new(url, hostname: endpoint.hostname)
+			end
 		end
 	end
 end

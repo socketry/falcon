@@ -33,12 +33,6 @@ module Falcon
 					Middleware::Redirect.new(Middleware::NotFound, hosts, redirect_endpoint)
 				end
 			end
-			
-			# services.each do |service|
-			# 	if service.is_a?(Service::Proxy)
-			# 		@hosts[service.authority] = service
-			# 	end
-			# end
 		end
 	end
 end

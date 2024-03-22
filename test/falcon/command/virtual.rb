@@ -48,7 +48,7 @@ VirtualCommand = Sus::Shared("falcon virtual") do
 		Async do
 			response = insecure_client.call(request)
 			
-			expect(response).to be_redirection
+			expect(response).to be(:redirection?)
 			expect(response.headers['location']).to be == "https://hello.localhost:8443/index"
 			
 			response.close
