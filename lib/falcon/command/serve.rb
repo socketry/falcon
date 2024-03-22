@@ -6,7 +6,8 @@
 
 require_relative '../server'
 require_relative '../endpoint'
-require_relative '../service/rackup'
+require_relative '../service/server'
+require_relative '../environment/rackup'
 
 require 'async/container'
 require 'async/http/client'
@@ -51,7 +52,9 @@ module Falcon
 			end
 			
 			def environment
-				Async::Service::Environment.new(Falcon::Service::Rackup::Environment).with(
+				Async::Service::Environment.new(Falcon::Service::Server::Environment).with(
+					Falcon::Environment::Rackup,
+					
 					root: Dir.pwd,
 					
 					verbose: self.parent&.verbose?,

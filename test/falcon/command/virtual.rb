@@ -29,7 +29,7 @@ VirtualCommand = Sus::Shared("falcon virtual") do
 	
 	def around
 		configuration = command.configuration
-		controller = Async::Service::Controller.new(configuration.services.to_a)
+		controller = configuration.controller
 		
 		controller.start
 		

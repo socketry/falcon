@@ -16,7 +16,7 @@ describe Falcon::Command::Top do
 			]
 			
 			serve = top.command
-			controller = Async::Service::Controller.new(serve.configuration.services.to_a)
+			controller = serve.configuration.controller
 			controller.start
 			
 			Async do

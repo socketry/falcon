@@ -16,7 +16,7 @@ ServeCommand = Sus::Shared("falcon serve") do
 	
 	it "can listen on specified port" do
 		configuration = command.configuration
-		controller = Async::Service::Controller.new(configuration.services.to_a)
+		controller = configuration.controller
 		
 		controller.start
 		

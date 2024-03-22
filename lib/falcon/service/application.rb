@@ -13,7 +13,60 @@ module Falcon
 	module Service
 		# Implements an application server using an internal clear-text proxy.
 		class Application < Server
-			def initialize(environment)
+			module Environment
+				include Server::Environment
+				
+				# The service class to use for the application.
+				# @returns [Class]
+				def service_class
+					::Falcon::Service::Application
+				end
+				
+				# The middleware stack for the application.
+				# @returns [Protocol::HTTP::Middleware]
+				def middleware
+					::Protocol::HTTP::Middleware::HelloWorld
+				end
+				
+				# The scheme to use to communicate with the application.
+				# @returns [String]
+				def scheme
+					'https'
+				end
+				
+				# The protocol to use to communicate with the application.
+				#
+				# Typically one of {Async::HTTP::Protocol::HTTP1} or {Async::HTTP::Protocl::HTTP2}.
+				#
+				# @returns [Async::HTTP::Protocol]
+				def protocol
+					Async::HTTP::Protocol::HTTP2
+				end
+				
+				# The IPC path to use for communication with the application.
+				# @returns [String]
+				def ipc_path
+					::File.expand_path("application.ipc", root)
+				end
+				
+				# The endpoint that will be used for communicating with the application server.
+				# @returns [Async::IO::Endpoint]
+				def endpoint
+					::Falcon::ProxyEndpoint.unix(ipc_path,
+						protocol: protocol,
+						scheme: scheme,
+						authority: authority
+					)
+				end
+				
+				# Number of instances to start.
+				# @returns [Integer | nil]
+				def count
+					nil
+				end
+			end
+			
+			def initialize(...)
 				super
 				
 				@bound_endpoint = nil
