@@ -36,7 +36,7 @@ module Falcon
 					configuration_paths: self.paths,
 					bind_insecure: @options[:bind_insecure],
 					bind_secure: @options[:bind_secure],
-					timeout: @options[:timeout]
+					timeout: @options[:timeout],
 				)
 			end
 			

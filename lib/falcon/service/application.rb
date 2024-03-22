@@ -5,6 +5,7 @@
 # Copyright, 2020, by Daniel Evans.
 
 require_relative 'proxy'
+require_relative '../proxy_endpoint'
 
 require 'async/http/endpoint'
 require 'async/io/shared_endpoint'
@@ -72,26 +73,15 @@ module Falcon
 				@bound_endpoint = nil
 			end
 			
-			# The middleware that will be served by this application.
-			# @returns [Protocol::HTTP::Middleware]
-			def middleware
-				# In a multi-threaded container, we don't want to modify the shared evaluator's cache, so we create a new evaluator:
-				@environment.evaluator.middleware
-			end
-			
-			# Number of instances to start.
-			# @returns [Integer | nil]
-			def count
-			  @environment.evaluator.count
-			end
-			
 			# Prepare the bound endpoint for the application instances.
 			# Invoke {preload!} to load shared resources into the parent process.
 			def start
-				Console.logger.info(self) {"Binding to #{self.endpoint}..."}
+				endpoint = @evaluator.endpoint
+				
+				Console.logger.info(self) {"Binding to #{endpoint}..."}
 				
 				@bound_endpoint = Async::Reactor.run do
-					Async::IO::SharedEndpoint.bound(self.endpoint)
+					Async::IO::SharedEndpoint.bound(endpoint)
 				end.wait
 				
 				preload!

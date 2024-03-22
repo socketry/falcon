@@ -3,24 +3,14 @@
 # Released under the MIT License.
 # Copyright, 2019-2023, by Samuel Williams.
 
-require 'rack/builder'
-require_relative '../server'
-require_relative '../environments'
+require_relative '../service/application'
+require_relative 'rackup'
 
 module Falcon
-	module Environment
+	module Environments
 		module Rack
-			def rackup_path
-				'config.ru'
-			end
-			
-			def rack_app
-				::Rack::Builder.parse_file(rackup_path)
-			end
-			
-			def middleware
-				::Falcon::Server.middleware(rack_app, verbose: verbose, cache: cache)
-			end
+			include Service::Application::Environment
+			include Rackup
 		end
 		
 		LEGACY_ENVIRONMENTS[:rack] = Rack

@@ -61,7 +61,6 @@ module Falcon
 			def initialize(...)
 				super
 				
-				@endpoint = nil
 				@bound_endpoint = nil
 			end
 			
@@ -82,10 +81,10 @@ module Falcon
 			
 			# Prepare the bound endpoint for the server.
 			def start
-				@endpoint ||= @evaluator.endpoint
+				endpoint = @evaluator.endpoint
 				
 				Sync do
-					@bound_endpoint = @endpoint.bound
+					@bound_endpoint = endpoint.bound
 				end
 				
 				preload!
@@ -121,8 +120,6 @@ module Falcon
 					@bound_endpoint.close
 					@bound_endpoint = nil
 				end
-				
-				@endpoint = nil
 				
 				super
 			end
