@@ -41,33 +41,10 @@ module Falcon
 				)
 			end
 			
-			def host_map(environments)
-				hosts = {}
-				
-				environments.each do |environment|
-					next unless environment.implements?(Falcon::Environment::Application)
-					evaluator = environment.evaluator
-					hosts[evaluator.authority] = evaluator
-				end
-				
-				Console.info(self) {"Hosts: #{hosts}"}
-				
-				return hosts
-			end
-			
 			def configuration
-				configuration = super
-				hosts = host_map(configuration.environments)
-				
-				Configuration.new.tap do |configuration|
-					environment = self.environment(hosts: hosts)
-					configuration.add(environment)
-				end
-			end
-			
-			# The container class to use.
-			def container_class
-				Async::Container.best_container_class
+				Configuration.for(
+					self.environment(environments: super.environments)
+				)
 			end
 			
 			# Prepare the environment and run the controller.
@@ -83,7 +60,7 @@ module Falcon
 					end
 				end
 				
-				Async::Service::Controller.run(self.configuration, container_class: self.container_class)
+				Async::Service::Controller.run(self.configuration)
 			end
 			
 			# The endpoint to bind to.

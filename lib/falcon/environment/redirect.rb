@@ -20,8 +20,25 @@ module Falcon
 				Async::HTTP::Endpoint.parse(redirect_url)
 			end
 			
+			# The services we will redirect to.
+			# @returns [Array(Async::Service::Environment)]
+			def environments
+				[]
+			end
+			
 			def hosts
-				{}
+				hosts = {}
+				
+				environments.each do |environment|
+					evaluator = environment.evaluator
+					
+					if environment.implements?(Falcon::Environment::Application)
+						Console.info(self) {"Redirecting #{self.url} to #{evaluator.authority}"}
+						hosts[evaluator.authority] = evaluator
+					end
+				end
+				
+				return hosts
 			end
 			
 			# Load the {Middleware::Redirect} application with the specified hosts.

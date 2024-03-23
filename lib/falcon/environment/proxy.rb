@@ -35,15 +35,15 @@ module Falcon
 				environments.each do |environment|
 					evaluator = environment.evaluator
 					
+					# next unless environment.implements?(Falcon::Environment::Application)
 					if evaluator.key?(:authority) and evaluator.key?(:ssl_context) and evaluator.key?(:endpoint)
-						Console.logger.info(self) {"Proxying #{self.url} to #{evaluator.authority} using #{evaluator.endpoint}"}
+						Console.info(self) {"Proxying #{self.url} to #{evaluator.authority} using #{evaluator.endpoint}"}
 						hosts[evaluator.authority] = evaluator
 						
-						# Pre-cache the ssl contexts:
-						# It seems some OpenSSL objects don't like event-driven I/O.
-						# service.ssl_context
-					else
-						Console.logger.warn(self) {"Ignoring environment: #{environment}, missing authority, ssl_context, or endpoint."}
+						if RUBY_VERSION < '3.1'
+							# Ensure the SSL context is set up before forking - it's buggy on Ruby < 3.1:
+							evaluator.ssl_context
+						end
 					end
 				end
 				
