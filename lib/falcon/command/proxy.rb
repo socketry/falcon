@@ -48,8 +48,10 @@ module Falcon
 					next unless environment.implements?(Falcon::Environments::Application)
 					evaluator = environment.evaluator
 					
-					# Prepare the ssl_context:
-					evaluator.ssl_context
+					if RUBY_VERSION < '3.1'
+						# Prepare the ssl_context:
+						evaluator.ssl_context
+					end
 					
 					hosts[evaluator.authority] = evaluator
 				end
