@@ -3,7 +3,7 @@
 # Released under the MIT License.
 # Copyright, 2020-2023, by Samuel Williams.
 
-require_relative '../service/proxy'
+require_relative '../environments/proxy'
 require_relative 'paths'
 
 require 'samovar'
@@ -32,7 +32,7 @@ module Falcon
 			include Paths
 			
 			def environment(**options)
-				Async::Service::Environment.new(Falcon::Service::Proxy::Environment).with(
+				Async::Service::Environment.new(Falcon::Environments::Proxy).with(
 					root: Dir.pwd,
 					verbose: self.parent&.verbose?,
 					url: @options[:bind],
@@ -45,7 +45,7 @@ module Falcon
 				hosts = {}
 				
 				environments.each do |environment|
-					next unless environment.implements?(Falcon::Service::Application::Environment)
+					next unless environment.implements?(Falcon::Environments::Application)
 					evaluator = environment.evaluator
 					hosts[evaluator.authority] = evaluator
 				end

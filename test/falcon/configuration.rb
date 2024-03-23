@@ -18,7 +18,7 @@ describe Falcon::Configuration do
 		evaluator = environment.evaluator
 		
 		expect(evaluator).to have_attributes(
-			service_class: be == Falcon::Service::Proxy,
+			service_class: be == Falcon::Service::Server,
 			authority: be == "localhost",
 			url: be == "https://www.google.com"
 		)

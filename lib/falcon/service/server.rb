@@ -11,62 +11,6 @@ require_relative '../server'
 module Falcon
 	module Service
 		class Server < Async::Service::Generic
-			module Environment
-				# The service class to use for the proxy.
-				# @returns [Class]
-				def service_class
-					Server
-				end
-				
-				def name
-					"#{service_class.name} (#{url})"
-				end
-				
-				# Options to use when creating the container.
-				def container_options
-					{restart: true}
-				end
-				
-				# The host that this server will receive connections for.
-				def url
-					"http://[::]:9292"
-				end
-				
-				def timeout
-					nil
-				end
-				
-				# The upstream endpoint that will handle incoming requests.
-				# @returns [Async::HTTP::Endpoint]
-				def endpoint
-					::Async::HTTP::Endpoint.parse(url).with(
-						reuse_address: true,
-						timeout: timeout,
-					)
-				end
-				
-				def verbose
-					false
-				end
-				
-				def cache
-					false
-				end
-				
-				def client_endpoint
-					::Async::HTTP::Endpoint.parse(url)
-				end
-				
-				# Any scripts to preload before starting the server.
-				def preload
-					[]
-				end
-			end
-			
-			def self.included(target)
-				target.include(Environment)
-			end
-			
 			def initialize(...)
 				super
 				

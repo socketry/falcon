@@ -4,7 +4,6 @@
 # Copyright, 2018-2023, by Samuel Williams.
 
 require 'falcon/middleware/proxy'
-require 'falcon/service/proxy'
 
 require 'sus/fixtures/async'
 require 'async/http/client'

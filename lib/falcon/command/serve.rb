@@ -53,7 +53,7 @@ module Falcon
 			end
 			
 			def environment
-				Async::Service::Environment.new(Falcon::Service::Server::Environment).with(
+				Async::Service::Environment.new(Falcon::Environments::Server).with(
 					Falcon::Environments::Rackup,
 					
 					root: Dir.pwd,
