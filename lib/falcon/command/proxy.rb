@@ -47,6 +47,10 @@ module Falcon
 				environments.each do |environment|
 					next unless environment.implements?(Falcon::Environments::Application)
 					evaluator = environment.evaluator
+					
+					# Prepare the ssl_context:
+					evaluator.ssl_context
+					
 					hosts[evaluator.authority] = evaluator
 				end
 				
