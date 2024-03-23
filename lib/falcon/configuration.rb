@@ -31,29 +31,17 @@ module Falcon
 			Loader.load_file(self, path)
 		end
 		
-		def each(key = :authority)
-			return to_enum(__method__, key) unless block_given?
-			
-			@environments.each do |environment|
-				evaluator = environment.evaluator
-				if evaluator.key?(key)
-					yield environment
-				end
-			end
-		end
-		
 		# The domain specific language for loading configuration files.
 		class Loader < ::Async::Service::Loader
 			# Load specific features into the current configuration.
 			#
-			# Falcon provides default environments for different purposes. These are included in the gem, in the `environments/` directory. This method loads the code in those files into the current configuration.
-			#
+			# @deprecated Use `require` instead.
 			# @parameter features [Array(Symbol)] The features to load.
 			def load(*features)
 				features.each do |feature|
 					case feature
 					when Symbol
-						require File.join(__dir__, "environments", "#{feature}.rb")
+						require File.join(__dir__, "environment", "#{feature}.rb")
 					else
 						raise LoadError, "Unsure about how to load #{feature}!"
 					end
@@ -62,6 +50,7 @@ module Falcon
 			
 			# Define a host with the specified name.
 			# Adds `root` and `authority` keys.
+			# @deprecated Use `service` and `include Falcon::Environment::Server` instead.
 			# @parameter name [String] The name of the environment, usually a hostname.
 			def host(name, *parents, &block)
 				@configuration.add(
@@ -71,6 +60,7 @@ module Falcon
 			
 			# Define a proxy with the specified name.
 			# Adds `root` and `authority` keys.
+			# @deprecated Use `service` and `include Falcon::Environment::Proxy` instead.
 			# @parameter name [String] The name of the environment, usually a hostname.
 			def proxy(name, *parents, &block)
 				@configuration.add(
@@ -80,6 +70,7 @@ module Falcon
 			
 			# Define a rack application with the specified name.
 			# Adds `root` and `authority` keys.
+			# @deprecated Use `service` and `include Falcon::Environment::Rack` instead.
 			# @parameter name [String] The name of the environment, usually a hostname.
 			def rack(name, *parents, &block)
 				@configuration.add(
@@ -88,7 +79,7 @@ module Falcon
 			end
 			
 			# Define a supervisor instance
-			# Adds `root` key.
+			# @deprecated Use `service` and `include Falcon::Environment::Supervisor` instead.
 			def supervisor(&block)
 				name = File.join(@root, "supervisor")
 				
@@ -107,7 +98,7 @@ module Falcon
 				::Async::Service::Environment.build(**initial) do
 					parents.each do |parent|
 						Console.warn(self) {"Legacy mapping for #{parent.inspect} should be updated to use `include`!"}
-						include(Environments::LEGACY_ENVIRONMENTS[parent])
+						include(Environment::LEGACY_ENVIRONMENTS[parent])
 					end
 					
 					instance_exec(&block) if block

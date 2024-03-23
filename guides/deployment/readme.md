@@ -6,11 +6,11 @@ Falcon can be deployed into production either as a standalone application server
 
 ## Falcon Serve
 
-`falcon serve` is not designed for deployment. Do not use it for deployment.
+`falcon serve` is not designed for deployment because the command line interface is not guaranteed to be stable nor does it expose every possible configuration option.
 
 ## Falcon Hosts
 
-`falcon host` is designed for deployment.
+`falcon host` is designed for deployment, and is the recommended way to deploy Falcon in production. It exposes a well defined interface for configuring services (web applications, job servers, etc).
 
 ### Configuration
 
@@ -19,37 +19,46 @@ Falcon can be deployed into production either as a standalone application server
 Here is a basic example which hosts a rack application:
 
 ~~~ ruby
-#!/usr/bin/env -S falcon host
+#!/usr/bin/env falcon-host
 # frozen_string_literal: true
 
-load :rack, :lets_encrypt_tls, :supervisor
-
 hostname = File.basename(__dir__)
-rack hostname, :lets_encrypt_tls do
+service hostname do
+	include Falcon::Environment::Rack
+	include Falcon::Environment::LetsEncryptTLS
+	
+	# Insert an in-memory cache in front of the application (using async-http-cache).
 	cache true
 end
 
-supervisor
+service "supervisor" do
+	include Falcon::Environment::Supervisor
+end
 ~~~
 
-These configuration blocks are constructed using [build-environment](https://github.com/ioquatix/build-environment), and the defaults are listed in the [Falcon source code](https://github.com/socketry/falcon/tree/master/lib/falcon/environments).
+These configuration blocks are evaluated using [async-service](https://github.com/socketry/async-service).
 
 ### Application Configuration
 
-The [`rack` environment](https://github.com/socketry/falcon/blob/master/lib/falcon/environments/rack.rb) inherits the [application environment](https://github.com/socketry/falcon/blob/master/lib/falcon/environments/application.rb). These environments by default are defined for usage with `falcon virtual`, but you can customise any parts of the configuration, e.g. to bind a production host to `localhost:3000` using plaintext HTTP/2:
+The environment configuration is defined in the `Falcon::Environment` module. The {ruby Falcon::Environment::Application} environment supports the generic virtual host functionality, but you can customise any parts of the configuration, e.g. to bind a production host to `localhost:3000` using plaintext HTTP/2:
 
 ~~~ ruby
-#!/usr/bin/env -S falcon host
+#!/usr/bin/env falcon-host
 # frozen_string_literal: true
 
-load :rack, :supervisor
-
 hostname = File.basename(__dir__)
-rack hostname do
-	endpoint Async::HTTP::Endpoint.parse('http://localhost:3000').with(protocol: Async::HTTP::Protocol::HTTP2)
+service hostname do
+	include Falcon::Environment::Rack
+	include Falcon::Environment::LetsEncryptTLS
+	
+	endpoint do
+		Async::HTTP::Endpoint.parse('http://localhost:3000').with(protocol: Async::HTTP::Protocol::HTTP2)
+	end
 end
 
-supervisor
+service "supervisor" do
+	include Falcon::Environment::Supervisor
+end
 ~~~
 
 You can verify this is working using `nghttp -v http://localhost:3000`.

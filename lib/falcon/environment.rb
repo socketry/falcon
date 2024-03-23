@@ -7,7 +7,7 @@ module Falcon
 	# Pre-defined environments for hosting web applications.
 	#
 	# See {Configuration::Loader#load} for more details.
-	module Environments
+	module Environment
 		LEGACY_ENVIRONMENTS = {}
 	end
 end

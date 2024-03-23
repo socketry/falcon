@@ -43,7 +43,7 @@ module Falcon
 				
 				preload!
 				
-				Console.logger.info(self) {"Starting #{name} on #{@endpoint}"}
+				Console.logger.info(self) {"Starting #{self.name} on #{@endpoint}"}
 				
 				super
 			end

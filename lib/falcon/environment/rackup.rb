@@ -5,10 +5,9 @@
 
 require 'rack/builder'
 require_relative '../server'
-require_relative '../environments'
 
 module Falcon
-	module Environments
+	module Environment
 		module Rackup
 			def rackup_path
 				'config.ru'

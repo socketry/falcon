@@ -8,7 +8,7 @@ require_relative 'server'
 require_relative '../proxy_endpoint'
 
 module Falcon
-	module Environments
+	module Environment
 		module Application
 			include Server
 			

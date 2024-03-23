@@ -4,10 +4,10 @@
 # Released under the MIT License.
 # Copyright, 2024, by Samuel Williams.
 
-require 'falcon/environments/server'
+require 'falcon/environment/server'
 
 service "hello-server" do
-	include Falcon::Environments::Server
+	include Falcon::Environment::Server
 	
 	middleware do
 		::Protocol::HTTP::Middleware::HelloWorld

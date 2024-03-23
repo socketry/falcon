@@ -10,7 +10,7 @@ require_relative '../service/server'
 require_relative '../server'
 
 module Falcon
-	module Environments
+	module Environment
 		module Server
 			# The service class to use for the proxy.
 			# @returns [Class]
@@ -18,8 +18,10 @@ module Falcon
 				Service::Server
 			end
 			
-			def name
-				"#{service_class.name} (#{url})"
+			# The server authority. Defaults to the server name.
+			# @returns [String]
+			def authority
+				self.name
 			end
 			
 			# Options to use when creating the container.

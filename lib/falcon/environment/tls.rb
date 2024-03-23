@@ -4,10 +4,10 @@
 # Copyright, 2019-2024, by Samuel Williams.
 
 require_relative '../tls'
-require_relative '../environments'
+require_relative '../environment'
 
 module Falcon
-	module Environments
+	module Environment
 		# A general SSL context environment.
 		module TLS
 			# The default session identifier for the session cache.

@@ -5,9 +5,10 @@
 
 require_relative 'application'
 require_relative 'rackup'
+require_relative '../environment'
 
 module Falcon
-	module Environments
+	module Environment
 		module Rack
 			include Application
 			include Rackup

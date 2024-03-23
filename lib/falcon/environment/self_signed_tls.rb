@@ -5,10 +5,10 @@
 
 require 'localhost/authority'
 require_relative 'tls'
-require_relative '../environments'
+require_relative '../environment'
 
 module Falcon
-	module Environments
+	module Environment
 		# A general SSL context environment.
 		module SelfSignedTLS
 			# The default session identifier for the session cache.

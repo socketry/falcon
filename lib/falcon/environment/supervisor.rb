@@ -4,10 +4,10 @@
 # Copyright, 2019-2024, by Samuel Williams.
 
 require_relative '../service/supervisor'
-require_relative '../environments'
+require_relative '../environment'
 
 module Falcon
-	module Environments
+	module Environment
 		# A application process monitor environment.
 		module Supervisor
 			# The name of the supervisor

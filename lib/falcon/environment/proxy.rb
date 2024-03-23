@@ -6,9 +6,10 @@
 require_relative 'server'
 require_relative '../tls'
 require_relative '../middleware/proxy'
+require_relative '../environment'
 
 module Falcon
-	module Environments
+	module Environment
 		module Proxy
 			include Server
 			

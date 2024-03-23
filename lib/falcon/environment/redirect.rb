@@ -7,7 +7,7 @@ require_relative 'server'
 require_relative '../middleware/redirect'
 
 module Falcon
-	module Environments
+	module Environment
 		# A controller for redirecting requests.
 		module Redirect
 			include Server

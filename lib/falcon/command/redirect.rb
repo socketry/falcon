@@ -3,7 +3,7 @@
 # Released under the MIT License.
 # Copyright, 2020-2024, by Samuel Williams.
 
-require_relative '../environments/redirect'
+require_relative '../environment/redirect'
 require_relative 'paths'
 
 require 'samovar'
@@ -30,8 +30,9 @@ module Falcon
 			include Paths
 			
 			def environment(**options)
-				Async::Service::Environment.new(Falcon::Environments::Redirect).with(
+				Async::Service::Environment.new(Falcon::Environment::Redirect).with(
 					root: Dir.pwd,
+					name: self.class.name,
 					verbose: self.parent&.verbose?,
 					url: @options[:bind],
 					redirect_url: @options[:redirect],
@@ -44,7 +45,7 @@ module Falcon
 				hosts = {}
 				
 				environments.each do |environment|
-					next unless environment.implements?(Falcon::Environments::Application)
+					next unless environment.implements?(Falcon::Environment::Application)
 					evaluator = environment.evaluator
 					hosts[evaluator.authority] = evaluator
 				end

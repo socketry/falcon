@@ -4,10 +4,10 @@
 # Copyright, 2020-2024, by Samuel Williams.
 
 require_relative 'tls'
-require_relative '../environments'
+require_relative '../environment'
 
 module Falcon
-	module Environments
+	module Environment
 		# A Lets Encrypt SSL context environment.
 		module LetsEncryptTLS
 			# The Lets Encrypt certificate store path.
