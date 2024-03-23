@@ -9,6 +9,7 @@ require_relative '../proxy_endpoint'
 
 module Falcon
 	module Environment
+		# Provides an environment for hosting a web application that uses TLS.
 		module Application
 			include Server
 			

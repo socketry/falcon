@@ -9,7 +9,7 @@ require_relative '../environment'
 
 module Falcon
 	module Environment
-		# A general SSL context environment.
+		# Provides an environment that exposes a self-signed TLS certificate using the `localhost` gem.
 		module SelfSignedTLS
 			# The default session identifier for the session cache.
 			# @returns [String]

@@ -8,6 +8,7 @@ require_relative '../server'
 
 module Falcon
 	module Environment
+		# Provides an environment for hosting loading a Rackup `config.ru` file.
 		module Rackup
 			def rackup_path
 				'config.ru'

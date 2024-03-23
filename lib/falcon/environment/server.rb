@@ -11,6 +11,7 @@ require_relative '../server'
 
 module Falcon
 	module Environment
+		# Provides an environment for hosting a web application that uses a Falcon server.
 		module Server
 			# The service class to use for the proxy.
 			# @returns [Class]

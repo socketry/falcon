@@ -8,7 +8,7 @@ require_relative '../environment'
 
 module Falcon
 	module Environment
-		# A application process monitor environment.
+		# Provides an environment for hosting a supervisor which can monitor multiple applications.
 		module Supervisor
 			# The name of the supervisor
 			# @returns [String]

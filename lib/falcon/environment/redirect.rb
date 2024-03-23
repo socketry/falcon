@@ -8,7 +8,7 @@ require_relative '../middleware/redirect'
 
 module Falcon
 	module Environment
-		# A controller for redirecting requests.
+		# Provides an environment for redirecting insecure web traffic to a secure endpoint.
 		module Redirect
 			include Server
 			

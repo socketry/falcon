@@ -9,6 +9,7 @@ require_relative '../environment'
 
 module Falcon
 	module Environment
+		# Provides an environment for hosting a web application that use a Rackup `config.ru` file.
 		module Rack
 			include Application
 			include Rackup

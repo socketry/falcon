@@ -8,7 +8,7 @@ require_relative '../environment'
 
 module Falcon
 	module Environment
-		# A general SSL context environment.
+		# Provides an environment that exposes a TLS context for hosting a secure web application.
 		module TLS
 			# The default session identifier for the session cache.
 			# @returns [String]

@@ -10,6 +10,7 @@ require_relative '../environment'
 
 module Falcon
 	module Environment
+		# Provides an environment for hosting a TLS-capable reverse proxy using SNI.
 		module Proxy
 			include Server
 			
@@ -29,6 +30,8 @@ module Falcon
 				[]
 			end
 			
+			# The hosts we will proxy to. This is a hash of SNI authority -> evaluator.
+			# @returns [Hash(String, Async::Service::Environment::Evaluator)]
 			def hosts
 				hosts = {}
 				

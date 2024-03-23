@@ -8,7 +8,7 @@ require_relative '../environment'
 
 module Falcon
 	module Environment
-		# A Lets Encrypt SSL context environment.
+		# Provides an environment that uses "Lets Encrypt" for TLS.
 		module LetsEncryptTLS
 			# The Lets Encrypt certificate store path.
 			# @parameter [String]
