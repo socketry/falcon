@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # Released under the MIT License.
-# Copyright, 2017-2023, by Samuel Williams.
+# Copyright, 2017-2024, by Samuel Williams.
 
 source 'https://rubygems.org'
 
@@ -15,6 +15,7 @@ gemspec
 # gem "protocol-http1", path: "../protocol-http1"
 # gem "utopia-project", path: "../utopia-project"
 # gem "protocol-rack", path: "../protocol-rack"
+# gem "async-service", path: "../async-service"
 
 group :maintenance, optional: true do
 	gem "bake-modernize"

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # Released under the MIT License.
-# Copyright, 2018-2023, by Samuel Williams.
+# Copyright, 2018-2024, by Samuel Williams.
 # Copyright, 2019, by Sho Ito.
 
 require 'falcon/command/serve'
@@ -15,7 +15,8 @@ ServeCommand = Sus::Shared("falcon serve") do
 	end
 	
 	it "can listen on specified port" do
-		controller = command.controller
+		configuration = command.configuration
+		controller = configuration.controller
 		
 		controller.start
 		

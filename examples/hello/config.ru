@@ -3,7 +3,7 @@
 
 require 'async'
 
-Console.logger.debug!
+# Console.logger.debug!
 
 class RequestLogger
 	def initialize(app)

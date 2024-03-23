@@ -1,25 +1,76 @@
 # frozen_string_literal: true
 
 # Released under the MIT License.
-# Copyright, 2020-2023, by Samuel Williams.
+# Copyright, 2024, by Samuel Williams.
 
-require 'async/container/controller'
+require 'async/service/generic'
 
 module Falcon
-	module Controller
+	module Service
 		# A controller which mananages several virtual hosts.
 		# Spawns instances of {Proxy} and {Redirect} to handle incoming requests.
 		#
 		# A virtual host is an application bound to a specific authority (essentially a hostname). The virtual controller manages multiple hosts and allows a single server to host multiple applications easily.
-		class Virtual < Async::Container::Controller
-			# Initialize the virtual controller.
-			# @parameter command [Command::Virtual] The user-specified command-line options.
-			def initialize(command, **options)
-				@command = command
+		class Virtual < Async::Service::Generic
+			module Environment
+				# The service class to use for the virtual host.
+				# @returns [Class]
+				def service_class
+					Virtual
+				end
 				
-				super(**options)
+				def name
+					service_class.name
+				end
 				
-				trap(SIGHUP, &self.method(:reload))
+				# All the falcon application configuration paths.
+				# @returns [Array(String)] Paths to the falcon application configuration files.
+				def configuration_paths
+					["/srv/http/*/falcon.rb"]
+				end
+				
+				def configuration
+					::Async::Service::Configuration.load(configuration_paths)
+				end
+				
+				# The URI to bind the `HTTPS` -> `falcon host` proxy.
+				def bind_secure
+					"https://[::]:443"
+				end
+				
+				# The URI to bind the `HTTP` -> `HTTPS` redirector.
+				def bind_insecure
+					"http://[::]:80"
+				end
+				
+				# The connection timeout to use for incoming connections.
+				def timeout
+					10.0
+				end
+				
+				# # The insecure endpoint for connecting to the {Redirect} instance.
+				# def insecure_endpoint(**options)
+				# 	Async::HTTP::Endpoint.parse(bind_insecure, **options)
+				# end
+				
+				# # The secure endpoint for connecting to the {Proxy} instance.
+				# def secure_endpoint(**options)
+				# 	Async::HTTP::Endpoint.parse(bind_secure, **options)
+				# end
+				
+				# # An endpoint suitable for connecting to the specified hostname.
+				# def host_endpoint(hostname, **options)
+				# 	endpoint = secure_endpoint(**options)
+					
+				# 	url = URI.parse(bind_secure)
+				# 	url.hostname = hostname
+					
+				# 	return Async::HTTP::Endpoint.new(url, hostname: endpoint.hostname)
+				# end
+			end
+			
+			def self.included(target)
+				target.include(Environnment)
 			end
 			
 			# Drop privileges according to the user and group of the specified path.
@@ -70,7 +121,9 @@ module Falcon
 				end
 				
 				container.reload do
-					@command.resolved_paths do |path|
+					evaluator = @environment.evaluator
+					
+					evaluator.configuration_paths.each do |path|
 						path = File.expand_path(path)
 						root = File.dirname(path)
 						
@@ -79,18 +132,18 @@ module Falcon
 					
 					container.spawn(name: "Falcon Redirector", restart: true, key: :redirect) do |instance|
 						instance.exec(falcon_path, "redirect",
-							"--bind", @command.bind_insecure,
-							"--timeout", @command.timeout.to_s,
-							"--redirect", @command.bind_secure,
-							*@command.paths, ready: false
+							"--bind", evaluator.bind_insecure,
+							"--timeout", evaluator.timeout.to_s,
+							"--redirect", evaluator.bind_secure,
+							*evaluator.configuration_paths, ready: false
 						)
 					end
 					
 					container.spawn(name: "Falcon Proxy", restart: true, key: :proxy) do |instance|
 						instance.exec(falcon_path, "proxy",
-							"--bind", @command.bind_secure,
-							"--timeout", @command.timeout.to_s,
-							*@command.paths, ready: false
+							"--bind", evaluator.bind_secure,
+							"--timeout", evaluator.timeout.to_s,
+							*evaluator.configuration_paths, ready: false
 						)
 					end
 				end

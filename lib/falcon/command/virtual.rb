@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
 # Released under the MIT License.
-# Copyright, 2018-2023, by Samuel Williams.
+# Copyright, 2018-2024, by Samuel Williams.
 
-require_relative '../controller/virtual'
+require_relative '../service/virtual'
 require_relative 'paths'
 
 require 'samovar'
@@ -30,26 +30,20 @@ module Falcon
 			# @attribute [Array(String)]
 			many :paths
 			
-			include Paths
-			
-			# Prepare a new controller for the command.
-			def controller
-				Controller::Virtual.new(self)
+			def environment
+				Async::Service::Environment.new(Falcon::Service::Virtual::Environment).with(
+					verbose: self.parent&.verbose?,
+					configuration_paths: self.paths,
+					bind_insecure: @options[:bind_insecure],
+					bind_secure: @options[:bind_secure],
+					timeout: @options[:timeout],
+				)
 			end
 			
-			# The URI to bind the `HTTPS` -> `falcon host` proxy.
-			def bind_secure
-				@options[:bind_secure]
-			end
-			
-			# The URI to bind the `HTTP` -> `HTTPS` redirector.
-			def bind_insecure
-				@options[:bind_insecure]
-			end
-			
-			# The connection timeout to use for incoming connections.
-			def timeout
-				@options[:timeout]
+			def configuration
+				Async::Service::Configuration.new.tap do |configuration|
+					configuration.add(self.environment)
+				end
 			end
 			
 			# Prepare the environment and run the controller.
@@ -60,9 +54,7 @@ module Falcon
 					buffer.puts "- To reload all sites: kill -HUP #{Process.pid}"
 				end
 				
-				ENV['CONSOLE_LEVEL'] = 'debug'
-				
-				self.controller.run
+				Async::Service::Controller.run(self.configuration)
 			end
 			
 			# The insecure endpoint for connecting to the {Redirect} instance.

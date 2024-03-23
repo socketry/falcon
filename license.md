@@ -19,6 +19,8 @@ Copyright, 2021, by Olle Jonsson.
 Copyright, 2023, by Nick Janetakis.  
 Copyright, 2024, by Peter Schrammel.  
 Copyright, 2024, by Santiago Bartesaghi.  
+Copyright, 2024, by Trevor Turk.  
+Copyright, 2024, by dependabot[bot].  
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

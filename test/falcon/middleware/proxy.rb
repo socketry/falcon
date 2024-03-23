@@ -1,23 +1,20 @@
 # frozen_string_literal: true
 
 # Released under the MIT License.
-# Copyright, 2018-2023, by Samuel Williams.
+# Copyright, 2018-2024, by Samuel Williams.
 
 require 'falcon/middleware/proxy'
-require 'falcon/service/proxy'
-require 'build/environment'
 
 require 'sus/fixtures/async'
 require 'async/http/client'
 require 'async/http/endpoint'
+require 'async/service/environment'
 
 describe Falcon::Middleware::Proxy do
 	include Sus::Fixtures::Async::ReactorContext
 	
 	def proxy_for(**options)
-		Falcon::Service::Proxy.new(
-			Build::Environment.new(nil, options)
-		)
+		Async::Service::Environment.build(**options).evaluator
 	end
 	
 	let(:proxy) do

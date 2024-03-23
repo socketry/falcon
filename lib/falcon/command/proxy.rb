@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
 # Released under the MIT License.
-# Copyright, 2020-2023, by Samuel Williams.
+# Copyright, 2020-2024, by Samuel Williams.
 
-require_relative '../controller/proxy'
+require_relative '../environment/proxy'
 require_relative 'paths'
 
 require 'samovar'
@@ -31,20 +31,21 @@ module Falcon
 			
 			include Paths
 			
-			# Prepare a new controller for the command.
-			def controller
-				Controller::Proxy.new(self)
+			def environment(**options)
+				Async::Service::Environment.new(Falcon::Environment::Proxy).with(
+					root: Dir.pwd,
+					name: self.class.name,
+					verbose: self.parent&.verbose?,
+					url: @options[:bind],
+					timeout: @options[:timeout],
+					**options
+				)
 			end
 			
-			# The container class to use.
-			def container_class
-				Async::Container.best_container_class
-			end
-			
-			# Options for the container.
-			# See {Controller::Serve#setup}.
-			def container_options
-				{}
+			def configuration
+				Configuration.for(
+					self.environment(environments: super.environments)
+				)
 			end
 			
 			# Prepare the environment and run the controller.
@@ -54,9 +55,13 @@ module Falcon
 					buffer.puts "- Binding to: #{@options[:bind]}"
 					buffer.puts "- To terminate: Ctrl-C or kill #{Process.pid}"
 					buffer.puts "- To reload: kill -HUP #{Process.pid}"
+					
+					self.resolved_paths.each do |path|
+						buffer.puts "- Loading configuration from #{path}"
+					end
 				end
 				
-				self.controller.run
+				Async::Service::Controller.run(self.configuration)
 			end
 			
 			# The endpoint to bind to.

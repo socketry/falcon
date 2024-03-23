@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # Released under the MIT License.
-# Copyright, 2018-2023, by Samuel Williams.
+# Copyright, 2018-2024, by Samuel Williams.
 
 require 'falcon/command'
 
@@ -16,8 +16,8 @@ describe Falcon::Command::Top do
 			]
 			
 			serve = top.command
-			container = serve.controller
-			container.start
+			controller = serve.configuration.controller
+			controller.start
 			
 			Async do
 				client = serve.client
@@ -29,7 +29,7 @@ describe Falcon::Command::Top do
 				client.close
 			end
 			
-			container.stop
+			controller.stop
 		end
 	end
 end

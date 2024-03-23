@@ -1,21 +1,22 @@
 # frozen_string_literal: true
 
 # Released under the MIT License.
-# Copyright, 2019-2023, by Samuel Williams.
+# Copyright, 2019-2024, by Samuel Williams.
 
 require 'process/metrics'
 require 'json'
 
 require 'async/io/endpoint'
 require 'async/io/shared_endpoint'
+require 'async/service/generic'
 
 module Falcon
 	module Service
 		# Implements a host supervisor which can restart the host services and provide various metrics about the running processes.
-		class Supervisor < Generic
+		class Supervisor < Async::Service::Generic
 			# Initialize the supervisor using the given environment.
 			# @parameter environment [Build::Environment]
-			def initialize(environment)
+			def initialize(...)
 				super
 				
 				@bound_endpoint = nil

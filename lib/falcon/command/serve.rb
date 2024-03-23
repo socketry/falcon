@@ -1,27 +1,18 @@
 # frozen_string_literal: true
 
 # Released under the MIT License.
-# Copyright, 2018-2023, by Samuel Williams.
+# Copyright, 2018-2024, by Samuel Williams.
 # Copyright, 2018, by Mitsutaka Mimura.
 
 require_relative '../server'
 require_relative '../endpoint'
-require_relative '../controller/serve'
+require_relative '../configuration'
+require_relative '../service/server'
+require_relative '../environment/rackup'
 
 require 'async/container'
-
-require 'async/io/trap'
-require 'async/io/host_endpoint'
-require 'async/io/shared_endpoint'
-require 'async/io/ssl_endpoint'
-
 require 'async/http/client'
-
 require 'samovar'
-
-require 'rack/builder'
-
-require 'bundler'
 
 module Falcon
 	module Command
@@ -53,6 +44,42 @@ module Falcon
 				option '--threads <count>', "Number of threads (hybrid only).", type: Integer
 			end
 			
+			def container_options
+				@options.slice(:count, :forks, :threads)
+			end
+			
+			def endpoint_options
+				@options.slice(:hostname, :port, :timeout)
+			end
+			
+			def environment
+				Async::Service::Environment.new(Falcon::Environment::Server).with(
+					Falcon::Environment::Rackup,
+					
+					root: Dir.pwd,
+					
+					verbose: self.parent&.verbose?,
+					cache: @options[:cache],
+					
+					container_options: self.container_options,
+					endpoint_options: self.endpoint_options,
+					
+					rackup_path: @options[:config],
+					preload: [@options[:preload]].compact,
+					url: @options[:bind],
+					
+					name: "server",
+					
+					endpoint: ->{Endpoint.parse(url, **endpoint_options)}
+				)
+			end
+			
+			def configuration
+				Configuration.new.tap do |configuration|
+					configuration.add(self.environment)
+				end
+			end
+			
 			# The container class to use.
 			def container_class
 				case @options[:container]
@@ -63,37 +90,6 @@ module Falcon
 				when :hybrid
 					return Async::Container::Hybrid
 				end
-			end
-			
-			# Whether verbose logging is enabled.
-			# @returns [Boolean]
-			def verbose?
-				@parent&.verbose?
-			end
-			
-			# Whether to enable the application HTTP cache.
-			# @returns [Boolean]
-			def cache?
-				@options[:cache]
-			end
-			
-			# Load the rack application from the specified configuration path.
-			# @returns [Protocol::HTTP::Middleware]
-			def load_app
-				rack_app, _ = Rack::Builder.parse_file(@options[:config])
-				
-				return Server.middleware(rack_app, verbose: self.verbose?, cache: self.cache?)
-			end
-			
-			# Options for the container.
-			# See {Controller::Serve#setup}.
-			def container_options
-				@options.slice(:count, :forks, :threads)
-			end
-			
-			# Options for the {endpoint}.
-			def endpoint_options
-				@options.slice(:hostname, :port, :reuse_port, :timeout)
 			end
 			
 			# The endpoint to bind to.
@@ -111,11 +107,6 @@ module Falcon
 				Async::HTTP::Client.new(client_endpoint)
 			end
 			
-			# Prepare a new controller for the command.
-			def controller
-				Controller::Serve.new(self)
-			end
-			
 			# Prepare the environment and run the controller.
 			def call
 				Console.logger.info(self) do |buffer|
@@ -125,22 +116,7 @@ module Falcon
 					buffer.puts "- To reload configuration: kill -HUP #{Process.pid}"
 				end
 				
-				if path = @options[:preload]
-					full_path = File.expand_path(path)
-					load(full_path)
-				end
-				
-				begin
-					Bundler.require(:preload)
-				rescue Bundler::GemfileNotFound
-					# Ignore.
-				end
-				
-				if GC.respond_to?(:compact)
-					GC.compact
-				end
-				
-				self.controller.run
+				Async::Service::Controller.run(self.configuration, container_class: self.container_class)
 			end
 		end
 	end

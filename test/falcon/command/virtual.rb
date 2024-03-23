@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # Released under the MIT License.
-# Copyright, 2019-2023, by Samuel Williams.
+# Copyright, 2019-2024, by Samuel Williams.
 
 require 'falcon/command/virtual'
 
@@ -28,8 +28,8 @@ VirtualCommand = Sus::Shared("falcon virtual") do
 	}
 	
 	def around
-		# Wait for the container to start...
-		controller = command.controller
+		configuration = command.configuration
+		controller = configuration.controller
 		
 		controller.start
 		
@@ -48,7 +48,7 @@ VirtualCommand = Sus::Shared("falcon virtual") do
 		Async do
 			response = insecure_client.call(request)
 			
-			expect(response).to be_redirection
+			expect(response).to be(:redirection?)
 			expect(response.headers['location']).to be == "https://hello.localhost:8443/index"
 			
 			response.close

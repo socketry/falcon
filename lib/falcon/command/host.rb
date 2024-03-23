@@ -1,14 +1,13 @@
 # frozen_string_literal: true
 
 # Released under the MIT License.
-# Copyright, 2019-2023, by Samuel Williams.
+# Copyright, 2019-2024, by Samuel Williams.
 
-require_relative '../controller/host'
-require_relative '../configuration'
+require_relative 'paths'
 require_relative '../version'
 
 require 'samovar'
-require 'bundler'
+require 'async/service/controller'
 
 module Falcon
 	module Command
@@ -23,26 +22,11 @@ module Falcon
 			# @attribute [Array(String)]
 			many :paths, "Service configuration paths.", default: ["falcon.rb"]
 			
+			include Paths
+			
 			# The container class to use.
 			def container_class
 				Async::Container.best_container_class
-			end
-			
-			# Generate a configuration based on the specified {paths}.
-			def configuration
-				configuration = Configuration.new
-				
-				@paths.each do |path|
-					path = File.expand_path(path)
-					configuration.load_file(path)
-				end
-				
-				return configuration
-			end
-			
-			# Prepare a new controller for the command.
-			def controller
-				Controller::Host.new(self)
 			end
 			
 			# Prepare the environment and run the controller.
@@ -54,17 +38,7 @@ module Falcon
 					buffer.puts "- To reload: kill -HUP #{Process.pid}"
 				end
 				
-				begin
-					Bundler.require(:preload)
-				rescue Bundler::GemfileNotFound
-					# Ignore.
-				end
-				
-				if GC.respond_to?(:compact)
-					GC.compact
-				end
-				
-				self.controller.run
+				Async::Service::Controller.run(self.configuration, container_class: self.container_class)
 			end
 		end
 	end
