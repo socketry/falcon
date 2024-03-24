@@ -16,7 +16,7 @@ Falcon can be deployed into production either as a standalone application server
 
 `falcon host` loads configuration from the `falcon.rb` file in your application directory. This file contains configuration blocks which define how to host the application and any related services. This file should generally be executable and it invokes `falcon host` which starts all defined services.
 
-Here is a basic example which hosts a rack application:
+Here is a basic example which hosts a rack application using :
 
 ~~~ ruby
 #!/usr/bin/env falcon-host
@@ -67,22 +67,10 @@ You can verify this is working using `nghttp -v http://localhost:3000`.
 
 Falcon can replace Nginx as a virtual server for Ruby applications.
 
-~~~
-/--------------------\
-|   Client Browser   |
-\--------------------/
-          ||          
-  (TLS + HTTP/2 TCP)
-          ||          
-/--------------------\
-| Falcon Proxy (SNI) |
-\--------------------/
-          ||          
-  (HTTP/2 UNIX PIPE)
-          ||          
-/--------------------\
-| Application Server |   (Rack Compatible)
-\--------------------/
+~~~ mermaid
+graph TD;
+	client[Client Browser] -->|TLS + HTTP/2 TCP| proxy["Falcon Proxy (SNI)"];
+	proxy -->|HTTP/2 UNIX PIPE| server["Application Server (Rack Compatible)"];
 ~~~
 
 You need to create a `falcon.rb` configuration in the root of your applications, and start the virtual host:
