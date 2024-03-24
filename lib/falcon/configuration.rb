@@ -95,14 +95,9 @@ module Falcon
 			# @parameter parents [Array(Symbol)]
 			# @yields {...} The block that will generate the environment.
 			def merge(*parents, **initial, &block)
-				::Async::Service::Environment.build(**initial) do
-					parents.each do |parent|
-						Console.warn(self) {"Legacy mapping for #{parent.inspect} should be updated to use `include`!"}
-						include(Environment::LEGACY_ENVIRONMENTS[parent])
-					end
-					
-					instance_exec(&block) if block
-				end
+				facets = parents.map{|parent| Environment::LEGACY_ENVIRONMENTS.fetch(parent)}
+				
+				::Async::Service::Environment.build(*facets, **initial, &block)
 			end
 		end
 	end
