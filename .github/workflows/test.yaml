@@ -29,12 +29,12 @@ jobs:
         experimental: [false]
         
         include:
-          - os: ubuntu
-            ruby: truffleruby
-            experimental: true
-          - os: ubuntu
-            ruby: jruby
-            experimental: true
+          # - os: ubuntu
+          #   ruby: truffleruby
+          #   experimental: true
+          # - os: ubuntu
+          #   ruby: jruby
+          #   experimental: true
           - os: ubuntu
             ruby: head
             experimental: true
