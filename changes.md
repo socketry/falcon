@@ -1,6 +1,6 @@
 # Changes
 
-# Unreleased
+# v0.44.0
 
 ## Falcon Host
 
