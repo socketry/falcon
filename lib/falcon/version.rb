@@ -4,5 +4,5 @@
 # Copyright, 2017-2024, by Samuel Williams.
 
 module Falcon
-	VERSION = "0.43.0"
+	VERSION = "0.44.0"
 end
