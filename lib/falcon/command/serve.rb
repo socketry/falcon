@@ -45,7 +45,7 @@ module Falcon
 			end
 			
 			def container_options
-				@options.slice(:count, :forks, :threads)
+				@options.slice(:count, :forks, :threads).merge(restart: true)
 			end
 			
 			def endpoint_options
@@ -116,7 +116,7 @@ module Falcon
 					buffer.puts "- To reload configuration: kill -HUP #{Process.pid}"
 				end
 				
-				Async::Service::Controller.run(self.configuration, container_class: self.container_class)
+				Async::Service::Controller.run(self.configuration, container_class: self.container_class, graceful_stop: 10)
 			end
 		end
 	end
