@@ -42,10 +42,13 @@ module Falcon
 				
 				option '--forks <count>', "Number of forks (hybrid only).", type: Integer
 				option '--threads <count>', "Number of threads (hybrid only).", type: Integer
+				
+				option '--[no]-restart', "Enable/disable automatic restart.", default: true
+				option '--graceful-stop <timeout>', "Duration to wait for graceful stop.", type: Float, default: 1.0
 			end
 			
 			def container_options
-				@options.slice(:count, :forks, :threads).merge(restart: true)
+				@options.slice(:count, :forks, :threads, :restart)
 			end
 			
 			def endpoint_options
@@ -116,7 +119,7 @@ module Falcon
 					buffer.puts "- To reload configuration: kill -HUP #{Process.pid}"
 				end
 				
-				Async::Service::Controller.run(self.configuration, container_class: self.container_class, graceful_stop: 10)
+				Async::Service::Controller.run(self.configuration, container_class: self.container_class, graceful_stop: @options[:graceful_stop])
 			end
 		end
 	end
