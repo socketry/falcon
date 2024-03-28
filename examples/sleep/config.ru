@@ -1,14 +1,19 @@
 
 require 'async'
 
-LIMIT = Async::Semaphore.new(8)
-
 run do
-	LIMIT.acquire do
-		sleep(1)
+	body = Async::HTTP::Body::Writable.new
+	
+	Async do
+		30.times do
+			body.write "(#{Time.now}) Hello World #{Process.pid}\n"
+			sleep 1
+		end
+	ensure
+		body.close
 	end
 	
-	[200, {}, ['Hello World']]
+	[200, {}, body]
 end
 
 # Run the server:
