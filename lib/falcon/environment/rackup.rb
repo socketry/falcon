@@ -14,8 +14,14 @@ module Falcon
 				'config.ru'
 			end
 			
-			def rack_app
-				::Rack::Builder.parse_file(rackup_path)
+			if Gem::Version.new(Rack::RELEASE) < Gem::Version.new("3")
+				def rack_app
+					::Rack::Builder.parse_file(rackup_path).first
+				end
+			else
+				def rack_app
+					::Rack::Builder.parse_file(rackup_path)
+				end
 			end
 			
 			def middleware
