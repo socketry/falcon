@@ -49,12 +49,6 @@ module Falcon
 					authority: authority
 				)
 			end
-			
-			# Number of instances to start.
-			# @returns [Integer | nil]
-			def count
-				nil
-			end
 		end
 	end
 end
