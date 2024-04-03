@@ -15,7 +15,7 @@ module Falcon
 			end
 			
 			def rack_app
-				::Rack::Builder.parse_file(rackup_path)
+				::Protocol::Rack::Adapter.parse_file(rackup_path)
 			end
 			
 			def middleware
