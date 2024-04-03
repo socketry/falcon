@@ -28,12 +28,12 @@ module Falcon
 			# Number of instances to start.
 			# @returns [Integer | nil]
 			def count
-				nil
+				Etc.nprocessors
 			end
 			
 			# Options to use when creating the container.
 			def container_options
-				{restart: true, count: self.count}
+				{restart: true, count: self.count}.compact
 			end
 			
 			# The host that this server will receive connections for.
