@@ -11,7 +11,7 @@ module Falcon
 		# Provides an environment for hosting loading a Rackup `config.ru` file.
 		module Rackup
 			def rackup_path
-				'config.ru'
+				File.expand_path('config.ru', root)
 			end
 			
 			def rack_app
