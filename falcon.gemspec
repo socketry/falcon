@@ -35,6 +35,6 @@ Gem::Specification.new do |spec|
 	spec.add_dependency "localhost", "~> 1.1"
 	spec.add_dependency "openssl", "~> 3.0"
 	spec.add_dependency "process-metrics", "~> 0.2.0"
-	spec.add_dependency "protocol-rack", "~> 0.1"
+	spec.add_dependency "protocol-rack", "~> 0.5"
 	spec.add_dependency "samovar", "~> 2.3"
 end
