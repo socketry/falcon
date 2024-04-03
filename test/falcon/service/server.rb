@@ -33,7 +33,7 @@ describe Falcon::Service::Server do
 		server.setup(container)
 		container.wait_until_ready
 		
-		expect(container.group.running).to have_attributes(size: be > 0)
+		expect(container.group.running).to have_attributes(size: be == Etc.nprocessors)
 		
 		server.stop
 		container.stop

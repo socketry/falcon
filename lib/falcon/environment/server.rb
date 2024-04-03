@@ -25,10 +25,10 @@ module Falcon
 				self.name
 			end
 			
-			# Number of instances to start.
+			# Number of instances to start. By default (when nil), uses `Etc.nprocessors`.
 			# @returns [Integer | nil]
 			def count
-				Etc.nprocessors
+				nil
 			end
 			
 			# Options to use when creating the container.
