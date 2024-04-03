@@ -8,6 +8,8 @@ During the `v0.44.0` release cycle, the workflows for testing older rack release
 
 Specifically, `protocol-rack` now provides `Protocol::Rack::Adapter.parse_file` to load Rack applications. Rack 2's `Rack::Builder.parse_file` returns both the application and a set of options (multi-value return). Rack 3 changed this to only return the application, as the prior multi-value return was confusing at best. This change allows `protocol-rack` to work with both versions of rack, and `falcon` adopts that interface.
 
+## Falcon Serve Options
+
 In addition, `falcon serve` provides two new options:
 
 1. `--[no]-restart` which controls what happens when `async-container` instances crash. By default, `falcon serve` will restart the container when it crashes. This can be disabled with `--no-restart`.
