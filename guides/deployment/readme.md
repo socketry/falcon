@@ -26,7 +26,7 @@ hostname = File.basename(__dir__)
 service hostname do
 	include Falcon::Environment::Rack
 	include Falcon::Environment::LetsEncryptTLS
-	
+
 	# Insert an in-memory cache in front of the application (using async-http-cache).
 	cache true
 end
@@ -50,7 +50,7 @@ hostname = File.basename(__dir__)
 service hostname do
 	include Falcon::Environment::Rack
 	include Falcon::Environment::LetsEncryptTLS
-	
+
 	endpoint do
 		Async::HTTP::Endpoint.parse('http://localhost:3000').with(protocol: Async::HTTP::Protocol::HTTP2)
 	end
@@ -62,6 +62,42 @@ end
 ~~~
 
 You can verify this is working using `nghttp -v http://localhost:3000`.
+
+#### Application Configuration Example for Heroku
+
+Building on the examples above, the following is a full configuration example for Heroku:
+
+~~~ bash
+# Procfile
+
+web: bundle exec falcon host
+~~~
+
+~~~ ruby
+# falcon.rb
+
+#!/usr/bin/env -S falcon host
+
+load :rack
+
+hostname = File.basename(__dir__)
+port = ENV["PORT"] || 3000
+
+service hostname do
+  include Falcon::Environment::Rack
+
+  append preload "preload.rb" # optional
+  cache false # optional
+  count ENV.fetch("FALCON_COUNT", 1).to_i # defaults to Etc.nprocessors, which is likely incorrect on shared hosts like Heroku
+  endpoint Async::HTTP::Endpoint.parse("http://0.0.0.0:#{port}").with(protocol: Async::HTTP::Protocol::HTTP11)
+end
+~~~
+
+~~~ ruby
+# preload.rb
+
+require_relative "config/environment"
+~~~
 
 ## Falcon Virtual
 
