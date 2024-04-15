@@ -95,8 +95,7 @@ service hostname do
 	# If using count > 1 you may want to preload your app to reduce memory usage and increase performance:
 	preload "preload.rb"
 
-	# Heroku only supports HTTP/1.1 at the time of this writing.
-	# Review the following for possible updates in the future:
+	# Heroku only supports HTTP/1.1 at the time of this writing. Review the following for possible updates in the future:
 	# https://devcenter.heroku.com/articles/http-routing#http-versions-supported
 	# https://github.com/heroku/roadmap/issues/34
 	endpoint Async::HTTP::Endpoint.parse("http://0.0.0.0:#{port}").with(protocol: Async::HTTP::Protocol::HTTP11)
