@@ -20,7 +20,7 @@ module Falcon
 			end
 			
 			# The default SSL session identifier.
-			def tls_session_id
+			def ssl_session_id
 				"falcon"
 			end
 			
@@ -79,7 +79,7 @@ module Falcon
 						self.host_context(socket, hostname)
 					end
 					
-					context.session_id_context = @session_id
+					context.session_id_context = self.ssl_session_id
 					
 					context.ssl_version = :TLSv1_2_server
 					
