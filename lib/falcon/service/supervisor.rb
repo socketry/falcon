@@ -60,9 +60,7 @@ module Falcon
 			def start
 				Console.logger.info(self) {"Binding to #{self.endpoint}..."}
 				
-				@bound_endpoint = Async::Reactor.run do
-					Async::IO::SharedEndpoint.bound(self.endpoint)
-				end.wait
+				@bound_endpoint = Sync{self.endpoint.bound}
 				
 				super
 			end

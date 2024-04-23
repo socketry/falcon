@@ -92,7 +92,7 @@ module ServerContext
 		super
 		
 		# We bind the endpoint before running the server so that we know incoming connections will be accepted:
-		@bound_endpoint = ::Async::IO::SharedEndpoint.bound(endpoint)
+		@bound_endpoint = Sync{endpoint.bound}
 		
 		@server_endpoint = make_server_endpoint(@bound_endpoint)
 		mock(@server_endpoint) do |wrapper|
