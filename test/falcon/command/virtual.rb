@@ -96,7 +96,7 @@ VirtualCommand = Sus::Shared("falcon virtual") do
 	end
 	
 	with "short timeout" do
-		let(:options) {["--timeout", "1"]}
+		let(:options) {["--timeout", "0.1"]}
 		let(:host_endpoint) {command.host_endpoint("hello.localhost").with(protocol: protocol)}
 		
 		it "times out after lack of data" do
@@ -109,7 +109,7 @@ VirtualCommand = Sus::Shared("falcon virtual") do
 				expect(response).to be(:success?)
 				expect(response.read).to be == "Hello World"
 				
-				task.sleep(2)
+				task.sleep(0.2)
 				
 				# Try to reuse the connection:
 				response = secure_client.call(request)
