@@ -7,8 +7,8 @@ require 'samovar'
 require 'async'
 require 'json'
 
-require 'async/io/stream'
-require 'async/io/unix_endpoint'
+require 'io/endpoint/unix_endpoint'
+require 'io/stream'
 
 module Falcon
 	module Command
@@ -43,7 +43,7 @@ module Falcon
 					stream.puts({please: 'metrics'}.to_json, separator: "\0")
 					response = JSON.parse(stream.gets("\0"), symbolize_names: true)
 					
-					pp response
+					$stdout.puts response
 				end
 			end
 			
@@ -57,16 +57,14 @@ module Falcon
 			
 			# The endpoint the supervisor is bound to.
 			def endpoint
-				Async::IO::Endpoint.unix(@options[:path])
+				::IO::Endpoint.unix(@options[:path])
 			end
 			
 			# Connect to the supervisor and execute the requested command.
 			def call
-				Async do
+				Sync do
 					endpoint.connect do |socket|
-						stream = Async::IO::Stream.new(socket)
-						
-						@command.call(stream)
+						@command.call(IO::Stream(socket))
 					end
 				end
 			end
