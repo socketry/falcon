@@ -22,6 +22,8 @@ Here is a basic example which hosts a rack application using :
 #!/usr/bin/env falcon-host
 # frozen_string_literal: true
 
+load :rack, :supervisor
+
 hostname = File.basename(__dir__)
 service hostname do
 	include Falcon::Environment::Rack
@@ -45,6 +47,8 @@ The environment configuration is defined in the `Falcon::Environment` module. Th
 ~~~ ruby
 #!/usr/bin/env falcon-host
 # frozen_string_literal: true
+
+load :rack, :supervisor
 
 hostname = File.basename(__dir__)
 service hostname do
