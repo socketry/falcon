@@ -7,7 +7,7 @@ Gem::Specification.new do |spec|
 	spec.version = Falcon::VERSION
 	
 	spec.summary = "A fast, asynchronous, rack-compatible web server."
-	spec.authors = ["Samuel Williams", "Janko Marohnić", "Bryan Powell", "Claudiu Garba", "Kyle Tam", "Mitsutaka Mimura", "Sho Ito", "Trevor Turk", "Colby Swandale", "Daniel Evans", "Kent Gruber", "Michael Adams", "Mikel Kew", "Nick Janetakis", "Olle Jonsson", "Peter Schrammel", "Santiago Bartesaghi", "Sh Lin", "Tad Thorley", "Tasos Latsas", "dependabot[bot]"]
+	spec.authors = ["Samuel Williams", "Janko Marohnić", "Bryan Powell", "Trevor Turk", "Claudiu Garba", "Kyle Tam", "Mitsutaka Mimura", "Sho Ito", "Colby Swandale", "Daniel Evans", "Kent Gruber", "Michael Adams", "Mikel Kew", "Nick Janetakis", "Olle Jonsson", "Peter Schrammel", "Santiago Bartesaghi", "Sh Lin", "Tad Thorley", "Tasos Latsas", "dependabot[bot]"]
 	spec.license = "MIT"
 	
 	spec.cert_chain  = ['release.cert']
@@ -17,13 +17,14 @@ Gem::Specification.new do |spec|
 	
 	spec.metadata = {
 		"documentation_uri" => "https://socketry.github.io/falcon/",
+		"source_code_uri" => "https://github.com/socketry/falcon.git",
 	}
 	
 	spec.files = Dir.glob(['{bake,bin,lib}/**/*', '*.md'], File::FNM_DOTMATCH, base: __dir__)
 	
 	spec.executables = ["falcon", "falcon-host"]
 	
-	spec.required_ruby_version = ">= 3.0"
+	spec.required_ruby_version = ">= 3.1"
 	
 	spec.add_dependency "async"
 	spec.add_dependency "async-container", "~> 0.18"
