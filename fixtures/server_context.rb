@@ -8,9 +8,6 @@ require 'sus/fixtures/async'
 require 'falcon/server'
 require 'async/http/client'
 require 'async/http/endpoint'
-require 'async/io/ssl_socket'
-require 'async/io/shared_endpoint'
-
 
 module ServerContext
 	include Sus::Fixtures::Async::ReactorContext

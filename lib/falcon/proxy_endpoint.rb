@@ -3,13 +3,13 @@
 # Released under the MIT License.
 # Copyright, 2019-2023, by Samuel Williams.
 
-require 'async/io/unix_endpoint'
+require 'io/endpoint/unix_endpoint'
 
 module Falcon
 	# An endpoint suitable for proxing requests, typically via a unix pipe.
-	class ProxyEndpoint < Async::IO::Endpoint
+	class ProxyEndpoint < ::IO::Endpoint::Generic
 		# Initialize the proxy endpoint.
-		# @parameter endpoint [Async::IO::Endpoint] The endpoint which will be used for connecting/binding.
+		# @parameter endpoint [::IO::Endpoint::Generic] The endpoint which will be used for connecting/binding.
 		def initialize(endpoint, **options)
 			super(**options)
 			
@@ -21,7 +21,7 @@ module Falcon
 		end
 		
 		# The actual endpoint for I/O.
-		# @attribute [Async::IO::Endpoint]
+		# @attribute [::IO::Endpoint::Generic]
 		attr :endpoint
 		
 		# The protocol to use for this connection.
@@ -69,7 +69,7 @@ module Falcon
 		# Create a proxy unix endpoint with the specific path.
 		# @returns [ProxyEndpoint]
 		def self.unix(path, **options)
-			self.new(::Async::IO::Endpoint.unix(path), **options)
+			self.new(::IO::Endpoint.unix(path), **options)
 		end
 	end
 end

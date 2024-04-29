@@ -23,9 +23,9 @@ module Falcon
 			end
 			
 			# The endpoint the supervisor will bind to.
-			# @returns [Async::IO::Endpoint]
+			# @returns [::IO::Endpoint::Generic]
 			def endpoint
-				Async::IO::Endpoint.unix(ipc_path)
+				::IO::Endpoint.unix(ipc_path)
 			end
 			
 			# The service class to use for the supervisor.

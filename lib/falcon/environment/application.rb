@@ -41,7 +41,7 @@ module Falcon
 			end
 			
 			# The endpoint that will be used for communicating with the application server.
-			# @returns [Async::IO::Endpoint]
+			# @returns [::Falcon::ProxyEndpoint]
 			def endpoint
 				::Falcon::ProxyEndpoint.unix(ipc_path,
 					protocol: protocol,
