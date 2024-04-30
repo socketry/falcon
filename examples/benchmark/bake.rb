@@ -8,7 +8,6 @@ require 'etc'
 require 'async'
 require 'async/process'
 require 'async/clock'
-require 'async/io/stream'
 require 'async/http/endpoint'
 
 def hello

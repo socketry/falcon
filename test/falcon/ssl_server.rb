@@ -17,11 +17,11 @@ describe Falcon::Server do
 		let(:protocol) {Async::HTTP::Protocol::HTTPS}
 		
 		def make_server_endpoint(bound_endpoint)
-			Async::IO::SSLEndpoint.new(super, ssl_context: server_context)
+			::IO::Endpoint::SSLEndpoint.new(super, ssl_context: server_context)
 		end
 		
 		def make_client_endpoint(bound_endpoint)
-			Async::IO::SSLEndpoint.new(super, ssl_context: client_context)
+			::IO::Endpoint::SSLEndpoint.new(super, ssl_context: client_context)
 		end
 		
 		with "basic middleware" do

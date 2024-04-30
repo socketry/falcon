@@ -6,8 +6,6 @@
 require 'process/metrics'
 require 'json'
 
-require 'async/io/endpoint'
-require 'async/io/shared_endpoint'
 require 'async/service/generic'
 
 module Falcon
@@ -71,7 +69,7 @@ module Falcon
 				container.run(name: self.name, restart: true, count: 1) do |instance|
 					Async do
 						@bound_endpoint.accept do |peer|
-							stream = Async::IO::Stream.new(peer)
+							stream = ::IO::Stream.new(peer)
 							
 							while message = stream.gets("\0")
 								response = handle(JSON.parse(message, symbolize_names: true))
