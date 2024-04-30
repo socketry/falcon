@@ -27,5 +27,5 @@ Async do
 	
 	server = Falcon::Server.new(app, websocket_endpoint)
 	
-	server.run.each(&:wait)
+	server.run.wait
 end

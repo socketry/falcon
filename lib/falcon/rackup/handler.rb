@@ -34,47 +34,42 @@ module Falcon
 				Sync do |task|
 					endpoint = endpoint_for(**options)
 					server = ::Falcon::Server.new(app, endpoint, protocol: Async::HTTP::Protocol::HTTP1, scheme: SCHEME)
-
-					server_task = task.async do |task|
-						server.run #.each(&:wait)
-						
-						# This is a bit of a hack:
-						task.children.each(&:wait)
-					end
-
+					
+					server_task = server.run
+					
 					wrapper = self.new(server, task)
 					
 					yield wrapper if block_given?
-
+					
 					server_task.wait
 				ensure
 					server_task.stop
 					wrapper.close
 				end
 			end
-
+			
 			def initialize(server, task)
 				@server = server
 				@task = task
-
+				
 				@notification = Thread::Queue.new
-
+				
 				@waiter = @task.async(transient: true) do
 					@notification.pop
-
+					
 					@task&.stop
 					@task = nil
 				end
 			end
-
+			
 			def stop
 				@notification&.push(true)
 			end
-
+			
 			def close
 				@notification&.close
 				@notification = nil
-
+				
 				@waiter&.stop
 				@waiter = nil
 			end
