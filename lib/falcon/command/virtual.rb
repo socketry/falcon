@@ -3,8 +3,7 @@
 # Released under the MIT License.
 # Copyright, 2018-2024, by Samuel Williams.
 
-require_relative '../service/virtual'
-require_relative 'paths'
+require_relative '../environment/virtual'
 
 require 'samovar'
 
@@ -31,7 +30,7 @@ module Falcon
 			many :paths
 			
 			def environment
-				Async::Service::Environment.new(Falcon::Service::Virtual::Environment).with(
+				Async::Service::Environment.new(Falcon::Environment::Virtual).with(
 					verbose: self.parent&.verbose?,
 					configuration_paths: self.paths,
 					bind_insecure: @options[:bind_insecure],

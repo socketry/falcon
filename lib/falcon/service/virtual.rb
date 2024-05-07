@@ -12,67 +12,6 @@ module Falcon
 		#
 		# A virtual host is an application bound to a specific authority (essentially a hostname). The virtual controller manages multiple hosts and allows a single server to host multiple applications easily.
 		class Virtual < Async::Service::Generic
-			module Environment
-				# The service class to use for the virtual host.
-				# @returns [Class]
-				def service_class
-					Virtual
-				end
-				
-				def name
-					service_class.name
-				end
-				
-				# All the falcon application configuration paths.
-				# @returns [Array(String)] Paths to the falcon application configuration files.
-				def configuration_paths
-					["/srv/http/*/falcon.rb"]
-				end
-				
-				def configuration
-					::Async::Service::Configuration.load(configuration_paths)
-				end
-				
-				# The URI to bind the `HTTPS` -> `falcon host` proxy.
-				def bind_secure
-					"https://[::]:443"
-				end
-				
-				# The URI to bind the `HTTP` -> `HTTPS` redirector.
-				def bind_insecure
-					"http://[::]:80"
-				end
-				
-				# The connection timeout to use for incoming connections.
-				def timeout
-					10.0
-				end
-				
-				# # The insecure endpoint for connecting to the {Redirect} instance.
-				# def insecure_endpoint(**options)
-				# 	Async::HTTP::Endpoint.parse(bind_insecure, **options)
-				# end
-				
-				# # The secure endpoint for connecting to the {Proxy} instance.
-				# def secure_endpoint(**options)
-				# 	Async::HTTP::Endpoint.parse(bind_secure, **options)
-				# end
-				
-				# # An endpoint suitable for connecting to the specified hostname.
-				# def host_endpoint(hostname, **options)
-				# 	endpoint = secure_endpoint(**options)
-					
-				# 	url = URI.parse(bind_secure)
-				# 	url.hostname = hostname
-					
-				# 	return Async::HTTP::Endpoint.new(url, hostname: endpoint.hostname)
-				# end
-			end
-			
-			def self.included(target)
-				target.include(Environnment)
-			end
-			
 			# Drop privileges according to the user and group of the specified path.
 			# @parameter path [String] The path to the application directory.
 			def assume_privileges(path)
@@ -102,12 +41,6 @@ module Falcon
 				end
 			end
 			
-			# The path to the falcon executable from this gem.
-			# @returns [String]
-			def falcon_path
-				File.expand_path("../../../bin/falcon", __dir__)
-			end
-			
 			# Setup the container with {Redirect} and {Proxy} child processes.
 			# These processes are gracefully restarted if they are already running.
 			# @parameter container [Async::Container::Generic]
@@ -122,8 +55,11 @@ module Falcon
 				
 				container.reload do
 					evaluator = @environment.evaluator
+					falcon_path = evaluator.falcon_path
 					
-					evaluator.configuration_paths.each do |path|
+					Console.info(self, "Loading configurations from:", evaluator.resolved_configuration_paths)
+					
+					evaluator.resolved_configuration_paths.each do |path|
 						path = File.expand_path(path)
 						root = File.dirname(path)
 						
