@@ -29,6 +29,6 @@ module Falcon
 			end
 		end
 		
-		LEGACY_ENVIRONMENTS[:tls] = TLS
+		LEGACY_ENVIRONMENTS[:lets_encrypt_tls] = LetsEncryptTLS
 	end
 end
