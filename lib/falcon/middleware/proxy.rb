@@ -140,9 +140,9 @@ module Falcon
 				else
 					super
 				end
-			rescue
-				Console.logger.error(self) {$!}
-				return Protocol::HTTP::Response[502, {'content-type' => 'text/plain'}, ["#{$!.inspect}: #{$!.backtrace.join("\n")}"]]
+			rescue => error
+				Console.error(self, error)
+				return Protocol::HTTP::Response[502, {'content-type' => 'text/plain'}, [error.class.name]]
 			end
 		end
 	end
