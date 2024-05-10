@@ -55,7 +55,7 @@ module Falcon
 					buffer.puts "- To terminate: Ctrl-C or kill #{Process.pid}"
 					buffer.puts "- To reload: kill -HUP #{Process.pid}"
 					
-					self.resolved_paths.each do |path|
+					self.resolved_paths do |path|
 						buffer.puts "- Loading configuration from #{path}"
 					end
 				end

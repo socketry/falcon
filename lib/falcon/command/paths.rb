@@ -12,16 +12,18 @@ module Falcon
 			# Resolve a set of `@paths` that may contain wildcards, into a sorted, unique array.
 			# @returns [Array(String)]
 			def resolved_paths(&block)
-				@paths.collect do |path|
-					Dir.glob(path)
-				end.flatten.sort.uniq.each(&block)
+				if @paths
+					@paths.collect do |path|
+						Dir.glob(path)
+					end.flatten.sort.uniq.each(&block)
+				end
 			end
 			
 			# Build a configuration based on the resolved paths.
 			def configuration
 				configuration = Configuration.new
 				
-				self.resolved_paths.each do |path|
+				self.resolved_paths do |path|
 					path = File.expand_path(path)
 					
 					configuration.load_file(path)
