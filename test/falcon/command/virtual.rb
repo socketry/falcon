@@ -42,6 +42,21 @@ VirtualCommand = Sus::Shared("falcon virtual") do
 	
 	let(:insecure_client) {Async::HTTP::Client.new(command.insecure_endpoint, retries: 0)}
 	
+	with 'no paths' do
+		let (:paths) {[]}
+		
+		it "should still start correctly" do
+			request = Protocol::HTTP::Request.new("https", "hello.localhost", "GET", "/index")
+			
+			Async do
+				response = insecure_client.get("/index")
+				
+				expect(response).to be(:failure?)
+				pp response
+			end
+		end
+	end
+	
 	it "gets redirected from insecure to secure endpoint" do
 		request = Protocol::HTTP::Request.new("http", "hello.localhost", "GET", "/index")
 		

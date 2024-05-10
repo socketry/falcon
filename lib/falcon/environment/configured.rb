@@ -16,9 +16,13 @@ module Falcon
 			
 			# All the falcon application configuration paths, with wildcards expanded.
 			def resolved_configuration_paths
-				configuration_paths.flat_map do |path|
-					Dir.glob(path)
-				end.uniq
+				if configuration_paths = self.configuration_paths
+					configuration_paths.flat_map do |path|
+						Dir.glob(path)
+					end.uniq
+				else
+					[]
+				end
 			end
 			
 			def configuration
