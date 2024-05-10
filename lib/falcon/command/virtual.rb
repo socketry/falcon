@@ -3,6 +3,8 @@
 # Released under the MIT License.
 # Copyright, 2018-2024, by Samuel Williams.
 
+require 'async/service'
+
 require_relative '../environment/virtual'
 
 require 'samovar'
