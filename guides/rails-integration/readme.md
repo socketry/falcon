@@ -4,12 +4,42 @@ This guide explains how to host Rails applications with Falcon.
 
 ## Integration with Rails
 
-Because `rails` apps are built on top of `rack`, they are compatible with `falcon`.
+Because Rails apps are built on top of Rack, they are compatible with Falcon.
 
 1. Add `gem 'falcon'` to your `Gemfile` and perhaps remove `gem 'puma'` once you are satisfied with the change.
 2. Run `falcon serve` to start a local development server.
 
-We do not recommend using Rails older than v7.1 with `falcon`. If you are using an older version of Rails, you should upgrade to the latest version before using `falcon`.
+We do not recommend using Rails older than v7.1 with Falcon. If you are using an older version of Rails, you should upgrade to the latest version before using Falcon.
+
+### Production
+
+The `falcon serve` command is only intended to be used for local development. Follow these steps to run a production Rails app with Falcon:
+
+1. Create a `falcon.rb` file
+
+```rb
+#!/usr/bin/env -S falcon host
+# frozen_string_literal: true
+
+load :rack
+
+hostname = File.basename(__dir__)
+port = ENV["PORT"] || 3000
+
+rack hostname do
+  append preload "preload.rb"
+  endpoint Async::HTTP::Endpoint.parse("http://0.0.0.0:#{port}")
+end
+```
+
+2. Create a `preload.rb` file
+
+```rb
+require_relative "config/environment"
+```
+
+3. Run the production server with `bundle exec falcon host`
+
 
 ## Isolation Level
 
