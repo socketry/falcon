@@ -120,6 +120,7 @@ module Falcon
 			def call
 				Console.logger.info(self) do |buffer|
 					buffer.puts "Falcon v#{VERSION} taking flight! Using #{self.container_class} #{self.container_options}."
+					buffer.puts "- Running on #{RUBY_DESCRIPTION}"
 					buffer.puts "- Binding to: #{self.endpoint}"
 					buffer.puts "- To terminate: Ctrl-C or kill #{Process.pid}"
 					buffer.puts "- To reload configuration: kill -HUP #{Process.pid}"
