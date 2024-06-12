@@ -69,14 +69,14 @@ This will run a single-threaded instance of Falcon using `http/1`. While it work
 In order to use `curl` with self-signed localhost certificates, you need to specify `--insecure` or the path of the certificate to validate the request:
 
 ~~~
-> curl -v https://localhost:9292 --cacert ~/.localhost/localhost.crt
+> curl -v https://localhost:9292 --cacert ~/.local/state/localhost.rb/localhost.crt
 *   Trying ::1...
 * TCP_NODELAY set
 * Connected to localhost (::1) port 9292 (#0)
 * ALPN, offering http/1.1
 * Cipher selection: ALL:!EXPORT:!EXPORT40:!EXPORT56:!aNULL:!LOW:!RC4:@STRENGTH
 * successfully set certificate verify locations:
-*   CAfile: /Users/samuel/.localhost/localhost.crt
+*   CAfile: /Users/samuel/.local/state/localhost.rb/localhost.crt
   CApath: none
 * TLSv1.2 (OUT), TLS header, Certificate Status (22):
 * TLSv1.2 (OUT), TLS handshake, Client hello (1):
