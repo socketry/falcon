@@ -43,7 +43,10 @@ module Falcon
 				
 				preload!
 				
-				Console.logger.info(self) {"Starting #{self.name} on #{@endpoint}"}
+				Console.logger.info(self) do
+					"Starting #{self.name} on #{@endpoint}"
+					"- Using certificate: #{Localhost::Authority.path}" if @endpoint.secure?
+				end
 				
 				super
 			end
