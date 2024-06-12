@@ -27,7 +27,7 @@ module Falcon
 			
 			# The protocol to use to communicate with the application.
 			#
-			# Typically one of {Async::HTTP::Protocol::HTTP1} or {Async::HTTP::Protocl::HTTP2}.
+			# Typically one of {Async::HTTP::Protocol::HTTP1} or {Async::HTTP::Protocol::HTTP2}.
 			#
 			# @returns [Async::HTTP::Protocol]
 			def protocol

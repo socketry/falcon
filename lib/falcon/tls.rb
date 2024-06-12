@@ -7,7 +7,7 @@ module Falcon
 	module TLS
 		# The list of supported ciphers.
 		#
-		# We follow "Intermediate compatibility" as oulined here:
+		# We follow "Intermediate compatibility" as outlined here:
 		# <https://wiki.mozilla.org/Security/Server_Side_TLS>
 		SERVER_CIPHERS = [
 			# TLS 1.3:

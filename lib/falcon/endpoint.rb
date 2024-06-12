@@ -17,7 +17,7 @@ module Falcon
 		
 		# Build an appropriate SSL context for the given hostname.
 		#
-		# Uses {Localhost::Authority} to generate self-signed certficates.
+		# Uses {Localhost::Authority} to generate self-signed certificates.
 		#
 		# @returns [OpenSSL::SSL::SSLContext]
 		def build_ssl_context(hostname = self.hostname)
