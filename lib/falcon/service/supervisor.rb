@@ -5,6 +5,7 @@
 
 require 'process/metrics'
 require 'json'
+require 'io/stream'
 
 require 'async/service/generic'
 
@@ -33,14 +34,18 @@ module Falcon
 				# Stop accepting connections.
 				# Wait for existing connnections to drain.
 				# Terminate this process group.
-				signal = message[:signal] || :INT
+				signal = message[:signal] || :HUP
 				
+				Console.info(self, "Restarting process group", signal: signal, ppid: Process.ppid)
 				Process.kill(signal, Process.ppid)
+				
+				return {ppid: Process.ppid, signal: signal}
 			end
 			
 			# Capture process metrics relating to the process group that the supervisor belongs to.
 			def do_metrics(message)
-				Process::Metrics::General.capture(pid: Process.ppid, ppid: Process.ppid)
+				Console.info(self, "Capturing process metrics", ppid: Process.ppid)
+				return Process::Metrics::General.capture(pid: Process.ppid, ppid: Process.ppid)
 			end
 			
 			# Handle an incoming request.
@@ -69,7 +74,7 @@ module Falcon
 				container.run(name: self.name, restart: true, count: 1) do |instance|
 					Async do
 						@bound_endpoint.accept do |peer|
-							stream = ::IO::Stream.new(peer)
+							stream = ::IO::Stream(peer)
 							
 							while message = stream.gets("\0")
 								response = handle(JSON.parse(message, symbolize_names: true))
