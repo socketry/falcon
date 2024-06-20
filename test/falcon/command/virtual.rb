@@ -52,7 +52,6 @@ VirtualCommand = Sus::Shared("falcon virtual") do
 				response = insecure_client.get("/index")
 				
 				expect(response).to be(:failure?)
-				pp response
 			end
 		end
 	end
