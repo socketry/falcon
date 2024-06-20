@@ -17,6 +17,11 @@ module Falcon
 			# The default scheme.
 			SCHEME = "http"
 			
+			# The name of the handler.
+			def self.to_s
+				"Falcon v#{Falcon::VERSION}"
+			end
+			
 			# Generate an endpoint for the given `rackup` options.
 			# @returns [::IO::Endpoint::HostEndpoint]
 			def self.endpoint_for(**options)

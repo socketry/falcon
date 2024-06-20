@@ -3,6 +3,7 @@
 # Released under the MIT License.
 # Copyright, 2017-2024, by Samuel Williams.
 
+require_relative "falcon/version"
 require_relative "falcon/server"
 
 # Falcon, running on Rails, requires specific configuration:
