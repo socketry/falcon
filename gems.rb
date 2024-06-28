@@ -29,6 +29,7 @@ end
 
 group :development do
 	gem 'ruby-prof', platform: :mri
+	gem 'io-watch'
 end
 
 group :test do
