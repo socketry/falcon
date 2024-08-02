@@ -116,7 +116,7 @@ module ServerContext
 		@client = ::Async::HTTP::Client.new(@client_endpoint, retries: retries)
 	end
 	
-	def after
+	def after(error = nil)
 		@client&.close
 		@server_task&.stop
 		@bound_endpoint&.close
