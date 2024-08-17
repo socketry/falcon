@@ -6,6 +6,10 @@ class Benchmark
 		@app = app
 	end
 	
+	def hello(env)
+		[200, {'content-length' => 12}, ["Hello World\n"]]
+	end
+	
 	PATH_INFO = 'PATH_INFO'.freeze
 	
 	SMALL = [200, {}, ["Hello World\n" * 10] * 10].freeze

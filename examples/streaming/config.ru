@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 require 'trenni/template'
 TEMPLATE = Trenni::Template.load(<<~'HTML')
 <!DOCTYPE html><html><head><title>99 bottles of beer</title></head><body>

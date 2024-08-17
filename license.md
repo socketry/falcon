@@ -21,6 +21,8 @@ Copyright, 2024, by Peter Schrammel.
 Copyright, 2024, by Santiago Bartesaghi.  
 Copyright, 2024, by Trevor Turk.  
 Copyright, 2024, by dependabot[bot].  
+Copyright, 2024, by Adam Daniels.  
+Copyright, 2024, by Stefan Buhrmester.  
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

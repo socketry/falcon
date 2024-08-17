@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # Released under the MIT License.
-# Copyright, 2018-2023, by Samuel Williams.
+# Copyright, 2018-2024, by Samuel Williams.
 
 require 'etc'
 
@@ -88,16 +88,16 @@ def compare
 				
 				n = 2
 				
-				# threads.times do |n|
+				threads.times do |n|
 					c = (n*n).to_s
 					puts "Running #{command.first} with #{c} concurrent connections..."
-					
+						
 					Async::Process.spawn("curl", "-o", "/dev/null", "#{host}#{@request_path}")
-					
+						
 					# Async::Process.spawn("ab", "-k", "-n", "1000", "#{host}#{@request_path}")
-					
+						
 					Async::Process.spawn("wrk", "-c", c.to_s, "-t", (n).to_s, "-d", "10", "#{host}#{@request_path}")
-				# end
+				end
 			ensure
 				child_process.kill(:INT)
 			end

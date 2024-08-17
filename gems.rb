@@ -35,6 +35,8 @@ end
 group :test do
 	gem 'sus'
 	gem 'covered'
+	gem "decode"
+	gem "rubocop"
 	
 	gem 'sus-fixtures-async'
 	gem 'sus-fixtures-async-http'

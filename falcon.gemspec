@@ -7,7 +7,7 @@ Gem::Specification.new do |spec|
 	spec.version = Falcon::VERSION
 	
 	spec.summary = "A fast, asynchronous, rack-compatible web server."
-	spec.authors = ["Samuel Williams", "Janko Marohnić", "Bryan Powell", "Trevor Turk", "Claudiu Garba", "Kyle Tam", "Mitsutaka Mimura", "Sho Ito", "Colby Swandale", "Daniel Evans", "Kent Gruber", "Michael Adams", "Mikel Kew", "Nick Janetakis", "Olle Jonsson", "Peter Schrammel", "Santiago Bartesaghi", "Sh Lin", "Tad Thorley", "Tasos Latsas", "dependabot[bot]"]
+	spec.authors = ["Samuel Williams", "Janko Marohnić", "Bryan Powell", "Trevor Turk", "Claudiu Garba", "Kyle Tam", "Mitsutaka Mimura", "Peter Schrammel", "Sho Ito", "Adam Daniels", "Colby Swandale", "Daniel Evans", "Kent Gruber", "Michael Adams", "Mikel Kew", "Nick Janetakis", "Olle Jonsson", "Santiago Bartesaghi", "Sh Lin", "Stefan Buhrmester", "Tad Thorley", "Tasos Latsas", "dependabot[bot]"]
 	spec.license = "MIT"
 	
 	spec.cert_chain  = ['release.cert']
@@ -28,7 +28,7 @@ Gem::Specification.new do |spec|
 	
 	spec.add_dependency "async"
 	spec.add_dependency "async-container", "~> 0.18"
-	spec.add_dependency "async-http", "~> 0.66", ">= 0.66.3"
+	spec.add_dependency "async-http", ["~> 0.66", ">= 0.66.3"]
 	spec.add_dependency "async-http-cache", "~> 0.4.0"
 	spec.add_dependency "async-service", "~> 0.10"
 	spec.add_dependency "bundler"

@@ -1,0 +1,25 @@
+name: Documentation Coverage
+
+on: [push, pull_request]
+
+permissions:
+  contents: read
+
+env:
+  CONSOLE_OUTPUT: XTerm
+  COVERAGE: PartialSummary
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    - uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: "3.3"
+        bundler-cache: true
+    
+    - name: Validate coverage
+      timeout-minutes: 5
+      run: bundle exec bake decode:index:coverage lib

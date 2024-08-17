@@ -1,4 +1,4 @@
-name: Coverage
+name: Test Coverage
 
 on: [push, pull_request]
 
@@ -33,7 +33,7 @@ jobs:
     - name: Run tests
       timeout-minutes: 5
       run: bundle exec bake test
-
+    
     - uses: actions/upload-artifact@v3
       with:
         name: coverage-${{matrix.os}}-${{matrix.ruby}}

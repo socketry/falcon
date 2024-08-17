@@ -1,0 +1,49 @@
+AllCops:
+  DisabledByDefault: true
+
+Layout/IndentationStyle:
+  Enabled: true
+  EnforcedStyle: tabs
+
+Layout/InitialIndentation:
+  Enabled: true
+
+Layout/IndentationWidth:
+  Enabled: true
+  Width: 1
+
+Layout/IndentationConsistency:
+  Enabled: true
+  EnforcedStyle: normal
+
+Layout/BlockAlignment:
+  Enabled: true
+
+Layout/EndAlignment:
+  Enabled: true
+  EnforcedStyleAlignWith: start_of_line
+
+Layout/BeginEndAlignment:
+  Enabled: true
+  EnforcedStyleAlignWith: start_of_line
+
+Layout/ElseAlignment:
+  Enabled: true
+
+Layout/DefEndAlignment:
+  Enabled: true
+
+Layout/CaseIndentation:
+  Enabled: true
+
+Layout/CommentIndentation:
+  Enabled: true
+
+Layout/EmptyLinesAroundClassBody:
+  Enabled: true
+
+Layout/EmptyLinesAroundModuleBody:
+  Enabled: true
+
+Style/FrozenStringLiteralComment:
+  Enabled: true
