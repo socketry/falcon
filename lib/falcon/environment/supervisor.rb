@@ -6,6 +6,8 @@
 require_relative '../service/supervisor'
 require_relative '../environment'
 
+require 'io/endpoint/unix_endpoint'
+
 module Falcon
 	module Environment
 		# Provides an environment for hosting a supervisor which can monitor multiple applications.

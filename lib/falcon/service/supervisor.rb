@@ -8,6 +8,9 @@ require 'json'
 
 require 'async/service/generic'
 
+require 'io/endpoint/bound_endpoint'
+require 'io/stream'
+
 module Falcon
 	module Service
 		# Implements a host supervisor which can restart the host services and provide various metrics about the running processes.
@@ -69,7 +72,7 @@ module Falcon
 				container.run(name: self.name, restart: true, count: 1) do |instance|
 					Async do
 						@bound_endpoint.accept do |peer|
-							stream = ::IO::Stream.new(peer)
+							stream = ::IO::Stream(peer)
 							
 							while message = stream.gets("\0")
 								response = handle(JSON.parse(message, symbolize_names: true))
@@ -90,6 +93,18 @@ module Falcon
 				@bound_endpoint = nil
 				
 				super
+			end
+			
+			def invoke(command)
+				@bound_endpoint.local_address_endpoint.connect do |peer|
+					stream = ::IO::Stream(peer)
+					
+					stream.puts(command.to_json, separator: "\0")
+					
+					response = JSON.parse(stream.gets("\0"), symbolize_names: true)
+					
+					return response
+				end
 			end
 		end
 	end
