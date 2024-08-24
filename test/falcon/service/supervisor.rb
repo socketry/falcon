@@ -7,10 +7,19 @@ require 'falcon/service/supervisor'
 require 'falcon/configuration'
 require 'falcon/environment/supervisor'
 
+require 'tmpdir'
+
 describe Falcon::Service::Supervisor do
+	def around(&block)
+		Dir.mktmpdir do |root|
+			@root = root
+			super(&block)
+		end
+	end
+	
 	let(:environment) do
 		Async::Service::Environment.new(Falcon::Environment::Supervisor).with(
-			root: File.expand_path('.supervisor', __dir__),
+			root: @root,
 		)
 	end
 	
