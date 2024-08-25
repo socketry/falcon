@@ -45,7 +45,7 @@ Please see the [project documentation](https://socketry.github.io/falcon/) for m
 
 Please see the [project releases](https://socketry.github.io/falcon/releases/index) for all releases.
 
-### Unreleased
+### v0.47.8
 
   - Fix Falcon Supervisor implementation: due to invalid code, it was unable to start.
 
