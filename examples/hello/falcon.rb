@@ -13,13 +13,13 @@ service 'hello.localhost' do
 	include Falcon::Environment::Rack
 	
 	scheme 'http'
-	protocol {Async::HTTP::Protocol::HTTP1}
+	protocol {Async::HTTP::Protocol::HTTP}
 	
-	endpoint do
-		Async::HTTP::Endpoint.for(scheme, "localhost", port: 9292, protocol: protocol)
-	end
+	# endpoint do
+	# 	Async::HTTP::Endpoint.for(scheme, "localhost", port: 9292, protocol: protocol)
+	# end
 	
-	append preload "preload.rb"
+	# append preload "preload.rb"
 	
 	# Process will connect to supervisor to report statistics periodically, otherwise it would be killed.
 	# report :supervisor
