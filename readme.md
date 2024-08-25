@@ -41,6 +41,14 @@ Please see the [project documentation](https://socketry.github.io/falcon/) for m
 
   - [How It Works](https://socketry.github.io/falcon/guides/how-it-works/index) - This guide gives an overview of how Falcon handles an incoming web request.
 
+## Releases
+
+Please see the [project releases](https://socketry.github.io/falcon/releases/index) for all releases.
+
+### Unreleased
+
+  - Fix Falcon Supervisor implementation: due to invalid code, it was unable to start.
+
 ## Contributing
 
 We welcome contributions to this project.
