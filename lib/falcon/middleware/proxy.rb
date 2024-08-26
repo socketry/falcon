@@ -7,6 +7,8 @@ require 'async/http/client'
 require 'protocol/http/headers'
 require 'protocol/http/middleware'
 
+require 'console/event/failure'
+
 module Falcon
 	module Middleware
 		# A static middleware which always returns a 400 bad request response.
@@ -95,7 +97,7 @@ module Falcon
 			def prepare_request(request, host)
 				forwarded = []
 				
-				Console.logger.debug(self) do |buffer|
+				Console.debug(self) do |buffer|
 					buffer.puts "Request authority: #{request.authority}"
 					buffer.puts "Host authority: #{host.authority}"
 					buffer.puts "Request: #{request.method} #{request.path} #{request.version}"
@@ -136,12 +138,13 @@ module Falcon
 					
 					client = connect(host.endpoint)
 					
+					Console.debug(self, "Sending request...", host: host, request: request, count: @count)
 					client.call(request)
 				else
 					super
 				end
 			rescue => error
-				Console.error(self, error)
+				Console::Event::Failure.for(error).emit(self)
 				return Protocol::HTTP::Response[502, {'content-type' => 'text/plain'}, [error.class.name]]
 			end
 		end
