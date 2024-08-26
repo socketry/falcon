@@ -8,6 +8,7 @@ require 'protocol/http/headers'
 require 'protocol/http/middleware'
 
 require 'console/event/failure'
+require 'traces/provider'
 
 module Falcon
 	module Middleware
@@ -138,7 +139,6 @@ module Falcon
 					
 					client = connect(host.endpoint)
 					
-					Console.debug(self, "Sending request...", host: host, request: request, count: @count)
 					client.call(request)
 				else
 					super
@@ -146,6 +146,14 @@ module Falcon
 			rescue => error
 				Console::Event::Failure.for(error).emit(self)
 				return Protocol::HTTP::Response[502, {'content-type' => 'text/plain'}, [error.class.name]]
+			end
+			
+			Traces::Provider(self) do
+				def call(request)
+					Traces.trace('falcon.middleware.proxy.call', attributes: {authority: request.authority}) do
+						super
+					end
+				end
 			end
 		end
 	end

@@ -55,6 +55,14 @@ module Falcon
 					super
 				end
 			end
+			
+			Traces::Provider(self) do
+				def call(request)
+					Traces.trace('falcon.middleware.redirect.call', attributes: {authority: request.authority}) do
+						super
+					end
+				end
+			end
 		end
 	end
 end

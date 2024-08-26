@@ -7,6 +7,8 @@ permissions:
 
 env:
   CONSOLE_OUTPUT: XTerm
+  TRACES_BACKEND: traces/backend/test
+  METRICS_BACKEND: metrics/backend/test
 
 jobs:
   test:
