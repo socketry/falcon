@@ -81,8 +81,6 @@ module Falcon
 					
 					context.session_id_context = self.ssl_session_id
 					
-					context.ssl_version = :TLSv1_2_server
-					
 					context.set_params(
 						ciphers: ::Falcon::TLS::SERVER_CIPHERS,
 						verify_mode: ::OpenSSL::SSL::VERIFY_NONE,
