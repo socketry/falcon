@@ -17,7 +17,7 @@ module Falcon
 		end
 		
 		def to_s
-			"\#<#{self.class} endpoint=#{@endpoint}>"
+			"\#<#{self.class} protocol=#{self.protocol} endpoint=#{@endpoint}>"
 		end
 		
 		# The actual endpoint for I/O.
@@ -25,7 +25,7 @@ module Falcon
 		attr :endpoint
 		
 		# The protocol to use for this connection.
-		# @returns [Async::HTTP::Protocol] A specific protocol, e.g. {Async::HTTP::P}
+		# @returns [Async::HTTP::Protocol] A specific protocol, e.g. {Async::HTTP::Protocol::HTTP1}
 		def protocol
 			@options[:protocol]
 		end
