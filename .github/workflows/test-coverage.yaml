@@ -50,7 +50,7 @@ jobs:
         ruby-version: "3.3"
         bundler-cache: true
     
-    - uses: actions/download-artifact@v3
+    - uses: actions/download-artifact@v4.1.7
     
     - name: Validate coverage
       timeout-minutes: 5
