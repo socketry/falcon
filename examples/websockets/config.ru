@@ -9,8 +9,7 @@ class App
 			message = Protocol::WebSocket::TextMessage.generate({body: "Hello World"})
 			
 			# Simple echo server:
-			while true
-				message = connection.read
+			while message = connection.read
 				connection.write(message)
 			end
 		end or [400, {}, []]
