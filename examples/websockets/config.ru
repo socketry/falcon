@@ -4,6 +4,10 @@ require 'async/websocket'
 require 'async/websocket/adapters/rack'
 
 class App
+	def handle_normal_request(env)
+		[200, {'content-type' => 'text/plain'}, ["Hello World"]]
+	end
+	
 	def call(env)
 		Async::WebSocket::Adapters::Rack.open(env) do |connection|
 			message = Protocol::WebSocket::TextMessage.generate({body: "Hello World"})
@@ -12,7 +16,7 @@ class App
 			while message = connection.read
 				connection.write(message)
 			end
-		end or [400, {}, []]
+		end or handle_normal_request(env)
 	end
 end
 

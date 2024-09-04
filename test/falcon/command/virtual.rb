@@ -117,11 +117,21 @@ VirtualCommand = Sus::Shared("falcon virtual") do
 		
 		it "can upgrade to websocket" do
 			Sync do
-				Async::WebSocket::Client.connect(host_endpoint) do |connection|
-					message = Protocol::WebSocket::TextMessage.generate({body: "Hello World"})
+				2.times do
+					# Normal request:
+					request = Protocol::HTTP::Request.new("https", "websockets.localhost", "GET", "/index")
+					response = secure_client.call(request)
 					
-					connection.write(message)
-					expect(connection.read).to be == message
+					expect(response).to be(:success?)
+					expect(response.read).to be == "Hello World"
+					
+					# WebSocket request:
+					Async::WebSocket::Client.connect(host_endpoint) do |connection|
+						message = Protocol::WebSocket::TextMessage.generate({body: "Hello World"})
+						
+						connection.write(message)
+						expect(connection.read).to be == message
+					end
 				end
 			end
 		end
