@@ -69,11 +69,12 @@ module Falcon
 			end
 			
 			# An endpoint suitable for connecting to the specified hostname.
-			def host_endpoint(hostname, **options)
+			def host_endpoint(hostname, path: "/", **options)
 				endpoint = secure_endpoint(**options)
 				
 				url = URI.parse(@options[:bind_secure])
 				url.hostname = hostname
+				url.path = path
 				
 				return Async::HTTP::Endpoint.new(url, hostname: endpoint.hostname)
 			end

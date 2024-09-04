@@ -50,6 +50,6 @@ group :test do
 	gem 'puma'
 	gem "rackup"
 	
-	gem "async-process", "~> 1.1"
-	gem "async-websocket", "~> 0.19.2"
+	gem "async-process"
+	gem "async-websocket"
 end

@@ -8,12 +8,11 @@ class App
 		Async::WebSocket::Adapters::Rack.open(env) do |connection|
 			message = Protocol::WebSocket::TextMessage.generate({body: "Hello World"})
 			
-			while true
+			# Simple echo server:
+			while message = connection.read
 				connection.write(message)
-				connection.flush
-				sleep 1
 			end
-		end
+		end or [400, {}, []]
 	end
 end
 

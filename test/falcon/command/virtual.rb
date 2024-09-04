@@ -8,10 +8,13 @@ require 'falcon/command/virtual'
 require 'async/http'
 require 'protocol/http/request'
 
+require 'async/websocket/client'
+
 VirtualCommand = Sus::Shared("falcon virtual") do
 	let(:paths) {[
 		File.expand_path("hello/falcon.rb", examples_root),
 		File.expand_path("beer/falcon.rb", examples_root),
+		File.expand_path("websockets/falcon.rb", examples_root),
 	]}
 	
 	let(:examples_root) {File.expand_path("../../../examples", __dir__)}
@@ -109,6 +112,21 @@ VirtualCommand = Sus::Shared("falcon virtual") do
 		end
 	end
 	
+	with "websockets.localhost" do
+		let(:host_endpoint) {command.host_endpoint("websockets.localhost").with(protocol: protocol)}
+		
+		it "can upgrade to websocket" do
+			Sync do
+				Async::WebSocket::Client.connect(host_endpoint) do |connection|
+					message = Protocol::WebSocket::TextMessage.generate({body: "Hello World"})
+					
+					connection.write(message)
+					expect(connection.read).to be == message
+				end
+			end
+		end
+	end
+	
 	with "short timeout" do
 		let(:options) {["--timeout", "0.1"]}
 		let(:host_endpoint) {command.host_endpoint("hello.localhost").with(protocol: protocol)}
@@ -139,16 +157,16 @@ end
 describe Falcon::Command::Virtual do
 	with "HTTP/1.0" do
 		let(:protocol) {Async::HTTP::Protocol::HTTP10}
-		it_behaves_like VirtualCommand
+		it_behaves_like VirtualCommand, unique: 'HTTP10'
 	end
 	
 	with "HTTP/1.1" do
 		let(:protocol) {Async::HTTP::Protocol::HTTP11}
-		it_behaves_like VirtualCommand
+		it_behaves_like VirtualCommand, unique: 'HTTP11'
 	end
 	
 	with "HTTP/2" do
 		let(:protocol) {Async::HTTP::Protocol::HTTP2}
-		it_behaves_like VirtualCommand
+		it_behaves_like VirtualCommand, unique: 'HTTP2'
 	end
 end
