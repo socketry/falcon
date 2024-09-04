@@ -14,17 +14,28 @@ module Falcon
 		class Virtual < Async::Service::Generic
 			# Drop privileges according to the user and group of the specified path.
 			# @parameter path [String] The path to the application directory.
+			# @returns [Hash] The environment to use for the spawned process.
 			def assume_privileges(path)
+				# Process.exec / Process.spawn don't replace the environment but instead update it, so we need to clear out any existing BUNDLE_ variables using `nil` values, which will cause them to be removed from the child environment:
+				env = ENV.to_h do |key, value|
+					if key.start_with?('BUNDLE_')
+						[key, nil]
+					else
+						[key, value]
+					end
+				end
+				
+				env['PWD'] = File.dirname(path)
+				
 				stat = File.stat(path)
 				
 				Process::GID.change_privilege(stat.gid)
 				Process::UID.change_privilege(stat.uid)
 				
 				home = Etc.getpwuid(stat.uid).dir
+				env['HOME'] = home
 				
-				return {
-					'HOME' => home,
-				}
+				return env
 			end
 			
 			# Spawn an application instance from the specified path.
@@ -35,9 +46,7 @@ module Falcon
 				container.spawn(name: "Falcon Application", restart: true, key: path) do |instance|
 					env = assume_privileges(path)
 					
-					instance.exec(env,
-						"bundle", "exec", "--keep-file-descriptors",
-						path, ready: false, **options)
+					instance.exec(env, "bundle", "exec", path, ready: false, **options)
 				end
 			end
 			
