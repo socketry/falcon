@@ -150,7 +150,20 @@ module Falcon
 			
 			Traces::Provider(self) do
 				def call(request)
-					Traces.trace('falcon.middleware.proxy.call', attributes: {authority: request.authority}) do
+					attributes = {
+						authority: request.authority,
+					}
+					
+					if host = lookup(request)
+						attributes[:endpoint] = host.endpoint.inspect
+						
+						if client = @clients[host.endpoint]
+							attributes[:client] = client.as_json
+							attributes[:pool] = client.pool.as_json
+						end
+					end
+					
+					Traces.trace('falcon.middleware.proxy.call', attributes: attributes) do
 						super
 					end
 				end
