@@ -66,7 +66,7 @@ module Falcon
 					evaluator = @environment.evaluator
 					falcon_path = evaluator.falcon_path
 					
-					Console.info(self, "Loading configurations from:", evaluator.resolved_configuration_paths)
+					Console.info(self, "Loading configurations:", paths: evaluator.resolved_configuration_paths)
 					
 					evaluator.resolved_configuration_paths.each do |path|
 						path = File.expand_path(path)
