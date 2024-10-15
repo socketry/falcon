@@ -40,8 +40,8 @@ module Falcon
 				
 				# Send the metrics message to the supervisor and print the results.
 				def call(stream)
-					stream.puts({please: 'metrics'}.to_json, separator: "\0")
-					response = JSON.parse(stream.gets("\0"), symbolize_names: true)
+					stream.puts({please: 'metrics'}.to_json, separator: "\0", chomp: true)
+					response = JSON.parse(stream.read_until("\0"), symbolize_names: true)
 					
 					$stdout.puts response
 				end

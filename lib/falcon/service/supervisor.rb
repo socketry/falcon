@@ -74,7 +74,7 @@ module Falcon
 						@bound_endpoint.accept do |peer|
 							stream = ::IO::Stream(peer)
 							
-							while message = stream.gets("\0")
+							while message = stream.read_until("\0")
 								response = handle(JSON.parse(message, symbolize_names: true))
 								stream.puts(response.to_json, separator: "\0")
 							end
@@ -101,7 +101,7 @@ module Falcon
 					
 					stream.puts(command.to_json, separator: "\0")
 					
-					response = JSON.parse(stream.gets("\0"), symbolize_names: true)
+					response = JSON.parse(stream.read_until("\0"), symbolize_names: true)
 					
 					return response
 				end
