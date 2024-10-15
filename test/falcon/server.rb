@@ -48,14 +48,14 @@ describe Falcon::Server do
 			response = client.post("/", {'content-type' => 'application/x-www-form-urlencoded'}, ['hello=world'])
 			
 			expect(response).to be(:success?)
-			expect(response.read).to be == 'POST: {"hello"=>"world"}'
+			expect(response.read).to be =~ /POST: {"hello"\s?=>\s?"world"}/
 		end
 		
 		it "can POST multipart/form-data" do
 			response = client.post("/", {'content-type' => 'multipart/form-data; boundary=multipart'}, ["--multipart\r\n", "Content-Disposition: form-data; name=\"hello\"\r\n\r\n", "world\r\n", "--multipart--"])
 			
 			expect(response).to be(:success?)
-			expect(response.read).to be == 'POST: {"hello"=>"world"}'
+			expect(response.read).to be =~ /POST: {"hello"\s?=>\s?"world"}/
 		end
 	end
 	
