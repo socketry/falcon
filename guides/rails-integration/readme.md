@@ -11,6 +11,12 @@ Because Rails apps are built on top of Rack, they are compatible with Falcon.
 
 We do not recommend using Rails older than v7.1 with Falcon. If you are using an older version of Rails, you should upgrade to the latest version before using Falcon.
 
+Falcon assumes HTTPS by default (so that browsers can use HTTP2). To run under HTTP in development you can bind it to an explicit scheme, host and port:
+
+```
+falcon serve -b http://localhost:3000
+```
+
 ### Production
 
 The `falcon serve` command is only intended to be used for local development. Follow these steps to run a production Rails app with Falcon:
