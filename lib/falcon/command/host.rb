@@ -3,11 +3,11 @@
 # Released under the MIT License.
 # Copyright, 2019-2024, by Samuel Williams.
 
-require_relative 'paths'
-require_relative '../version'
+require_relative "paths"
+require_relative "../version"
 
-require 'samovar'
-require 'async/service/controller'
+require "samovar"
+require "async/service/controller"
 
 module Falcon
 	module Command

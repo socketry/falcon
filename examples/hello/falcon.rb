@@ -4,15 +4,15 @@
 # Released under the MIT License.
 # Copyright, 2019-2024, by Samuel Williams.
 
-require 'falcon/environment/self_signed_tls'
-require 'falcon/environment/rack'
-require 'falcon/environment/supervisor'
+require "falcon/environment/self_signed_tls"
+require "falcon/environment/rack"
+require "falcon/environment/supervisor"
 
-service 'hello.localhost' do
+service "hello.localhost" do
 	include Falcon::Environment::SelfSignedTLS
 	include Falcon::Environment::Rack
 	
-	scheme 'http'
+	scheme "http"
 	protocol {Async::HTTP::Protocol::HTTP}
 	
 	# endpoint do
@@ -25,6 +25,6 @@ service 'hello.localhost' do
 	# report :supervisor
 end
 
-service 'supervisor' do
+service "supervisor" do
 	include Falcon::Environment::Supervisor
 end

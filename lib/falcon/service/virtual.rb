@@ -3,7 +3,7 @@
 # Released under the MIT License.
 # Copyright, 2020-2024, by Samuel Williams.
 
-require 'async/service/generic'
+require "async/service/generic"
 
 module Falcon
 	module Service
@@ -18,14 +18,14 @@ module Falcon
 			def assume_privileges(path)
 				# Process.exec / Process.spawn don't replace the environment but instead update it, so we need to clear out any existing BUNDLE_ variables using `nil` values, which will cause them to be removed from the child environment:
 				env = ENV.to_h do |key, value|
-					if key.start_with?('BUNDLE_')
+					if key.start_with?("BUNDLE_")
 						[key, nil]
 					else
 						[key, value]
 					end
 				end
 				
-				env['PWD'] = File.dirname(path)
+				env["PWD"] = File.dirname(path)
 				
 				stat = File.stat(path)
 				
@@ -33,7 +33,7 @@ module Falcon
 				Process::UID.change_privilege(stat.uid)
 				
 				home = Etc.getpwuid(stat.uid).dir
-				env['HOME'] = home
+				env["HOME"] = home
 				
 				return env
 			end

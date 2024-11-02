@@ -3,7 +3,7 @@
 # Released under the MIT License.
 # Copyright, 2019-2024, by Samuel Williams.
 
-require 'io/endpoint/unix_endpoint'
+require "io/endpoint/unix_endpoint"
 
 module Falcon
 	# An endpoint suitable for proxing requests, typically via a unix pipe.

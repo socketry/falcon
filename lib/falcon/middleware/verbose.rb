@@ -3,8 +3,8 @@
 # Released under the MIT License.
 # Copyright, 2018-2023, by Samuel Williams.
 
-require 'console'
-require 'async/http/statistics'
+require "console"
+require "async/http/statistics"
 
 module Falcon
 	module Middleware

@@ -7,8 +7,8 @@ class EarlyHints
 	end
 	
 	def call(env)
-		path = env['PATH_INFO']
-		early_hints = early_hints = env['rack.early_hints']
+		path = env["PATH_INFO"]
+		early_hints = early_hints = env["rack.early_hints"]
 		
 		Console.logger.debug("path: #{path} #{early_hints}")
 		
@@ -23,6 +23,6 @@ end
 
 use EarlyHints
 
-use Rack::Static, :urls => [""], :root => __dir__, :index => 'index.html'
+use Rack::Static, :urls => [""], :root => __dir__, :index => "index.html"
 
 run lambda{|env| [404, [], ["Not Found"]]}

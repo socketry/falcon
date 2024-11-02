@@ -3,12 +3,12 @@
 # Released under the MIT License.
 # Copyright, 2018-2024, by Samuel Williams.
 
-require 'falcon/middleware/proxy'
+require "falcon/middleware/proxy"
 
-require 'sus/fixtures/async'
-require 'async/http/client'
-require 'async/http/endpoint'
-require 'async/service/environment'
+require "sus/fixtures/async"
+require "async/http/client"
+require "async/http/endpoint"
+require "async/service/environment"
 
 describe Falcon::Middleware::Proxy do
 	include Sus::Fixtures::Async::ReactorContext
@@ -19,15 +19,15 @@ describe Falcon::Middleware::Proxy do
 	
 	let(:proxy) do
 		subject.new(Falcon::Middleware::BadRequest, {
-			'www.google.com' => proxy_for(authority: "www.google.com", endpoint: Async::HTTP::Endpoint.parse('https://www.google.com')),
-			'www.yahoo.com' => proxy_for(authority: "www.yahoo.com", endpoint: Async::HTTP::Endpoint.parse('https://www.yahoo.com')),
+			"www.google.com" => proxy_for(authority: "www.google.com", endpoint: Async::HTTP::Endpoint.parse("https://www.google.com")),
+			"www.yahoo.com" => proxy_for(authority: "www.yahoo.com", endpoint: Async::HTTP::Endpoint.parse("https://www.yahoo.com")),
 		})
 	end
 	
-	let(:headers) {Protocol::HTTP::Headers['accept' => '*/*']}
+	let(:headers) {Protocol::HTTP::Headers["accept" => "*/*"]}
 	
-	it 'can select client based on authority' do
-		request = Protocol::HTTP::Request.new('https', 'www.google.com', 'GET', '/', nil, headers, nil)
+	it "can select client based on authority" do
+		request = Protocol::HTTP::Request.new("https", "www.google.com", "GET", "/", nil, headers, nil)
 		
 		expect(request).to receive(:remote_address).and_return(Addrinfo.ip("127.0.0.1"))
 		
@@ -36,13 +36,13 @@ describe Falcon::Middleware::Proxy do
 		
 		expect(response).not.to be(:failure?)
 		
-		expect(request.headers['x-forwarded-for']).to be == ["127.0.0.1"]
+		expect(request.headers["x-forwarded-for"]).to be == ["127.0.0.1"]
 		
 		proxy.close
 	end
 	
-	it 'defers if no host is available' do
-		request = Protocol::HTTP::Request.new('www.groogle.com', 'GET', '/', nil, headers, nil)
+	it "defers if no host is available" do
+		request = Protocol::HTTP::Request.new("www.groogle.com", "GET", "/", nil, headers, nil)
 		
 		response = proxy.call(request)
 		response.finish

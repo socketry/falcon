@@ -3,12 +3,12 @@
 # Released under the MIT License.
 # Copyright, 2019-2024, by Samuel Williams.
 
-require 'falcon/command/virtual'
+require "falcon/command/virtual"
 
-require 'async/http'
-require 'protocol/http/request'
+require "async/http"
+require "protocol/http/request"
 
-require 'async/websocket/client'
+require "async/websocket/client"
 
 VirtualCommand = Sus::Shared("falcon virtual") do
 	let(:paths) {[
@@ -45,7 +45,7 @@ VirtualCommand = Sus::Shared("falcon virtual") do
 	
 	let(:insecure_client) {Async::HTTP::Client.new(command.insecure_endpoint, retries: 0)}
 	
-	with 'no paths' do
+	with "no paths" do
 		let (:paths) {[]}
 		
 		it "should still start correctly" do
@@ -66,7 +66,7 @@ VirtualCommand = Sus::Shared("falcon virtual") do
 			response = insecure_client.call(request)
 			
 			expect(response).to be(:redirection?)
-			expect(response.headers['location']).to be == "https://hello.localhost:8443/index"
+			expect(response.headers["location"]).to be == "https://hello.localhost:8443/index"
 			
 			response.close
 		end
@@ -167,16 +167,16 @@ end
 describe Falcon::Command::Virtual do
 	with "HTTP/1.0" do
 		let(:protocol) {Async::HTTP::Protocol::HTTP10}
-		it_behaves_like VirtualCommand, unique: 'HTTP10'
+		it_behaves_like VirtualCommand, unique: "HTTP10"
 	end
 	
 	with "HTTP/1.1" do
 		let(:protocol) {Async::HTTP::Protocol::HTTP11}
-		it_behaves_like VirtualCommand, unique: 'HTTP11'
+		it_behaves_like VirtualCommand, unique: "HTTP11"
 	end
 	
 	with "HTTP/2" do
 		let(:protocol) {Async::HTTP::Protocol::HTTP2}
-		it_behaves_like VirtualCommand, unique: 'HTTP2'
+		it_behaves_like VirtualCommand, unique: "HTTP2"
 	end
 end

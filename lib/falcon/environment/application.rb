@@ -4,8 +4,8 @@
 # Copyright, 2019-2024, by Samuel Williams.
 # Copyright, 2020, by Daniel Evans.
 
-require_relative 'server'
-require_relative '../proxy_endpoint'
+require_relative "server"
+require_relative "../proxy_endpoint"
 
 module Falcon
 	module Environment
@@ -22,7 +22,7 @@ module Falcon
 			# The scheme to use to communicate with the application.
 			# @returns [String]
 			def scheme
-				'https'
+				"https"
 			end
 			
 			# The protocol to use to communicate with the application.

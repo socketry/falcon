@@ -3,12 +3,12 @@
 # Released under the MIT License.
 # Copyright, 2018-2024, by Samuel Williams.
 
-require 'etc'
+require "etc"
 
-require 'async'
-require 'async/process'
-require 'async/clock'
-require 'async/http/endpoint'
+require "async"
+require "async/process"
+require "async/clock"
+require "async/http/endpoint"
 
 def hello
 	@config_path = File.expand_path("../hello/config.ru", __dir__)

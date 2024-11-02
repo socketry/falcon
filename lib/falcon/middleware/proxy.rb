@@ -3,12 +3,12 @@
 # Released under the MIT License.
 # Copyright, 2018-2024, by Samuel Williams.
 
-require 'async/http/client'
-require 'protocol/http/headers'
-require 'protocol/http/middleware'
+require "async/http/client"
+require "protocol/http/headers"
+require "protocol/http/middleware"
 
-require 'console/event/failure'
-require 'traces/provider'
+require "console/event/failure"
+require "traces/provider"
 
 module Falcon
 	module Middleware
@@ -25,21 +25,21 @@ module Falcon
 		# A HTTP middleware for proxying requests to a given set of hosts.
 		# Typically used for implementing virtual servers.
 		class Proxy < Protocol::HTTP::Middleware
-			FORWARDED = 'forwarded'
-			X_FORWARDED_FOR = 'x-forwarded-for'
-			X_FORWARDED_PROTO = 'x-forwarded-proto'
+			FORWARDED = "forwarded"
+			X_FORWARDED_FOR = "x-forwarded-for"
+			X_FORWARDED_PROTO = "x-forwarded-proto"
 			
-			VIA = 'via'
-			CONNECTION = 'connection'
+			VIA = "via"
+			CONNECTION = "connection"
 			
 			# HTTP hop headers which *should* not be passed through the proxy.
 			HOP_HEADERS = [
-				'connection',
-				'keep-alive',
-				'public',
-				'proxy-authenticate',
-				'transfer-encoding',
-				'upgrade',
+				"connection",
+				"keep-alive",
+				"public",
+				"proxy-authenticate",
+				"transfer-encoding",
+				"upgrade",
 			]
 			
 			# Initialize the proxy middleware.
@@ -78,7 +78,7 @@ module Falcon
 			# @returns [Service::Proxy]
 			def lookup(request)
 				# Trailing dot and port is ignored/normalized.
-				if authority = request.authority&.sub(/(\.)?(:\d+)?$/, '')
+				if authority = request.authority&.sub(/(\.)?(:\d+)?$/, "")
 					return @hosts[authority]
 				end
 			end
@@ -119,7 +119,7 @@ module Falcon
 				end
 				
 				unless forwarded.empty?
-					request.headers.add(FORWARDED, forwarded.join(';'))
+					request.headers.add(FORWARDED, forwarded.join(";"))
 				end
 				
 				request.headers.add(VIA, "#{request.version} #{self.class}")
@@ -145,7 +145,7 @@ module Falcon
 				end
 			rescue => error
 				Console::Event::Failure.for(error).emit(self)
-				return Protocol::HTTP::Response[502, {'content-type' => 'text/plain'}, [error.class.name]]
+				return Protocol::HTTP::Response[502, {"content-type" => "text/plain"}, [error.class.name]]
 			end
 			
 			Traces::Provider(self) do
@@ -154,7 +154,7 @@ module Falcon
 						"authority" => request.authority,
 					}
 					
-					Traces.trace('falcon.middleware.proxy.call', attributes: attributes) do
+					Traces.trace("falcon.middleware.proxy.call", attributes: attributes) do
 						super
 					end
 				end

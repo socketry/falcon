@@ -3,14 +3,14 @@
 # Released under the MIT License.
 # Copyright, 2019-2024, by Samuel Williams.
 
-require 'sus/fixtures/async'
+require "sus/fixtures/async"
 
-require 'falcon/server'
-require 'async/http/endpoint'
-require 'async/http/client'
-require 'async/process'
+require "falcon/server"
+require "async/http/endpoint"
+require "async/http/client"
+require "async/process"
 
-require 'rackup/handler/falcon'
+require "rackup/handler/falcon"
 
 RackupHandler = Sus::Shared("rackup handler") do |server_name|
 	include Sus::Fixtures::Async::ReactorContext
@@ -49,7 +49,7 @@ RackupHandler = Sus::Shared("rackup handler") do |server_name|
 end
 
 describe Falcon::Rackup::Handler do
-	it_behaves_like RackupHandler, 'falcon'
+	it_behaves_like RackupHandler, "falcon"
 
 	let(:app) {lambda {|env| [200, {}, ["Hello World"]]}}
 

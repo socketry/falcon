@@ -3,8 +3,8 @@
 # Released under the MIT License.
 # Copyright, 2018-2023, by Samuel Williams.
 
-require 'async/http/endpoint'
-require 'localhost/authority'
+require "async/http/endpoint"
+require "localhost/authority"
 
 module Falcon
 	# An HTTP-specific endpoint which adds localhost TLS.

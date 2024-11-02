@@ -4,7 +4,7 @@
 # Copyright, 2019-2024, by Samuel Williams.
 # Copyright, 2019, by Sho Ito.
 
-require 'async/service'
+require "async/service"
 
 module Falcon
 	# Manages environments which describes how to host a specific application.

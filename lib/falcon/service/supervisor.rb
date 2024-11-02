@@ -3,13 +3,13 @@
 # Released under the MIT License.
 # Copyright, 2019-2024, by Samuel Williams.
 
-require 'process/metrics'
-require 'json'
+require "process/metrics"
+require "json"
 
-require 'async/service/generic'
+require "async/service/generic"
 
-require 'io/endpoint/bound_endpoint'
-require 'io/stream'
+require "io/endpoint/bound_endpoint"
+require "io/stream"
 
 module Falcon
 	module Service
@@ -50,9 +50,9 @@ module Falcon
 			# @parameter message [Hash] The decoded message.
 			def handle(message)
 				case message[:please]
-				when 'restart'
+				when "restart"
 					self.do_restart(message)
-				when 'metrics'
+				when "metrics"
 					self.do_metrics(message)
 				end
 			end

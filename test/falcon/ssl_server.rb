@@ -4,9 +4,9 @@
 # Copyright, 2018-2024, by Samuel Williams.
 # Copyright, 2020, by Tasos Latsas.
 
-require 'server_context'
-require 'sus/fixtures/openssl/valid_certificate_context'
-require 'sus/fixtures/openssl/verified_certificate_context'
+require "server_context"
+require "sus/fixtures/openssl/valid_certificate_context"
+require "sus/fixtures/openssl/verified_certificate_context"
 
 describe Falcon::Server do
 	with OpenSSL do

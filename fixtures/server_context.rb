@@ -3,11 +3,11 @@
 # Released under the MIT License.
 # Copyright, 2023-2024, by Samuel Williams.
 
-require 'sus/fixtures/async'
+require "sus/fixtures/async"
 
-require 'falcon/server'
-require 'async/http/client'
-require 'async/http/endpoint'
+require "falcon/server"
+require "async/http/client"
+require "async/http/endpoint"
 
 module ServerContext
 	include Sus::Fixtures::Async::ReactorContext
@@ -17,7 +17,7 @@ module ServerContext
 	end
 	
 	def url
-		'http://localhost:0'
+		"http://localhost:0"
 	end
 	
 	def bound_urls

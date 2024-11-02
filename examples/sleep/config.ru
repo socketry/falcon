@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'async'
+require "async"
 
 run do
 	body = Async::HTTP::Body::Writable.new

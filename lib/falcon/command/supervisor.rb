@@ -3,12 +3,12 @@
 # Released under the MIT License.
 # Copyright, 2019-2024, by Samuel Williams.
 
-require 'samovar'
-require 'async'
-require 'json'
+require "samovar"
+require "async"
+require "json"
 
-require 'io/endpoint/unix_endpoint'
-require 'io/stream'
+require "io/endpoint/unix_endpoint"
+require "io/stream"
 
 module Falcon
 	module Command
@@ -30,7 +30,7 @@ module Falcon
 				
 				# Send the restart message to the supervisor.
 				def call(stream)
-					stream.puts({please: 'restart'}.to_json, separator: "\0")
+					stream.puts({please: "restart"}.to_json, separator: "\0")
 				end
 			end
 			
@@ -40,7 +40,7 @@ module Falcon
 				
 				# Send the metrics message to the supervisor and print the results.
 				def call(stream)
-					stream.puts({please: 'metrics'}.to_json, separator: "\0", chomp: true)
+					stream.puts({please: "metrics"}.to_json, separator: "\0", chomp: true)
 					response = JSON.parse(stream.read_until("\0"), symbolize_names: true)
 					
 					$stdout.puts response
@@ -51,9 +51,9 @@ module Falcon
 			# @name nested
 			# @attribute [Command]
 			nested :command, {
-				'restart' => Restart,
-				'metrics' => Metrics,
-			}, default: 'metrics'
+				"restart" => Restart,
+				"metrics" => Metrics,
+			}, default: "metrics"
 			
 			# The endpoint the supervisor is bound to.
 			def endpoint

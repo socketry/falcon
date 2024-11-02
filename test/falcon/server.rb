@@ -3,9 +3,9 @@
 # Released under the MIT License.
 # Copyright, 2017-2024, by Samuel Williams.
 
-require 'server_context'
-require 'sus/fixtures/openssl/valid_certificate_context'
-require 'sus/fixtures/openssl/verified_certificate_context'
+require "server_context"
+require "sus/fixtures/openssl/valid_certificate_context"
+require "sus/fixtures/openssl/verified_certificate_context"
 
 describe Falcon::Server do
 	include ServerContext
@@ -45,14 +45,14 @@ describe Falcon::Server do
 		end
 		
 		it "can POST application/x-www-form-urlencoded" do
-			response = client.post("/", {'content-type' => 'application/x-www-form-urlencoded'}, ['hello=world'])
+			response = client.post("/", {"content-type" => "application/x-www-form-urlencoded"}, ["hello=world"])
 			
 			expect(response).to be(:success?)
 			expect(response.read).to be =~ /POST: {"hello"\s?=>\s?"world"}/
 		end
 		
 		it "can POST multipart/form-data" do
-			response = client.post("/", {'content-type' => 'multipart/form-data; boundary=multipart'}, ["--multipart\r\n", "Content-Disposition: form-data; name=\"hello\"\r\n\r\n", "world\r\n", "--multipart--"])
+			response = client.post("/", {"content-type" => "multipart/form-data; boundary=multipart"}, ["--multipart\r\n", "Content-Disposition: form-data; name=\"hello\"\r\n\r\n", "world\r\n", "--multipart--"])
 			
 			expect(response).to be(:success?)
 			expect(response.read).to be =~ /POST: {"hello"\s?=>\s?"world"}/
@@ -102,7 +102,7 @@ describe Falcon::Server do
 		end
 	end
 	
-	with 'streaming response', timeout: nil do
+	with "streaming response", timeout: nil do
 		let(:app) do
 			lambda do |env|
 				body = proc do |stream|

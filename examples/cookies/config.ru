@@ -1,9 +1,9 @@
 #!/usr/bin/env falcon --verbose serve -c
 # frozen_string_literal: true
 
-require 'rack/request'
+require "rack/request"
 
-KEY = 'my cookie'
+KEY = "my cookie"
 
 run do |env|
 	request = Rack::Request.new(env)
@@ -11,7 +11,7 @@ run do |env|
 	puts "All Cookies: #{request.cookies}"
 	
 	headers = {}
-	Rack::Utils.set_cookie_header!(headers, KEY, 'bar')
+	Rack::Utils.set_cookie_header!(headers, KEY, "bar")
 	
 	[200, headers, ["Hello World!"]]
 end

@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-require 'sinatra/base'
-require 'async/redis'
-require 'async/clock'
+require "sinatra/base"
+require "async/redis"
+require "async/clock"
 
 CLIENT = Async::Redis::Client.new(Async::Redis.local_endpoint)
 

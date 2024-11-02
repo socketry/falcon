@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'trenni'
+require "trenni"
 
 class Output < Struct.new(:stream)
 	def <<(chunk)

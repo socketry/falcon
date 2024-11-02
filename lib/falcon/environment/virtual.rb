@@ -3,9 +3,9 @@
 # Released under the MIT License.
 # Copyright, 2024, by Samuel Williams.
 
-require_relative 'configured'
+require_relative "configured"
 
-require_relative '../service/virtual'
+require_relative "../service/virtual"
 
 module Falcon
 	module Environment

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative 'allocations'
+require_relative "allocations"
 
 use Allocations
 

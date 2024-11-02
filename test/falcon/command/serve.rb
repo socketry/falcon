@@ -4,7 +4,7 @@
 # Copyright, 2018-2024, by Samuel Williams.
 # Copyright, 2019, by Sho Ito.
 
-require 'falcon/command/serve'
+require "falcon/command/serve"
 
 ServeCommand = Sus::Shared("falcon serve") do
 	let(:command) do

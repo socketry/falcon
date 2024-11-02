@@ -1,8 +1,8 @@
 #!/usr/bin/env falcon --verbose serve -c
 # frozen_string_literal: true
 
-require 'rack'
-require 'cgi'
+require "rack"
+require "cgi"
 
 def bottles(n)
 	n == 1 ? "#{n} bottle" : "#{n} bottles"
@@ -19,7 +19,7 @@ run lambda {|env|
 	body = Async::HTTP::Body::Writable.new
 	
 	request = Rack::Request.new(env)
-	count = (request.params['count'] || 99).to_i
+	count = (request.params["count"] || 99).to_i
 	
 	body.write("<!DOCTYPE html><html><head><title>#{count} Bottles of Beer</title></head><body>")
 	
@@ -53,5 +53,5 @@ run lambda {|env|
 		end
 	end
 	
-	[200, {'content-type' => 'text/html; charset=utf-8'}, body]
+	[200, {"content-type" => "text/html; charset=utf-8"}, body]
 }

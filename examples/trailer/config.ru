@@ -1,7 +1,7 @@
 #!/usr/bin/env falcon --verbose serve -c
 # frozen_string_literal: true
 
-require 'async'
+require "async"
 
 class RequestLogger
 	def initialize(app)

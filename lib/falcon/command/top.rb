@@ -3,16 +3,16 @@
 # Released under the MIT License.
 # Copyright, 2020-2024, by Samuel Williams.
 
-require_relative 'serve'
-require_relative 'host'
-require_relative 'virtual'
-require_relative 'proxy'
-require_relative 'redirect'
-require_relative 'supervisor'
+require_relative "serve"
+require_relative "host"
+require_relative "virtual"
+require_relative "proxy"
+require_relative "redirect"
+require_relative "supervisor"
 
-require_relative '../version'
+require_relative "../version"
 
-require 'samovar'
+require "samovar"
 
 module Falcon
 	module Command
@@ -23,23 +23,23 @@ module Falcon
 			# The command line options.
 			# @attribute [Samovar::Options]
 			options do
-				option '--verbose | --quiet', "Verbosity of output for debugging.", key: :logging
-				option '-h/--help', "Print out help information."
-				option '-v/--version', "Print out the application version."
-				option '-e/--encoding', "Specify the default external encoding of the server.", default: "UTF-8"
+				option "--verbose | --quiet", "Verbosity of output for debugging.", key: :logging
+				option "-h/--help", "Print out help information."
+				option "-v/--version", "Print out the application version."
+				option "-e/--encoding", "Specify the default external encoding of the server.", default: "UTF-8"
 			end
 			
 			# The nested command to execute.
 			# @name nested
 			# @attribute [Command]
 			nested :command, {
-				'serve' => Serve,
-				'host' => Host,
-				'virtual' => Virtual,
-				'proxy' => Proxy,
-				'redirect' => Redirect,
-				'supervisor' => Supervisor,
-			}, default: 'serve'
+				"serve" => Serve,
+				"host" => Host,
+				"virtual" => Virtual,
+				"proxy" => Proxy,
+				"redirect" => Redirect,
+				"supervisor" => Supervisor,
+			}, default: "serve"
 			
 			# Whether verbose logging is enabled.
 			# @returns [Boolean]

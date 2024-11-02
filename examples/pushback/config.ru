@@ -2,7 +2,7 @@
 
 # https://tmr08c.github.io/2020/05/concurrent-ruby-hello-async/
 #
-require 'async'
+require "async"
 
 class Pool
 	def initialize(size:, workers:)
@@ -79,7 +79,7 @@ class Task
 	end
 	
 	def work
-		step 'working'
+		step "working"
 		sleep 5
 		@body.write "(#{Time.now}) Hello World #{Process.pid} #{@task}\n"
 		ensure
@@ -91,7 +91,7 @@ class Task
 	end
 	
 	def wait_for_worker
-		step('waiting')
+		step("waiting")
 		Fiber.scheduler.yield while @wait
 		work
 		#    @fiber.yield
@@ -99,18 +99,18 @@ class Task
 	end
 	
 	def continue
-		step('continue')
+		step("continue")
 		@wait = false
 	end
 	
 	def finish
-		step('finish')
+		step("finish")
 		@body.close
 		print_timings
 	end
 	
 	def pushback
-		step('finish')
+		step("finish")
 		@body.close
 	end
 	
@@ -126,7 +126,7 @@ end
 pool = Pool.new(size: 15, workers: 10)
 
 run do |env|
-	request = env['protocol.http.request']
+	request = env["protocol.http.request"]
 	path = request.path
 	pool.push(path) # returns [code, {}, body]
 end

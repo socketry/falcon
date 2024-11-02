@@ -4,10 +4,10 @@
 # Copyright, 2019-2024, by Samuel Williams.
 # Copyright, 2020, by Daniel Evans.
 
-require 'async/service/generic'
-require 'async/http/endpoint'
+require "async/service/generic"
+require "async/http/endpoint"
 
-require_relative '../server'
+require_relative "../server"
 
 module Falcon
 	module Service

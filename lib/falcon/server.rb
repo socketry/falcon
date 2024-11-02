@@ -3,15 +3,15 @@
 # Released under the MIT License.
 # Copyright, 2017-2023, by Samuel Williams.
 
-require 'async/http/server'
+require "async/http/server"
 
-require 'protocol/http/middleware/builder'
-require 'protocol/http/content_encoding'
+require "protocol/http/middleware/builder"
+require "protocol/http/content_encoding"
 
-require 'async/http/cache'
+require "async/http/cache"
 
-require_relative 'middleware/verbose'
-require 'protocol/rack'
+require_relative "middleware/verbose"
+require "protocol/rack"
 
 module Falcon
 	# A server listening on a specific endpoint, hosting a specific middleware.

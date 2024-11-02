@@ -3,10 +3,10 @@
 # Released under the MIT License.
 # Copyright, 2020-2024, by Samuel Williams.
 
-require_relative 'server'
-require_relative '../tls'
-require_relative '../middleware/proxy'
-require_relative '../environment'
+require_relative "server"
+require_relative "../tls"
+require_relative "../middleware/proxy"
+require_relative "../environment"
 
 module Falcon
 	module Environment
@@ -43,7 +43,7 @@ module Falcon
 						Console.info(self) {"Proxying #{self.url} to #{evaluator.authority} using #{evaluator.endpoint}"}
 						hosts[evaluator.authority] = evaluator
 						
-						if RUBY_VERSION < '3.1'
+						if RUBY_VERSION < "3.1"
 							# Ensure the SSL context is set up before forking - it's buggy on Ruby < 3.1:
 							evaluator.ssl_context
 						end

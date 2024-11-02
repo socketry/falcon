@@ -3,7 +3,7 @@
 # Released under the MIT License.
 # Copyright, 2018-2024, by Samuel Williams.
 
-require 'falcon/command'
+require "falcon/command"
 
 describe Falcon::Command::Top do
 	with "basic server configuration" do

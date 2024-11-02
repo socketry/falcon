@@ -3,8 +3,8 @@
 # Released under the MIT License.
 # Copyright, 2020-2024, by Samuel Williams.
 
-require_relative 'server'
-require_relative '../middleware/redirect'
+require_relative "server"
+require_relative "../middleware/redirect"
 
 module Falcon
 	module Environment

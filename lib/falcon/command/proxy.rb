@@ -3,10 +3,10 @@
 # Released under the MIT License.
 # Copyright, 2020-2024, by Samuel Williams.
 
-require_relative '../environment/proxy'
-require_relative 'paths'
+require_relative "../environment/proxy"
+require_relative "paths"
 
-require 'samovar'
+require "samovar"
 
 module Falcon
 	module Command
@@ -19,9 +19,9 @@ module Falcon
 			# The command line options.
 			# @attribute [Samovar::Options]
 			options do
-				option '--bind <address>', "Bind to the given hostname/address", default: "https://[::]:443"
+				option "--bind <address>", "Bind to the given hostname/address", default: "https://[::]:443"
 				
-				option '-t/--timeout <duration>', "Specify the maximum time to wait for non-blocking operations.", type: Float, default: nil
+				option "-t/--timeout <duration>", "Specify the maximum time to wait for non-blocking operations.", type: Float, default: nil
 			end
 			
 			# One or more paths to the configuration files.

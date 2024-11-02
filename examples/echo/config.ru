@@ -13,5 +13,5 @@ class EchoBody
 end
 
 run lambda{|env|
-	[200, [], EchoBody.new(env['rack.input'])]
+	[200, [], EchoBody.new(env["rack.input"])]
 }

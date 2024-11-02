@@ -3,17 +3,17 @@
 # Released under the MIT License.
 # Copyright, 2024, by Samuel Williams.
 
-require 'falcon/service/server'
-require 'falcon/configuration'
-require 'falcon/environment/server'
-require 'falcon/environment/rackup'
+require "falcon/service/server"
+require "falcon/configuration"
+require "falcon/environment/server"
+require "falcon/environment/rackup"
 
 describe Falcon::Service::Server do
 	let(:environment) do
 		Async::Service::Environment.new(Falcon::Environment::Server).with(
 			Falcon::Environment::Rackup,
-			name: 'hello',
-			root: File.expand_path('.server/hello', __dir__),
+			name: "hello",
+			root: File.expand_path(".server/hello", __dir__),
 			url: "http://localhost:0",
 		)
 	end
@@ -39,12 +39,12 @@ describe Falcon::Service::Server do
 		container.stop
 	end
 	
-	with 'a limited count' do
+	with "a limited count" do
 		let(:environment) do
 			Async::Service::Environment.new(Falcon::Environment::Server).with(
 				Falcon::Environment::Rackup,
-				name: 'hello',
-				root: File.expand_path('.server/hello', __dir__),
+				name: "hello",
+				root: File.expand_path(".server/hello", __dir__),
 				url: "http://localhost:0",
 				count: 1,
 			)

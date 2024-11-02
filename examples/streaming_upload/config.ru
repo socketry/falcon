@@ -2,8 +2,8 @@
 
 # run with: falcon serve -n 1 -b http://localhost:9292
 
-require 'digest'
-require 'securerandom'
+require "digest"
+require "securerandom"
 
 class BodyHandler
 	attr_reader :time, :md5, :size, :uuid
@@ -42,12 +42,12 @@ class BodyHandler
 end
 
 run lambda { |env|
-	request = env['protocol.http.request']
-	handler = BodyHandler.new(env['rack.input'], env['CONTENT_LENGTH'])
+	request = env["protocol.http.request"]
+	handler = BodyHandler.new(env["rack.input"], env["CONTENT_LENGTH"])
 	Console.info(self, "#{env['REQUEST_METHOD']} #{handler.uuid}: #{request.path}  #{env['CONTENT_LENGTH']}")
 	
-	if env['REQUEST_METHOD'] == 'POST'
-		if request.headers['expect']&.include?('100-continue')
+	if env["REQUEST_METHOD"] == "POST"
+		if request.headers["expect"]&.include?("100-continue")
 			request.write_interim_response(Protocol::HTTP::Response[100])
 		end
 		

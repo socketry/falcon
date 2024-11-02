@@ -4,15 +4,15 @@
 # Copyright, 2018-2024, by Samuel Williams.
 # Copyright, 2018, by Mitsutaka Mimura.
 
-require_relative '../server'
-require_relative '../endpoint'
-require_relative '../configuration'
-require_relative '../service/server'
-require_relative '../environment/rackup'
+require_relative "../server"
+require_relative "../endpoint"
+require_relative "../configuration"
+require_relative "../service/server"
+require_relative "../environment/rackup"
 
-require 'async/container'
-require 'async/http/client'
-require 'samovar'
+require "async/container"
+require "async/http/client"
+require "samovar"
 
 module Falcon
 	module Command
@@ -25,26 +25,26 @@ module Falcon
 			# The command line options.
 			# @attribute [Samovar::Options]
 			options do
-				option '-b/--bind <address>', "Bind to the given hostname/address.", default: "https://localhost:9292"
+				option "-b/--bind <address>", "Bind to the given hostname/address.", default: "https://localhost:9292"
 				
-				option '-p/--port <number>', "Override the specified port.", type: Integer
-				option '-h/--hostname <hostname>', "Specify the hostname which would be used for certificates, etc."
-				option '-t/--timeout <duration>', "Specify the maximum time to wait for non-blocking operations.", type: Float, default: nil
+				option "-p/--port <number>", "Override the specified port.", type: Integer
+				option "-h/--hostname <hostname>", "Specify the hostname which would be used for certificates, etc."
+				option "-t/--timeout <duration>", "Specify the maximum time to wait for non-blocking operations.", type: Float, default: nil
 				
-				option '-c/--config <path>', "Rackup configuration file to load.", default: 'config.ru'
-				option '--preload <path>', "Preload the specified path before creating containers."
+				option "-c/--config <path>", "Rackup configuration file to load.", default: "config.ru"
+				option "--preload <path>", "Preload the specified path before creating containers."
 				
-				option '--cache', "Enable the response cache."
+				option "--cache", "Enable the response cache."
 				
-				option '--forked | --threaded | --hybrid', "Select a specific parallelism model.", key: :container, default: :forked
+				option "--forked | --threaded | --hybrid", "Select a specific parallelism model.", key: :container, default: :forked
 				
-				option '-n/--count <count>', "Number of instances to start.", default: Async::Container.processor_count, type: Integer
+				option "-n/--count <count>", "Number of instances to start.", default: Async::Container.processor_count, type: Integer
 				
-				option '--forks <count>', "Number of forks (hybrid only).", type: Integer
-				option '--threads <count>', "Number of threads (hybrid only).", type: Integer
+				option "--forks <count>", "Number of forks (hybrid only).", type: Integer
+				option "--threads <count>", "Number of threads (hybrid only).", type: Integer
 				
-				option '--[no]-restart', "Enable/disable automatic restart.", default: true
-				option '--graceful-stop <timeout>', "Duration to wait for graceful stop.", type: Float, default: 1.0
+				option "--[no]-restart", "Enable/disable automatic restart.", default: true
+				option "--graceful-stop <timeout>", "Duration to wait for graceful stop.", type: Float, default: 1.0
 			end
 			
 			def container_options

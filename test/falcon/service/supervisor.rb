@@ -3,11 +3,11 @@
 # Released under the MIT License.
 # Copyright, 2024, by Samuel Williams.
 
-require 'falcon/service/supervisor'
-require 'falcon/configuration'
-require 'falcon/environment/supervisor'
+require "falcon/service/supervisor"
+require "falcon/configuration"
+require "falcon/environment/supervisor"
 
-require 'temporary_directory_context'
+require "temporary_directory_context"
 
 describe Falcon::Service::Supervisor do
 	include TemporaryDirectoryContext
@@ -35,7 +35,7 @@ describe Falcon::Service::Supervisor do
 		
 		expect(container.group.running).to have_attributes(size: be == 1)
 		
-		response = supervisor.invoke({please: 'metrics'})
+		response = supervisor.invoke({please: "metrics"})
 		
 		expect(response).to be_a(Hash)
 		

@@ -4,7 +4,7 @@
 # Copyright, 2019-2024, by Samuel Williams.
 # Copyright, 2020, by Daniel Evans.
 
-require 'falcon/configuration'
+require "falcon/configuration"
 
 describe Falcon::Configuration do
 	let(:configuration) {subject.new}

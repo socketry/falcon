@@ -3,10 +3,10 @@
 # Released under the MIT License.
 # Copyright, 2019-2024, by Samuel Williams.
 
-require_relative '../service/supervisor'
-require_relative '../environment'
+require_relative "../service/supervisor"
+require_relative "../environment"
 
-require 'io/endpoint/unix_endpoint'
+require "io/endpoint/unix_endpoint"
 
 module Falcon
 	module Environment

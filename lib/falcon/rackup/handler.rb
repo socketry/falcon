@@ -3,12 +3,12 @@
 # Released under the MIT License.
 # Copyright, 2024, by Samuel Williams.
 
-require 'rackup/handler'
+require "rackup/handler"
 
-require_relative '../../falcon'
+require_relative "../../falcon"
 
-require 'kernel/sync'
-require 'io/endpoint/host_endpoint'
+require "kernel/sync"
+require "io/endpoint/host_endpoint"
 
 module Falcon
 	module Rackup
@@ -25,7 +25,7 @@ module Falcon
 			# Generate an endpoint for the given `rackup` options.
 			# @returns [::IO::Endpoint::HostEndpoint]
 			def self.endpoint_for(**options)
-				host = options[:Host] || 'localhost'
+				host = options[:Host] || "localhost"
 				port = Integer(options[:Port] || 9292)
 				
 				return ::IO::Endpoint.tcp(host, port)

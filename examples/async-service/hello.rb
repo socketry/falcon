@@ -4,7 +4,7 @@
 # Released under the MIT License.
 # Copyright, 2019-2024, by Samuel Williams.
 
-require 'falcon/environment/server'
+require "falcon/environment/server"
 
 service "hello-server" do
 	include Falcon::Environment::Server

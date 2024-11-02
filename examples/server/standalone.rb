@@ -4,11 +4,11 @@
 # Released under the MIT License.
 # Copyright, 2020-2024, by Samuel Williams.
 
-require 'async'
-require 'async/http/endpoint'
-require 'async/websocket/adapters/rack'
+require "async"
+require "async/http/endpoint"
+require "async/websocket/adapters/rack"
 
-require 'falcon'
+require "falcon"
 
 module WebSocketApp
 	def self.call(env)
@@ -21,7 +21,7 @@ module WebSocketApp
 end
 
 Async do
-	websocket_endpoint = Async::HTTP::Endpoint.parse('http://127.0.0.1:3000')
+	websocket_endpoint = Async::HTTP::Endpoint.parse("http://127.0.0.1:3000")
 	
 	app = Falcon::Server.middleware(WebSocketApp)
 	

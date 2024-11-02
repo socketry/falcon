@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
-require 'async'
-require 'async/http/internet'
+require "async"
+require "async/http/internet"
 
 # Experimental.
-require 'kernel/sync'
+require "kernel/sync"
 
 class Search
 	def initialize(app)
@@ -38,10 +38,10 @@ class Search
 	
 	# The only point of this is to invoke one of the above two methods.
 	def call(env)
-		case env['PATH_INFO']
-		when '/sync'
+		case env["PATH_INFO"]
+		when "/sync"
 			self.sync
-		when '/async'
+		when "/async"
 			self.async
 		end
 		

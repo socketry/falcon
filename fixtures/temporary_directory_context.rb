@@ -3,7 +3,7 @@
 # Released under the MIT License.
 # Copyright, 2024, by Samuel Williams.
 
-require 'tmpdir'
+require "tmpdir"
 
 module TemporaryDirectoryContext
 	def around(&block)

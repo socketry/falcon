@@ -3,9 +3,9 @@
 # Released under the MIT License.
 # Copyright, 2019-2024, by Samuel Williams.
 
-require 'localhost/authority'
-require_relative 'tls'
-require_relative '../environment'
+require "localhost/authority"
+require_relative "tls"
+require_relative "../environment"
 
 module Falcon
 	module Environment

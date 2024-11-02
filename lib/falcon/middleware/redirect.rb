@@ -3,7 +3,7 @@
 # Released under the MIT License.
 # Copyright, 2018-2024, by Samuel Williams.
 
-require 'async/http/client'
+require "async/http/client"
 
 module Falcon
 	module Middleware
@@ -35,7 +35,7 @@ module Falcon
 			# @parameter request [Protocol::HTTP::Request]
 			def lookup(request)
 				# Trailing dot and port is ignored/normalized.
-				if authority = request.authority&.sub(/(\.)?(:\d+)?$/, '')
+				if authority = request.authority&.sub(/(\.)?(:\d+)?$/, "")
 					return @hosts[authority]
 				end
 			end
@@ -50,7 +50,7 @@ module Falcon
 						location = "#{@endpoint.scheme}://#{host.authority}:#{@endpoint.port}#{request.path}"
 					end
 					
-					return Protocol::HTTP::Response[301, [['location', location]], []]
+					return Protocol::HTTP::Response[301, [["location", location]], []]
 				else
 					super
 				end
@@ -58,7 +58,7 @@ module Falcon
 			
 			Traces::Provider(self) do
 				def call(request)
-					Traces.trace('falcon.middleware.redirect.call', attributes: {authority: request.authority}) do
+					Traces.trace("falcon.middleware.redirect.call", attributes: {authority: request.authority}) do
 						super
 					end
 				end

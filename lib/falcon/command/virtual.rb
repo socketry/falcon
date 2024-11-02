@@ -3,11 +3,11 @@
 # Released under the MIT License.
 # Copyright, 2018-2024, by Samuel Williams.
 
-require 'async/service'
+require "async/service"
 
-require_relative '../environment/virtual'
+require_relative "../environment/virtual"
 
-require 'samovar'
+require "samovar"
 
 module Falcon
 	module Command
@@ -20,10 +20,10 @@ module Falcon
 			# The command line options.
 			# @attribute [Samovar::Options]
 			options do
-				option '--bind-insecure <address>', "Bind redirection to the given hostname/address", default: "http://[::]:80"
-				option '--bind-secure <address>', "Bind proxy to the given hostname/address", default: "https://[::]:443"
+				option "--bind-insecure <address>", "Bind redirection to the given hostname/address", default: "http://[::]:80"
+				option "--bind-secure <address>", "Bind proxy to the given hostname/address", default: "https://[::]:443"
 				
-				option '-t/--timeout <duration>', "Specify the maximum time to wait for non-blocking operations.", type: Float, default: 30
+				option "-t/--timeout <duration>", "Specify the maximum time to wait for non-blocking operations.", type: Float, default: 30
 			end
 			
 			# One or more paths to the configuration files.

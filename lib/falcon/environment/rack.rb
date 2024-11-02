@@ -3,9 +3,9 @@
 # Released under the MIT License.
 # Copyright, 2024, by Samuel Williams.
 
-require_relative 'application'
-require_relative 'rackup'
-require_relative '../environment'
+require_relative "application"
+require_relative "rackup"
+require_relative "../environment"
 
 module Falcon
 	module Environment

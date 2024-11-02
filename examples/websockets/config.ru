@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
-require 'async/websocket'
-require 'async/websocket/adapters/rack'
+require "async/websocket"
+require "async/websocket/adapters/rack"
 
 class App
 	def handle_normal_request(env)
-		[200, {'content-type' => 'text/plain'}, ["Hello World"]]
+		[200, {"content-type" => "text/plain"}, ["Hello World"]]
 	end
 	
 	def call(env)

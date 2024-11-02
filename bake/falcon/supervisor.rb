@@ -4,7 +4,7 @@
 # Copyright, 2020-2023, by Samuel Williams.
 
 def restart
-	require_relative '../../lib/falcon/command/supervisor'
+	require_relative "../../lib/falcon/command/supervisor"
 	
 	Falcon::Command::Supervisor["restart"].call
 end

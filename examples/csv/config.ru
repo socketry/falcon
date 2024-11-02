@@ -5,7 +5,7 @@ class MyApp
 	def initialize(app)
 		@app = app
 		
-		@words = File.readlines('/usr/share/dict/words', chomp: true).each_slice(3).to_a
+		@words = File.readlines("/usr/share/dict/words", chomp: true).each_slice(3).to_a
 	end
 	
 	def call(env)

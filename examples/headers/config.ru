@@ -6,7 +6,7 @@ require "cgi"
 
 run ->(env) {
 	params = CGI.parse env["QUERY_STRING"]
-	header = params.fetch("xid", []).first || ''
+	header = params.fetch("xid", []).first || ""
 	
 	[200, {"xid" => "m" + header }, ["hello"]]
 }

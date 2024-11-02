@@ -3,8 +3,8 @@
 # Released under the MIT License.
 # Copyright, 2020-2024, by Samuel Williams.
 
-require_relative 'tls'
-require_relative '../environment'
+require_relative "tls"
+require_relative "../environment"
 
 module Falcon
 	module Environment
@@ -13,7 +13,7 @@ module Falcon
 			# The Lets Encrypt certificate store path.
 			# @parameter [String]
 			def lets_encrypt_root
-				'/etc/letsencrypt/live'
+				"/etc/letsencrypt/live"
 			end
 			
 			# The public certificate path.

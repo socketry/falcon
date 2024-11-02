@@ -3,11 +3,11 @@
 # Released under the MIT License.
 # Copyright, 2020-2024, by Samuel Williams.
 
-require 'async/service/generic'
-require 'async/http/endpoint'
+require "async/service/generic"
+require "async/http/endpoint"
 
-require_relative '../service/server'
-require_relative '../server'
+require_relative "../service/server"
+require_relative "../server"
 
 module Falcon
 	module Environment
