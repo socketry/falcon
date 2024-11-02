@@ -47,3 +47,7 @@ Layout/EmptyLinesAroundModuleBody:
 
 Style/FrozenStringLiteralComment:
   Enabled: true
+
+Style/StringLiterals:
+  Enabled: true
+  EnforcedStyle: double_quotes
