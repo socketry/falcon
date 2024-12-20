@@ -4,10 +4,7 @@
 # Released under the MIT License.
 # Copyright, 2024, by Samuel Williams.
 
-require "falcon/environment/self_signed_tls"
-require "falcon/environment/rack"
-require "falcon/environment/supervisor"
-
+require "falcon/environment/application"
 require_relative "application"
 
 service "proxy.localhost" do
