@@ -1,6 +1,6 @@
 # Releases
 
-## Unreleased
+## v0.48.4
 
   - Improve compatibility of rackup handler w.r.t. sinatra.
 
