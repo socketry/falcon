@@ -4,7 +4,7 @@
 # Released under the MIT License.
 # Copyright, 2024, by Samuel Williams.
 
-require 'async/http/client'
+require "async/http/client"
 
 class Application
 	# The endpoint we will proxy requests to:
