@@ -4,4 +4,11 @@
 source "https://rubygems.org"
 
 gem "sinatra"
-gem "falcon"
+gem "falcon", path: "../.."
+
+# Rack dependency:
+
+gem "rack", "~> 2.0"
+# or:
+# gem "rack", "~> 3.0"
+# gem "rackup"

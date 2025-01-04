@@ -3,8 +3,6 @@
 # Released under the MIT License.
 # Copyright, 2024, by Samuel Williams.
 
-require "rackup/handler"
-
 require_relative "../../falcon"
 
 require "kernel/sync"
