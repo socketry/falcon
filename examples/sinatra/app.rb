@@ -1,6 +1,9 @@
 #!/usr/bin/env ruby
 # frozen_string_literal: true
 
+# Released under the MIT License.
+# Copyright, 2025, by Samuel Williams.
+
 # To run this example, you need to install the `sinatra` gem:
 # $ bundle install
 # $ bundle exec ./app.rb
