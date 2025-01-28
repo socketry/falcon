@@ -50,6 +50,8 @@ module Falcon
 						location = "#{@endpoint.scheme}://#{host.authority}:#{@endpoint.port}#{request.path}"
 					end
 					
+					Console.info(self, "Redirecting incoming request...", request: request, location: location)
+					
 					return Protocol::HTTP::Response[301, [["location", location]], []]
 				else
 					super

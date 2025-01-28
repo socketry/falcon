@@ -152,6 +152,9 @@ module Falcon
 				def call(request)
 					attributes = {
 						"authority" => request.authority,
+						"method" => request.method,
+						"path" => request.path,
+						"version" => request.version,
 					}
 					
 					Traces.trace("falcon.middleware.proxy.call", attributes: attributes) do

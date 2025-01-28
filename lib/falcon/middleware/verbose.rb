@@ -13,7 +13,7 @@ module Falcon
 			# Initialize the verbose middleware.
 			# @parameter app [Protocol::HTTP::Middleware] The middleware to wrap.
 			# @parameter logger [Console::Logger] The logger to use.
-			def initialize(app, logger = Console.logger)
+			def initialize(app, logger = Console)
 				super(app)
 				
 				@logger = logger
@@ -24,7 +24,7 @@ module Falcon
 				task = Async::Task.current
 				address = request.remote_address
 				
-				@logger.info(request) {"Headers: #{request.headers.to_h} from #{address.inspect}"}
+				@logger.info(request, "-> #{request.method} #{request.path}", headers: request.headers.to_h, address: address.inspect)
 				
 				task.annotate("#{request.method} #{request.path} from #{address.inspect}")
 			end
@@ -37,10 +37,8 @@ module Falcon
 				
 				response = super
 				
-				statistics.wrap(response) do |statistics, error|
-					@logger.info(request) {"Responding with: #{response.status} #{response.headers.to_h}; #{statistics.inspect}"}
-					
-					@logger.error(request) {"#{error.class}: #{error.message}"} if error
+				statistics.wrap(response) do |body, error|
+					@logger.info(request, "<- #{request.method} #{request.path}", headers: response.headers.to_h, status: response.status, body: body.inspect, error: error)
 				end
 				
 				return response
