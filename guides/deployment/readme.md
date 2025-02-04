@@ -125,16 +125,26 @@ graph TD;
 You need to create a `falcon.rb` configuration in the root of your applications, and start the virtual host:
 
 ~~~ bash
-$ cat /srv/http/example.com/falcon.rb
-#!/usr/bin/env -S falcon host
+cat /srv/http/example.com/falcon.rb
+#!/usr/bin/env falcon-host
 
-load :rack, :lets_encrypt_tls, :supervisor
+require "falcon/environment/self_signed_tls"
+require "falcon/environment/rack"
+require "falcon/environment/supervisor"
 
-rack 'hello.localhost', :lets_encrypt_tls
+service "hello.localhost" do
 
-supervisor
+  include Falcon::Environment::SelfSignedTLS
+  include Falcon::Environment::Rack
 
-$ falcon virtual /srv/http/example.com/falcon.rb
+end
+
+service "supervisor" do
+  include Falcon::Environment::Supervisor
+end
+
+$ falcon virtual /srv/http/*/falcon.rb
 ~~~
 
 The Falcon virtual server is hard coded to redirect http traffic to https, and will serve each application using an internal SNI-based proxy.
+See the [docker example](https://github.com/socketry/falcon-virtual-docker-example).
