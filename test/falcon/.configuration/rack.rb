@@ -4,8 +4,9 @@
 # Copyright, 2020, by Daniel Evans.
 # Copyright, 2023, by Samuel Williams.
 
-load :rack
+require "falcon/environment/rack"
 
-rack 'localhost' do
-  count 3
+service "localhost" do
+	include Falcon::Environment::Rack
+	count 3
 end

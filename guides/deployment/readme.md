@@ -22,7 +22,9 @@ Here is a basic example which hosts a rack application using :
 #!/usr/bin/env falcon-host
 # frozen_string_literal: true
 
-load :rack, :supervisor
+require "falcon/environment/rack"
+require "falcon/environment/lets_encrypt_tls"
+require "falcon/environment/supervisor"
 
 hostname = File.basename(__dir__)
 service hostname do
@@ -48,7 +50,8 @@ The environment configuration is defined in the `Falcon::Environment` module. Th
 #!/usr/bin/env falcon-host
 # frozen_string_literal: true
 
-load :rack, :supervisor
+require "falcon/environment/rack"
+require "falcon/environment/supervisor"
 
 hostname = File.basename(__dir__)
 service hostname do
@@ -82,7 +85,7 @@ web: bundle exec falcon host
 
 #!/usr/bin/env -S falcon host
 
-load :rack
+require "falcon/environment/rack"
 
 hostname = File.basename(__dir__)
 port = ENV["PORT"] || 3000

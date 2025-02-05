@@ -9,21 +9,7 @@ require "async/service"
 module Falcon
 	# Manages environments which describes how to host a specific application.
 	#
-	# Environments are key-value maps with lazy value resolution. An environment can inherit from a parent environment, which can provide defaults
-	#
-	# A typical configuration file might look something like:
-	#
-	#	~~~ ruby
-	#	#!/usr/bin/env falcon-host
-	#	# frozen_string_literal: true
-	#	
-	#	load :rack, :self_signed_tls, :supervisor
-	#	
-	#	supervisor
-	#	
-	#	rack 'hello.localhost', :self_signed_tls do
-	#	end
-	#	~~~
+	# Environments are key-value maps with lazy value resolution. An environment can inherit from a parent environment, which can provide defaults or shared configuration.
 	#
 	class Configuration < ::Async::Service::Configuration
 		# Load the specified configuration file. See {Loader#load_file} for more details.

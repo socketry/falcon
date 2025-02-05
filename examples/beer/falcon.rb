@@ -4,8 +4,15 @@
 # Released under the MIT License.
 # Copyright, 2019-2025, by Samuel Williams.
 
-load :rack, :self_signed_tls, :supervisor
+require "falcon/environment/rack"
+require "falcon/environment/self_signed_tls"
+require "falcon/environment/supervisor"
 
-rack "beer.localhost", :self_signed_tls
+service "beer.localhost" do
+	include Falcon::Environment::Rack
+	include Falcon::Environment::SelfSignedTLS
+end
 
-supervisor
+service "supervisor" do
+	include Falcon::Environment::Supervisor
+end

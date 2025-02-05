@@ -3,8 +3,9 @@
 # Released under the MIT License.
 # Copyright, 2019-2023, by Samuel Williams.
 
-load :proxy
+require "falcon/environment/proxy"
 
-proxy 'localhost' do
-	url 'https://www.google.com'
+service "localhost" do
+	include Falcon::Environment::Proxy
+	url "https://www.google.com"
 end
