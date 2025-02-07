@@ -45,10 +45,12 @@ module Falcon
 				
 				option "--[no]-restart", "Enable/disable automatic restart.", default: true
 				option "--graceful-stop <timeout>", "Duration to wait for graceful stop.", type: Float, default: 1.0
+				
+				option "--health-check-timeout <duration>", "Duration to wait for health check.", type: Float, default: 30.0
 			end
 			
 			def container_options
-				@options.slice(:count, :forks, :threads, :restart)
+				@options.slice(:count, :forks, :threads, :restart, :health_check_timeout)
 			end
 			
 			def endpoint_options

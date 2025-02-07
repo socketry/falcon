@@ -52,6 +52,7 @@ module Falcon
 			# @parameter container [Async::Container::Generic]
 			def setup(container)
 				container_options = @evaluator.container_options
+				health_check_timeout = container_options[:health_check_timeout]
 				
 				container.run(name: self.name, **container_options) do |instance|
 					evaluator = @environment.evaluator
@@ -62,6 +63,16 @@ module Falcon
 						server.run
 						
 						instance.ready!
+						
+						if health_check_timeout
+							Async(transient: true) do
+								while true
+									instance.name = "#{server} load=#{Fiber.scheduler.load}"
+									sleep(health_check_timeout / 2)
+									instance.ready!
+								end
+							end
+						end
 						
 						task.children.each(&:wait)
 					end

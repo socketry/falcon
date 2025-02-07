@@ -33,7 +33,7 @@ module Falcon
 			
 			# Options to use when creating the container.
 			def container_options
-				{restart: true, count: self.count}.compact
+				{restart: true, count: self.count, health_check_timeout: 30}.compact
 			end
 			
 			# The host that this server will receive connections for.
