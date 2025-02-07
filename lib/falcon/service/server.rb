@@ -67,7 +67,8 @@ module Falcon
 						if health_check_timeout
 							Async(transient: true) do
 								while true
-									instance.name = "#{server} load=#{Fiber.scheduler.load}"
+									# We only update this if the health check is enabled. Maybe we should always update it?
+									instance.name = "#{self.name} (#{server.statistics_string} L=#{Fiber.scheduler.load.round(3)})"
 									sleep(health_check_timeout / 2)
 									instance.ready!
 								end

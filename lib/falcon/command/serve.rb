@@ -57,6 +57,10 @@ module Falcon
 				@options.slice(:hostname, :port, :timeout)
 			end
 			
+			def name
+				@options[:hostname] || @options[:bind]
+			end
+			
 			def environment
 				Async::Service::Environment.new(Falcon::Environment::Server).with(
 					Falcon::Environment::Rackup,
@@ -73,7 +77,7 @@ module Falcon
 					preload: [@options[:preload]].compact,
 					url: @options[:bind],
 					
-					name: "server",
+					name: self.name,
 					
 					endpoint: ->{Endpoint.parse(url, **endpoint_options)}
 				)

@@ -35,5 +35,53 @@ module Falcon
 				run rack_app
 			end
 		end
+		
+		def initialize(...)
+			super
+			
+			@accept_count = 0
+			@connection_count = 0
+			
+			@request_count = 0
+			@active_count = 0
+		end
+		
+		attr :request_count
+		attr :accept_count
+		attr :connect_count
+		
+		def accept(...)
+			@accept_count += 1
+			@connection_count += 1
+			
+			super
+		ensure
+			@connection_count -= 1
+		end
+		
+		def call(...)
+			@request_count += 1
+			@active_count += 1
+			
+			super
+		ensure
+			@active_count -= 1
+		end
+		
+		def statistics_string
+			"C=#{format_count @connection_count}/#{format_count @accept_count} R=#{format_count @active_count}/#{format_count @request_count}"
+		end
+		
+		private
+		
+		def format_count(value)
+			if value > 1_000_000
+				"#{(value/1_000_000.0).round(2)}M"
+			elsif value > 1_000
+				"#{(value/1_000.0).round(2)}K"
+			else
+				value
+			end
+		end
 	end
 end
