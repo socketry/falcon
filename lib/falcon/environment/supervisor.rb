@@ -12,6 +12,12 @@ module Falcon
 	module Environment
 		# Provides an environment for hosting a supervisor which can monitor multiple applications.
 		module Supervisor
+			# The service class to use for the supervisor.
+			# @returns [Class]
+			def service_class
+				::Falcon::Service::Supervisor
+			end
+			
 			# The name of the supervisor
 			# @returns [String]
 			def name
@@ -30,10 +36,9 @@ module Falcon
 				::IO::Endpoint.unix(ipc_path)
 			end
 			
-			# The service class to use for the supervisor.
-			# @returns [Class]
-			def service_class
-				::Falcon::Service::Supervisor
+			# Options to use when creating the container.
+			def container_options
+				{restart: true, count: 1, health_check_timeout: 30}
 			end
 		end
 		

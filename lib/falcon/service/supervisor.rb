@@ -69,7 +69,10 @@ module Falcon
 			# Start the supervisor process which accepts connections from the bound endpoint and processes JSON formatted messages.
 			# @parameter container [Async::Container::Generic]
 			def setup(container)
-				container.run(name: self.name, restart: true, count: 1) do |instance|
+				container_options = @evaluator.container_options
+				health_check_timeout = container_options[:health_check_timeout]
+				
+				container.run(name: self.name, **container_options) do |instance|
 					Async do
 						@bound_endpoint.accept do |peer|
 							stream = ::IO::Stream(peer)
@@ -81,6 +84,15 @@ module Falcon
 						end
 						
 						instance.ready!
+						
+						if health_check_timeout
+							Async(transient: true) do
+								while true
+									sleep(health_check_timeout / 2)
+									instance.ready!
+								end
+							end
+						end
 					end
 				end
 				
