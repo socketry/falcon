@@ -28,7 +28,7 @@ The Falcon server process title is now updated periodically (alongside the healt
   - **R** – Requests: `(current/total)` requests processed by the server
   - **L** – Scheduler Load: A floating-point value representing the event loop load
 
-Note, if you are using `htop`, you should enable "Setup" → "Display Options" → "[x] Update process names on every refresh" otherwise the process title will not be updated.
+Note, if you are using `htop`, you should enable "Setup" → "Display Options" → "\[x\] Update process names on every refresh" otherwise the process title will not be updated.
 
 ## v0.48.4
 
