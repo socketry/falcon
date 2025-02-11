@@ -1,6 +1,6 @@
 # frozen_string_literal: true
-require "trenni/template"
-TEMPLATE = Trenni::Template.load(<<~'HTML')
+require "xrb/template"
+TEMPLATE = XRB::Template.load(<<~'HTML')
 <!DOCTYPE html><html><head><title>99 bottles of beer</title></head><body>
 	<?r 99.downto(1) do |i| ?>
 	<p>#{i} bottles of beer on the wall</br>
