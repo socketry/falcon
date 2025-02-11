@@ -1,5 +1,9 @@
 # Releases
 
+## v0.50.0
+
+  - Add {ruby Falcon::Environment::Server#endpoint_options} to allow configuration of the endpoint options more easily.
+
 ## v0.49.0
 
 ### Falcon Server Container Health Checks

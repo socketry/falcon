@@ -45,6 +45,10 @@ Please see the [project documentation](https://socketry.github.io/falcon/) for m
 
 Please see the [project releases](https://socketry.github.io/falcon/releases/index) for all releases.
 
+### v0.50.0
+
+  - Add <code class="language-ruby">Falcon::Environment::Server\#endpoint\_options</code> to allow configuration of the endpoint options more easily.
+
 ### v0.49.0
 
   - [Falcon Server Container Health Checks](https://socketry.github.io/falcon/releases/index#falcon-server-container-health-checks)
