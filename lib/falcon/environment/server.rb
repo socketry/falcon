@@ -33,7 +33,11 @@ module Falcon
 			
 			# Options to use when creating the container.
 			def container_options
-				{restart: true, count: self.count, health_check_timeout: 30}.compact
+				{
+					restart: true,
+					count: self.count,
+					health_check_timeout: 30,
+				}.compact
 			end
 			
 			# The host that this server will receive connections for.
@@ -45,13 +49,17 @@ module Falcon
 				nil
 			end
 			
+			def endpoint_options
+				{
+					reuse_address: true,
+					timeout: timeout,
+				}
+			end
+			
 			# The upstream endpoint that will handle incoming requests.
 			# @returns [Async::HTTP::Endpoint]
 			def endpoint
-				::Async::HTTP::Endpoint.parse(url).with(
-					reuse_address: true,
-					timeout: timeout,
-				)
+				::Async::HTTP::Endpoint.parse(url).with(**endpoint_options)
 			end
 			
 			def verbose
