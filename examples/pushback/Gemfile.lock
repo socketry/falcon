@@ -63,7 +63,7 @@ GEM
     protocol-rack (0.6.0)
       protocol-http (~> 0.23)
       rack (>= 1.0)
-    rack (3.1.7)
+    rack (3.1.10)
     samovar (2.3.0)
       console (~> 1.0)
       mapping (~> 1.0)
