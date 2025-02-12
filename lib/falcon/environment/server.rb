@@ -45,14 +45,16 @@ module Falcon
 				"http://[::]:9292"
 			end
 			
+			# The timeout used for client connections.
 			def timeout
 				nil
 			end
 			
+			# Options to use when creating the endpoint.
 			def endpoint_options
 				{
 					reuse_address: true,
-					timeout: timeout,
+					timeout: self.timeout,
 				}
 			end
 			
@@ -62,10 +64,12 @@ module Falcon
 				::Async::HTTP::Endpoint.parse(url).with(**endpoint_options)
 			end
 			
+			# Whether to enable verbose logging.
 			def verbose
 				false
 			end
 			
+			# Whether to enable the HTTP cache for this server.
 			def cache
 				false
 			end
