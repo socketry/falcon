@@ -21,8 +21,7 @@ service "hello.localhost" do
 	
 	# append preload "preload.rb"
 	
-	# Process will connect to supervisor to report statistics periodically, otherwise it would be killed.
-	# report :supervisor
+	
 end
 
 service "supervisor" do
