@@ -22,6 +22,8 @@ gemspec
 # gem "async-service", path: "../async-service"
 # gem "io-stream", path: "../io-stream"
 
+# gem "fiber-profiler"
+
 group :maintenance, optional: true do
 	gem "bake-modernize"
 	gem "bake-gem"
