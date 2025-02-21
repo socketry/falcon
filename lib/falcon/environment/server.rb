@@ -74,16 +74,23 @@ module Falcon
 				false
 			end
 			
+			# A client endpoint that can be used to connect to the server.
+			# @returns [Async::HTTP::Endpoint] The client endpoint.
 			def client_endpoint
 				::Async::HTTP::Endpoint.parse(url)
 			end
 			
 			# Any scripts to preload before starting the server.
+			#
+			# @returns [Array(String)] The list of scripts to preload.
 			def preload
 				[]
 			end
 			
 			# Make a server instance using the given endpoint. The endpoint may be a bound endpoint, so we take care to specify the protocol and scheme as per the original endpoint.
+			#
+			# @parameter endpoint [IO::Endpoint] The endpoint to bind to.
+			# @returns [Falcon::Server] The server instance.
 			def make_server(endpoint)
 				Falcon::Server.new(self.middleware, endpoint, protocol: self.endpoint.protocol, scheme: self.endpoint.scheme)
 			end
