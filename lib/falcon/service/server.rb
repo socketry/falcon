@@ -58,7 +58,7 @@ module Falcon
 					evaluator = @environment.evaluator
 					
 					Async do |task|
-						server = Falcon::Server.new(evaluator.middleware, @bound_endpoint, protocol: @endpoint.protocol, scheme: @endpoint.scheme)
+						server = evaluator.make_server(@bound_endpoint)
 						
 						server.run
 						

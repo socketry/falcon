@@ -82,6 +82,11 @@ module Falcon
 			def preload
 				[]
 			end
+			
+			# Make a server instance using the given endpoint. The endpoint may be a bound endpoint, so we take care to specify the protocol and scheme as per the original endpoint.
+			def make_server(endpoint)
+				Falcon::Server.new(self.middleware, endpoint, protocol: self.endpoint.protocol, scheme: self.endpoint.scheme)
+			end
 		end
 	end
 end

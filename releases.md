@@ -1,5 +1,9 @@
 # Releases
 
+## Unreleased
+
+  - Introduce {ruby Falcon::Environment::Server#make_server} which gives you full control over the server creation process.
+
 ## v0.50.0
 
   - Add {ruby Falcon::Environment::Server#endpoint_options} to allow configuration of the endpoint options more easily.
