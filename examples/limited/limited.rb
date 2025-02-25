@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Limited
 	# Thread local storage for the semaphore (per-worker):
 	Thread.attr_accessor :limited_semaphore
@@ -12,19 +14,30 @@ module Limited
 		# Create a new semaphore with the given limit.
 		def initialize(limit = 1)
 			@queue = Thread::Queue.new
+			
+			Console.debug(self, "Initializing queue...", limit: limit)
 			limit.times{release}
 		end
 		
 		# Release the semaphore.
 		def release
+			Console.debug(self, "Releasing semaphore...")
 			@queue.push(true)
 		end
 		
 		# Acquire the semaphore. May block until the semaphore is available.
 		def acquire
+			Console.debug(self, "Acquiring semaphore...")
 			@queue.pop
-			
+			Console.debug(self, "Acquired semaphore...")
+
 			return Token.new(self)
+		end
+		
+		def try_acquire
+			if @queue.pop(timeout: 0)
+				return Token.new(self)
+			end
 		end
 		
 		# A token that can be used to release the semaphore once and once only.
@@ -44,19 +57,46 @@ module Limited
 	
 	# A wrapper implementation for the endpoint that limits the number of connections that can be accepted.
 	class Wrapper < IO::Endpoint::Wrapper
-		def socket_accept(server)
+		# Wait for an inbound connection to be ready to be accepted.
+		def wait_for_inbound_connection(server)
 			semaphore = Semaphore.instance
 			
 			# Wait until there is a connection ready to be accepted:
-			server.wait_readable
+			while true
+				server.wait_readable
 			
-			# Acquire the semaphore:
-			Console.info(self, "Acquiring semaphore...")
-			token = semaphore.acquire
+				# Acquire the semaphore:
+				if token = semaphore.acquire
+					return token
+				end
+			end
+		end
+		
+		# Once the server is readable and we've acquired the token, we can accept the connection (if it's still there).
+		def socket_accept_nonblock(server, token)
+			result = server.accept_nonblock
 			
-			# Accept the connection:
-			socket, address = super
-			Console.info(self, "Accepted connection from #{address.inspect}", socket: socket)
+			success = true
+			return result
+		rescue IO::WaitReadable
+			return nil
+		ensure
+			token.release unless success
+		end
+		
+		# Accept a connection from the server, limited by the per-worker (thread or process) semaphore.
+		def socket_accept(server)
+			while true
+				if token = wait_for_inbound_connection(server)
+					# In principle, there is a connection ready to be accepted:
+					socket, address = socket_accept_nonblock(server, token)
+					
+					if socket
+						Console.debug(self, "Accepted connection from #{address.inspect}", socket: socket)
+						break
+					end
+				end
+			end
 			
 			# Provide access to the token, so that the connection limit could be released prematurely if it is determined that the request will not overload the server:
 			socket.define_singleton_method :token do
@@ -67,11 +107,14 @@ module Limited
 			socket.define_singleton_method :close do
 				super()
 			ensure
-				Console.info(self, "Closing connection from #{address.inspect}", socket: socket)
+				Console.debug(self, "Releasing connection from #{address.inspect}", socket: socket)
 				token.release
 			end
 			
+			success = true
 			return socket, address
+		ensure
+			token&.release unless success
 		end
 	end
 end

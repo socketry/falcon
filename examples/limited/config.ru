@@ -20,8 +20,6 @@ run do |env|
 	# There is no guarantee that there is a connection or that the connection has a token:
 	token = limited_semaphore_token(request)
 	
-	Console.info(self, "Sleeping 10 seconds", token: token)
-	
 	if env["PATH_INFO"] == "/fast"
 		if token
 			# Keeping the connection alive here is problematic because if the next request is slow, it will "block the server" since we have relinquished the token already.
@@ -30,10 +28,10 @@ run do |env|
 		end
 		
 		# Simulated "fast / non-blocking" request:
-		sleep(1)
+		sleep(0.01)
 	else
 		# Simulated "slow / blocking" request:
-		sleep(10)
+		sleep(0.1)
 	end
 	
 	[200, {}, ["Hello World"]]
