@@ -98,6 +98,13 @@ module Limited
 				end
 			end
 			
+			# Identify duplicated sockets:
+			# socket.define_singleton_method :dup do
+			# 	super().tap do |dup_socket|
+			# 		Console.warn(socket, "Duplicating socket!", dup: dup_socket, caller: caller(2..6))
+			# 	end
+			# end
+			
 			# Provide access to the token, so that the connection limit could be released prematurely if it is determined that the request will not overload the server:
 			socket.define_singleton_method :token do
 				token
@@ -105,6 +112,9 @@ module Limited
 			
 			# Provide a way to release the semaphore when the connection is closed:
 			socket.define_singleton_method :close do
+				# Force the connection to be closed, even if it was duped:
+				# self.shutdown
+				
 				super()
 			ensure
 				Console.debug(self, "Releasing connection from #{address.inspect}", socket: socket)

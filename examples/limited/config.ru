@@ -17,6 +17,9 @@ run do |env|
 	# This is not part of the rack specification, but is available when running under Falcon.
 	request = env["protocol.http.request"]
 	
+	# Simulate a leaked IO object:
+	# leak_io = request.connection.stream.io.dup
+	
 	# There is no guarantee that there is a connection or that the connection has a token:
 	token = limited_semaphore_token(request)
 	
