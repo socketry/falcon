@@ -21,7 +21,7 @@ service "hello.localhost" do
 	
 	# append preload "preload.rb"
 	
-	
+	include Async::Container::Supervisor::Supervised
 end
 
 service "supervisor" do
