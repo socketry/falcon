@@ -3,13 +3,12 @@
 # Released under the MIT License.
 # Copyright, 2024, by Samuel Williams.
 
-require "falcon/service/supervisor"
 require "falcon/configuration"
 require "falcon/environment/supervisor"
 
 require "temporary_directory_context"
 
-describe Falcon::Service::Supervisor do
+describe Falcon::Environment::Supervisor do
 	include TemporaryDirectoryContext
 	
 	let(:environment) do
@@ -19,11 +18,7 @@ describe Falcon::Service::Supervisor do
 	end
 	
 	let(:supervisor) do
-		subject.new(environment)
-	end
-	
-	it "can create a supervisor" do
-		expect(supervisor).to be_a subject
+		environment.evaluator.service_class.new(environment)
 	end
 	
 	it "can start and stop server" do
@@ -35,14 +30,20 @@ describe Falcon::Service::Supervisor do
 		
 		expect(container.group.running).to have_attributes(size: be == 1)
 		
-		response = supervisor.invoke({please: "metrics"})
-		
-		expect(response).to be_a(Hash)
-		
-		# The supervisor should report itself:
-		expect(response.values).to have_value(have_keys(
-			command: be == "supervisor"
-		))
+		Sync do
+			client = Async::Container::Supervisor::Client.new(endpoint: environment.evaluator.endpoint)
+			client.connect do |connection|
+				response = connection.call(do: "status")
+				
+				expect(response).to be_a(Array)
+				expect(response.size).to be == 1
+				
+				first = response.first
+				expect(first).to have_keys(
+					memory_monitor: be_a(Hash),
+				)
+			end
+		end
 	ensure
 		supervisor.stop
 		container.stop

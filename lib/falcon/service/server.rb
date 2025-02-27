@@ -5,6 +5,7 @@
 # Copyright, 2020, by Daniel Evans.
 
 require "async/service/generic"
+require "async/container/supervisor/supervised"
 require "async/http/endpoint"
 
 require_relative "../server"
@@ -58,6 +59,10 @@ module Falcon
 					evaluator = @environment.evaluator
 					
 					Async do |task|
+						if @environment.implements?(Async::Container::Supervisor::Supervised)
+							evaluator.make_supervised_worker(instance).run
+						end
+						
 						server = evaluator.make_server(@bound_endpoint)
 						
 						server.run

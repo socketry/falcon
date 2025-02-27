@@ -4,7 +4,5 @@
 # Copyright, 2020-2025, by Samuel Williams.
 
 def restart
-	require_relative "../../lib/falcon/command/supervisor"
-	
-	Falcon::Command::Supervisor["restart"].call
+	context.lookup("async:container:supervisor:restart").call
 end

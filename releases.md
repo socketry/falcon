@@ -4,6 +4,33 @@
 
   - Introduce {ruby Falcon::Environment::Server#make_server} which gives you full control over the server creation process.
 
+### Introduce `Async::Container::Supervisor`.
+
+`Async::Container::Supervisor` is a new supervisor implementation that replaces Falcon's own supervisor. This allows you to use the same supervisor for all your services, and provides a more consistent interface for managing services. The supervisor is now a separate gem, `async-container-supervisor`.
+
+By default, the supervisor does not perform any monitoring, but you may add monitoring by defining them in the service definition. For example:
+
+``` ruby
+service "hello.localhost" do
+	# Configure server...
+	
+	include Async::Container::Supervisor::Supervised
+end
+
+service "supervisor" do
+	include Async::Container::Supervisor::Environment
+	
+	monitors do
+		[
+			# Limit total memory usage to 512MiB:
+			Async::Container::Supervisor::MemoryMonitor.new(interval: 10, limit: 1024 * 1024 * 512),
+		]
+	end
+end
+```
+
+We retain the `falcon:supervisor:restart` task, but you may prefer to use `async:container:supervisor:restart` directly.
+
 ## v0.50.0
 
   - Add {ruby Falcon::Environment::Server#endpoint_options} to allow configuration of the endpoint options more easily.
