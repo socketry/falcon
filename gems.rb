@@ -22,6 +22,7 @@ gemspec
 # gem "protocol-rack", path: "../protocol-rack"
 # gem "async-service", path: "../async-service"
 # gem "io-stream", path: "../io-stream"
+# gem "memory-leak", path: "../memory-leak"
 
 # gem "fiber-profiler"
 

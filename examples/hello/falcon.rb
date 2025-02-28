@@ -20,10 +20,4 @@ service "hello.localhost" do
 	# end
 	
 	# append preload "preload.rb"
-	
-	include Async::Container::Supervisor::Supervised
-end
-
-service "supervisor" do
-	include Falcon::Environment::Supervisor
 end
