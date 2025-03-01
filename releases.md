@@ -1,8 +1,8 @@
 # Releases
 
-## Unreleased
+## v0.51.0
 
-  - Introduce {ruby Falcon::Environment::Server#make_server} which gives you full control over the server creation process.
+  - Introduce {ruby Falcon::Environment::Server\#make\_server} which gives you full control over the server creation process.
 
 ### Introduce `Async::Container::Supervisor`.
 
@@ -33,7 +33,7 @@ We retain the `falcon:supervisor:restart` task, but you may prefer to use `async
 
 ## v0.50.0
 
-  - Add {ruby Falcon::Environment::Server#endpoint_options} to allow configuration of the endpoint options more easily.
+  - Add {ruby Falcon::Environment::Server\#endpoint\_options} to allow configuration of the endpoint options more easily.
 
 ## v0.49.0
 

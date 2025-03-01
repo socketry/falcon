@@ -45,6 +45,11 @@ Please see the [project documentation](https://socketry.github.io/falcon/) for m
 
 Please see the [project releases](https://socketry.github.io/falcon/releases/index) for all releases.
 
+### v0.51.0
+
+  - Introduce <code class="language-ruby">Falcon::Environment::Server\#make\_server</code> which gives you full control over the server creation process.
+  - [Introduce `Async::Container::Supervisor`.](https://socketry.github.io/falcon/releases/index#introduce-async::container::supervisor.)
+
 ### v0.50.0
 
   - Add <code class="language-ruby">Falcon::Environment::Server\#endpoint\_options</code> to allow configuration of the endpoint options more easily.
