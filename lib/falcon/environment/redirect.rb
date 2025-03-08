@@ -4,6 +4,7 @@
 # Copyright, 2020-2024, by Samuel Williams.
 
 require_relative "server"
+require_relative "application"
 require_relative "../middleware/redirect"
 
 module Falcon
