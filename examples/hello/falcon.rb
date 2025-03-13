@@ -15,6 +15,11 @@ service "hello.localhost" do
 	scheme "http"
 	protocol {Async::HTTP::Protocol::HTTP}
 	
+	# protocol {Async::HTTP::Protocol::HTTP1.new(
+	# 	persistent: false,
+	# 	maximum_line_size: 1024,
+	# )}
+	
 	# endpoint do
 	# 	Async::HTTP::Endpoint.for(scheme, "localhost", port: 9292, protocol: protocol)
 	# end
