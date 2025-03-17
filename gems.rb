@@ -54,6 +54,7 @@ group :test do
 	gem "bake-test-external"
 	
 	gem "puma"
+	gem "unicorn"
 	gem "rackup"
 	
 	gem "async-process"

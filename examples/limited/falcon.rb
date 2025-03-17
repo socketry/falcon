@@ -11,14 +11,19 @@ service "limited.localhost" do
 	include Falcon::Environment::Rack
 	
 	scheme "http"
-	protocol {Async::HTTP::Protocol::HTTP}
+	protocol {Async::HTTP::Protocol::HTTP1.new(
+		persistent: false,
+	)}
 	
 	# Extend the endpoint options to include the (connection) limited wrapper.
 	endpoint_options do
-		super().merge(wrapper: Limited::Wrapper.new)
+		super().merge(
+			protocol: protocol,
+			# wrapper: Limited::Wrapper.new
+		)
 	end
 	
-	count 2
+	count 1
 	
 	url "http://localhost:8080"
 	

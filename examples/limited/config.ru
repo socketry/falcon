@@ -32,7 +32,7 @@ run do |env|
 		
 		# Simulated "fast / non-blocking" request:
 		sleep(0.01)
-	else
+	elsif env["PATH_INFO"] == "/slow"
 		# Simulated "slow / blocking" request:
 		sleep(0.1)
 	end
