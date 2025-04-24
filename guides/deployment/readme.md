@@ -59,7 +59,9 @@ service hostname do
 	include Falcon::Environment::LetsEncryptTLS
 
 	endpoint do
-		Async::HTTP::Endpoint.parse('http://localhost:3000').with(protocol: Async::HTTP::Protocol::HTTP2)
+		Async::HTTP::Endpoint
+			.parse('http://localhost:3000')
+			.with(protocol: Async::HTTP::Protocol::HTTP2)
 	end
 end
 
@@ -142,10 +144,8 @@ require "falcon/environment/rack"
 require "falcon/environment/supervisor"
 
 service "hello.localhost" do
-
   include Falcon::Environment::SelfSignedTLS
   include Falcon::Environment::Rack
-
 end
 
 service "supervisor" do

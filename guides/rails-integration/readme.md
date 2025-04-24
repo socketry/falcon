@@ -36,6 +36,7 @@ preload "preload.rb"
 
 service hostname do
 	include Falcon::Environment::Rack
+
 	endpoint Async::HTTP::Endpoint.parse("http://0.0.0.0:#{port}")
 end
 ~~~
