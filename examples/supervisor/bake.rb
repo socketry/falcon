@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 def leak(size: 1024*1024)
 	require "async/http/internet/instance"
 	

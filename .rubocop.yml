@@ -19,6 +19,9 @@ Layout/IndentationConsistency:
 Layout/BlockAlignment:
   Enabled: true
 
+Layout/EmptyLineAfterMagicComment:
+  Enabled: true
+
 Layout/EndAlignment:
   Enabled: true
   EnforcedStyleAlignWith: start_of_line
