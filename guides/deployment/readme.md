@@ -19,7 +19,7 @@ Falcon can be deployed into production either as a standalone application server
 Here is a basic example which hosts a rack application using :
 
 ~~~ ruby
-#!/usr/bin/env falcon-host
+#!/usr/bin/env falcon host
 # frozen_string_literal: true
 
 require "falcon/environment/rack"
@@ -47,7 +47,7 @@ These configuration blocks are evaluated using [async-service](https://github.co
 The environment configuration is defined in the `Falcon::Environment` module. The {ruby Falcon::Environment::Application} environment supports the generic virtual host functionality, but you can customise any parts of the configuration, e.g. to bind a production host to `localhost:3000` using plaintext HTTP/2:
 
 ~~~ ruby
-#!/usr/bin/env falcon-host
+#!/usr/bin/env falcon host
 # frozen_string_literal: true
 
 require "falcon/environment/rack"
@@ -59,7 +59,9 @@ service hostname do
 	include Falcon::Environment::LetsEncryptTLS
 
 	endpoint do
-		Async::HTTP::Endpoint.parse('http://localhost:3000').with(protocol: Async::HTTP::Protocol::HTTP2)
+		Async::HTTP::Endpoint
+			.parse('http://localhost:3000')
+			.with(protocol: Async::HTTP::Protocol::HTTP2)
 	end
 end
 
@@ -84,6 +86,7 @@ web: bundle exec falcon host
 # falcon.rb
 
 #!/usr/bin/env -S falcon host
+# frozen_string_literal: true
 
 require "falcon/environment/rack"
 
@@ -105,12 +108,16 @@ service hostname do
 	# Heroku only supports HTTP/1.1 at the time of this writing. Review the following for possible updates in the future:
 	# https://devcenter.heroku.com/articles/http-routing#http-versions-supported
 	# https://github.com/heroku/roadmap/issues/34
-	endpoint Async::HTTP::Endpoint.parse("http://0.0.0.0:#{port}").with(protocol: Async::HTTP::Protocol::HTTP11)
+	endpoint Async::HTTP::Endpoint
+		.parse("http://0.0.0.0:#{port}")
+		.with(protocol: Async::HTTP::Protocol::HTTP11)
 end
 ~~~
 
 ~~~ ruby
 # preload.rb
+
+# frozen_string_literal: true
 
 require_relative "config/environment"
 ~~~
@@ -129,17 +136,16 @@ You need to create a `falcon.rb` configuration in the root of your applications,
 
 ~~~ bash
 cat /srv/http/example.com/falcon.rb
-#!/usr/bin/env falcon-host
+#!/usr/bin/env falcon host
+# frozen_string_literal: true
 
 require "falcon/environment/self_signed_tls"
 require "falcon/environment/rack"
 require "falcon/environment/supervisor"
 
 service "hello.localhost" do
-
   include Falcon::Environment::SelfSignedTLS
   include Falcon::Environment::Rack
-
 end
 
 service "supervisor" do
