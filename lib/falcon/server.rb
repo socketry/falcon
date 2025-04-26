@@ -68,6 +68,17 @@ module Falcon
 			@active_count -= 1
 		end
 		
+		# Generates a human-readable string representing the current statistics.
+		#
+		# e.g. `C=23/3.42K R=2/3.42K L=0.273`
+		#
+		# This can be interpreted as:
+		#
+		# - `C=23/3.42K` - The number of connections currently open and the total number of connections accepted.
+		# - `R=2/3.42K` - The number of requests currently being processed and the total number of requests received.
+		# - `L=0.273` - The average scheduler load of the server, where 0.0 is idle and 1.0 is fully loaded.
+		#
+		# @returns [String] A string representing the current statistics.
 		def statistics_string
 			"C=#{format_count @connection_count}/#{format_count @accept_count} R=#{format_count @active_count}/#{format_count @request_count}"
 		end
