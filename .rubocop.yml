@@ -45,6 +45,9 @@ Layout/EmptyLinesAroundClassBody:
 Layout/EmptyLinesAroundModuleBody:
   Enabled: true
 
+Layout/EmptyLineAfterMagicComment:
+   Enabled: true
+
 Style/FrozenStringLiteralComment:
   Enabled: true
 

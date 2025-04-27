@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require "xrb/template"
 TEMPLATE = XRB::Template.load(<<~'HTML')
 <!DOCTYPE html><html><head><title>99 bottles of beer</title></head><body>

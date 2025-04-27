@@ -25,6 +25,8 @@ Copyright, 2024, by Trevor Turk.
 Copyright, 2024, by Adam Daniels.  
 Copyright, 2024, by Stefan Buhrmester.  
 Copyright, 2024, by Ismael Celis.  
+Copyright, 2025, by Pierre Montelle.  
+Copyright, 2025, by Jared Smith.  
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

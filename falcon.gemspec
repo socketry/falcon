@@ -7,7 +7,7 @@ Gem::Specification.new do |spec|
 	spec.version = Falcon::VERSION
 	
 	spec.summary = "A fast, asynchronous, rack-compatible web server."
-	spec.authors = ["Samuel Williams", "dependabot[bot]", "Janko Marohnić", "Bryan Powell", "Trevor Turk", "Claudiu Garba", "Kyle Tam", "Mitsutaka Mimura", "Peter Schrammel", "Sho Ito", "Adam Daniels", "Colby Swandale", "Daniel Evans", "Ismael Celis", "Kent Gruber", "Martin Hrdlicka", "Michael Adams", "Mikel Kew", "Nick Janetakis", "Olle Jonsson", "Santiago Bartesaghi", "Sh Lin", "Stefan Buhrmester", "Tad Thorley", "Tasos Latsas"]
+	spec.authors = ["Samuel Williams", "dependabot[bot]", "Janko Marohnić", "Bryan Powell", "Trevor Turk", "Claudiu Garba", "Kyle Tam", "Mitsutaka Mimura", "Peter Schrammel", "Sho Ito", "Adam Daniels", "Colby Swandale", "Daniel Evans", "Ismael Celis", "Jared Smith", "Kent Gruber", "Martin Hrdlicka", "Michael Adams", "Mikel Kew", "Nick Janetakis", "Olle Jonsson", "Pierre Montelle", "Santiago Bartesaghi", "Sh Lin", "Stefan Buhrmester", "Tad Thorley", "Tasos Latsas"]
 	spec.license = "MIT"
 	
 	spec.cert_chain  = ["release.cert"]
@@ -24,7 +24,7 @@ Gem::Specification.new do |spec|
 	
 	spec.executables = ["falcon", "falcon-host"]
 	
-	spec.required_ruby_version = ">= 3.1"
+	spec.required_ruby_version = ">= 3.2"
 	
 	spec.add_dependency "async"
 	spec.add_dependency "async-container", "~> 0.20"

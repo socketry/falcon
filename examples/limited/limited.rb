@@ -1,5 +1,8 @@
 # frozen_string_literal: true
 
+# Released under the MIT License.
+# Copyright, 2025, by Samuel Williams.
+
 module Limited
 	# Thread local storage for the semaphore (per-worker):
 	Thread.attr_accessor :limited_semaphore
