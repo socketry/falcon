@@ -47,6 +47,7 @@ end
 # frozen_string_literal: true
 
 require_relative "config/environment"
+Rails.application.eager_load!
 ~~~
 
 3. Run the production server with `bundle exec falcon host`
