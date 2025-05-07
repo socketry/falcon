@@ -25,7 +25,7 @@ The `falcon serve` command is only intended to be used for local development. Fo
 
 1. Create a `falcon.rb` file
 
-~~~ rb
+~~~ ruby
 #!/usr/bin/env -S falcon host
 # frozen_string_literal: true
 
@@ -45,7 +45,7 @@ end
 
 2. Create a `preload.rb` file
 
-~~~ rb
+~~~ ruby
 # frozen_string_literal: true
 
 require_relative "config/environment"
