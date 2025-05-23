@@ -34,11 +34,12 @@ require "falcon/environment/rack"
 hostname = File.basename(__dir__)
 port = ENV["PORT"] || 3000
 
-preload "preload.rb"
-
 service hostname do
 	include Falcon::Environment::Rack
-
+	
+	# This file will be loaded in the main process before forking.
+	preload "preload.rb"
+	
 	endpoint Async::HTTP::Endpoint.parse("http://0.0.0.0:#{port}")
 end
 ~~~
