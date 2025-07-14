@@ -45,6 +45,14 @@ Please see the [project documentation](https://socketry.github.io/falcon/) for m
 
 Please see the [project releases](https://socketry.github.io/falcon/releases/index) for all releases.
 
+### v0.52.0
+
+  - Modernized codebase and dropped support for Ruby v3.1.
+  - Improved Rails integration documentation.
+  - Added extra logging of `RUBY_DESCRIPTION`.
+  - Minor documentation improvements.
+  - Agent context is now available, via the [`agent-context` gem](https://github.com/ioquatix/agent-context).
+
 ### v0.51.0
 
   - Introduce <code class="language-ruby">Falcon::Environment::Server\#make\_server</code> which gives you full control over the server creation process.
