@@ -23,7 +23,7 @@ class App
 		EOF
 		
 		template = Trenni::Template.new(buffer)
-		body = DeferredBody.new(->(stream){ template.to_string({}, Output.new(stream)) })
+		body = DeferredBody.new(->(stream){template.to_string({}, Output.new(stream))})
 		
 		[200, {}, body]
 	end

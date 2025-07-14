@@ -21,14 +21,14 @@ VirtualCommand = Sus::Shared("falcon virtual") do
 
 	let(:options) {[]}
 	
-	let(:command) {
+	let(:command) do
 		subject[
 			"--bind-insecure", "http://localhost:8080",
 			"--bind-secure", "https://localhost:8443",
 			*options,
 			*paths,
 		]
-	}
+	end
 	
 	def around
 		configuration = command.configuration

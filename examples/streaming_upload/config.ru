@@ -41,7 +41,7 @@ class BodyHandler
 	end
 end
 
-run lambda { |env|
+run do |env|
 	request = env["protocol.http.request"]
 	handler = BodyHandler.new(env["rack.input"], env["CONTENT_LENGTH"])
 	Console.info(self, "#{env['REQUEST_METHOD']} #{handler.uuid}: #{request.path}  #{env['CONTENT_LENGTH']}")
@@ -60,4 +60,4 @@ run lambda { |env|
 		sleep 1
 		[200, {}, ["#{env['REQUEST_METHOD']}: #{request.path}\n"]]
 	end
-}
+end

@@ -48,6 +48,15 @@ Layout/EmptyLinesAroundModuleBody:
 Layout/EmptyLineAfterMagicComment:
    Enabled: true
 
+Layout/SpaceInsideBlockBraces:
+  Enabled: true
+  EnforcedStyle: no_space
+  SpaceBeforeBlockParameters: false
+
+Layout/SpaceAroundBlockParameters:
+  Enabled: true
+  EnforcedStyleInsidePipes: no_space
+
 Style/FrozenStringLiteralComment:
   Enabled: true
 

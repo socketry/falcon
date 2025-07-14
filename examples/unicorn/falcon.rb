@@ -11,9 +11,11 @@ service "limited.localhost" do
 	include Falcon::Environment::Rack
 	
 	scheme "http"
-	protocol {Async::HTTP::Protocol::HTTP1.new(
-		persistent: false,
-	)}
+	protocol do
+		Async::HTTP::Protocol::HTTP1.new(
+			persistent: false,
+		)
+	end
 	
 	# Extend the endpoint options to include the (connection) limited wrapper.
 	endpoint_options do

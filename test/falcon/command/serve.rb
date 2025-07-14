@@ -37,7 +37,7 @@ ServeCommand = Sus::Shared("falcon serve") do
 end
 
 describe Falcon::Command::Serve do
-	let(:options) { [] }
+	let(:options) {[]}
 
 	with "custom port" do
 		let(:port) {8090}
