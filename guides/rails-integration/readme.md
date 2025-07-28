@@ -32,7 +32,6 @@ The `falcon serve` command is only intended to be used for local development. Fo
 require "falcon/environment/rack"
 
 hostname = File.basename(__dir__)
-port = ENV["PORT"] || 3000
 
 service hostname do
 	include Falcon::Environment::Rack
@@ -40,7 +39,15 @@ service hostname do
 	# This file will be loaded in the main process before forking.
 	preload "preload.rb"
 	
-	endpoint Async::HTTP::Endpoint.parse("http://0.0.0.0:#{port}")
+	# Default to port 3000 unless otherwise specified.
+	port {ENV.fetch("PORT", 3000).to_i}
+	
+	# Default to HTTP/1.1.
+	endpoint do
+		Async::HTTP::Endpoint
+			.parse("http://0.0.0.0:#{port}")
+			.with(protocol: Async::HTTP::Protocol::HTTP11)
+	end
 end
 ~~~
 
