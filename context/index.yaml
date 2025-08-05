@@ -1,34 +1,32 @@
 # Automatically generated context index for Utopia::Project guides.
 # Do not edit then files in this directory directly, instead edit the guides and then run `bake utopia:project:agent:context:update`.
 ---
-getting-started:
+description: A fast, asynchronous, rack-compatible web server.
+metadata:
+  documentation_uri: https://socketry.github.io/falcon/
+  source_code_uri: https://github.com/socketry/falcon.git
+files:
+- path: getting-started.md
   title: Getting Started
-  order: 1
   description: This guide gives an overview of how to use Falcon for running Ruby
     web applications.
-rails-integration:
+- path: rails-integration.md
   title: Rails Integration
-  order: 2
   description: This guide explains how to host Rails applications with Falcon.
-deployment:
+- path: deployment.md
   title: Deployment
-  order: 3
   description: This guide explains how to use Falcon in production environments.
-performance-tuning:
+- path: performance-tuning.md
   title: Performance Tuning
-  order: 4
   description: This guide explains the performance characteristics of Falcon.
-websockets:
+- path: websockets.md
   title: WebSockets
-  order: 5
   description: This guide explains how to use WebSockets with Falcon.
-interim-responses:
+- path: interim-responses.md
   title: Interim Responses
-  order: 6
   description: This guide explains how to use interim responses in Falcon to send
     early hints to the client.
-how-it-works:
+- path: how-it-works.md
   title: How It Works
-  order: 10
   description: This guide gives an overview of how Falcon handles an incoming web
     request.
