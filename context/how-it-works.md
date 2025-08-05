@@ -8,6 +8,16 @@ When you run `falcon serve`, Falcon creates a {ruby Falcon::Controller::Serve} w
 
 The workers individually load a copy of your rack application. These applications are wrapped using {ruby Falcon::Adapters::Rack} which modifies the incoming {ruby Protocol::HTTP::Request} object into an `env` object suitable for your application. It also handles converting the output of your rack application `[status, headers, body]` into an instance of {ruby Falcon::Adapters::Response} which is derived from {ruby Protocol::HTTP::Response}.
 
+See the [protocol-http documentation](https://socketry.github.io/protocol-http/) for more details on how it works.
+
 ## Server
 
 The server itself is mostly implemented by {ruby Async::HTTP::Server} which in turn depends on the `protocol-http` gems for the actual protocol implementations. Therefore, Falcon is primarily a bridge between the underlying protocol objects and the Rack interface.
+
+See the [async-http documentation](https://socketry.github.io/async-http/) for more details on how it works.
+
+## Protocol::Rack
+
+Falcon uses the `protocol-rack` gem to provide a Rack interface for the HTTP protocol. This allows you to run any Rack-compatible application with Falcon. However, Falcon itself is not a Rack server, but rather an HTTP server that can run Rack applications.
+
+See the [protocol-rack documentation](https://socketry.github.io/protocol-rack/) for more details on how it works.

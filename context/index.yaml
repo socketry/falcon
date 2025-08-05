@@ -14,17 +14,21 @@ deployment:
   title: Deployment
   order: 3
   description: This guide explains how to use Falcon in production environments.
-extended-features:
-  title: Extended Features
-  order: 4
-  description: This guide explains some of the extended features and functionality
-    of Falcon.
 performance-tuning:
   title: Performance Tuning
-  order: 5
+  order: 4
   description: This guide explains the performance characteristics of Falcon.
+websockets:
+  title: WebSockets
+  order: 5
+  description: This guide explains how to use WebSockets with Falcon.
+interim-responses:
+  title: Interim Responses
+  order: 6
+  description: This guide explains how to use interim responses in Falcon to send
+    early hints to the client.
 how-it-works:
   title: How It Works
-  order: 6
+  order: 10
   description: This guide gives an overview of how Falcon handles an incoming web
     request.

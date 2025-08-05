@@ -4,9 +4,11 @@ rails-integration:
   order: 2
 deployment:
   order: 3
-extended-features:
-  order: 4
 performance-tuning:
+  order: 4
+websockets:
   order: 5
-how-it-works:
+interim-responses:
   order: 6
+how-it-works:
+  order: 10

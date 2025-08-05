@@ -2,16 +2,22 @@
 
 This guide explains how to host Rails applications with Falcon.
 
-**We strongly recommend using the latest stable release of Rails with Falcon.** The integration is much smoother and you will benefit from the latest features and bug fixes. This guide is primarily intended for users of Rails 8.0 and later.
+**We strongly recommend using the latest stable release of Rails with Falcon.**
 
-## Integration with Rails
+We now recommend using the `Falcon::Rails` gem for Rails integration. This gem provides a simple way to configure Falcon as the web server for your Rails application, and includes many conveniences for running Rails with Falcon.
+
+~~~
+> bundle add falcon-rails
+~~~
+
+It also includes detailed documentation for [common tasks and configurations](https://socketry.github.io/falcon-rails/).
+
+## Usage
 
 Because Rails apps are built on top of Rack, they are compatible with Falcon.
 
 1. Add `gem "falcon"` to your `Gemfile` and perhaps remove `gem "puma"` once you are satisfied with the change.
 2. Run `falcon serve` to start a local development server.
-
-We do not recommend using Rails older than v7.1 with Falcon. If you are using an older version of Rails, you should upgrade to the latest version before using Falcon.
 
 Falcon assumes HTTPS by default (so that browsers can use HTTP2). To run under HTTP in development you can bind it to an explicit scheme, host and port:
 
@@ -19,14 +25,24 @@ Falcon assumes HTTPS by default (so that browsers can use HTTP2). To run under H
 falcon serve -b http://localhost:3000
 ~~~
 
+### Self-signed Development Certificates
+
+The [localhost gem](https://github.com/socketry/localhost) is used to generate self-signed certificates for local development. This allows you to run Falcon with HTTPS in development without needing to set up a real certificate authority. However, you must still install the development certificate to avoid security warnings in your browser:
+
+~~~bash
+> bundle exec bake localhost:install
+~~~
+
 ### Production
 
-The `falcon serve` command is only intended to be used for local development. Follow these steps to run a production Rails app with Falcon:
+The `falcon serve` command is only intended to be used for local development. We recommend you use `falcon host` for production deployments.
 
-1. Create a `falcon.rb` file
+#### Falcon Host Configuration File
+
+Create a `falcon.rb` file in the root of your Rails application. This file will be used to configure the Falcon server for production. The following example binds HTTP/1 to port 3000 as is common for Rails applications:
 
 ~~~ ruby
-#!/usr/bin/env -S falcon host
+#!/usr/bin/env -S falcon-host
 # frozen_string_literal: true
 
 require "falcon/environment/rack"
@@ -51,7 +67,9 @@ service hostname do
 end
 ~~~
 
-2. Create a `preload.rb` file
+#### Preloading Rails
+
+Preloading is a technique used to load your Rails application into memory before forking worker processes. This can significantly improve performance by reducing the time it takes to start each worker.
 
 ~~~ ruby
 # frozen_string_literal: true
@@ -59,17 +77,14 @@ end
 require_relative "config/environment"
 ~~~
 
-3. Run the production server with `bundle exec falcon host`
+#### Running the Production Server
 
+To run the production server, make sure your `falcon.rb` is executable and then run it:
+
+~~~ bash
+> bundle exec falcon.rb
+~~~
 
 ## Isolation Level
 
-Rails provides the ability to change its internal isolation level from threads (default) to fibers. When you use `falcon` with Rails, it will automatically set the isolation level to fibers.
-
-## ActionCable
-
-Falcon fully supports ActionCable with the [`Async::Cable` adapter](https://github.com/socketry/async-cable).
-
-## ActiveJob
-
-Falcon fully supports ActiveJob with the [`Async::Job` adapter](https://github.com/socketry/async-job-adapter-active_job).
+Rails provides the ability to change its internal isolation level from threads (default) to fibers. When you use `falcon` with Rails, it will automatically set the isolation level to fibers as Falcon provides the appropriate Railtie.
