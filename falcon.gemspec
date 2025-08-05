@@ -20,7 +20,7 @@ Gem::Specification.new do |spec|
 		"source_code_uri" => "https://github.com/socketry/falcon.git",
 	}
 	
-	spec.files = Dir.glob(["{bake,bin,lib}/**/*", "*.md"], File::FNM_DOTMATCH, base: __dir__)
+	spec.files = Dir.glob(["{bake,context,bin,lib}/**/*", "*.md"], File::FNM_DOTMATCH, base: __dir__)
 	
 	spec.executables = ["falcon", "falcon-host"]
 	

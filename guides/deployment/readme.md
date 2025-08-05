@@ -14,12 +14,12 @@ Falcon can be deployed into production either as a standalone application server
 
 ### Configuration
 
-`falcon host` loads configuration from the `falcon.rb` file in your application directory. This file contains configuration blocks which define how to host the application and any related services. This file should generally be executable and it invokes `falcon host` which starts all defined services.
+`falcon host` loads configuration from the `falcon.rb` file in your application directory. This file contains configuration blocks which define how to host the application and any related services. This file should be executable and it invokes `falcon-host` which starts all defined services.
 
-Here is a basic example which hosts a rack application using :
+Here is a basic example which hosts a rack application:
 
 ~~~ ruby
-#!/usr/bin/env falcon host
+#!/usr/bin/env falcon-host
 # frozen_string_literal: true
 
 require "falcon/environment/rack"
@@ -33,14 +33,34 @@ service hostname do
 
 	# Insert an in-memory cache in front of the application (using async-http-cache).
 	cache true
+	
+	# Connect to the supervisor for monitoring.
+	include Async::Container::Supervisor::Supervised
 end
 
 service "supervisor" do
 	include Falcon::Environment::Supervisor
+	
+	monitors do
+		[
+			MemoryMonitor.new(
+				# Check every 10 seconds:
+				interval: 10,
+				# Per-supervisor (cluster) limit:
+				total_size_limit: 1000*1024*1024,
+				# Per-process limit:
+				maximum_size_limit: 200*1024*1024
+			)
+		]
+	end
 end
 ~~~
 
-These configuration blocks are evaluated using [async-service](https://github.com/socketry/async-service).
+These configuration blocks are evaluated using the [async-service](https://github.com/socketry/async-service) gem. The supervisor is an independent service which monitors the health of the application and can restart it if necessary. Other services like background job processors can be added to the configuration.
+
+### Environments
+
+The service blocks define configuration that is loaded by the service layer to control how the service is run. The `service ... do` block defines the service name and the environment in which it runs. Different modules can be included to provide different functionality, such as `Falcon::Environment::Rack` for Rack applications, or `Falcon::Environment::LetsEncryptTLS` for automatic TLS certificate management.
 
 ### Application Configuration
 
@@ -127,7 +147,7 @@ require_relative "config/environment"
 
 ## Falcon Virtual
 
-Falcon can replace Nginx as a virtual server for Ruby applications.
+Falcon virtual provides a virtual host proxy and HTTP-to-HTTPS redirection for multiple applications. It is designed to be a zero-configuration deployment option, allowing you to run multiple applications on the same server.
 
 ~~~ mermaid
 graph TD;
@@ -138,25 +158,9 @@ graph TD;
 You need to create a `falcon.rb` configuration in the root of your applications, and start the virtual host:
 
 ~~~ bash
-cat /srv/http/example.com/falcon.rb
-#!/usr/bin/env falcon host
-# frozen_string_literal: true
-
-require "falcon/environment/self_signed_tls"
-require "falcon/environment/rack"
-require "falcon/environment/supervisor"
-
-service "hello.localhost" do
-  include Falcon::Environment::SelfSignedTLS
-  include Falcon::Environment::Rack
-end
-
-service "supervisor" do
-  include Falcon::Environment::Supervisor
-end
-
-$ falcon virtual /srv/http/*/falcon.rb
+falcon virtual /srv/http/*/falcon.rb
 ~~~
 
-The Falcon virtual server is hard coded to redirect http traffic to https, and will serve each application using an internal SNI-based proxy.
-See the [docker example](https://github.com/socketry/falcon-virtual-docker-example).
+By default, it binds to both HTTP and HTTPS ports, and automatically redirects HTTP requests to HTTPS. It also supports TLS SNI for resolving the certificates.
+
+See the [docker example](https://github.com/socketry/falcon-virtual-docker-example) for a complete working example.

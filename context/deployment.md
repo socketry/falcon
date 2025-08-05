@@ -16,7 +16,7 @@ Falcon can be deployed into production either as a standalone application server
 
 `falcon host` loads configuration from the `falcon.rb` file in your application directory. This file contains configuration blocks which define how to host the application and any related services. This file should be executable and it invokes `falcon-host` which starts all defined services.
 
-Here is a basic example which hosts a rack application using :
+Here is a basic example which hosts a rack application:
 
 ~~~ ruby
 #!/usr/bin/env falcon-host
@@ -33,10 +33,26 @@ service hostname do
 
 	# Insert an in-memory cache in front of the application (using async-http-cache).
 	cache true
+	
+	# Connect to the supervisor for monitoring.
+	include Async::Container::Supervisor::Supervised
 end
 
 service "supervisor" do
 	include Falcon::Environment::Supervisor
+	
+	monitors do
+		[
+			MemoryMonitor.new(
+				# Check every 10 seconds:
+				interval: 10,
+				# Per-supervisor (cluster) limit:
+				total_size_limit: 1000*1024*1024,
+				# Per-process limit:
+				maximum_size_limit: 200*1024*1024
+			)
+		]
+	end
 end
 ~~~
 
@@ -44,11 +60,100 @@ These configuration blocks are evaluated using the [async-service](https://githu
 
 ### Environments
 
-The service blocks define configuration that is loaded by the serivce layer to control how the service is run. The `service ... do` block defines the service name and the environment in which it runs. Different modules can be included to provide different functionality, such as `Falcon::Environment::Rack` for Rack applications, or `Falcon::Environment::LetsEncryptTLS` for automatic TLS certificate management.
+The service blocks define configuration that is loaded by the service layer to control how the service is run. The `service ... do` block defines the service name and the environment in which it runs. Different modules can be included to provide different functionality, such as `Falcon::Environment::Rack` for Rack applications, or `Falcon::Environment::LetsEncryptTLS` for automatic TLS certificate management.
+
+### Application Configuration
+
+The environment configuration is defined in the `Falcon::Environment` module. The {ruby Falcon::Environment::Application} environment supports the generic virtual host functionality, but you can customise any parts of the configuration, e.g. to bind a production host to `localhost:3000` using plaintext HTTP/2:
+
+~~~ ruby
+#!/usr/bin/env falcon host
+# frozen_string_literal: true
+
+require "falcon/environment/rack"
+require "falcon/environment/supervisor"
+
+hostname = File.basename(__dir__)
+service hostname do
+	include Falcon::Environment::Rack
+	include Falcon::Environment::LetsEncryptTLS
+
+	endpoint do
+		Async::HTTP::Endpoint
+			.parse('http://localhost:3000')
+			.with(protocol: Async::HTTP::Protocol::HTTP2)
+	end
+end
+
+service "supervisor" do
+	include Falcon::Environment::Supervisor
+end
+~~~
+
+You can verify this is working using `nghttp -v http://localhost:3000`.
+
+#### Application Configuration Example for Heroku
+
+Building on the examples above, the following is a full configuration example for Heroku:
+
+~~~ bash
+# Procfile
+
+web: bundle exec falcon host
+~~~
+
+~~~ ruby
+# falcon.rb
+
+#!/usr/bin/env -S falcon host
+# frozen_string_literal: true
+
+require "falcon/environment/rack"
+
+hostname = File.basename(__dir__)
+
+service hostname do
+	include Falcon::Environment::Rack
+	
+	# By default, Falcon uses Etc.nprocessors to set the count, which is likely incorrect on shared hosts like Heroku.
+	# Review the following for guidance about how to find the right value for your app:
+	# https://help.heroku.com/88G3XLA6/what-is-an-acceptable-amount-of-dyno-load
+	# https://devcenter.heroku.com/articles/deploying-rails-applications-with-the-puma-web-server#workers
+	count ENV.fetch("WEB_CONCURRENCY", 1).to_i
+	
+	# If using count > 1 you may want to preload your app to reduce memory usage and increase performance:
+	preload "preload.rb"
+	
+	# The default port should be 3000, but you can change it to match your Heroku configuration.
+	port {ENV.fetch("PORT", 3000).to_i}
+	
+	# Heroku only supports HTTP/1.1 at the time of this writing. Review the following for possible updates in the future:
+	# https://devcenter.heroku.com/articles/http-routing#http-versions-supported
+	# https://github.com/heroku/roadmap/issues/34
+	endpoint do
+		Async::HTTP::Endpoint
+			.parse("http://0.0.0.0:#{port}")
+			.with(protocol: Async::HTTP::Protocol::HTTP11)
+	end
+~~~
+
+~~~ ruby
+# preload.rb
+
+# frozen_string_literal: true
+
+require_relative "config/environment"
+~~~
 
 ## Falcon Virtual
 
 Falcon virtual provides a virtual host proxy and HTTP-to-HTTPS redirection for multiple applications. It is designed to be a zero-configuration deployment option, allowing you to run multiple applications on the same server.
+
+~~~ mermaid
+graph TD;
+	client[Client Browser] -->|TLS + HTTP/2 TCP| proxy["Falcon Proxy (SNI)"];
+	proxy -->|HTTP/2 UNIX PIPE| server["Application Server (Rack Compatible)"];
+~~~
 
 You need to create a `falcon.rb` configuration in the root of your applications, and start the virtual host:
 
@@ -56,6 +161,6 @@ You need to create a `falcon.rb` configuration in the root of your applications,
 falcon virtual /srv/http/*/falcon.rb
 ~~~
 
-By default, it binds to both HTTP and HTTPS ports, and automatically redirects HTTP requests to HTTPS. It also supports automatic TLS certificate management using Let's Encrypt.
+By default, it binds to both HTTP and HTTPS ports, and automatically redirects HTTP requests to HTTPS. It also supports TLS SNI for resolving the certificates.
 
 See the [docker example](https://github.com/socketry/falcon-virtual-docker-example) for a complete working example.

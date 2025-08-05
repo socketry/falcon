@@ -1,0 +1,30 @@
+# Automatically generated context index for Utopia::Project guides.
+# Do not edit then files in this directory directly, instead edit the guides and then run `bake utopia:project:agent:context:update`.
+---
+getting-started:
+  title: Getting Started
+  order: 1
+  description: This guide gives an overview of how to use Falcon for running Ruby
+    web applications.
+rails-integration:
+  title: Rails Integration
+  order: 2
+  description: This guide explains how to host Rails applications with Falcon.
+deployment:
+  title: Deployment
+  order: 3
+  description: This guide explains how to use Falcon in production environments.
+extended-features:
+  title: Extended Features
+  order: 4
+  description: This guide explains some of the extended features and functionality
+    of Falcon.
+performance-tuning:
+  title: Performance Tuning
+  order: 5
+  description: This guide explains the performance characteristics of Falcon.
+how-it-works:
+  title: How It Works
+  order: 6
+  description: This guide gives an overview of how Falcon handles an incoming web
+    request.
