@@ -1,6 +1,6 @@
 # Deployment
 
-This guide explains how to use Falcon in production environments.
+This guide explains how to deploy applications using the Falcon web server. It covers the recommended deployment methods, configuration options, and examples for different environments, including systemd and kubernetes.
 
 Falcon can be deployed into production either as a standalone application server, or as a virtual host routing to multiple applications. Both configurations can run behind a load balancer, but `falcon virtual` is designed to be zero-configuration deployment option.
 
@@ -145,6 +145,50 @@ service hostname do
 require_relative "config/environment"
 ~~~
 
+### Kubernetes Integration
+
+Falcon can be deployed in a Kubernetes cluster using the `falcon host` command. You can use the following example to create a Kubernetes deployment for Falcon:
+
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: falcon
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: falcon
+  template:
+    metadata:
+      labels:
+        app: falcon
+    spec:
+      containers:
+        - name: my-app
+          image: my-app-image:latest
+          env:
+            - name: NOTIFY_LOG
+              value: "/tmp/notify.log"
+          ports:
+            - containerPort: 9292
+          readinessProbe:
+            exec:
+              command: ["bundle", "exec", "bake", "async:container:notify:log:ready?"]
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            failureThreshold: 12
+
+          # Assuming you are running Rails and have bound to port 3000:
+          livenessProbe:
+            httpGet:
+              path: /up
+              port: 3000
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            failureThreshold: 3
+```
+
 ## Falcon Virtual
 
 Falcon virtual provides a virtual host proxy and HTTP-to-HTTPS redirection for multiple applications. It is designed to be a zero-configuration deployment option, allowing you to run multiple applications on the same server.
@@ -164,3 +208,23 @@ falcon virtual /srv/http/*/falcon.rb
 By default, it binds to both HTTP and HTTPS ports, and automatically redirects HTTP requests to HTTPS. It also supports TLS SNI for resolving the certificates.
 
 See the [docker example](https://github.com/socketry/falcon-virtual-docker-example) for a complete working example.
+
+### systemd Service File
+
+You can create a systemd service file to manage the Falcon virtual service. Here is an example of a systemd service file for Falcon:
+
+```ini
+[Unit]
+Description=Falcon Virtual Service
+After=network.target
+
+[Service]
+Type=notify
+User=http
+WorkingDirectory=/srv/http
+ExecStart=/usr/local/bin/falcon virtual /srv/http/*/falcon.rb
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
+```
