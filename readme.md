@@ -33,7 +33,7 @@ Please see the [project documentation](https://socketry.github.io/falcon/) for m
 
   - [Rails Integration](https://socketry.github.io/falcon/guides/rails-integration/index) - This guide explains how to host Rails applications with Falcon.
 
-  - [Deployment](https://socketry.github.io/falcon/guides/deployment/index) - This guide explains how to use Falcon in production environments.
+  - [Deployment](https://socketry.github.io/falcon/guides/deployment/index) - This guide explains how to deploy applications using the Falcon web server. It covers the recommended deployment methods, configuration options, and examples for different environments, including systemd and kubernetes.
 
   - [Performance Tuning](https://socketry.github.io/falcon/guides/performance-tuning/index) - This guide explains the performance characteristics of Falcon.
 
