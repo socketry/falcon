@@ -9,7 +9,7 @@ Falcon supports WebSockets using the [async-websocket gem](https://github.com/so
 ~~~ruby
 # config.ru
 
-require "async/websocket/adapter/rack"
+require "async/websocket/adapters/rack"
 
 run do |env|
 	Async::WebSocket::Adapters::Rack.open(env, protocols: ['ws']) do |connection|
