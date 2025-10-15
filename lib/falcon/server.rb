@@ -59,11 +59,11 @@ module Falcon
 			@connection_count -= 1
 		end
 		
-		def call(...)
+		def call(*args, **kwargs)
 			@request_count += 1
 			@active_count += 1
 			
-			super
+			super(*args, **kwargs)
 		ensure
 			@active_count -= 1
 		end
