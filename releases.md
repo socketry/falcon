@@ -1,6 +1,6 @@
 # Releases
 
-## Unreleased
+## v0.52.4
 
   - Relax dependency on `async-container-supervisor` to allow `~> 0.6`.
 

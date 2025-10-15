@@ -47,6 +47,10 @@ Please see the [project documentation](https://socketry.github.io/falcon/) for m
 
 Please see the [project releases](https://socketry.github.io/falcon/releases/index) for all releases.
 
+### v0.52.4
+
+  - Relax dependency on `async-container-supervisor` to allow `~> 0.6`.
+
 ### v0.52.0
 
   - Modernized codebase and dropped support for Ruby v3.1.
