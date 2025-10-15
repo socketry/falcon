@@ -1,5 +1,9 @@
 # Releases
 
+## Unreleased
+
+  - Relax dependency on `async-container-supervisor` to allow `~> 0.6`.
+
 ## v0.52.0
 
   - Modernized codebase and dropped support for Ruby v3.1.
