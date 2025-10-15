@@ -7,3 +7,5 @@ require "covered/sus"
 include Covered::Sus
 
 ENV["CONSOLE_LEVEL"] ||= "warn"
+ENV["TRACES_BACKEND"] ||= "traces/backend/test"
+ENV["METRICS_BACKEND"] ||= "metrics/backend/test"

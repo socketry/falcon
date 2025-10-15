@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # Released under the MIT License.
-# Copyright, 2018-2024, by Samuel Williams.
+# Copyright, 2018-2025, by Samuel Williams.
 # Copyright, 2019, by Sho Ito.
 
 require "falcon/command/serve"
@@ -38,7 +38,7 @@ end
 
 describe Falcon::Command::Serve do
 	let(:options) {[]}
-
+	
 	with "custom port" do
 		let(:port) {8090}
 		it_behaves_like ServeCommand

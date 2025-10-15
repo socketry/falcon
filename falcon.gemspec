@@ -7,7 +7,7 @@ Gem::Specification.new do |spec|
 	spec.version = Falcon::VERSION
 	
 	spec.summary = "A fast, asynchronous, rack-compatible web server."
-	spec.authors = ["Samuel Williams", "dependabot[bot]", "Janko Marohnić", "Bryan Powell", "Trevor Turk", "Claudiu Garba", "Kyle Tam", "Mitsutaka Mimura", "Peter Schrammel", "Sho Ito", "Adam Daniels", "Colby Swandale", "Daniel Evans", "Ismael Celis", "Jared Smith", "Kent Gruber", "Martin Hrdlicka", "Michael Adams", "Mikel Kew", "Nick Janetakis", "Olle Jonsson", "Pierre Montelle", "Santiago Bartesaghi", "Sh Lin", "Stefan Buhrmester", "Tad Thorley", "Tasos Latsas"]
+	spec.authors = ["Samuel Williams", "dependabot[bot]", "Janko Marohnić", "Bryan Powell", "Trevor Turk", "Claudiu Garba", "Kyle Tam", "Mitsutaka Mimura", "Peter Schrammel", "Sho Ito", "Adam Daniels", "Colby Swandale", "Daniel Evans", "Ismael Celis", "Jared Smith", "Kent Gruber", "Martin Hrdlicka", "Michael Adams", "Mikel Kew", "Nick Janetakis", "Olle Jonsson", "Pierre Montelle", "Santiago Bartesaghi", "Sh Lin", "Stefan Buhrmester", "Tad Thorley", "Tasos Latsas", "Yoji Shidara"]
 	spec.license = "MIT"
 	
 	spec.cert_chain  = ["release.cert"]
@@ -20,7 +20,7 @@ Gem::Specification.new do |spec|
 		"source_code_uri" => "https://github.com/socketry/falcon.git",
 	}
 	
-	spec.files = Dir.glob(["{bake,context,bin,lib}/**/*", "*.md"], File::FNM_DOTMATCH, base: __dir__)
+	spec.files = Dir.glob(["{bake,bin,context,lib}/**/*", "*.md"], File::FNM_DOTMATCH, base: __dir__)
 	
 	spec.executables = ["falcon", "falcon-host"]
 	
@@ -28,7 +28,7 @@ Gem::Specification.new do |spec|
 	
 	spec.add_dependency "async"
 	spec.add_dependency "async-container", "~> 0.20"
-	spec.add_dependency "async-container-supervisor", "~> 0.5.0"
+	spec.add_dependency "async-container-supervisor", "~> 0.6"
 	spec.add_dependency "async-http", "~> 0.75"
 	spec.add_dependency "async-http-cache", "~> 0.4"
 	spec.add_dependency "async-service", "~> 0.10"

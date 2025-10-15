@@ -24,7 +24,7 @@ run lambda {|env|
 	body.write("<!DOCTYPE html><html><head><title>#{count} Bottles of Beer</title></head><body>")
 	
 	task.async do |task|
-		begin
+		task.defer_stop do
 			body.write(COMMENT)
 			
 			count.downto(1) do |i|
