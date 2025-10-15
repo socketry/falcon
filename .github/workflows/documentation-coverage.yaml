@@ -6,7 +6,6 @@ permissions:
   contents: read
 
 env:
-  CONSOLE_OUTPUT: XTerm
   COVERAGE: PartialSummary
 
 jobs:
@@ -17,7 +16,7 @@ jobs:
     - uses: actions/checkout@v4
     - uses: ruby/setup-ruby@v1
       with:
-        ruby-version: "3.4"
+        ruby-version: ruby
         bundler-cache: true
     
     - name: Validate coverage

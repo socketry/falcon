@@ -5,11 +5,6 @@ on: [push, pull_request]
 permissions:
   contents: read
 
-env:
-  CONSOLE_OUTPUT: XTerm
-  TRACES_BACKEND: traces/backend/test
-  METRICS_BACKEND: metrics/backend/test
-
 jobs:
   test:
     name: ${{matrix.ruby}} on ${{matrix.os}} ${{matrix.gemfile}}

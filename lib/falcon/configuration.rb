@@ -73,7 +73,7 @@ module Falcon
 					merge(:supervisor, name: name, root: @root, &block)
 				)
 			end
-				
+			
 			private
 			
 			# Build a new environment with the specified name and the given parents.

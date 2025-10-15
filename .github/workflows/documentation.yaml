@@ -17,7 +17,6 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  CONSOLE_OUTPUT: XTerm
   BUNDLE_WITH: maintenance
 
 jobs:
@@ -29,7 +28,7 @@ jobs:
 
     - uses: ruby/setup-ruby@v1
       with:
-        ruby-version: "3.4"
+        ruby-version: ruby
         bundler-cache: true
     
     - name: Installing packages

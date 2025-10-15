@@ -7,19 +7,19 @@ require "securerandom"
 
 class BodyHandler
 	attr_reader :time, :md5, :size, :uuid
-
+	
 	def initialize(input, length)
 		@uuid = SecureRandom.uuid
 		@input = input
 		@length = length
 	end
-
+	
 	def receive
 		start = Time.now
 		@md5 = Digest::MD5.new
 		@size = 0
 		@done = false
-
+		
 		until @done
 			begin
 				chunk = @input.read(1024*1024) # read will raise EOF so we have to check
@@ -36,7 +36,7 @@ class BodyHandler
 				@done = true if @length == @size
 			end
 		end
-
+		
 		@time = Time.now - start
 	end
 end

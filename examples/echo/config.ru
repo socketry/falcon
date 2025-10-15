@@ -4,7 +4,7 @@ class EchoBody
 	def initialize(input)
 		@input = input
 	end
-
+	
 	def each(&output)
 		while chunk = @input.read(1024)
 			output.call(chunk)

@@ -64,7 +64,6 @@ module Falcon
 			def environment
 				Async::Service::Environment.new(Falcon::Environment::Server).with(
 					Falcon::Environment::Rackup,
-					
 					root: Dir.pwd,
 					
 					verbose: self.parent&.verbose?,

@@ -3,7 +3,7 @@
 It is possible to verify inbound client requests using TLS client certificates. This is useful for ensuring that only authorized clients can access your service. In order to do this, you need to configure Falcon to use a TLS context with additional client verification options.
 
 ```ruby
-	ssl_context do
+ssl_context do
 		super().tap do |context|
 			context.verify_mode = OpenSSL::SSL::VERIFY_PEER
 			
@@ -12,7 +12,7 @@ It is possible to verify inbound client requests using TLS client certificates. 
 				true
 			end
 		end
-	end
+end
 ```
 
 ## Server

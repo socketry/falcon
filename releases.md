@@ -106,13 +106,13 @@ In addition, `falcon serve` provides two new options:
 The current configuration format uses definitions like this:
 
 ``` ruby
-rack 'hello.localhost', :self_signed_tls
+rack "hello.localhost", :self_signed_tls
 ```
 
 This changes to:
 
 ``` ruby
-service 'hello.localhost' do
+service "hello.localhost" do
 	include Falcon::Environment::Rack
 	include Falcon::Environment::SelfSignedTLS
 end

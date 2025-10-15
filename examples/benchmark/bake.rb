@@ -91,11 +91,11 @@ def compare
 				threads.times do |n|
 					c = (n*n).to_s
 					puts "Running #{command.first} with #{c} concurrent connections..."
-						
+					
 					Async::Process.spawn("curl", "-o", "/dev/null", "#{host}#{@request_path}")
-						
+					
 					# Async::Process.spawn("ab", "-k", "-n", "1000", "#{host}#{@request_path}")
-						
+					
 					Async::Process.spawn("wrk", "-c", c.to_s, "-t", (n).to_s, "-d", "10", "#{host}#{@request_path}")
 				end
 			ensure

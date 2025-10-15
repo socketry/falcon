@@ -10,7 +10,10 @@ require "falcon/environment/supervisor"
 
 service "beer.localhost" do
 	include Falcon::Environment::Rack
-	include Falcon::Environment::SelfSignedTLS
+	# include Falcon::Environment::SelfSignedTLS
+	
+	count 1
+	endpoint{Async::HTTP::Endpoint.parse("http://localhost:9293")}
 end
 
 service "supervisor" do

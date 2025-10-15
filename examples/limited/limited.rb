@@ -33,7 +33,7 @@ module Limited
 			Console.debug(self, "Acquiring semaphore...")
 			@queue.pop
 			Console.debug(self, "Acquired semaphore...")
-
+			
 			return Token.new(self)
 		end
 		
@@ -67,7 +67,7 @@ module Limited
 			# Wait until there is a connection ready to be accepted:
 			while true
 				server.wait_readable
-			
+				
 				# Acquire the semaphore:
 				if token = semaphore.acquire
 					return token

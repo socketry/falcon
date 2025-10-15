@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # Released under the MIT License.
-# Copyright, 2019-2024, by Samuel Williams.
+# Copyright, 2019-2025, by Samuel Williams.
 
 require "falcon/command/virtual"
 
@@ -18,7 +18,7 @@ VirtualCommand = Sus::Shared("falcon virtual") do
 	]}
 	
 	let(:examples_root) {File.expand_path("../../../examples", __dir__)}
-
+	
 	let(:options) {[]}
 	
 	let(:command) do
