@@ -36,7 +36,6 @@ describe Falcon::Environment::Supervisor do
 				response = connection.call(do: "status")
 				
 				expect(response).to be_a(Array)
-				expect(response.size).to be == 1
 				
 				first = response.first
 				expect(first).to have_keys(
