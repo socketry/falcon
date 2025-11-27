@@ -31,7 +31,7 @@ Gem::Specification.new do |spec|
 	spec.add_dependency "async-container-supervisor", "~> 0.6"
 	spec.add_dependency "async-http", "~> 0.75"
 	spec.add_dependency "async-http-cache", "~> 0.4"
-	spec.add_dependency "async-service", "~> 0.10"
+	spec.add_dependency "async-service", "~> 0.16"
 	spec.add_dependency "bundler"
 	spec.add_dependency "localhost", "~> 1.1"
 	spec.add_dependency "openssl", "~> 3.0"
