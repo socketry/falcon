@@ -4,7 +4,7 @@
 # Copyright, 2019-2025, by Samuel Williams.
 # Copyright, 2020, by Daniel Evans.
 
-require "async/service/generic"
+require "async/service/managed_service"
 require "async/container/supervisor/supervised"
 require "async/http/endpoint"
 
@@ -12,26 +12,11 @@ require_relative "../server"
 
 module Falcon
 	module Service
-		class Server < Async::Service::Generic
+		class Server < Async::Service::ManagedService
 			def initialize(...)
 				super
 				
 				@bound_endpoint = nil
-			end
-			
-			# Preload any resources specified by the environment.
-			def preload!
-				root = @evaluator.root
-				
-				if scripts = @evaluator.preload
-					scripts = Array(scripts)
-					
-					scripts.each do |path|
-						Console.logger.info(self) {"Preloading #{path}..."}
-						full_path = File.expand_path(path, root)
-						load(full_path)
-					end
-				end
 			end
 			
 			# Prepare the bound endpoint for the server.
@@ -42,47 +27,42 @@ module Falcon
 					@bound_endpoint = @endpoint.bound
 				end
 				
-				preload!
-				
 				Console.logger.info(self) {"Starting #{self.name} on #{@endpoint}"}
 				
 				super
 			end
 			
-			# Setup the container with the application instance.
-			# @parameter container [Async::Container::Generic]
-			def setup(container)
-				container_options = @evaluator.container_options
-				health_check_timeout = container_options[:health_check_timeout]
-				
-				container.run(name: self.name, **container_options) do |instance|
-					evaluator = @environment.evaluator
+			# Run the service logic.
+			#
+			# @parameter instance [Object] The container instance.
+			# @parameter evaluator [Environment::Evaluator] The environment evaluator.
+			# @returns [Falcon::Server] The server instance.
+			def run(instance, evaluator)
+				if evaluator.key?(:make_supervised_worker)
+					Console.warn(self, "Async::Container::Supervisor is replaced by Async::Services::Supervisor, please update your service definition.")
 					
-					Async do |task|
-						if @environment.implements?(Async::Container::Supervisor::Supervised)
-							evaluator.make_supervised_worker(instance).run
-						end
-						
-						server = evaluator.make_server(@bound_endpoint)
-						
-						server.run
-						
-						instance.ready!
-						
-						if health_check_timeout
-							Async(transient: true) do
-								while true
-									# We only update this if the health check is enabled. Maybe we should always update it?
-									instance.name = "#{self.name} (#{server.statistics_string} L=#{Fiber.scheduler.load.round(3)})"
-									sleep(health_check_timeout / 2)
-									instance.ready!
-								end
-							end
-						end
-						
-						task.children.each(&:wait)
-					end
+					evaluator.make_supervised_worker(instance).run
 				end
+				
+				server = evaluator.make_server(@bound_endpoint)
+				
+				Async do |task|
+					server.run
+					
+					task.children.each(&:wait)
+				end
+				
+				server
+			end
+			
+			# Format the process title with server statistics.
+			#
+			# @parameter evaluator [Environment::Evaluator] The environment evaluator.
+			# @parameter server [Falcon::Server] The server instance.
+			# @returns [String] The formatted process title.
+			private def format_title(evaluator, server)
+				load = Fiber.scheduler.load.round(3)
+				"#{evaluator.name} (#{server.statistics_string} L=#{load})"
 			end
 			
 			# Close the bound endpoint.

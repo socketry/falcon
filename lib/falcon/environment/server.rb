@@ -3,7 +3,7 @@
 # Released under the MIT License.
 # Copyright, 2020-2025, by Samuel Williams.
 
-require "async/service/generic"
+require "async/service/managed_environment"
 require "async/http/endpoint"
 
 require_relative "../service/server"
@@ -13,6 +13,8 @@ module Falcon
 	module Environment
 		# Provides an environment for hosting a web application that uses a Falcon server.
 		module Server
+			include Async::Service::ManagedEnvironment
+			
 			# The service class to use for the proxy.
 			# @returns [Class]
 			def service_class
@@ -23,21 +25,6 @@ module Falcon
 			# @returns [String]
 			def authority
 				self.name
-			end
-			
-			# Number of instances to start. By default (when nil), uses `Etc.nprocessors`.
-			# @returns [Integer | nil]
-			def count
-				nil
-			end
-			
-			# Options to use when creating the container.
-			def container_options
-				{
-					restart: true,
-					count: self.count,
-					health_check_timeout: 30,
-				}.compact
 			end
 			
 			# The host that this server will receive connections for.
@@ -78,13 +65,6 @@ module Falcon
 			# @returns [Async::HTTP::Endpoint] The client endpoint.
 			def client_endpoint
 				::Async::HTTP::Endpoint.parse(url)
-			end
-			
-			# Any scripts to preload before starting the server.
-			#
-			# @returns [Array(String)] The list of scripts to preload.
-			def preload
-				[]
 			end
 			
 			# Make a server instance using the given endpoint. The endpoint may be a bound endpoint, so we take care to specify the protocol and scheme as per the original endpoint.
