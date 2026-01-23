@@ -14,7 +14,7 @@ module Falcon
 	# - Access statistics for each named server.
 	# - Control all servers as a single unit.
 	#
-	# @example Create and run serveral applications.
+	# @example Create and run several applications.
 	# 	require 'falcon/composite_server'
 	# 	require 'falcon/server'
 	# 	
