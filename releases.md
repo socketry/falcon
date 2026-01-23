@@ -1,5 +1,9 @@
 # Releases
 
+## Unreleased
+
+  - Introduce `Falcon::CompositeServer` for hosting multiple server instances in a single worker.
+
 ## v0.52.4
 
   - Relax dependency on `async-container-supervisor` to allow `~> 0.6`.
