@@ -50,15 +50,7 @@ module Falcon
 			Async do |task|
 				# Run each server - server.run creates its own Async block internally
 				@servers.each do |name, server|
-					task.async do
-						begin
-							# Call server.run which will handle its own async context
-							server.run.wait
-						rescue => error
-							Console.logger.error(self) {"Server #{name.inspect} failed: #{error}"}
-							raise
-						end
-					end
+					server.run
 				end
 				
 				# Wait for all child tasks to complete
@@ -70,15 +62,9 @@ module Falcon
 		#
 		# @returns [String] A string representing the current statistics for each server.
 		def statistics_string
-			if @servers.empty?
-				"No servers running"
-			else
-				parts = @servers.map do |name, server|
-					"#{name}: #{server.statistics_string}"
-				end
-				
-				parts.join(", ")
-			end
+			@servers.map do |name, server|
+				"#{name}: #{server.statistics_string}"
+			end.join(", ")
 		end
 		
 		# Get detailed statistics for each server.

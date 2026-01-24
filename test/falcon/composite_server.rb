@@ -30,29 +30,22 @@ describe Falcon::CompositeServer do
 		]
 	end
 	
-	let(:bound_endpoints) do
-		endpoints.map{|endpoint| Sync{endpoint.bound}}
+	before do
+		@bound_endpoints = endpoints.map{|endpoint| Sync{endpoint.bound}}
+	end
+	
+	after do
+		@bound_endpoints.each(&:close)
 	end
 	
 	let(:servers) do
-		bound_endpoints.map.with_index do |bound_endpoint, index|
-			# Mock the endpoint to add protocol and scheme
-			mock(bound_endpoint) do |wrapper|
-				wrapper.replace(:protocol) {Async::HTTP::Protocol::HTTP1}
-				wrapper.replace(:scheme) {"http"}
-			end
-			
-			["server#{index + 1}", Falcon::Server.new(middleware, bound_endpoint)]
+		@bound_endpoints.map.with_index do |bound_endpoint, index|
+			["server#{index + 1}", Falcon::Server.new(middleware, bound_endpoint, protocol: Async::HTTP::Protocol::HTTP1, scheme: "http")]
 		end.to_h
 	end
 	
 	let(:composite_server) do
 		subject.new(servers)
-	end
-	
-	def after(...)
-		bound_endpoints.each(&:close)
-		super
 	end
 	
 	it "manages multiple server instances" do
@@ -65,60 +58,46 @@ describe Falcon::CompositeServer do
 		end
 	end
 	
-	
 	it "can handle requests on multiple endpoints" do
 		clients = []
 		
-		Async do |task|
-			server_task = task.async do
-				composite_server.run
-			end
-			
-			# Give servers time to start
-			task.sleep(0.1)
-			
-			# Make requests to both servers
-			bound_endpoints.each do |bound_endpoint|
-				client_endpoint = bound_endpoint.local_address_endpoint
-				
-				mock(client_endpoint) do |wrapper|
-					wrapper.replace(:protocol) {Async::HTTP::Protocol::HTTP1}
-					wrapper.replace(:scheme) {"http"}
-				end
-				
-				client = ::Async::HTTP::Client.new(client_endpoint)
-				clients << client
-				
-				# Make a request
-				response = client.get("/")
-				expect(response).to be(:success?)
-				expect(response.read).to be =~ /Hello from port/
-			end
-			
-			server_task.stop
-		ensure
-			clients.each(&:close)
+		server_task = Async do
+			composite_server.run
 		end
+		
+		# Make requests to both servers
+		@bound_endpoints.each do |bound_endpoint|
+			client_endpoint = bound_endpoint.local_address_endpoint.each.first
+			
+			client = ::Async::HTTP::Client.new(client_endpoint, protocol: Async::HTTP::Protocol::HTTP1, scheme: "http", authority: "localhost")
+			clients << client
+			
+			# Make a request
+			response = client.get("/")
+			expect(response).to be(:success?)
+			expect(response.read).to be =~ /Hello from port/
+		end
+		
+		server_task.stop
+	ensure
+		clients.each(&:close)
 	end
 	
 	it "can stop all servers" do
-		Async do |task|
-			server_task = task.async do
-				composite_server.run
-			end
-			
-			# Give servers time to start
-			task.sleep(0.1)
-			
-			# Stop the composite server by stopping the returned task
-			server_task.stop
-			
-			# Give time for cleanup
-			task.sleep(0.1)
-			
-			# The server task should be stopped
-			expect(server_task).to be(:stopped?)
+		server_task = Async do
+			composite_server.run
 		end
+		
+		# Give servers time to start
+		sleep(0.1)
+		
+		# Stop the composite server by stopping the returned task
+		server_task.stop
+		
+		server_task.wait_all
+		
+		# The server task should no longer be running:
+		expect(server_task).not.to be(:running?)
 	end
 	
 	it "provides statistics for each server" do
@@ -144,21 +123,15 @@ describe Falcon::CompositeServer do
 		
 		it "reports no servers running" do
 			statistics = composite_server.statistics_string
-			expect(statistics).to be == "No servers running"
+			expect(statistics).to be == ""
 		end
 	end
 	
 	with "single server" do
 		let(:servers) do
-			bound_endpoint = bound_endpoints.first
+			bound_endpoint = @bound_endpoints.first
 			
-			# Mock the endpoint to add protocol and scheme
-			mock(bound_endpoint) do |wrapper|
-				wrapper.replace(:protocol) {Async::HTTP::Protocol::HTTP1}
-				wrapper.replace(:scheme) {"http"}
-			end
-			
-			{"main" => Falcon::Server.new(middleware, bound_endpoint)}
+			{"main" => Falcon::Server.new(middleware, bound_endpoint, protocol: Async::HTTP::Protocol::HTTP1, scheme: "http")}
 		end
 		
 		it "manages a single server" do
