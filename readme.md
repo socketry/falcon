@@ -47,6 +47,10 @@ Please see the [project documentation](https://socketry.github.io/falcon/) for m
 
 Please see the [project releases](https://socketry.github.io/falcon/releases/index) for all releases.
 
+### v0.54.0
+
+  - Introduce `Falcon::CompositeServer` for hosting multiple server instances in a single worker.
+
 ### v0.52.4
 
   - Relax dependency on `async-container-supervisor` to allow `~> 0.6`.
@@ -94,25 +98,6 @@ In addition, `falcon serve` provides two new options:
 1.  `--[no]-restart` which controls what happens when `async-container` instances crash. By default, `falcon serve` will restart the container when it crashes. This can be disabled with `--no-restart`.
 
 2.  `--graceful-stop [timeout]` which allows you to specify a timeout for graceful shutdown. This is useful when you want to stop the server, but allow existing connections to finish processing before the server stops. This feature is highly experimental and doesn't work correctly in all cases yet, but we are aiming to improve it.
-
-### Falcon Host
-
-`async-service` is a new gem that exposes a generic service interface on top of `async-container`. Previously, `falcon host` used `async-container` directly and `build-environment` for configuration. In order to allow for more generic service definitions and configuration, `async-service` now provides a similar interface to `build-environment` and exposes this in a way that can be used for services other tha falcon. This makes it simpler to integrate multiple services into a single application.
-
-The current configuration format uses definitions like this:
-
-``` ruby
-rack "hello.localhost", :self_signed_tls
-```
-
-This changes to:
-
-``` ruby
-service "hello.localhost" do
-	include Falcon::Environment::Rack
-	include Falcon::Environment::SelfSignedTLS
-end
-```
 
 ## Contributing
 

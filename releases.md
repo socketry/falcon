@@ -1,6 +1,6 @@
 # Releases
 
-## Unreleased
+## v0.54.0
 
   - Introduce `Falcon::CompositeServer` for hosting multiple server instances in a single worker.
 
