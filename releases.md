@@ -1,6 +1,6 @@
 # Releases
 
-## Unreleased
+## v0.54.1
 
   - Fix handling of old style supervisors from `Async::Container::Supervisor`.
 
