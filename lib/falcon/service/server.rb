@@ -38,7 +38,7 @@ module Falcon
 			# @parameter evaluator [Environment::Evaluator] The environment evaluator.
 			# @returns [Falcon::Server] The server instance.
 			def run(instance, evaluator)
-				if evaluator.key?(:make_supervised_worker)
+				if evaluator.respond_to?(:make_supervised_worker)
 					Console.warn(self, "Async::Container::Supervisor is replaced by Async::Services::Supervisor, please update your service definition.")
 					
 					evaluator.make_supervised_worker(instance).run

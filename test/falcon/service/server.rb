@@ -63,4 +63,49 @@ describe Falcon::Service::Server do
 			container.stop
 		end
 	end
+	
+	with "legacy make_supervised_worker" do
+		let(:instance) {Object.new}
+		
+		let(:supervised_worker) do
+			worker = Object.new
+			def worker.run
+				# Mock method - will be stubbed by expect
+			end
+			worker
+		end
+		
+		let(:mock_server) do
+			server = Object.new
+			def server.run
+				# Mock method - will be stubbed by expect
+			end
+			server
+		end
+		
+		it "invokes make_supervised_worker when evaluator responds to it" do
+			server.start
+			
+			evaluator = environment.evaluator
+			
+			# Verify make_supervised_worker is called with the instance and returns supervised_worker
+			expect(evaluator).to receive(:make_supervised_worker).with(instance).and_return(supervised_worker)
+			
+			# Verify supervised_worker.run is called
+			expect(supervised_worker).to receive(:run)
+			
+			# Mock make_server to return our mock server
+			expect(evaluator).to receive(:make_server).and_return(mock_server)
+			
+			# Mock server.run to avoid errors in the Async block
+			expect(mock_server).to receive(:run)
+			
+			Async do
+				result = server.run(instance, evaluator)
+				expect(result).to be == mock_server
+			end.wait
+			
+			server.stop
+		end
+	end
 end

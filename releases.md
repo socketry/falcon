@@ -1,5 +1,9 @@
 # Releases
 
+## Unreleased
+
+  - Fix handling of old style supervisors from `Async::Container::Supervisor`.
+
 ## v0.54.0
 
   - Introduce `Falcon::CompositeServer` for hosting multiple server instances in a single worker.
