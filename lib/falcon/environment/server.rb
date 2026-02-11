@@ -3,7 +3,7 @@
 # Released under the MIT License.
 # Copyright, 2020-2025, by Samuel Williams.
 
-require "async/service/managed_environment"
+require "async/service/managed/environment"
 require "async/http/endpoint"
 
 require_relative "../service/server"
@@ -13,7 +13,7 @@ module Falcon
 	module Environment
 		# Provides an environment for hosting a web application that uses a Falcon server.
 		module Server
-			include Async::Service::ManagedEnvironment
+			include Async::Service::Managed::Environment
 			
 			# The service class to use for the proxy.
 			# @returns [Class]

@@ -4,7 +4,7 @@
 # Copyright, 2019-2025, by Samuel Williams.
 # Copyright, 2020, by Daniel Evans.
 
-require "async/service/managed_service"
+require "async/service/managed/service"
 require "async/container/supervisor/supervised"
 require "async/http/endpoint"
 
@@ -12,7 +12,7 @@ require_relative "../server"
 
 module Falcon
 	module Service
-		class Server < Async::Service::ManagedService
+		class Server < Async::Service::Managed::Service
 			def initialize(...)
 				super
 				
