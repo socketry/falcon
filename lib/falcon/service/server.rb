@@ -49,7 +49,7 @@ module Falcon
 				Async do |task|
 					server.run
 					
-					task.children.each(&:wait)
+					task.children&.each(&:wait)
 				end
 				
 				server
