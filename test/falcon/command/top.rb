@@ -16,7 +16,7 @@ describe Falcon::Command::Top do
 			]
 			
 			serve = top.command
-			controller = serve.configuration.controller
+			controller = serve.configuration.make_controller
 			controller.start
 			
 			Async do

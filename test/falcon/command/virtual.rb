@@ -32,7 +32,7 @@ VirtualCommand = Sus::Shared("falcon virtual") do
 	
 	def around
 		configuration = command.configuration
-		controller = configuration.controller
+		controller = configuration.make_controller
 		
 		controller.start
 		
