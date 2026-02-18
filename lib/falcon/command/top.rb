@@ -8,6 +8,7 @@ require_relative "host"
 require_relative "virtual"
 require_relative "proxy"
 require_relative "redirect"
+require_relative "static"
 
 require_relative "../version"
 
@@ -37,6 +38,7 @@ module Falcon
 				"virtual" => Virtual,
 				"proxy" => Proxy,
 				"redirect" => Redirect,
+				"static" => Static,
 			}, default: "serve"
 			
 			# Whether verbose logging is enabled.
