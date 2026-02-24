@@ -39,7 +39,7 @@ module Falcon
 			# @returns [Falcon::Server] The server instance.
 			def run(instance, evaluator)
 				if evaluator.respond_to?(:make_supervised_worker)
-					Console.warn(self, "Async::Container::Supervisor is replaced by Async::Services::Supervisor, please update your service definition.")
+					Console.warn(self, "Async::Container::Supervisor is replaced by Async::Service::Supervisor, please update your service definition.")
 					
 					evaluator.make_supervised_worker(instance).run
 				end
