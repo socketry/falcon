@@ -6,7 +6,6 @@
 
 require "falcon/environment/self_signed_tls"
 require "falcon/environment/rack"
-require "falcon/environment/supervisor"
 
 service "hello.localhost" do
 	include Falcon::Environment::SelfSignedTLS

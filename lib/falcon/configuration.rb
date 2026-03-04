@@ -65,7 +65,7 @@ module Falcon
 			end
 			
 			# Define a supervisor instance
-			# @deprecated Use `service` and `include Falcon::Environment::Supervisor` instead.
+			# @deprecated Use `service` and `include Async::Service::Supervisor::Environment` instead.
 			def supervisor(&block)
 				name = File.join(@root, "supervisor")
 				

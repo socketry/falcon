@@ -6,9 +6,9 @@
 
 require "falcon/environment/self_signed_tls"
 require "falcon/environment/rack"
-require "falcon/environment/supervisor"
+require "async/service/supervisor"
 
-class MemoryMonitor < Async::Container::Supervisor::MemoryMonitor
+class MemoryMonitor < Async::Service::Supervisor::MemoryMonitor
 	def memory_leak_detected(process_id, monitor)
 		connections = @processes[process_id]
 		
@@ -43,11 +43,11 @@ service "hello.localhost" do
 		::Async::HTTP::Endpoint.parse(url).with(**endpoint_options)
 	end
 	
-	include Async::Container::Supervisor::Supervised
+	include Async::Service::Supervisor::Supervised
 end
 
 service "supervisor" do
-	include Falcon::Environment::Supervisor
+	include Async::Service::Supervisor::Environment
 	
 	monitors do
 		[

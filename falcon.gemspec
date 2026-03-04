@@ -28,7 +28,6 @@ Gem::Specification.new do |spec|
 	
 	spec.add_dependency "async"
 	spec.add_dependency "async-container", "~> 0.20"
-	spec.add_dependency "async-container-supervisor", "~> 0.6"
 	spec.add_dependency "async-http", "~> 0.75"
 	spec.add_dependency "async-http-cache", "~> 0.4"
 	spec.add_dependency "async-service", "~> 0.19"

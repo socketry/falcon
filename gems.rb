@@ -11,7 +11,6 @@ gemspec
 # gem "async-http", path: "../async-http-native-io"
 # gem "openssl", git: "https://github.com/ruby/openssl.git"
 # gem "async-container", path: "../async-container"
-# gem "async-container-supervisor", path: "../async-container-supervisor"
 # gem "async-websocket", path: "../async-websocket"
 # gem "async-http", path: "../async-http"
 # gem "async-http-cache", path: "../async-http-cache"
@@ -25,6 +24,8 @@ gemspec
 # gem "memory-leak", path: "../memory-leak"
 
 # gem "fiber-profiler"
+
+gem "async-service-supervisor"
 
 group :maintenance, optional: true do
 	gem "bake-modernize"

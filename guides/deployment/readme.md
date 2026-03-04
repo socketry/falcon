@@ -24,7 +24,7 @@ Here is a basic example which hosts a rack application:
 
 require "falcon/environment/rack"
 require "falcon/environment/lets_encrypt_tls"
-require "falcon/environment/supervisor"
+require "async/service/supervisor"
 
 hostname = File.basename(__dir__)
 service hostname do
@@ -35,11 +35,11 @@ service hostname do
 	cache true
 	
 	# Connect to the supervisor for monitoring.
-	include Async::Container::Supervisor::Supervised
+	include Async::Service::Supervisor::Supervised
 end
 
 service "supervisor" do
-	include Falcon::Environment::Supervisor
+	include Async::Service::Supervisor::Environment
 	
 	monitors do
 		[
@@ -71,7 +71,7 @@ The environment configuration is defined in the `Falcon::Environment` module. Th
 # frozen_string_literal: true
 
 require "falcon/environment/rack"
-require "falcon/environment/supervisor"
+require "async/service/supervisor"
 
 hostname = File.basename(__dir__)
 service hostname do
@@ -86,7 +86,7 @@ service hostname do
 end
 
 service "supervisor" do
-	include Falcon::Environment::Supervisor
+	include Async::Service::Supervisor::Environment
 end
 ~~~
 

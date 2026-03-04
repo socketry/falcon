@@ -6,7 +6,7 @@
 
 require "falcon/environment/rack"
 require "falcon/environment/self_signed_tls"
-require "falcon/environment/supervisor"
+require "async/service/supervisor"
 
 service "benchmark.localhost" do
 	include Falcon::Environment::Rack
@@ -14,5 +14,5 @@ service "benchmark.localhost" do
 end
 
 service "supervisor" do
-	include Falcon::Environment::Supervisor
+	include Async::Service::Supervisor::Environment
 end

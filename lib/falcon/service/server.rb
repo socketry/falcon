@@ -5,7 +5,7 @@
 # Copyright, 2020, by Daniel Evans.
 
 require "async/service/managed/service"
-require "async/container/supervisor/supervised"
+require "async/service/supervisor/supervised"
 require "async/http/endpoint"
 
 require_relative "../server"

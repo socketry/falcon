@@ -1,5 +1,9 @@
 # Releases
 
+## Unreleased
+
+  - Drop dependency on `async-container-supervisor`, you should migrate to `async-service-supervisor` instead.
+
 ## v0.54.1
 
   - Fix handling of old style supervisors from `Async::Container::Supervisor`.
