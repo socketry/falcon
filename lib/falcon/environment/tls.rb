@@ -92,6 +92,5 @@ module Falcon
 			end
 		end
 		
-		LEGACY_ENVIRONMENTS[:tls] = TLS
 	end
 end

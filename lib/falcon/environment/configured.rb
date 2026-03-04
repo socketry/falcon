@@ -26,7 +26,7 @@ module Falcon
 			end
 			
 			def configuration
-				::Async::Service::Configuration.load(resolved_configuration_paths)
+				Async::Service::Configuration.load(resolved_configuration_paths)
 			end
 		end
 	end

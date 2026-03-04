@@ -101,7 +101,5 @@ module Falcon
 				return Middleware::Proxy.new(Middleware::BadRequest, self.hosts)
 			end
 		end
-		
-		LEGACY_ENVIRONMENTS[:proxy] = Proxy
 	end
 end

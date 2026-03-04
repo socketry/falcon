@@ -42,7 +42,7 @@ module Falcon
 			end
 			
 			def configuration
-				Configuration.for(
+				Async::Service::Configuration.for(
 					self.environment(environments: super.environments)
 				)
 			end

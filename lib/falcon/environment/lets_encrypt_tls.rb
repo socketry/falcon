@@ -28,7 +28,5 @@ module Falcon
 				File.join(lets_encrypt_root, authority, "privkey.pem")
 			end
 		end
-		
-		LEGACY_ENVIRONMENTS[:lets_encrypt_tls] = LetsEncryptTLS
 	end
 end

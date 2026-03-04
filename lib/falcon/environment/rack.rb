@@ -14,7 +14,5 @@ module Falcon
 			include Application
 			include Rackup
 		end
-		
-		LEGACY_ENVIRONMENTS[:rack] = Rack
 	end
 end

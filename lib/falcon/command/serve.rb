@@ -6,10 +6,10 @@
 
 require_relative "../server"
 require_relative "../endpoint"
-require_relative "../configuration"
 require_relative "../service/server"
 require_relative "../environment/rackup"
 
+require "async/service/configuration"
 require "async/container"
 require "async/http/client"
 require "samovar"
@@ -83,7 +83,7 @@ module Falcon
 			end
 			
 			def configuration
-				Configuration.new.tap do |configuration|
+				Async::Service::Configuration.new.tap do |configuration|
 					configuration.add(self.environment)
 				end
 			end

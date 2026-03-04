@@ -4,7 +4,6 @@
 # Copyright, 2024, by Samuel Williams.
 
 require "falcon/service/server"
-require "falcon/configuration"
 require "falcon/environment/server"
 require "falcon/environment/rackup"
 

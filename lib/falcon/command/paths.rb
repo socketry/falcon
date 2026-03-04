@@ -3,7 +3,7 @@
 # Released under the MIT License.
 # Copyright, 2020-2024, by Samuel Williams.
 
-require_relative "../configuration"
+require "async/service/configuration"
 
 module Falcon
 	module Command
@@ -21,7 +21,7 @@ module Falcon
 			
 			# Build a configuration based on the resolved paths.
 			def configuration
-				configuration = Configuration.new
+				configuration = Async::Service::Configuration.new
 				
 				self.resolved_paths do |path|
 					path = File.expand_path(path)

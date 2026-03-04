@@ -39,7 +39,5 @@ module Falcon
 				end
 			end
 		end
-		
-		LEGACY_ENVIRONMENTS[:self_signed_tls] = SelfSignedTLS
 	end
 end

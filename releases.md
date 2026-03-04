@@ -2,7 +2,8 @@
 
 ## Unreleased
 
-  - Drop dependency on `async-container-supervisor`, you should migrate to `async-service-supervisor` instead.
+  - **Breaking**: Drop dependency on `async-container-supervisor`, you should migrate to `async-service-supervisor` instead.
+  - **Breaking**: Remove support for legacy environments, including `Falcon::Configuration`, now using `Async::Service::Configuration` directly.
 
 ## v0.54.1
 
