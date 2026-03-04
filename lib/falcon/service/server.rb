@@ -11,8 +11,11 @@ require "async/http/endpoint"
 require_relative "../server"
 
 module Falcon
+	# @namespace
 	module Service
+		# A managed service for running Falcon servers.
 		class Server < Async::Service::Managed::Service
+			# Initialize the server service.
 			def initialize(...)
 				super
 				

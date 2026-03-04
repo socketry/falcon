@@ -31,6 +31,9 @@ module Falcon
 			
 			include Paths
 			
+			# Create the environment for the proxy service.
+			# @parameter options [Hash] Additional options to pass to the environment.
+			# @returns [Async::Service::Environment] The configured proxy environment.
 			def environment(**options)
 				Async::Service::Environment.new(Falcon::Environment::Proxy).with(
 					root: Dir.pwd,
@@ -42,6 +45,8 @@ module Falcon
 				)
 			end
 			
+			# Build the service configuration for the proxy.
+			# @returns [Async::Service::Configuration] The service configuration.
 			def configuration
 				Async::Service::Configuration.for(
 					self.environment(environments: super.environments)

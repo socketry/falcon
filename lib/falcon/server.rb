@@ -36,6 +36,7 @@ module Falcon
 			end
 		end
 		
+		# Initialize the server and set up statistics tracking.
 		def initialize(...)
 			super
 			
@@ -50,6 +51,7 @@ module Falcon
 		attr :accept_count
 		attr :connect_count
 		
+		# Accept a new connection and track connection statistics.
 		def accept(...)
 			@accept_count += 1
 			@connection_count += 1
@@ -59,6 +61,7 @@ module Falcon
 			@connection_count -= 1
 		end
 		
+		# Handle a request and track request statistics.
 		def call(...)
 			@request_count += 1
 			@active_count += 1

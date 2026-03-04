@@ -9,10 +9,14 @@ module Falcon
 	module Middleware
 		# A static middleware which always returns a 404 not found response.
 		module NotFound
+			# Handle a request by returning a 404 not found response.
+			# @parameter request [Protocol::HTTP::Request] The incoming request.
+			# @returns [Protocol::HTTP::Response] A 404 not found response.
 			def self.call(request)
 				return Protocol::HTTP::Response[404, {}, []]
 			end
 			
+			# Close any resources used by this middleware.
 			def self.close
 			end
 		end

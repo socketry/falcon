@@ -7,6 +7,7 @@
 require_relative "command/top"
 
 module Falcon
+	# @namespace
 	module Command
 		# The main entry point for the `falcon` executable.
 		# @parameter arguments [Array(String)] The command line arguments.

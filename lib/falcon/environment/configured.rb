@@ -25,6 +25,8 @@ module Falcon
 				end
 			end
 			
+			# Load the configuration from all resolved configuration paths.
+			# @returns [Async::Service::Configuration] The loaded configuration.
 			def configuration
 				Async::Service::Configuration.load(resolved_configuration_paths)
 			end

@@ -97,6 +97,8 @@ module Falcon
 				)
 			end
 			
+			# Build the proxy middleware with the configured hosts.
+			# @returns [Middleware::Proxy] The proxy middleware instance.
 			def middleware
 				return Middleware::Proxy.new(Middleware::BadRequest, self.hosts)
 			end

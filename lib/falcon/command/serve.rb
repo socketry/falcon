@@ -49,18 +49,26 @@ module Falcon
 				option "--health-check-timeout <duration>", "Duration to wait for health check.", type: Float, default: 30.0
 			end
 			
+			# Extract container-related options from the command line options.
+			# @returns [Hash] Options for container configuration.
 			def container_options
 				@options.slice(:count, :forks, :threads, :restart, :health_check_timeout)
 			end
 			
+			# Extract endpoint-related options from the command line options.
+			# @returns [Hash] Options for endpoint configuration.
 			def endpoint_options
 				@options.slice(:hostname, :port, :timeout)
 			end
 			
+			# Get the name for the service, using hostname if available, otherwise the bind address.
+			# @returns [String] The service name.
 			def name
 				@options[:hostname] || @options[:bind]
 			end
 			
+			# Create the environment for the serve command.
+			# @returns [Async::Service::Environment] The configured server environment.
 			def environment
 				Async::Service::Environment.new(Falcon::Environment::Server).with(
 					Falcon::Environment::Rackup,
@@ -82,6 +90,8 @@ module Falcon
 				)
 			end
 			
+			# Build the service configuration for the serve command.
+			# @returns [Async::Service::Configuration] The service configuration.
 			def configuration
 				Async::Service::Configuration.new.tap do |configuration|
 					configuration.add(self.environment)

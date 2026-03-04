@@ -10,6 +10,9 @@ require "samovar"
 
 module Falcon
 	module Command
+		# Implements the `falcon redirect` command.
+		#
+		# Manages a {Controller::Redirect} instance which redirects insecure HTTP traffic to secure HTTPS endpoints.
 		class Redirect < Samovar::Command
 			self.description = "Redirect from insecure HTTP to secure HTTP."
 			
@@ -29,6 +32,9 @@ module Falcon
 			
 			include Paths
 			
+			# Create the environment for the redirect service.
+			# @parameter options [Hash] Additional options to pass to the environment.
+			# @returns [Async::Service::Environment] The configured redirect environment.
 			def environment(**options)
 				Async::Service::Environment.new(Falcon::Environment::Redirect).with(
 					root: Dir.pwd,
@@ -41,6 +47,8 @@ module Falcon
 				)
 			end
 			
+			# Build the service configuration for the redirect.
+			# @returns [Async::Service::Configuration] The service configuration.
 			def configuration
 				Async::Service::Configuration.for(
 					self.environment(environments: super.environments)

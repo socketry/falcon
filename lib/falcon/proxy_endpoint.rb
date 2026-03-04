@@ -16,6 +16,8 @@ module Falcon
 			@endpoint = endpoint
 		end
 		
+		# Generate a string representation of the proxy endpoint.
+		# @returns [String] A string representation including protocol and endpoint.
 		def to_s
 			"\#<#{self.class} protocol=#{self.protocol} endpoint=#{@endpoint}>"
 		end

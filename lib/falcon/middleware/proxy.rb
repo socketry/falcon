@@ -11,13 +11,18 @@ require "console/event/failure"
 require "traces/provider"
 
 module Falcon
+	# @namespace
 	module Middleware
 		# A static middleware which always returns a 400 bad request response.
 		module BadRequest
+			# Handle a request by returning a 400 bad request response.
+			# @parameter request [Protocol::HTTP::Request] The incoming request.
+			# @returns [Protocol::HTTP::Response] A 400 bad request response.
 			def self.call(request)
 				return Protocol::HTTP::Response[400, {}, []]
 			end
 			
+			# Close any resources used by this middleware.
 			def self.close
 			end
 		end

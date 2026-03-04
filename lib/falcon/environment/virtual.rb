@@ -9,6 +9,7 @@ require_relative "../service/virtual"
 
 module Falcon
 	module Environment
+		# Provides an environment for running virtual hosts with front-end proxy and redirect services.
 		module Virtual
 			include Configured
 			
@@ -18,6 +19,8 @@ module Falcon
 				Service::Virtual
 			end
 			
+			# The name of the virtual host service.
+			# @returns [String] The service class name.
 			def name
 				service_class.name
 			end

@@ -9,6 +9,7 @@ require "kernel/sync"
 require "io/endpoint/host_endpoint"
 
 module Falcon
+	# @namespace
 	module Rackup
 		# The falcon adaptor for the `rackup` executable.
 		class Handler
@@ -51,6 +52,9 @@ module Falcon
 				end
 			end
 			
+			# Initialize the handler with a server and task.
+			# @parameter server [Falcon::Server] The server instance.
+			# @parameter task [Async::Task] The async task managing the server.
 			def initialize(server, task)
 				@server = server
 				@task = task
@@ -65,10 +69,12 @@ module Falcon
 				end
 			end
 			
+			# Signal the handler to stop the server.
 			def stop
 				@notification&.push(true)
 			end
 			
+			# Close the handler and clean up resources.
 			def close
 				@notification&.close
 				@notification = nil

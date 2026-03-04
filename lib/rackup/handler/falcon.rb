@@ -9,7 +9,9 @@ require_relative "../../falcon/rackup/handler"
 
 # Generally speaking, you should not require this file directly, or assume the existance of the `Rackup::Handler::Falcon` constant. Instead, use `Rackup::Handler.get(:falcon)` to load and access the handler.
 
+# @namespace
 module Rackup
+	# @namespace
 	module Handler
 		# Sinatra (and possibly others) try to extract the name using the final part of the class path, so we define a new class in the `Rack::Handler` namespace that inherits from `Falcon::Rackup::Handler`, that follows that convention.
 		class Falcon < ::Falcon::Rackup::Handler

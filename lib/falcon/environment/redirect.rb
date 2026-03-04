@@ -13,10 +13,14 @@ module Falcon
 		module Redirect
 			include Server
 			
+			# The URL template to redirect to.
+			# @returns [String] The redirect URL template.
 			def redirect_url
 				"https://[::]:443"
 			end
 			
+			# Parse the redirect URL into an endpoint.
+			# @returns [Async::HTTP::Endpoint] The redirect endpoint.
 			def redirect_endpoint
 				Async::HTTP::Endpoint.parse(redirect_url)
 			end
@@ -27,6 +31,8 @@ module Falcon
 				[]
 			end
 			
+			# Build a hash of host authorities to their evaluators for redirect matching.
+			# @returns [Hash(String, Async::Service::Environment::Evaluator)] Map of host authorities to evaluators.
 			def hosts
 				hosts = {}
 				

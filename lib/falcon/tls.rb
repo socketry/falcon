@@ -4,6 +4,7 @@
 # Copyright, 2020-2023, by Samuel Williams.
 
 module Falcon
+	# TLS configuration and cipher suites for Falcon servers.
 	module TLS
 		# The list of supported ciphers.
 		#

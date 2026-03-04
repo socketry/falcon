@@ -31,6 +31,8 @@ module Falcon
 			# @attribute [Array(String)]
 			many :paths
 			
+			# Create the environment for the virtual host service.
+			# @returns [Async::Service::Environment] The configured virtual environment.
 			def environment
 				Async::Service::Environment.new(Falcon::Environment::Virtual).with(
 					verbose: self.parent&.verbose?,
@@ -41,6 +43,8 @@ module Falcon
 				)
 			end
 			
+			# Build the service configuration for the virtual host.
+			# @returns [Async::Service::Configuration] The service configuration.
 			def configuration
 				Async::Service::Configuration.new.tap do |configuration|
 					configuration.add(self.environment)
