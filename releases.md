@@ -5,6 +5,7 @@
   - **Breaking**: Drop dependency on `async-container-supervisor`, you should migrate to `async-service-supervisor` instead.
   - **Breaking**: Remove support for legacy environments, including `Falcon::Configuration`, now using `Async::Service::Configuration` directly.
   - **Breaking**: `bake falcon:supervisor:restart` removed – superceeded by `async:service:supervisor:restart`.
+  - Add support for `async-utilization` metrics.
 
 ## v0.54.1
 

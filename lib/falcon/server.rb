@@ -9,6 +9,7 @@ require "protocol/http/middleware/builder"
 require "protocol/http/content_encoding"
 
 require "async/http/cache"
+require "async/utilization"
 require_relative "middleware/verbose"
 require "protocol/rack"
 
@@ -37,38 +38,35 @@ module Falcon
 		end
 		
 		# Initialize the server and set up statistics tracking.
-		def initialize(...)
-			super
+		#
+		# @parameter utilization_registry [Registry, nil] The utilization registry to use for metrics tracking.
+		#   If nil, a new registry instance is created.
+		def initialize(*arguments, utilization_registry: nil, **options)
+			super(*arguments, **options)
 			
-			@accept_count = 0
-			@connection_count = 0
+			utilization_registry ||= Async::Utilization::Registry.new
 			
-			@request_count = 0
-			@active_count = 0
+			# Get metric references for utilization tracking:
+			@connections_total_metric = utilization_registry.metric(:connections_total)
+			@connections_active_metric = utilization_registry.metric(:connections_active)
+			@requests_total_metric = utilization_registry.metric(:requests_total)
+			@requests_active_metric = utilization_registry.metric(:requests_active)
 		end
-		
-		attr :request_count
-		attr :accept_count
-		attr :connect_count
 		
 		# Accept a new connection and track connection statistics.
 		def accept(...)
-			@accept_count += 1
-			@connection_count += 1
-			
-			super
-		ensure
-			@connection_count -= 1
+			@connections_total_metric.increment
+			@connections_active_metric.track do
+				super
+			end
 		end
 		
 		# Handle a request and track request statistics.
 		def call(...)
-			@request_count += 1
-			@active_count += 1
-			
-			super
-		ensure
-			@active_count -= 1
+			@requests_total_metric.increment
+			@requests_active_metric.track do
+				super
+			end
 		end
 		
 		# Generates a human-readable string representing the current statistics.
@@ -83,7 +81,7 @@ module Falcon
 		#
 		# @returns [String] A string representing the current statistics.
 		def statistics_string
-			"C=#{format_count @connection_count}/#{format_count @accept_count} R=#{format_count @active_count}/#{format_count @request_count}"
+			"C=#{format_count @connections_active_metric.value}/#{format_count @connections_total_metric.value} R=#{format_count @requests_active_metric.value}/#{format_count @requests_total_metric.value}"
 		end
 		
 		private
