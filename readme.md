@@ -47,6 +47,10 @@ Please see the [project documentation](https://socketry.github.io/falcon/) for m
 
 Please see the [project releases](https://socketry.github.io/falcon/releases/index) for all releases.
 
+### v0.55.1
+
+  - `requests_active` is decremented after the response body is closed, including `rack.response_finished` callbacks.
+
 ### v0.55.0
 
   - **Breaking**: Drop dependency on `async-container-supervisor`, you should migrate to `async-service-supervisor` instead.
@@ -91,10 +95,6 @@ Please see the [project releases](https://socketry.github.io/falcon/releases/ind
 ### v0.48.4
 
   - Improve compatibility of rackup handler w.r.t. sinatra.
-
-### v0.47.8
-
-  - Fix Falcon Supervisor implementation: due to invalid code, it was unable to start.
 
 ## Contributing
 

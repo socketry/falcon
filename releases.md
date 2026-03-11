@@ -1,6 +1,6 @@
 # Releases
 
-## Unreleased
+## v0.55.1
 
   - `requests_active` is decremented after the response body is closed, including `rack.response_finished` callbacks.
 
