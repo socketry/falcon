@@ -1,5 +1,9 @@
 # Releases
 
+## Unreleased
+
+  - Remove unnecessary require for `async/service/supervisor/supervised`."
+
 ## v0.55.1
 
   - `requests_active` is decremented after the response body is closed, including `rack.response_finished` callbacks.
