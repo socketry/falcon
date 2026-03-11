@@ -25,7 +25,7 @@ gemspec
 
 # gem "fiber-profiler"
 
-gem "async-service-supervisor"
+# gem "async-service-supervisor"
 
 group :maintenance, optional: true do
 	gem "bake-modernize"
