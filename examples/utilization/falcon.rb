@@ -15,6 +15,11 @@ class SimpleApp
 		# Simulate some work
 		sleep(rand * 0.1)
 		
+		# Delay after response is sent - use to verify whether this counts toward active requests:
+		# if response_finished = env["rack.response_finished"]
+		# 	response_finished << proc{sleep 10}
+		# end
+		
 		return [200, {"content-type" => "text/plain"}, ["Hello, World!"]]
 	end
 end
@@ -47,7 +52,7 @@ service "supervisor" do
 		[
 			Async::Service::Supervisor::UtilizationMonitor.new(
 				path: File.expand_path("utilization.shm", __dir__),
-				interval: 5.0
+				interval: 1.0
 			)
 		]
 	end

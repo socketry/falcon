@@ -10,6 +10,7 @@ require "protocol/http/content_encoding"
 
 require "async/http/cache"
 require "async/utilization"
+require_relative "body/request_finished"
 require_relative "middleware/verbose"
 require "protocol/rack"
 
@@ -62,11 +63,16 @@ module Falcon
 		end
 		
 		# Handle a request and track request statistics.
+		#
+		# Uses manual increment/decrement so requests_active stays elevated until the
+		# response body is closed (including rack.response_finished). The
+		# Body::RequestFinished wrapper runs the decrement after the body closes,
+		# so response_finished callbacks are counted as active.
 		def call(...)
 			@requests_total_metric.increment
-			@requests_active_metric.track do
-				super
-			end
+			@requests_active_metric.increment
+			
+			return Body::RequestFinished.wrap(super, @requests_active_metric)
 		end
 		
 		# Generates a human-readable string representing the current statistics.

@@ -125,4 +125,28 @@ describe Falcon::Server do
 			expect(response.read).to be =~ /Hello World!/
 		end
 	end
+	
+	with "utilization tracking" do
+		let(:utilization_registry) {Async::Utilization::Registry.new}
+		
+		def make_server(endpoint)
+			::Falcon::Server.new(middleware, endpoint, utilization_registry: utilization_registry)
+		end
+		
+		let(:app) do
+			lambda do |env|
+				[200, {}, ["OK"]]
+			end
+		end
+		
+		it "decrements requests_active after response body is consumed" do
+			expect(utilization_registry.metric(:requests_active).value).to be == 0
+			
+			response = client.get("/")
+			expect(response.read).to be == "OK"
+			
+			expect(utilization_registry.metric(:requests_active).value).to be == 0
+			expect(utilization_registry.metric(:requests_total).value).to be == 1
+		end
+	end
 end

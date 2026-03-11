@@ -1,5 +1,9 @@
 # Releases
 
+## Unreleased
+
+  - `requests_active` is decremented after the response body is closed, including `rack.response_finished` callbacks.
+
 ## v0.55.0
 
   - **Breaking**: Drop dependency on `async-container-supervisor`, you should migrate to `async-service-supervisor` instead.
