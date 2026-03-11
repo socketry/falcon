@@ -72,7 +72,7 @@ module Falcon
 			# @parameter endpoint [IO::Endpoint] The endpoint to bind to.
 			# @returns [Falcon::Server] The server instance.
 			def make_server(endpoint)
-				Falcon::Server.new(self.middleware, endpoint, protocol: self.endpoint.protocol, scheme: self.endpoint.scheme)
+				Falcon::Server.new(self.middleware, endpoint, protocol: self.endpoint.protocol, scheme: self.endpoint.scheme, utilization_registry: self[:utilization_registry])
 			end
 		end
 	end
