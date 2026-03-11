@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # Released under the MIT License.
-# Copyright, 2018-2025, by Samuel Williams.
+# Copyright, 2018-2026, by Samuel Williams.
 # Copyright, 2018, by Mitsutaka Mimura.
 
 require_relative "../server"
@@ -127,7 +127,7 @@ module Falcon
 			
 			# Prepare the environment and run the controller.
 			def call
-				Console.logger.info(self) do |buffer|
+				Console.info(self) do |buffer|
 					buffer.puts "Falcon v#{VERSION} taking flight! Using #{self.container_class} #{self.container_options}."
 					buffer.puts "- Running on #{RUBY_DESCRIPTION}"
 					buffer.puts "- Binding to: #{self.endpoint}"

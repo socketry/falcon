@@ -7,7 +7,7 @@ run do |env|
 	request = Rack::Request.new(env)
 	
 	if size = request.params["leak"]
-		Console.debug(self) {"Leaking #{size} bytes..."}
+		Console.debug(self){"Leaking #{size} bytes..."}
 		leaks << " " * size.to_i
 	end
 	

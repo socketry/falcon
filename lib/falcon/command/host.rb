@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # Released under the MIT License.
-# Copyright, 2019-2024, by Samuel Williams.
+# Copyright, 2019-2026, by Samuel Williams.
 
 require_relative "paths"
 require_relative "../version"
@@ -31,7 +31,7 @@ module Falcon
 			
 			# Prepare the environment and run the controller.
 			def call
-				Console.logger.info(self) do |buffer|
+				Console.info(self) do |buffer|
 					buffer.puts "Falcon Host v#{VERSION} taking flight!"
 					buffer.puts "- Configuration: #{@paths.join(', ')}"
 					buffer.puts "- To terminate: Ctrl-C or kill #{Process.pid}"

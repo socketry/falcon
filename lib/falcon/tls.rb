@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # Released under the MIT License.
-# Copyright, 2020-2023, by Samuel Williams.
+# Copyright, 2020-2026, by Samuel Williams.
 
 module Falcon
 	# TLS configuration and cipher suites for Falcon servers.

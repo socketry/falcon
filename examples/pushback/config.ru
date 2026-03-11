@@ -82,8 +82,8 @@ class Task
 		step "working"
 		sleep 5
 		@body.write "(#{Time.now}) Hello World #{Process.pid} #{@task}\n"
-		ensure
-			finish
+	ensure
+		finish
 	end
 	
 	def finished?

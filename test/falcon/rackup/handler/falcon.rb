@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # Released under the MIT License.
-# Copyright, 2019-2024, by Samuel Williams.
+# Copyright, 2019-2026, by Samuel Williams.
 
 require "sus/fixtures/async"
 
@@ -51,7 +51,7 @@ end
 describe Falcon::Rackup::Handler do
 	it_behaves_like RackupHandler, "falcon"
 	
-	let(:app) {lambda {|env| [200, {}, ["Hello World"]]}}
+	let(:app) {lambda{|env| [200, {}, ["Hello World"]]}}
 	
 	it "can start and stop server" do
 		Rackup::Handler::Falcon.run(app) do |server|

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # Released under the MIT License.
-# Copyright, 2019-2025, by Samuel Williams.
+# Copyright, 2019-2026, by Samuel Williams.
 # Copyright, 2020, by Daniel Evans.
 
 require "async/service/managed/service"
@@ -30,7 +30,7 @@ module Falcon
 					@bound_endpoint = @endpoint.bound
 				end
 				
-				Console.logger.info(self) {"Starting #{self.name} on #{@endpoint}"}
+				Console.info(self){"Starting #{self.name} on #{@endpoint}"}
 				
 				super
 			end

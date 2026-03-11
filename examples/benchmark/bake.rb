@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # Released under the MIT License.
-# Copyright, 2018-2024, by Samuel Williams.
+# Copyright, 2018-2026, by Samuel Williams.
 
 require "etc"
 
@@ -40,7 +40,7 @@ def compare
 		["../../bin/falcon", "serve", "--bind", host, "--config"],
 	]
 	
-	Console.logger.info!
+	Console.info!
 	
 	endpoint = Async::HTTP::Endpoint.parse(host)
 	
@@ -71,7 +71,7 @@ def compare
 					
 					response = protocol.call(request)
 					
-					Console.logger.info(response, "Headers:", response.headers.to_h) {"Response body size: #{response.read.bytesize}"}
+					Console.info(response, "Headers:", response.headers.to_h){"Response body size: #{response.read.bytesize}"}
 					
 					response.close
 					
@@ -84,7 +84,7 @@ def compare
 				
 				end_time = Async::Clock.now
 				
-				Console.logger.info(command) {"** Took #{end_time - start_time}s to first response."}
+				Console.info(command){"** Took #{end_time - start_time}s to first response."}
 				
 				n = 2
 				

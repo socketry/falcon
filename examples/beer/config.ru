@@ -14,7 +14,7 @@ COMMENT = "<!--#{'-' * 1024}-->"
 # To test this example with the curl command-line tool, you'll need to add the `--no-buffer` flag or set the COMMENT size to the required 4096 bytes in order for curl to start streaming. 
 # curl http://localhost:9292/ --no-buffer
 
-run lambda {|env|
+run lambda{|env|
 	task = Async::Task.current
 	body = Async::HTTP::Body::Writable.new
 	
@@ -30,7 +30,7 @@ run lambda {|env|
 			count.downto(1) do |i|
 				task.annotate "bottles of beer #{i}"
 				
-				Console.logger.info(body) {"#{bottles(i)} of beer on the wall..."}
+				Console.info(body){"#{bottles(i)} of beer on the wall..."}
 				body.write("<p>#{bottles(i)} of beer on the wall, ")
 				task.sleep(0.1)
 				body.write("#{bottles(i)} of beer, ")

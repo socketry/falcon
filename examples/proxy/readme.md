@@ -93,6 +93,6 @@ Or change the port in `falcon.rb`:
 
 ```ruby
 endpoint do
-  Async::HTTP::Endpoint.for(scheme, "localhost", port: 8080, protocol: protocol)
+	Async::HTTP::Endpoint.for(scheme, "localhost", port: 8080, protocol: protocol)
 end
 ```

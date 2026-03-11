@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # Released under the MIT License.
-# Copyright, 2020-2024, by Samuel Williams.
+# Copyright, 2020-2026, by Samuel Williams.
 
 require_relative "server"
 require_relative "../tls"
@@ -40,13 +40,8 @@ module Falcon
 					
 					# next unless environment.implements?(Falcon::Environment::Application)
 					if evaluator.key?(:authority) and evaluator.key?(:ssl_context) and evaluator.key?(:endpoint)
-						Console.info(self) {"Proxying #{self.url} to #{evaluator.authority} using #{evaluator.endpoint}"}
+						Console.info(self){"Proxying #{self.url} to #{evaluator.authority} using #{evaluator.endpoint}"}
 						hosts[evaluator.authority] = evaluator
-						
-						if RUBY_VERSION < "3.1"
-							# Ensure the SSL context is set up before forking - it's buggy on Ruby < 3.1:
-							evaluator.ssl_context
-						end
 					end
 				end
 				
@@ -60,13 +55,13 @@ module Falcon
 				hosts = self.hosts
 				
 				if host = hosts[hostname]
-					Console.logger.debug(self) {"Resolving #{hostname} -> #{host}"}
+					Console.debug(self){"Resolving #{hostname} -> #{host}"}
 					
 					socket.hostname = hostname
 					
 					return host.ssl_context
 				else
-					Console.logger.warn(self, hosts: hosts.keys) {"Unable to resolve #{hostname}!"}
+					Console.warn(self, hosts: hosts.keys){"Unable to resolve #{hostname}!"}
 					
 					return nil
 				end

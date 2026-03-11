@@ -15,7 +15,7 @@ end
 
 use RequestLogger
 
-run lambda {|env|
+run lambda{|env|
 	start_time = Async::Clock.now
 	
 	server_timing = ->{"app;dur=#{Async::Clock.now - start_time}"}

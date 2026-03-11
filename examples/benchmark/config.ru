@@ -44,4 +44,4 @@ end
 
 use Benchmark
 
-run lambda {|env| [200, {}, ["Hello World"]]}
+run lambda{|env| [200, {}, ["Hello World"]]}

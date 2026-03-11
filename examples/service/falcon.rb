@@ -1,6 +1,9 @@
 #!/usr/bin/env falcon-host
 # frozen_string_literal: true
 
+# Released under the MIT License.
+# Copyright, 2025-2026, by Samuel Williams.
+
 require "falcon/environment/rack"
 require "async/redis"
 

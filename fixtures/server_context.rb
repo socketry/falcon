@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # Released under the MIT License.
-# Copyright, 2023-2024, by Samuel Williams.
+# Copyright, 2023-2026, by Samuel Williams.
 
 require "sus/fixtures/async"
 
@@ -93,10 +93,10 @@ module ServerContext
 		
 		@server_endpoint = make_server_endpoint(@bound_endpoint)
 		mock(@server_endpoint) do |wrapper|
-			wrapper.replace(:protocol) {endpoint.protocol}
-			wrapper.replace(:scheme) {endpoint.scheme}
-			wrapper.replace(:authority) {endpoint.authority}
-			wrapper.replace(:path) {endpoint.path}
+			wrapper.replace(:protocol){endpoint.protocol}
+			wrapper.replace(:scheme){endpoint.scheme}
+			wrapper.replace(:authority){endpoint.authority}
+			wrapper.replace(:path){endpoint.path}
 		end
 		
 		@server = make_server(@server_endpoint)
@@ -107,10 +107,10 @@ module ServerContext
 		
 		@client_endpoint = make_client_endpoint(@bound_endpoint)
 		mock(@client_endpoint) do |wrapper|
-			wrapper.replace(:protocol) {endpoint.protocol}
-			wrapper.replace(:scheme) {endpoint.scheme}
-			wrapper.replace(:authority) {endpoint.authority}
-			wrapper.replace(:path) {endpoint.path}
+			wrapper.replace(:protocol){endpoint.protocol}
+			wrapper.replace(:scheme){endpoint.scheme}
+			wrapper.replace(:authority){endpoint.authority}
+			wrapper.replace(:path){endpoint.path}
 		end
 		
 		@client = ::Async::HTTP::Client.new(@client_endpoint, retries: retries)

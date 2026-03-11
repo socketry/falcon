@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # Released under the MIT License.
-# Copyright, 2020-2025, by Samuel Williams.
+# Copyright, 2020-2026, by Samuel Williams.
 
 require_relative "server"
 require_relative "application"
@@ -40,7 +40,7 @@ module Falcon
 					evaluator = environment.evaluator
 					
 					if environment.implements?(Falcon::Environment::Application)
-						Console.info(self) {"Redirecting #{self.url} to #{evaluator.authority}"}
+						Console.info(self){"Redirecting #{self.url} to #{evaluator.authority}"}
 						hosts[evaluator.authority] = evaluator
 					end
 				end

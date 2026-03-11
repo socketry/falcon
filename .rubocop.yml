@@ -5,8 +5,18 @@ plugins:
 AllCops:
   DisabledByDefault: true
 
+# Socketry specific rules:
+
 Layout/ConsistentBlankLineIndentation:
   Enabled: true
+
+Layout/BlockDelimiterSpacing:
+  Enabled: true
+
+Style/GlobalExceptionVariables:
+  Enabled: true
+
+# General Layout rules:
 
 Layout/IndentationStyle:
   Enabled: true
@@ -34,6 +44,9 @@ Layout/BeginEndAlignment:
   Enabled: true
   EnforcedStyleAlignWith: start_of_line
 
+Layout/RescueEnsureAlignment:
+  Enabled: true
+
 Layout/ElseAlignment:
   Enabled: true
 
@@ -42,9 +55,14 @@ Layout/DefEndAlignment:
 
 Layout/CaseIndentation:
   Enabled: true
+  EnforcedStyle: end
 
 Layout/CommentIndentation:
   Enabled: true
+
+Layout/FirstHashElementIndentation:
+  Enabled: true
+  EnforcedStyle: consistent
 
 Layout/EmptyLinesAroundClassBody:
   Enabled: true
@@ -63,6 +81,25 @@ Layout/SpaceInsideBlockBraces:
 Layout/SpaceAroundBlockParameters:
   Enabled: true
   EnforcedStyleInsidePipes: no_space
+
+Layout/FirstArrayElementIndentation:
+  Enabled: true
+  EnforcedStyle: consistent
+
+Layout/ArrayAlignment:
+  Enabled: true
+  EnforcedStyle: with_fixed_indentation
+
+Layout/FirstArgumentIndentation:
+  Enabled: true
+  EnforcedStyle: consistent
+
+Layout/ArgumentAlignment:
+  Enabled: true
+  EnforcedStyle: with_fixed_indentation
+
+Layout/ClosingParenthesisIndentation:
+  Enabled: true
 
 Style/FrozenStringLiteralComment:
   Enabled: true

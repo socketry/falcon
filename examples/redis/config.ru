@@ -19,7 +19,7 @@ class MyApp < Sinatra::Base
 end
 
 use MyApp # Then, it will get to Sinatra.
-run lambda {|env| [404, {}, []]} # Bottom of the stack, give 404.
+run lambda{|env| [404, {}, []]} # Bottom of the stack, give 404.
 
 # Start server like this:
 # falcon --verbose serve --threaded --count 1 --bind http://localhost:9292

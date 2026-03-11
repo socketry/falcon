@@ -20,11 +20,11 @@ Gem::Specification.new do |spec|
 		"source_code_uri" => "https://github.com/socketry/falcon.git",
 	}
 	
-	spec.files = Dir.glob(["{bake,bin,context,lib}/**/*", "*.md"], File::FNM_DOTMATCH, base: __dir__)
+	spec.files = Dir.glob(["{bin,context,lib}/**/*", "*.md"], File::FNM_DOTMATCH, base: __dir__)
 	
 	spec.executables = ["falcon", "falcon-host"]
 	
-	spec.required_ruby_version = ">= 3.2"
+	spec.required_ruby_version = ">= 3.3"
 	
 	spec.add_dependency "async"
 	spec.add_dependency "async-container", "~> 0.20"

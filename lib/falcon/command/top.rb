@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # Released under the MIT License.
-# Copyright, 2020-2025, by Samuel Williams.
+# Copyright, 2020-2026, by Samuel Williams.
 
 require_relative "serve"
 require_relative "host"
@@ -58,7 +58,7 @@ module Falcon
 			# @parameter encoding [Encoding] Defaults to `Encoding::UTF_8`.
 			def update_external_encoding!(encoding = Encoding::UTF_8)
 				if Encoding.default_external != encoding
-					Console.logger.warn(self) {"Updating Encoding.default_external from #{Encoding.default_external} to #{encoding}"}
+					Console.warn(self){"Updating Encoding.default_external from #{Encoding.default_external} to #{encoding}"}
 					Encoding.default_external = encoding
 				end
 			end

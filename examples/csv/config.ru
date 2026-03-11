@@ -13,12 +13,13 @@ class MyApp
 		
 		Async do |task|
 			@words.each do |words|
-				Console.logger.debug("Sending #{words.inspect}")
+				Console.debug("Sending #{words.inspect}")
 				body.write(words.join(",") + "\n")
 				task.sleep(1)
 			end
+		rescue => error
 		ensure
-			body.close($!)
+			body.close(error)
 		end
 		
 		return [200, [], body]
@@ -28,4 +29,4 @@ end
 # Build the middleware stack:
 use MyApp
 
-run lambda {|env| [404, {}, []]}
+run lambda{|env| [404, {}, []]}

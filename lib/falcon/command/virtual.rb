@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # Released under the MIT License.
-# Copyright, 2018-2025, by Samuel Williams.
+# Copyright, 2018-2026, by Samuel Williams.
 
 require "async/service"
 
@@ -53,7 +53,7 @@ module Falcon
 			
 			# Prepare the environment and run the controller.
 			def call
-				Console.logger.info(self) do |buffer|
+				Console.info(self) do |buffer|
 					buffer.puts "Falcon Virtual v#{VERSION} taking flight!"
 					buffer.puts "- Running on #{RUBY_DESCRIPTION}"
 					buffer.puts "- To terminate: Ctrl-C or kill #{Process.pid}"

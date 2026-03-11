@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # Released under the MIT License.
-# Copyright, 2020-2024, by Samuel Williams.
+# Copyright, 2020-2026, by Samuel Williams.
 
 require_relative "../environment/proxy"
 require_relative "paths"
@@ -55,7 +55,7 @@ module Falcon
 			
 			# Prepare the environment and run the controller.
 			def call
-				Console.logger.info(self) do |buffer|
+				Console.info(self) do |buffer|
 					buffer.puts "Falcon Proxy v#{VERSION} taking flight!"
 					buffer.puts "- Binding to: #{@options[:bind]}"
 					buffer.puts "- To terminate: Ctrl-C or kill #{Process.pid}"
