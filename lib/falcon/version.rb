@@ -5,5 +5,5 @@
 
 # @namespace
 module Falcon
-	VERSION = "0.54.3"
+	VERSION = "0.55.0"
 end

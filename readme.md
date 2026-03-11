@@ -47,6 +47,13 @@ Please see the [project documentation](https://socketry.github.io/falcon/) for m
 
 Please see the [project releases](https://socketry.github.io/falcon/releases/index) for all releases.
 
+### v0.55.0
+
+  - **Breaking**: Drop dependency on `async-container-supervisor`, you should migrate to `async-service-supervisor` instead.
+  - **Breaking**: Remove support for legacy environments, including `Falcon::Configuration`, now using `Async::Service::Configuration` directly.
+  - **Breaking**: `bake falcon:supervisor:restart` removed – superceeded by `async:service:supervisor:restart`.
+  - Add support for `async-utilization` metrics.
+
 ### v0.54.1
 
   - Fix handling of old style supervisors from `Async::Container::Supervisor`.
@@ -88,12 +95,6 @@ Please see the [project releases](https://socketry.github.io/falcon/releases/ind
 ### v0.47.8
 
   - Fix Falcon Supervisor implementation: due to invalid code, it was unable to start.
-
-### Compatibility Fixes
-
-During the `v0.44.0` release cycle, the workflows for testing older rack releases were accidentally dropped. As such, `v0.44.0` was not compatible with older versions of rack. This release restores compatibility with older versions of rack.
-
-Specifically, `protocol-rack` now provides `Protocol::Rack::Adapter.parse_file` to load Rack applications. Rack 2's `Rack::Builder.parse_file` returns both the application and a set of options (multi-value return). Rack 3 changed this to only return the application, as the prior multi-value return was confusing at best. This change allows `protocol-rack` to work with both versions of rack, and `falcon` adopts that interface.
 
 ## Contributing
 
