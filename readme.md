@@ -47,6 +47,10 @@ Please see the [project documentation](https://socketry.github.io/falcon/) for m
 
 Please see the [project releases](https://socketry.github.io/falcon/releases/index) for all releases.
 
+### v0.55.2
+
+  - Remove unnecessary require for `async/service/supervisor/supervised`."
+
 ### v0.55.1
 
   - `requests_active` is decremented after the response body is closed, including `rack.response_finished` callbacks.
@@ -91,10 +95,6 @@ Please see the [project releases](https://socketry.github.io/falcon/releases/ind
 
   - [Falcon Server Container Health Checks](https://socketry.github.io/falcon/releases/index#falcon-server-container-health-checks)
   - [Falcon Server Process Title](https://socketry.github.io/falcon/releases/index#falcon-server-process-title)
-
-### v0.48.4
-
-  - Improve compatibility of rackup handler w.r.t. sinatra.
 
 ## Contributing
 

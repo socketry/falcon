@@ -1,6 +1,6 @@
 # Releases
 
-## Unreleased
+## v0.55.2
 
   - Remove unnecessary require for `async/service/supervisor/supervised`."
 
