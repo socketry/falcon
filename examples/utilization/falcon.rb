@@ -16,9 +16,9 @@ class SimpleApp
 		sleep(rand * 0.1)
 		
 		# Delay after response is sent - use to verify whether this counts toward active requests:
-		# if response_finished = env["rack.response_finished"]
-		# 	response_finished << proc{sleep 10}
-		# end
+		if response_finished = env["rack.response_finished"]
+			response_finished << proc{sleep 0.1}
+		end
 		
 		return [200, {"content-type" => "text/plain"}, ["Hello, World!"]]
 	end
