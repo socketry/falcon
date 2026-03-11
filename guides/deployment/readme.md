@@ -56,18 +56,22 @@ service "supervisor" do
 end
 ~~~
 
-These configuration blocks are evaluated using the [async-service](https://github.com/socketry/async-service) gem. The supervisor is an independent service which monitors the health of the application and can restart it if necessary. Other services like background job processors can be added to the configuration.
+These configuration blocks are evaluated using the [async-service](https://github.com/socketry/async-service) gem. This configuration will bind Falcon to an [IPC socket](https://en.wikipedia.org/wiki/Unix_domain_socket) and is designed to be used with a reverse proxy such as [`falcon virtual`](#falcon-virtual).
+
+The supervisor is an independent service which monitors the health of the application and can restart it if necessary. Other services like background job processors can be added to the configuration.
 
 ### Environments
 
 The service blocks define configuration that is loaded by the service layer to control how the service is run. The `service ... do` block defines the service name and the environment in which it runs. Different modules can be included to provide different functionality, such as `Falcon::Environment::Rack` for Rack applications, or `Falcon::Environment::LetsEncryptTLS` for automatic TLS certificate management.
+
+**NOTE**: Falcon does not provision or renew certificates automatically. Use a tool like [certbot](https://certbot.eff.org) to provision your certificate and the `LetsEncryptTLS` environment will automatically read it in.
 
 ### Application Configuration
 
 The environment configuration is defined in the `Falcon::Environment` module. The {ruby Falcon::Environment::Application} environment supports the generic virtual host functionality, but you can customise any parts of the configuration, e.g. to bind a production host to `localhost:3000` using plaintext HTTP/2:
 
 ~~~ ruby
-#!/usr/bin/env falcon host
+#!/usr/bin/env falcon-host
 # frozen_string_literal: true
 
 require "falcon/environment/rack"
@@ -76,12 +80,13 @@ require "async/service/supervisor"
 hostname = File.basename(__dir__)
 service hostname do
 	include Falcon::Environment::Rack
-	include Falcon::Environment::LetsEncryptTLS
 
 	endpoint do
 		Async::HTTP::Endpoint
 			.parse('http://localhost:3000')
-			.with(protocol: Async::HTTP::Protocol::HTTP2)
+			.with(
+				protocol: Async::HTTP::Protocol::HTTP2
+			)
 	end
 end
 
@@ -90,7 +95,48 @@ service "supervisor" do
 end
 ~~~
 
-You can verify this is working using `nghttp -v http://localhost:3000`.
+You can verify this is working using the [`nghttp2` client](https://nghttp2.org): `nghttp -v http://localhost:3000`. This will not work in a browser as they mandate TLS for HTTP/2 connections.
+
+#### Self-signed certificate
+
+You can use a self-signed certificate to test your server configuration locally. First, provision a certificate using the [`localhost` gem](https://github.com/socketry/localhost):
+
+```
+$ bundle exec bake localhost:install
+```
+
+You may be prompted for a password to install the certificate. This is the password for your local keychain.
+
+Then, add the `SelfSignedTLS` environment to your configuration and set up the SSL context:
+
+~~~ ruby
+#!/usr/bin/env falcon-host
+# frozen_string_literal: true
+
+require "falcon/environment/rack"
+require "async/service/supervisor"
+
+hostname = File.basename(__dir__)
+service hostname do
+	include Falcon::Environment::Rack
+	include Falcon::Environment::SelfSignedTLS
+
+	endpoint do
+		Async::HTTP::Endpoint
+			.parse('https://localhost:3000')
+			.with(
+				protocol: Async::HTTP::Protocol::HTTP2,
+				ssl_context: ssl_context
+			)
+	end
+end
+
+service "supervisor" do
+	include Async::Service::Supervisor::Environment
+end
+~~~
+
+You should now be able to access your server at `https://localhost:3000` in your browser.
 
 #### Application Configuration Example for Heroku
 
