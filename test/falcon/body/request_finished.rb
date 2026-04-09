@@ -69,9 +69,9 @@ describe Falcon::Body::RequestFinished do
 		end
 		
 		with "nil message" do
-			it "decrements immediately" do
+			it "decrements immediately and returns nil" do
 				metric.increment
-				subject.wrap(nil, metric)
+				expect(subject.wrap(nil, metric)).to be == nil
 				expect(metric.value).to be == 0
 			end
 		end

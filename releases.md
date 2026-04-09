@@ -1,8 +1,12 @@
 # Releases
 
+## Unreleased
+
+  - Decrement `requests_active` in `Falcon::Server#call` when `super` or `Falcon::Body::RequestFinished.wrap` raises, so utilization metrics are not leaked on error paths.
+
 ## v0.55.2
 
-  - Remove unnecessary require for `async/service/supervisor/supervised`."
+  - Remove unnecessary require for `async/service/supervisor/supervised`.
 
 ## v0.55.1
 

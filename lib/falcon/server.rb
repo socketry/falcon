@@ -69,10 +69,22 @@ module Falcon
 		# Body::RequestFinished wrapper runs the decrement after the body closes,
 		# so response_finished callbacks are counted as active.
 		def call(...)
+			decrement = false
+			
 			@requests_total_metric.increment
 			@requests_active_metric.increment
+			decrement = true
 			
-			return Body::RequestFinished.wrap(super, @requests_active_metric)
+			# Roll back `requests_active` unless the full `super` + wrap path completes. Covers
+			# `super` raising before `wrap` runs, errors inside `wrap`, and other abnormal exits.
+			response = Body::RequestFinished.wrap(super, @requests_active_metric)
+			decrement = false
+			
+			return response
+		ensure
+			if decrement
+				@requests_active_metric.decrement
+			end
 		end
 		
 		# Generates a human-readable string representing the current statistics.

@@ -148,5 +148,26 @@ describe Falcon::Server do
 			expect(utilization_registry.metric(:requests_active).value).to be == 0
 			expect(utilization_registry.metric(:requests_total).value).to be == 1
 		end
+		
+		it "restores requests_active when delegate raises" do
+			boom = Object.new
+			def boom.call(_request)
+				raise RuntimeError, "boom"
+			end
+			def boom.close
+			end
+			
+			endpoint = Async::HTTP::Endpoint.parse("http://127.0.0.1:0", reuse_port: true)
+			server = ::Falcon::Server.new(
+				::Protocol::HTTP::Middleware.new(boom),
+				endpoint,
+				utilization_registry: utilization_registry
+			)
+			
+			request = ::Protocol::HTTP::Request["GET", "/", {}]
+			expect{server.call(request)}.to raise_exception(RuntimeError, message: be =~ /boom/)
+			expect(utilization_registry.metric(:requests_active).value).to be == 0
+			expect(utilization_registry.metric(:requests_total).value).to be == 1
+		end
 	end
 end

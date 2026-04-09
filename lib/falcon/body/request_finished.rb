@@ -14,7 +14,9 @@ module Falcon
 		# then decrements the metric. Use this so requests_active stays elevated until
 		# the request is fully finished (including response_finished callbacks).
 		class RequestFinished < Protocol::HTTP::Body::Wrapper
-			# Wrap a response body with a metric. If the body is nil or empty, decrements immediately.
+			# Wrap a response body with a metric.
+			#
+			# Expects the caller to have incremented `requests_active` beforehand. If the body is not wrapped (nil or empty message/body, or an error while assigning the wrapper), the `ensure` block decrements once. When wrapped, the metric is decremented in {#close}.
 			#
 			# @parameter message [Protocol::HTTP::Response] The response whose body to wrap.
 			# @parameter metric [Async::Utilization::Metric] The metric to decrement when the body is closed.
@@ -29,6 +31,8 @@ module Falcon
 				message
 			end
 			
+			# Initialize the wrapper.
+			#
 			# @parameter body [Protocol::HTTP::Body::Readable] The body to wrap.
 			# @parameter metric [Async::Utilization::Metric] The metric to decrement on close.
 			def initialize(body, metric)
