@@ -1,6 +1,6 @@
 # Releases
 
-## Unreleased
+## v0.55.3
 
   - Decrement `requests_active` in `Falcon::Server#call` when `super` or `Falcon::Body::RequestFinished.wrap` raises, so utilization metrics are not leaked on error paths.
 
