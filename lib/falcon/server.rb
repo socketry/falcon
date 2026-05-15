@@ -59,6 +59,8 @@ module Falcon
 			@connections_total_metric.increment
 			@connections_active_metric.track do
 				super
+			rescue Errno::EPIPE, Errno::ECONNRESET
+				# Client disconnected mid-response — expected, nothing to do.
 			end
 		end
 		
