@@ -1,6 +1,6 @@
 # Releases
 
-## Unreleased
+## v0.55.4
 
   - Ensure `requests_active` is decremented if closing the response body raises.
 

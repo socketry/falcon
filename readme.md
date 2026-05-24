@@ -47,6 +47,10 @@ Please see the [project documentation](https://socketry.github.io/falcon/) for m
 
 Please see the [project releases](https://socketry.github.io/falcon/releases/index) for all releases.
 
+### v0.55.4
+
+  - Ensure `requests_active` is decremented if closing the response body raises.
+
 ### v0.55.3
 
   - Decrement `requests_active` in `Falcon::Server#call` when `super` or `Falcon::Body::RequestFinished.wrap` raises, so utilization metrics are not leaked on error paths.
@@ -90,10 +94,6 @@ Please see the [project releases](https://socketry.github.io/falcon/releases/ind
 
   - Introduce <code class="language-ruby">Falcon::Environment::Server\#make\_server</code> which gives you full control over the server creation process.
   - [Introduce `Async::Container::Supervisor`.](https://socketry.github.io/falcon/releases/index#introduce-async::container::supervisor.)
-
-### v0.50.0
-
-  - Add <code class="language-ruby">Falcon::Environment::Server\#endpoint\_options</code> to allow configuration of the endpoint options more easily.
 
 ## Contributing
 
