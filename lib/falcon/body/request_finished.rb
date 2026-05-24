@@ -11,8 +11,9 @@ module Falcon
 		# Wraps a response body and decrements a metric after the body is closed.
 		#
 		# Runs close on the underlying body first (which invokes rack.response_finished),
-		# then decrements the metric. Use this so requests_active stays elevated until
-		# the request is fully finished (including response_finished callbacks).
+		# then decrements the metric, even if closing raises. Use this so requests_active
+		# stays elevated until the request is fully finished (including response_finished
+		# callbacks), without leaking if close reports an error.
 		class RequestFinished < Protocol::HTTP::Body::Wrapper
 			# Wrap a response body with a metric.
 			#
@@ -56,7 +57,7 @@ module Falcon
 			# @parameter error [Exception, nil] Optional error that caused the close.
 			def close(error = nil)
 				super
-				
+			ensure
 				@metric&.decrement
 				@metric = nil
 			end
