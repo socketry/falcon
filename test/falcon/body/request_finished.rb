@@ -32,6 +32,25 @@ describe Falcon::Body::RequestFinished do
 				expect(metric.value).to be == 0
 			end
 			
+			it "decrements metric when body close raises" do
+				body = Class.new(Protocol::HTTP::Body::Buffered) do
+					def close(error = nil)
+						super
+						raise RuntimeError, "close failed"
+					end
+				end.new(["Hello World"])
+				response = Protocol::HTTP::Response[200, {"content-type" => "text/plain"}, body]
+				
+				metric.increment
+				subject.wrap(response, metric)
+				
+				expect do
+					response.body.close
+				end.to raise_exception(RuntimeError, message: be =~ /close failed/)
+				
+				expect(metric.value).to be == 0
+			end
+			
 			it "decrements only once on multiple close calls" do
 				metric.increment
 				subject.wrap(response, metric)

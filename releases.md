@@ -1,5 +1,9 @@
 # Releases
 
+## Unreleased
+
+  - Ensure `requests_active` is decremented if closing the response body raises.
+
 ## v0.55.3
 
   - Decrement `requests_active` in `Falcon::Server#call` when `super` or `Falcon::Body::RequestFinished.wrap` raises, so utilization metrics are not leaked on error paths.
