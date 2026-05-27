@@ -1,5 +1,9 @@
 # Releases
 
+## Unreleased
+
+  - Strip `proxy-authorization` header in `Falcon::Middleware::Proxy`.
+
 ## v0.55.4
 
   - Ensure `requests_active` is decremented if closing the response body raises.

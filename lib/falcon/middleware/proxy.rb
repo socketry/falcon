@@ -43,6 +43,7 @@ module Falcon
 				"keep-alive",
 				"public",
 				"proxy-authenticate",
+				"proxy-authorization",
 				"transfer-encoding",
 				"upgrade",
 			]

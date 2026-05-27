@@ -26,6 +26,16 @@ describe Falcon::Middleware::Proxy do
 	
 	let(:headers) {Protocol::HTTP::Headers["accept" => "*/*"]}
 	
+	it "removes proxy authorization by default" do
+		headers = Protocol::HTTP::Headers[
+			"authorization" => "Bearer application",
+			"proxy-authorization" => "Basic proxy",
+		]
+		proxy.prepare_headers(headers)
+		expect(headers["authorization"]).to be == "Bearer application"
+		expect(headers["proxy-authorization"]).to be_nil
+	end
+	
 	it "can select client based on authority" do
 		request = Protocol::HTTP::Request.new("https", "www.google.com", "GET", "/", nil, headers, nil)
 		
