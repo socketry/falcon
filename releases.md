@@ -1,6 +1,6 @@
 # Releases
 
-## Unreleased
+## v0.55.5
 
   - Strip `proxy-authorization` header in `Falcon::Middleware::Proxy`.
 

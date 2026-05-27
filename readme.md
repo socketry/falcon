@@ -47,6 +47,10 @@ Please see the [project documentation](https://socketry.github.io/falcon/) for m
 
 Please see the [project releases](https://socketry.github.io/falcon/releases/index) for all releases.
 
+### v0.55.5
+
+  - Strip `proxy-authorization` header in `Falcon::Middleware::Proxy`.
+
 ### v0.55.4
 
   - Ensure `requests_active` is decremented if closing the response body raises.
@@ -89,11 +93,6 @@ Please see the [project releases](https://socketry.github.io/falcon/releases/ind
   - Added extra logging of `RUBY_DESCRIPTION`.
   - Minor documentation improvements.
   - Agent context is now available, via the [`agent-context` gem](https://github.com/ioquatix/agent-context).
-
-### v0.51.0
-
-  - Introduce <code class="language-ruby">Falcon::Environment::Server\#make\_server</code> which gives you full control over the server creation process.
-  - [Introduce `Async::Container::Supervisor`.](https://socketry.github.io/falcon/releases/index#introduce-async::container::supervisor.)
 
 ## Contributing
 
