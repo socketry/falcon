@@ -35,6 +35,7 @@ group :maintenance, optional: true do
 	
 	gem "utopia-project"
 	gem "bake-releases"
+	gem "decode"
 end
 
 group :development do
@@ -45,7 +46,6 @@ end
 group :test do
 	gem "sus"
 	gem "covered"
-	gem "decode"
 	
 	gem "rubocop"
 	gem "rubocop-md"
