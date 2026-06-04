@@ -55,4 +55,4 @@ jobs:
     
     - name: Validate coverage
       timeout-minutes: 5
-      run: bundle exec bake covered:validate --paths */.covered.db \;
+      run: bundle exec bake covered:validate --minimum 0.85 --paths */.covered.db \;
