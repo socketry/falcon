@@ -92,6 +92,19 @@ describe Falcon::Middleware::Proxy do
 		expect(request.headers["x-forwarded-port"]).to be_nil
 	end
 	
+	it "doesn't let connection tokens strip authored forwarding headers" do
+		headers = Protocol::HTTP::Headers[
+			"connection" => "x-forwarded-for, x-forwarded-proto, forwarded, via",
+		]
+		request = Protocol::HTTP::Request.new("http", "www.google.com", "GET", "/", nil, headers, nil)
+		expect(request).to receive(:remote_address).and_return(Addrinfo.ip("127.0.0.1"))
+		proxy.prepare_request(request, host)
+		expect(request.headers["connection"]).to be_nil
+		expect(request.headers["x-forwarded-for"]).to be == ["127.0.0.1"]
+		expect(request.headers["x-forwarded-proto"]).to be == ["http"]
+		expect(request.headers["forwarded"]).to be == ["for=127.0.0.1;proto=http"]
+		expect(request.headers["via"]).not.to be_nil
+	end
 	it "formats IPv6 addresses according to RFC 7239" do
 		request = Protocol::HTTP::Request.new("https", "www.google.com", "GET", "/", nil, headers, nil)
 		expect(request).to receive(:remote_address).and_return(Addrinfo.ip("::1"))

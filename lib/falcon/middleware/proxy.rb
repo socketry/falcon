@@ -137,6 +137,9 @@ module Falcon
 				# The authority of the request must match the authority of the endpoint we are proxying to, otherwise SNI and other things won't work correctly.
 				request.authority = host.authority
 				
+				# Discard inbound hop-by-hop headers before authoring trusted forwarding
+				# headers, so client-supplied Connection tokens can't remove headers we add.
+				self.prepare_headers(request.headers)
 				# Discard any inbound forwarding headers so a client can't spoof them; we author our own below from connection-level facts.
 				request.headers.extract(FORWARDING_HEADERS)
 				
@@ -157,8 +160,6 @@ module Falcon
 				end
 				
 				request.headers.add(VIA, "#{request.version} #{self.class}")
-				
-				self.prepare_headers(request.headers)
 				
 				return request
 			end
