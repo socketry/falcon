@@ -49,12 +49,20 @@ module Falcon
 			# `Rack::Request#forwarded_for` (used by Rails' `ActionDispatch::RemoteIp`)
 			# only prefers `Forwarded` and falls back to `X-Forwarded-For`; older Rack
 			# (< 3) and a lot of application code read `X-Forwarded-For` directly.
+			#
+			# We also strip underscore variants of the same header names because Rack
+			# normalizes both `x-forwarded-for` and `x_forwarded_for` to the same
+			# `HTTP_X_FORWARDED_FOR` CGI environment key.
 			FORWARDING_HEADERS = [
 				FORWARDED,
 				X_FORWARDED_FOR,
 				X_FORWARDED_PROTO,
 				"x-forwarded-host",
 				"x-forwarded-port",
+				"x_forwarded_for",
+				"x_forwarded_proto",
+				"x_forwarded_host",
+				"x_forwarded_port",
 			]
 			
 			# HTTP hop headers which *should* not be passed through the proxy.

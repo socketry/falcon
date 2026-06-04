@@ -92,6 +92,24 @@ describe Falcon::Middleware::Proxy do
 		expect(request.headers["x-forwarded-port"]).to be_nil
 	end
 	
+	it "strips underscore forwarding headers that collide with rack environment keys" do
+		headers = Protocol::HTTP::Headers[
+			"x_forwarded_for" => "1.2.3.4",
+			"x_forwarded_proto" => "https",
+			"x_forwarded_host" => "evil.example.com",
+			"x_forwarded_port" => "8443",
+		]
+		request = Protocol::HTTP::Request.new("http", "www.google.com", "GET", "/", nil, headers, nil)
+		expect(request).to receive(:remote_address).and_return(Addrinfo.ip("127.0.0.1"))
+		proxy.prepare_request(request, host)
+		expect(request.headers["x_forwarded_for"]).to be_nil
+		expect(request.headers["x_forwarded_proto"]).to be_nil
+		expect(request.headers["x_forwarded_host"]).to be_nil
+		expect(request.headers["x_forwarded_port"]).to be_nil
+		expect(request.headers["x-forwarded-for"]).to be == ["127.0.0.1"]
+		expect(request.headers["x-forwarded-proto"]).to be == ["http"]
+		expect(request.headers["forwarded"]).to be == ["for=127.0.0.1;proto=http"]
+	end
 	it "doesn't let connection tokens strip authored forwarding headers" do
 		headers = Protocol::HTTP::Headers[
 			"connection" => "x-forwarded-for, x-forwarded-proto, forwarded, via",
