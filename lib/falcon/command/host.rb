@@ -8,6 +8,7 @@ require_relative "../version"
 
 require "samovar"
 require "async/service/controller"
+require "console"
 
 module Falcon
 	module Command
@@ -16,6 +17,17 @@ module Falcon
 		# Manages a {Controller::Host} instance which is responsible for running applications in a production environment.
 		class Host < Samovar::Command
 			self.description = "Host the specified applications."
+			
+			# The main entry point for the `falcon-host` executable.
+			# @parameter arguments [Array(String)] The command line arguments.
+			def self.call(...)
+				super
+			rescue Interrupt
+				# Ignore.
+			rescue => error
+				Console.error(self, error)
+				exit! 1
+			end
 			
 			# One or more paths to the configuration files.
 			# @name paths

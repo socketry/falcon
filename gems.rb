@@ -53,6 +53,7 @@ group :test do
 	
 	gem "sus-fixtures-async"
 	gem "sus-fixtures-async-http"
+	gem "sus-fixtures-console"
 	gem "sus-fixtures-openssl"
 	
 	gem "bake"

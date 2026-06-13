@@ -7,6 +7,7 @@
 require_relative "../server"
 require_relative "../endpoint"
 require_relative "../service/server"
+require_relative "../environment/server"
 require_relative "../environment/rackup"
 
 require "async/service/configuration"

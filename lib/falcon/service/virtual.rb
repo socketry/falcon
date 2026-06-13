@@ -4,6 +4,7 @@
 # Copyright, 2020-2024, by Samuel Williams.
 
 require "async/service/generic"
+require "console"
 
 module Falcon
 	module Service

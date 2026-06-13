@@ -4,6 +4,7 @@
 # Copyright, 2019-2026, by Samuel Williams.
 
 require "falcon/command/virtual"
+require "sus/fixtures/console/captured_logger"
 
 require "async/http"
 require "protocol/http/request"
@@ -23,7 +24,7 @@ VirtualCommand = Sus::Shared("falcon virtual") do
 	
 	let(:command) do
 		subject[
-			"--bind-insecure", "http://localhost:8080",
+			"--bind-insecure", "http://localhost:8090",
 			"--bind-secure", "https://localhost:8443",
 			*options,
 			*paths,
@@ -165,6 +166,37 @@ VirtualCommand = Sus::Shared("falcon virtual") do
 end
 
 describe Falcon::Command::Virtual do
+	include Sus::Fixtures::Console::CapturedLogger
+	
+	with "#call" do
+		let(:command) do
+			subject[
+				"--bind-insecure", "http://localhost:8090",
+				"--bind-secure", "https://localhost:8443",
+			]
+		end
+		
+		it "runs the controller" do
+			captured_configuration = nil
+			
+			mock(Async::Service::Controller) do |controller|
+				controller.replace(:run) do |configuration|
+					captured_configuration = configuration
+				end
+			end
+			
+			command.call
+			
+			expect(captured_configuration).to be_a(Async::Service::Configuration)
+			
+			expect_console.to have_logged(
+				severity: be == :info,
+				subject: be == command,
+				message: be(:include?, "Falcon Virtual v"),
+			)
+		end
+	end
+	
 	with "HTTP/1.0" do
 		let(:protocol) {Async::HTTP::Protocol::HTTP10}
 		it_behaves_like VirtualCommand, unique: "HTTP10"
