@@ -9,7 +9,6 @@ require "protocol/http/headers"
 require "protocol/http/middleware"
 
 require "console/event/failure"
-require "traces/provider"
 
 module Falcon
 	# @namespace
@@ -155,20 +154,6 @@ module Falcon
 				return Protocol::HTTP::Response[502, {"content-type" => "text/plain"}, [error.class.name]]
 			end
 			
-			Traces::Provider(self) do
-				def call(request)
-					attributes = {
-						"authority" => request.authority,
-						"method" => request.method,
-						"path" => request.path,
-						"version" => request.version,
-					}
-					
-					Traces.trace("falcon.middleware.proxy.call", attributes: attributes) do
-						super
-					end
-				end
-			end
 		end
 	end
 end

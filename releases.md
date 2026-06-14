@@ -1,5 +1,9 @@
 # Releases
 
+## Unreleased
+
+  - Move Falcon middleware trace providers to `traces/provider/falcon/middleware`.
+
 ## v0.55.5
 
   - Strip `proxy-authorization` header in `Falcon::Middleware::Proxy`.
