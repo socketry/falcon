@@ -23,7 +23,4 @@
 
 require_relative "../lib/falcon/command/host"
 
-begin
-	Falcon::Command::Host.call
-rescue Interrupt
-end
+Falcon::Command::Host.call

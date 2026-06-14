@@ -23,11 +23,4 @@
 
 require_relative "../lib/falcon/command"
 
-begin
-	Falcon::Command.call
-rescue Interrupt
-	# Ignore.
-rescue => error
-	Console.error(Falcon::Command, error)
-	exit! 1
-end
+Falcon::Command.call

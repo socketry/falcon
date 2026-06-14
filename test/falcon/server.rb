@@ -8,6 +8,21 @@ require "sus/fixtures/openssl/valid_certificate_context"
 require "sus/fixtures/openssl/verified_certificate_context"
 
 describe Falcon::Server do
+	it "can build middleware with a cache" do
+		app = lambda do |env|
+			[200, {}, ["OK"]]
+		end
+		
+		expect(subject.middleware(app, cache: true)).to be_a(Async::HTTP::Cache::General)
+	end
+	
+	it "formats large statistics counts" do
+		server = subject.allocate
+		
+		expect(server.send(:format_count, 1_001)).to be == "1.0K"
+		expect(server.send(:format_count, 1_000_001)).to be == "1.0M"
+	end
+	
 	include ServerContext
 	
 	with "http client" do
