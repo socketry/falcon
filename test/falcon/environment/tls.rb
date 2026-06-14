@@ -6,11 +6,11 @@
 require "falcon/environment/tls"
 require "async/service/environment"
 require "sus/fixtures/openssl/valid_certificate_context"
-require "temporary_directory_context"
+require "sus/fixtures/temporary_directory_context"
 require "fileutils"
 
 describe Falcon::Environment::TLS do
-	include TemporaryDirectoryContext
+	include Sus::Fixtures::TemporaryDirectoryContext
 	include Sus::Fixtures::OpenSSL::ValidCertificateContext
 	
 	let(:evaluator) do

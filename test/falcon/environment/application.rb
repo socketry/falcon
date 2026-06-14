@@ -6,10 +6,10 @@
 require "falcon/environment/application"
 require "falcon/proxy_endpoint"
 require "async/service/environment"
-require "temporary_directory_context"
+require "sus/fixtures/temporary_directory_context"
 
 describe Falcon::Environment::Application do
-	include TemporaryDirectoryContext
+	include Sus::Fixtures::TemporaryDirectoryContext
 	
 	let(:evaluator) do
 		Async::Service::Environment.build(subject, root: root, name: "localhost").evaluator
