@@ -10,6 +10,8 @@ module Falcon
 	module Environment
 		# Provides an environment that uses "Lets Encrypt" for TLS.
 		module LetsEncryptTLS
+			include TLS
+
 			# The Lets Encrypt certificate store path.
 			# @parameter [String]
 			def lets_encrypt_root
