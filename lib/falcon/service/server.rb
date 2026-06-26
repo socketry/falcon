@@ -21,8 +21,8 @@ module Falcon
 				@bound_endpoint = nil
 			end
 			
-			# Prepare the bound endpoint for the server.
-			def start
+			# Bind the endpoint used by each server worker.
+			def bind_endpoint
 				@endpoint = @evaluator.endpoint
 				
 				Sync do
@@ -30,6 +30,11 @@ module Falcon
 				end
 				
 				Console.info(self){"Starting #{self.name} on #{@endpoint}"}
+			end
+			
+			# Prepare the bound endpoint for the server.
+			def start
+				bind_endpoint
 				
 				super
 			end
@@ -38,20 +43,25 @@ module Falcon
 			#
 			# @parameter instance [Object] The container instance.
 			# @parameter evaluator [Environment::Evaluator] The environment evaluator.
+			# @parameter bound_endpoint [IO::Endpoint] The endpoint bound by this worker.
 			# @returns [Falcon::Server] The server instance.
-			def run(instance, evaluator)
+			def run(instance, evaluator, bound_endpoint = @bound_endpoint)
 				if evaluator.respond_to?(:make_supervised_worker)
 					Console.warn(self, "Async::Container::Supervisor is replaced by Async::Service::Supervisor, please update your service definition.")
 					
 					evaluator.make_supervised_worker(instance).run
 				end
 				
-				server = evaluator.make_server(@bound_endpoint)
+				server = evaluator.make_server(bound_endpoint)
 				
 				Async do |task|
 					server.run
 					
-					task.children&.each(&:wait)
+					begin
+						task.children&.each(&:wait)
+					rescue IOError
+						raise unless bound_endpoint.respond_to?(:sockets) && bound_endpoint.sockets.empty?
+					end
 				end
 				
 				server
