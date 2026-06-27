@@ -6,8 +6,11 @@
 require "falcon/service/server"
 require "falcon/environment/server"
 require "falcon/environment/rackup"
+require "sus/fixtures/async/scheduler_context"
 
 describe Falcon::Service::Server do
+	include Sus::Fixtures::Async::SchedulerContext
+	
 	let(:environment) do
 		Async::Service::Environment.new(Falcon::Environment::Server).with(
 			Falcon::Environment::Rackup,

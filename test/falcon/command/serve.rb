@@ -6,8 +6,11 @@
 
 require "falcon/command/serve"
 require "sus/fixtures/console/captured_logger"
+require "sus/fixtures/async/scheduler_context"
 
 ServeCommand = Sus::Shared("falcon serve") do
+	include Sus::Fixtures::Async::SchedulerContext
+	
 	let(:command) do
 		subject[
 			"--port", port,
