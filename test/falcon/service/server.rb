@@ -6,8 +6,13 @@
 require "falcon/service/server"
 require "falcon/environment/server"
 require "falcon/environment/rackup"
+require "async/container"
+require "async/service/environment"
+require "container_context"
 
 describe Falcon::Service::Server do
+	include ContainerContext
+	
 	let(:environment) do
 		Async::Service::Environment.new(Falcon::Environment::Server).with(
 			Falcon::Environment::Rackup,
@@ -26,16 +31,18 @@ describe Falcon::Service::Server do
 	end
 	
 	it "can start and stop server" do
-		container = Async::Container.new
-		
-		server.start
-		server.setup(container)
-		container.wait_until_ready
-		
-		expect(container.group.running).to have_attributes(size: be == Etc.nprocessors)
-		
-		server.stop
-		container.stop
+		container_context do
+			container = Async::Container.new
+			
+			server.start
+			server.setup(container)
+			container.wait_until_ready
+			
+			expect(container.group.running).to have_attributes(size: be == Etc.nprocessors)
+		ensure
+			server.stop
+			container&.stop
+		end
 	end
 	
 	with "a limited count" do
@@ -50,16 +57,18 @@ describe Falcon::Service::Server do
 		end
 		
 		it "can start and stop server" do
-			container = Async::Container.new
-			
-			server.start
-			server.setup(container)
-			container.wait_until_ready
-			
-			expect(container.group.running).to have_attributes(size: be == 1)
-			
-			server.stop
-			container.stop
+			container_context do
+				container = Async::Container.new
+				
+				server.start
+				server.setup(container)
+				container.wait_until_ready
+				
+				expect(container.group.running).to have_attributes(size: be == 1)
+			ensure
+				server.stop
+				container&.stop
+			end
 		end
 	end
 	

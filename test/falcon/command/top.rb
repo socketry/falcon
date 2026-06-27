@@ -4,9 +4,11 @@
 # Copyright, 2018-2026, by Samuel Williams.
 
 require "falcon/command"
+require "container_context"
 require "sus/fixtures/console/captured_logger"
 
 describe Falcon::Command::Top do
+	include ContainerContext
 	include Sus::Fixtures::Console::CapturedLogger
 	
 	with "basic server configuration" do
@@ -19,20 +21,25 @@ describe Falcon::Command::Top do
 			]
 			
 			serve = top.command
-			controller = serve.configuration.make_controller
-			controller.start
 			
-			Async do
-				client = serve.client
+			container_context do
+				controller = serve.configuration.make_controller
+				controller.start
 				
-				response = client.get("/")
-				expect(response).to be(:success?)
-				
-				response.finish
-				client.close
+				begin
+					Async do
+						client = serve.client
+						
+						response = client.get("/")
+						expect(response).to be(:success?)
+						
+						response.finish
+						client.close
+					end
+				ensure
+					controller.stop
+				end
 			end
-			
-			controller.stop
 		end
 	end
 	

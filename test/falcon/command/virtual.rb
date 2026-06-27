@@ -4,6 +4,8 @@
 # Copyright, 2019-2026, by Samuel Williams.
 
 require "falcon/command/virtual"
+require "async"
+require "container_context"
 require "sus/fixtures/console/captured_logger"
 
 require "async/http"
@@ -12,6 +14,8 @@ require "protocol/http/request"
 require "async/websocket/client"
 
 VirtualCommand = Sus::Shared("falcon virtual") do
+	include ContainerContext
+	
 	let(:paths) {[
 		File.expand_path("hello/falcon.rb", examples_root),
 		File.expand_path("beer/falcon.rb", examples_root),
@@ -32,15 +36,17 @@ VirtualCommand = Sus::Shared("falcon virtual") do
 	end
 	
 	def around
-		configuration = command.configuration
-		controller = configuration.make_controller
-		
-		controller.start
-		
-		begin
-			yield
-		ensure
-			controller.stop
+		container_context do
+			configuration = command.configuration
+			controller = configuration.make_controller
+			
+			controller.start
+			
+			begin
+				yield
+			ensure
+				controller.stop
+			end
 		end
 	end
 	

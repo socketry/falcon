@@ -5,9 +5,12 @@
 # Copyright, 2019, by Sho Ito.
 
 require "falcon/command/serve"
+require "container_context"
 require "sus/fixtures/console/captured_logger"
 
 ServeCommand = Sus::Shared("falcon serve") do
+	include ContainerContext
+	
 	let(:command) do
 		subject[
 			"--port", port,
@@ -16,23 +19,25 @@ ServeCommand = Sus::Shared("falcon serve") do
 	end
 	
 	it "can listen on specified port" do
-		configuration = command.configuration
-		controller = configuration.make_controller
-		
-		controller.start
-		
-		begin
-			Async do
-				client = command.client
-				
-				response = client.get("/")
-				expect(response).to be(:success?)
-				
-				response.finish
-				client.close
+		container_context do
+			configuration = command.configuration
+			controller = configuration.make_controller
+			
+			controller.start
+			
+			begin
+				Async do
+					client = command.client
+					
+					response = client.get("/")
+					expect(response).to be(:success?)
+					
+					response.finish
+					client.close
+				end
+			ensure
+				controller.stop
 			end
-		ensure
-			controller.stop
 		end
 	end
 end
