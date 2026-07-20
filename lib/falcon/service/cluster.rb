@@ -24,10 +24,21 @@ module Falcon
 					clock = Async::Clock.start
 					bound_endpoint = nil
 					
+					# Route process signals through the reactor rather than an arbitrary request fiber.
+					signal_reader, signal_writer = IO.pipe
+					signal_handlers = [:INT, :TERM].to_h do |signal|
+						[signal, Signal.trap(signal){signal_writer.write_nonblock(".", exception: false)}]
+					end
+					
 					begin
 						Async do |task|
 							evaluator = self.environment.evaluator
 							server = nil
+							
+							task.async(transient: true) do
+								signal_reader.read(1)
+								task.cancel
+							end
 							
 							health_checker(instance, health_check_timeout) do
 								if server
@@ -49,13 +60,11 @@ module Falcon
 							emit_running(instance, clock)
 							
 							instance.ready!
-							
-							sleep
-						ensure
-							bound_endpoint&.close
-							task&.children&.each(&:stop)
 						end
 					ensure
+						signal_handlers.each{|signal, handler| Signal.trap(signal, handler)}
+						signal_reader.close
+						signal_writer.close
 						bound_endpoint&.close
 					end
 				end

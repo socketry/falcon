@@ -77,8 +77,11 @@ describe Falcon::Service::Cluster do
 			
 			expect(response).to have_attributes(code: be == "200")
 		end
+		
+		container.stop
+		expect(container.failed?).to be_falsey
 	ensure
 		server.stop
-		container&.stop
+		container&.stop unless container&.stopping?
 	end
 end

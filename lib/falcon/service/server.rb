@@ -57,11 +57,7 @@ module Falcon
 				Async do |task|
 					server.run
 					
-					begin
-						task.children&.each(&:wait)
-					rescue IOError
-						raise unless bound_endpoint.respond_to?(:sockets) && bound_endpoint.sockets.empty?
-					end
+					task.children&.each(&:wait)
 				end
 				
 				server
