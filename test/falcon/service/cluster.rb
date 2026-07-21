@@ -43,6 +43,7 @@ describe Falcon::Service::Cluster do
 			root: File.expand_path(".cluster/hello", __dir__),
 			url: "http://127.0.0.1:0",
 			count: 2,
+			health_check_timeout: 0.01,
 		)
 	end
 	
@@ -77,6 +78,8 @@ describe Falcon::Service::Cluster do
 			
 			expect(response).to have_attributes(code: be == "200")
 		end
+		
+		sleep(0.01)
 		
 		container.stop
 		expect(container.failed?).to be_falsey
