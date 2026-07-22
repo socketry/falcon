@@ -25,24 +25,6 @@ module Falcon
 				
 				# @attribute [Array(Addrinfo)] The addresses bound by the worker.
 				attr_reader :addresses
-				
-				# The first bound IP address, if present.
-				# @returns [String | Nil] The bound IP address.
-				def address
-					@addresses.find(&:ip?)&.ip_address
-				end
-				
-				# The first bound IP port, if present.
-				# @returns [Integer | Nil] The bound IP port.
-				def port
-					@addresses.find(&:ip?)&.ip_port
-				end
-				
-				# The first bound Unix socket path, if present.
-				# @returns [String | Nil] The bound Unix socket path.
-				def path
-					@addresses.find(&:unix?)&.unix_path
-				end
 			end
 			
 			# Cluster workers bind independently in their own process.

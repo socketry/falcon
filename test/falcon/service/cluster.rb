@@ -31,28 +31,9 @@ describe Falcon::Service::Cluster do
 		
 		expect(binding).to have_attributes(
 			addresses: be == [ip_address, unix_address],
-			address: be == "127.0.0.1",
-			port: be == 9292,
-			path: be == "/tmp/falcon.sock",
 			frozen?: be == true,
 		)
 		expect(binding.addresses.frozen?).to be == true
-	end
-	
-	it "exposes an IP address and port without a Unix socket path" do
-		binding = make_binding(Addrinfo.tcp("127.0.0.1", 9292))
-		
-		expect(binding.address).to be == "127.0.0.1"
-		expect(binding.port).to be == 9292
-		expect(binding.path).to be == nil
-	end
-	
-	it "exposes a Unix socket path without an IP address and port" do
-		binding = make_binding(Addrinfo.unix("/tmp/falcon.sock"))
-		
-		expect(binding.address).to be == nil
-		expect(binding.port).to be == nil
-		expect(binding.path).to be == "/tmp/falcon.sock"
 	end
 	
 	let(:recorder) do
@@ -71,7 +52,9 @@ describe Falcon::Service::Cluster do
 				super(instance, binding)
 				
 				File.open(path, "a") do |file|
-					file.puts(binding.port)
+					binding.addresses.each do |address|
+						file.puts(address.ip_port) if address.ip?
+					end
 				end
 			end
 		end
