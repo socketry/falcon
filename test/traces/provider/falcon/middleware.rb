@@ -15,14 +15,17 @@ describe "traces/provider/falcon/middleware" do
 	end
 	
 	def expect_trace(name, expected_attributes)
+		trace = Traces.method(:trace)
+		
 		mock(Traces) do |mock|
-			mock.wrap(:trace) do |original, actual_name, attributes: nil, &block|
+			mock.replace(:trace) do |actual_name, attributes: nil, &block|
 				expect(actual_name).to be == name
 				expect(attributes).to be == expected_attributes
 				expect(block).not.to be == nil
 				
-				Traces.trace_context = Traces::Context.local
-				block.call
+				trace.call(actual_name, attributes: attributes) do
+					block.call
+				end
 			end
 		end
 	end
