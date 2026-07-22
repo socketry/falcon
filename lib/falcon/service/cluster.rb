@@ -10,6 +10,41 @@ module Falcon
 	module Service
 		# A managed service for running Falcon workers with independently bound endpoints.
 		class Cluster < Server
+			# An immutable association between a worker and its bound endpoint.
+			class Binding
+				# Initialize a worker binding.
+				# @parameter endpoint [IO::Endpoint::BoundEndpoint] The endpoint bound by the worker.
+				def initialize(endpoint:)
+					@endpoint = endpoint
+					@addresses = endpoint.sockets.map{|socket| socket.to_io.local_address}.freeze
+					freeze
+				end
+				
+				# @attribute [IO::Endpoint::BoundEndpoint] The endpoint bound by the worker.
+				attr_reader :endpoint
+				
+				# @attribute [Array(Addrinfo)] The addresses bound by the worker.
+				attr_reader :addresses
+				
+				# The first bound IP address, if present.
+				# @returns [String | Nil] The bound IP address.
+				def address
+					@addresses.find(&:ip?)&.ip_address
+				end
+				
+				# The first bound IP port, if present.
+				# @returns [Integer | Nil] The bound IP port.
+				def port
+					@addresses.find(&:ip?)&.ip_port
+				end
+				
+				# The first bound Unix socket path, if present.
+				# @returns [String | Nil] The bound Unix socket path.
+				def path
+					@addresses.find(&:unix?)&.unix_path
+				end
+			end
+			
 			# Cluster workers bind independently in their own process.
 			def bind_endpoint
 			end
@@ -38,13 +73,13 @@ module Falcon
 							instance.status!("Preparing...")
 							
 							bound_endpoint = evaluator.endpoint.bound
-							evaluator.bound_endpoint = bound_endpoint
+							binding = Binding.new(endpoint: bound_endpoint)
 							
-							evaluator.prepare!(instance)
+							evaluator.prepare_worker!(instance, binding)
 							emit_prepared(instance, clock)
 							
 							instance.status!("Running...")
-							server = run(instance, evaluator, bound_endpoint)
+							server = run(instance, evaluator, binding.endpoint)
 							instance.name = format_title(evaluator, server)
 							emit_running(instance, clock)
 							

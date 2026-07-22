@@ -16,9 +16,15 @@ describe Falcon::Environment::Cluster do
 			service_class: be == Falcon::Service::Cluster,
 			url: be == "http://[::]:0",
 			authority: be == "localhost",
-			bound_endpoint: be == nil,
-			bound_address: be == nil,
-			bound_port: be == nil,
 		)
+	end
+	
+	it "prepares workers using the existing preparation hook" do
+		instance = Object.new
+		binding = Object.new
+		
+		expect(evaluator).to receive(:prepare!).with(instance)
+		
+		evaluator.prepare_worker!(instance, binding)
 	end
 end

@@ -14,6 +14,47 @@ require "protocol/http/middleware"
 describe Falcon::Service::Cluster do
 	let(:ports_path) {File.expand_path(".cluster/ports.txt", __dir__)}
 	
+	def make_binding(*addresses)
+		sockets = addresses.map do |address|
+			io = Struct.new(:local_address).new(address)
+			Struct.new(:to_io).new(io)
+		end
+		
+		endpoint = Struct.new(:sockets).new(sockets)
+		subject::Binding.new(endpoint: endpoint)
+	end
+	
+	it "captures all addresses from the bound endpoint" do
+		ip_address = Addrinfo.tcp("127.0.0.1", 9292)
+		unix_address = Addrinfo.unix("/tmp/falcon.sock")
+		binding = make_binding(ip_address, unix_address)
+		
+		expect(binding).to have_attributes(
+			addresses: be == [ip_address, unix_address],
+			address: be == "127.0.0.1",
+			port: be == 9292,
+			path: be == "/tmp/falcon.sock",
+			frozen?: be == true,
+		)
+		expect(binding.addresses.frozen?).to be == true
+	end
+	
+	it "exposes an IP address and port without a Unix socket path" do
+		binding = make_binding(Addrinfo.tcp("127.0.0.1", 9292))
+		
+		expect(binding.address).to be == "127.0.0.1"
+		expect(binding.port).to be == 9292
+		expect(binding.path).to be == nil
+	end
+	
+	it "exposes a Unix socket path without an IP address and port" do
+		binding = make_binding(Addrinfo.unix("/tmp/falcon.sock"))
+		
+		expect(binding.address).to be == nil
+		expect(binding.port).to be == nil
+		expect(binding.path).to be == "/tmp/falcon.sock"
+	end
+	
 	let(:recorder) do
 		path = ports_path
 		
@@ -26,11 +67,11 @@ describe Falcon::Service::Cluster do
 				super.merge(restart: false)
 			end
 			
-			define_method(:prepare!) do |instance|
-				super(instance)
+			define_method(:prepare_worker!) do |instance, binding|
+				super(instance, binding)
 				
 				File.open(path, "a") do |file|
-					file.puts(bound_port)
+					file.puts(binding.port)
 				end
 			end
 		end

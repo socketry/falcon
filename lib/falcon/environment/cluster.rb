@@ -23,28 +23,12 @@ module Falcon
 				"http://[::]:0"
 			end
 			
-			# The endpoint bound by the current worker.
-			# @returns [IO::Endpoint::BoundEndpoint | Nil]
-			def bound_endpoint
-				@bound_endpoint
-			end
-			
-			# Set the endpoint bound by the current worker.
-			# @parameter bound_endpoint [IO::Endpoint::BoundEndpoint]
-			def bound_endpoint=(bound_endpoint)
-				@bound_endpoint = bound_endpoint
-			end
-			
-			# The first socket address bound by the current worker.
-			# @returns [Addrinfo | Nil]
-			def bound_address
-				@bound_endpoint&.sockets&.first&.to_io&.local_address
-			end
-			
-			# The port bound by the current worker.
-			# @returns [Integer | Nil]
-			def bound_port
-				bound_address&.ip_port
+			# Prepare a cluster worker after its endpoint has been bound.
+			#
+			# @parameter instance [Object] The container instance.
+			# @parameter binding [Service::Cluster::Binding] The worker's bound endpoint and addresses.
+			def prepare_worker!(instance, binding)
+				prepare!(instance)
 			end
 		end
 	end
