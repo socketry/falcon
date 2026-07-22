@@ -3,6 +3,7 @@
 ## Unreleased
 
   - Move Falcon middleware trace providers to `traces/provider/falcon/middleware`.
+  - Add `traces` to the test dependencies for Falcon middleware trace provider tests.
 
 ## v0.55.5
 

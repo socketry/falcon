@@ -21,7 +21,8 @@ describe "traces/provider/falcon/middleware" do
 				expect(attributes).to be == expected_attributes
 				expect(block).not.to be == nil
 				
-				original.call(actual_name, attributes: attributes, &block)
+				Traces.trace_context = Traces::Context.local
+				block.call
 			end
 		end
 	end
