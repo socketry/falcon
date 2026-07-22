@@ -23,9 +23,7 @@ describe "traces/provider/falcon/middleware" do
 				expect(attributes).to be == expected_attributes
 				expect(block).not.to be == nil
 				
-				trace.call(actual_name, attributes: attributes) do
-					block.call
-				end
+				trace.call(actual_name, attributes: attributes, &block)
 			end
 		end
 	end
