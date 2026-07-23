@@ -14,26 +14,29 @@ require "protocol/http/middleware"
 describe Falcon::Service::Cluster do
 	let(:ports_path) {File.expand_path(".cluster/ports.txt", __dir__)}
 	
-	def make_binding(*addresses)
+	def make_listener(*addresses, name: "hello", scheme: "http", protocol: Async::HTTP::Protocol::HTTP1)
 		sockets = addresses.map do |address|
 			io = Struct.new(:local_address).new(address)
 			Struct.new(:to_io).new(io)
 		end
 		
 		endpoint = Struct.new(:sockets).new(sockets)
-		subject::Binding.new(endpoint: endpoint)
+		subject::Listener.new(name: name, scheme: scheme, protocol: protocol, endpoint: endpoint)
 	end
 	
-	it "captures all addresses from the bound endpoint" do
+	it "describes the bound listener" do
 		ip_address = Addrinfo.tcp("127.0.0.1", 9292)
 		unix_address = Addrinfo.unix("/tmp/falcon.sock")
-		binding = make_binding(ip_address, unix_address)
+		listener = make_listener(ip_address, unix_address)
 		
-		expect(binding).to have_attributes(
+		expect(listener).to have_attributes(
+			name: be == "hello",
+			scheme: be == "http",
+			protocol: be == Async::HTTP::Protocol::HTTP1,
 			addresses: be == [ip_address, unix_address],
 			frozen?: be == true,
 		)
-		expect(binding.addresses.frozen?).to be == true
+		expect(listener.addresses.frozen?).to be == true
 	end
 	
 	let(:recorder) do
@@ -48,11 +51,11 @@ describe Falcon::Service::Cluster do
 				super.merge(restart: false)
 			end
 			
-			define_method(:prepare_worker!) do |instance, binding|
-				super(instance, binding)
+			define_method(:prepare_worker!) do |instance, listener:|
+				super(instance, listener: listener)
 				
 				File.open(path, "a") do |file|
-					binding.addresses.each do |address|
+					listener.addresses.each do |address|
 						file.puts(address.ip_port) if address.ip?
 					end
 				end

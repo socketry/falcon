@@ -21,10 +21,10 @@ describe Falcon::Environment::Cluster do
 	
 	it "prepares workers using the existing preparation hook" do
 		instance = Object.new
-		binding = Object.new
+		listener = Object.new
 		
 		expect(evaluator).to receive(:prepare!).with(instance)
 		
-		evaluator.prepare_worker!(instance, binding)
+		evaluator.prepare_worker!(instance, listener: listener)
 	end
 end

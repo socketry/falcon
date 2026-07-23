@@ -26,8 +26,8 @@ module Falcon
 			# Prepare a cluster worker after its endpoint has been bound.
 			#
 			# @parameter instance [Object] The container instance.
-			# @parameter binding [Service::Cluster::Binding] The worker's bound endpoint and addresses.
-			def prepare_worker!(instance, binding)
+			# @parameter listener [Service::Cluster::Listener] The worker's bound listener.
+			def prepare_worker!(instance, listener:)
 				prepare!(instance)
 			end
 		end

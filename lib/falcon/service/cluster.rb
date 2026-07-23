@@ -10,15 +10,30 @@ module Falcon
 	module Service
 		# A managed service for running Falcon workers with independently bound endpoints.
 		class Cluster < Server
-			# An immutable association between a worker and its bound endpoint.
-			class Binding
-				# Initialize a worker binding.
+			# Describes a bound listener for a cluster worker.
+			class Listener
+				# Initialize a bound listener.
+				# @parameter name [String] The logical listener name.
+				# @parameter scheme [String] The application protocol scheme.
+				# @parameter protocol [Object] The application protocol implementation.
 				# @parameter endpoint [IO::Endpoint::BoundEndpoint] The endpoint bound by the worker.
-				def initialize(endpoint:)
+				def initialize(name:, scheme:, protocol:, endpoint:)
+					@name = name
+					@scheme = scheme
+					@protocol = protocol
 					@endpoint = endpoint
 					@addresses = endpoint.sockets.map{|socket| socket.to_io.local_address}.freeze
 					freeze
 				end
+				
+				# @attribute [String] The logical listener name.
+				attr_reader :name
+				
+				# @attribute [String] The application protocol scheme.
+				attr_reader :scheme
+				
+				# @attribute [Object] The application protocol implementation.
+				attr_reader :protocol
 				
 				# @attribute [IO::Endpoint::BoundEndpoint] The endpoint bound by the worker.
 				attr_reader :endpoint
@@ -54,14 +69,20 @@ module Falcon
 							
 							instance.status!("Preparing...")
 							
-							bound_endpoint = evaluator.endpoint.bound
-							binding = Binding.new(endpoint: bound_endpoint)
+							endpoint = evaluator.endpoint
+							bound_endpoint = endpoint.bound
+							listener = Listener.new(
+								name: evaluator.name,
+								scheme: endpoint.scheme,
+								protocol: endpoint.protocol,
+								endpoint: bound_endpoint,
+							)
 							
-							evaluator.prepare_worker!(instance, binding)
+							evaluator.prepare_worker!(instance, listener: listener)
 							emit_prepared(instance, clock)
 							
 							instance.status!("Running...")
-							server = run(instance, evaluator, binding.endpoint)
+							server = run(instance, evaluator, listener.endpoint)
 							instance.name = format_title(evaluator, server)
 							emit_running(instance, clock)
 							
