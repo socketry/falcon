@@ -15,12 +15,12 @@ module Falcon
 				# Initialize a bound listener.
 				# @parameter name [String] The logical listener name.
 				# @parameter scheme [String] The application protocol scheme.
-				# @parameter protocol [Object] The application protocol implementation.
+				# @parameter protocols [Array(String)] The supported application protocol names.
 				# @parameter endpoint [IO::Endpoint::BoundEndpoint] The endpoint bound by the worker.
-				def initialize(name:, scheme:, protocol:, endpoint:)
+				def initialize(name:, scheme:, protocols:, endpoint:)
 					@name = name
 					@scheme = scheme
-					@protocol = protocol
+					@protocols = protocols.map(&:to_s).freeze
 					@endpoint = endpoint
 					@addresses = endpoint.sockets.map{|socket| socket.to_io.local_address}.freeze
 					freeze
@@ -32,8 +32,8 @@ module Falcon
 				# @attribute [String] The application protocol scheme.
 				attr_reader :scheme
 				
-				# @attribute [Object] The application protocol implementation.
-				attr_reader :protocol
+				# @attribute [Array(String)] The supported application protocol names.
+				attr_reader :protocols
 				
 				# @attribute [IO::Endpoint::BoundEndpoint] The endpoint bound by the worker.
 				attr_reader :endpoint
@@ -74,7 +74,7 @@ module Falcon
 							listener = Listener.new(
 								name: evaluator.name,
 								scheme: endpoint.scheme,
-								protocol: endpoint.protocol,
+								protocols: endpoint.protocol.names,
 								endpoint: bound_endpoint,
 							)
 							

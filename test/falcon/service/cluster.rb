@@ -14,14 +14,14 @@ require "protocol/http/middleware"
 describe Falcon::Service::Cluster do
 	let(:ports_path) {File.expand_path(".cluster/ports.txt", __dir__)}
 	
-	def make_listener(*addresses, name: "hello", scheme: "http", protocol: Async::HTTP::Protocol::HTTP1)
+	def make_listener(*addresses, name: "hello", scheme: "http", protocols: ["http/1.1", "http/1.0"])
 		sockets = addresses.map do |address|
 			io = Struct.new(:local_address).new(address)
 			Struct.new(:to_io).new(io)
 		end
 		
 		endpoint = Struct.new(:sockets).new(sockets)
-		subject::Listener.new(name: name, scheme: scheme, protocol: protocol, endpoint: endpoint)
+		subject::Listener.new(name: name, scheme: scheme, protocols: protocols, endpoint: endpoint)
 	end
 	
 	it "describes the bound listener" do
@@ -32,11 +32,12 @@ describe Falcon::Service::Cluster do
 		expect(listener).to have_attributes(
 			name: be == "hello",
 			scheme: be == "http",
-			protocol: be == Async::HTTP::Protocol::HTTP1,
+			protocols: be == ["http/1.1", "http/1.0"],
 			addresses: be == [ip_address, unix_address],
 			frozen?: be == true,
 		)
 		expect(listener.addresses.frozen?).to be == true
+		expect(listener.protocols.frozen?).to be == true
 	end
 	
 	let(:recorder) do

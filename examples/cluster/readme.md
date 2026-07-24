@@ -4,7 +4,7 @@ This example shows how to run Falcon cluster workers on independently bound Unix
 
 Each worker lazily constructs an `IO::Endpoint.unix` endpoint using its process ID and current thread object ID. Consequently, process, threaded, and hybrid workers never compete for the same socket path, and the socket directory reflects every independently bound worker.
 
-After binding, Falcon describes each worker using a `Falcon::Service::Cluster::Listener`. The listener exposes its logical name, scheme, protocol, bound endpoint, and all concrete socket addresses. Service discovery integrations can use `prepare_worker!(instance, listener:)` to register exactly what the worker bound.
+After binding, Falcon describes each worker using a `Falcon::Service::Cluster::Listener`. The listener exposes its logical name, scheme, supported protocol names, bound endpoint, and all concrete socket addresses. Service discovery integrations can use `prepare_worker!(instance, listener:)` to register exactly what the worker bound.
 
 ## Usage
 
