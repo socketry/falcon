@@ -1,30 +1,29 @@
-# Cluster TCP Endpoints
+# Cluster with Envoy
 
-This example shows how to run Falcon cluster workers on independently bound TCP endpoints. Each worker binds to `localhost` with port `0`, allowing the operating system to assign an available port.
+This example runs a two-worker Falcon cluster behind Envoy. Each worker binds to `localhost` with port `0`, allowing the operating system to assign an available port. Falcon publishes the concrete worker addresses to Envoy through the supervisor's xDS control plane.
 
-After binding, Falcon describes each worker using a `Falcon::Service::Cluster::Listener`. The listener exposes its logical name, scheme, supported protocol names, bound endpoint, and all concrete socket addresses. This example records those addresses in `addresses.txt`; service discovery integrations can instead use `prepare_worker!(instance, listener:)` to register them directly.
+Docker Compose runs Falcon and Envoy in the same network namespace. This allows the workers to remain bound to loopback addresses while Envoy connects to their dynamically assigned ports. Envoy exposes a fixed HTTP listener on port 10000 and distributes requests across the workers.
 
 ## Usage
 
-Start the two-worker cluster:
+Build and start Falcon and Envoy:
 
 ```shell
-$ bundle exec async-service ./falcon.rb
+$ docker compose up --build --detach
 ```
 
-In another terminal, run the client:
+Run the client through Compose:
 
 ```shell
-$ bundle exec ruby ./client.rb
-[::]:53142: Hello World!
-[::]:53143: Hello World!
+$ docker compose run --rm client
+Hello from worker 12!
+Hello from worker 13!
 ```
 
-The exact address family and ports are platform-dependent.
+The client waits for Envoy and confirms that requests reach both workers.
 
-Both commands use `./addresses.txt` by default. Set `ADDRESSES_PATH` on both commands to use a different file:
+Stop and remove the containers:
 
 ```shell
-$ ADDRESSES_PATH=/tmp/falcon-cluster-addresses bundle exec async-service ./falcon.rb
-$ ADDRESSES_PATH=/tmp/falcon-cluster-addresses bundle exec ruby ./client.rb
+$ docker compose down
 ```

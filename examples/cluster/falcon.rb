@@ -4,29 +4,13 @@
 # Released under the MIT License.
 # Copyright, 2026, by Samuel Williams.
 
-require "protocol/http/middleware"
-
+require "async/service/supervisor"
+require "async/service/supervisor/envoy"
 require "falcon/environment/cluster"
-
-addresses_path = File.expand_path(ENV.fetch("ADDRESSES_PATH", "addresses.txt"), __dir__)
-File.write(addresses_path, "")
-
-record_addresses = Module.new do
-	define_method(:prepare_worker!) do |instance, listener:|
-		super(instance, listener: listener)
-		
-		File.open(addresses_path, "a") do |file|
-			file.flock(File::LOCK_EX)
-			listener.addresses.each do |address|
-				file.puts(address.inspect_sockaddr) if address.ip?
-			end
-		end
-	end
-end
 
 service "cluster" do
 	include Falcon::Environment::Cluster
-	include record_addresses
+	include Async::Service::Supervisor::Envoy::Supervised
 	
 	count 2
 	
@@ -35,6 +19,33 @@ service "cluster" do
 	end
 	
 	middleware do
-		Protocol::HTTP::Middleware::HelloWorld
+		rack_application = proc do |_env|
+			worker_id = Process.pid.to_s
+			body = "Hello from worker #{worker_id}!\n"
+			
+			[
+				200,
+				{
+					"content-type" => "text/plain",
+					"content-length" => body.bytesize.to_s,
+					"x-worker-id" => worker_id,
+				},
+				[body],
+			]
+		end
+		
+		Falcon::Server.middleware(rack_application, cache: false)
+	end
+end
+
+service "supervisor" do
+	include Async::Service::Supervisor::Environment
+	
+	monitors do
+		[
+			Async::Service::Supervisor::Envoy::Monitor.new(
+				bind: "http://127.0.0.1:18000",
+			),
+		]
 	end
 end

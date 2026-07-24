@@ -4,26 +4,28 @@
 # Released under the MIT License.
 # Copyright, 2026, by Samuel Williams.
 
-require "async/http/client"
-require "async/http/endpoint"
+require "net/http"
+require "uri"
 
-addresses_path = File.expand_path(ENV.fetch("ADDRESSES_PATH", "addresses.txt"), __dir__)
-addresses = File.readlines(addresses_path, chomp: true)
+uri = URI(ENV.fetch("ENVOY_URI", "http://127.0.0.1:10000"))
+deadline = Process.clock_gettime(Process::CLOCK_MONOTONIC) + 20
+workers = {}
 
-abort "No cluster addresses found in #{addresses_path}." if addresses.empty?
-
-Sync do
-	addresses.each do |address|
-		endpoint = Async::HTTP::Endpoint.parse("http://#{address}")
+until workers.size == 2 || Process.clock_gettime(Process::CLOCK_MONOTONIC) >= deadline
+	begin
+		response = Net::HTTP.get_response(uri)
 		
-		Async::HTTP::Client.open(endpoint) do |client|
-			response = client.get("/")
-			
-			begin
-				puts "#{address}: #{response.read}"
-			ensure
-				response.finish
-			end
+		if response.is_a?(Net::HTTPSuccess)
+			worker_id = response["x-worker-id"]
+			workers[worker_id] ||= response.body
 		end
+	rescue Errno::ECONNREFUSED, EOFError
+		# Envoy may still be connecting to the xDS control plane.
 	end
+	
+	sleep(0.1) unless workers.size == 2
 end
+
+abort "Envoy did not route requests to both workers." unless workers.size == 2
+
+workers.each_value{|body| puts(body)}

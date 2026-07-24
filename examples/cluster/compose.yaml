@@ -1,0 +1,32 @@
+services:
+  falcon:
+    image: cluster-falcon
+    build:
+      context: ../..
+      dockerfile: examples/cluster/Dockerfile
+    environment:
+      CONSOLE_OUTPUT: XTerm
+    ports:
+      - "10000:10000"
+
+  envoy:
+    image: envoyproxy/envoy:v1.32-latest
+    command: ["envoy", "-c", "/etc/envoy/envoy.yaml", "--log-level", "info"]
+    network_mode: "service:falcon"
+    volumes:
+      - ./envoy.yaml:/etc/envoy/envoy.yaml:ro
+    depends_on:
+      falcon:
+        condition: service_started
+
+  client:
+    image: cluster-falcon
+    command: ["bundle", "exec", "ruby", "examples/cluster/client.rb"]
+    environment:
+      ENVOY_URI: http://127.0.0.1:10000
+    network_mode: "service:falcon"
+    depends_on:
+      envoy:
+        condition: service_started
+    profiles:
+      - client
