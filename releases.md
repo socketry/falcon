@@ -1,9 +1,10 @@
 # Releases
 
-## Unreleased
+## v0.55.6
 
   - Add `Falcon::Environment::Cluster` and `Falcon::Service::Cluster` for running workers with independently bound endpoints.
   - Move Falcon middleware trace providers to `traces/provider/falcon/middleware`.
+  - Add `traces` to the test dependencies for Falcon middleware trace provider tests.
 
 ## v0.55.5
 

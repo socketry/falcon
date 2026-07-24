@@ -47,6 +47,11 @@ Please see the [project documentation](https://socketry.github.io/falcon/) for m
 
 Please see the [project releases](https://socketry.github.io/falcon/releases/index) for all releases.
 
+### v0.55.6
+
+  - Move Falcon middleware trace providers to `traces/provider/falcon/middleware`.
+  - Add `traces` to the test dependencies for Falcon middleware trace provider tests.
+
 ### v0.55.5
 
   - Strip `proxy-authorization` header in `Falcon::Middleware::Proxy`.
@@ -85,14 +90,6 @@ Please see the [project releases](https://socketry.github.io/falcon/releases/ind
 ### v0.52.4
 
   - Relax dependency on `async-container-supervisor` to allow `~> 0.6`.
-
-### v0.52.0
-
-  - Modernized codebase and dropped support for Ruby v3.1.
-  - Improved Rails integration documentation.
-  - Added extra logging of `RUBY_DESCRIPTION`.
-  - Minor documentation improvements.
-  - Agent context is now available, via the [`agent-context` gem](https://github.com/ioquatix/agent-context).
 
 ## Contributing
 

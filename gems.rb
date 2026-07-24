@@ -50,6 +50,7 @@ group :test do
 	gem "rubocop"
 	gem "rubocop-md"
 	gem "rubocop-socketry"
+	gem "traces"
 	
 	gem "sus-fixtures-async"
 	gem "sus-fixtures-async-http"
