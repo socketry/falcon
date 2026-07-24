@@ -37,6 +37,34 @@ module Falcon
 			VIA = "via"
 			CONNECTION = "connection"
 			
+			# Forwarding headers which carry trust-sensitive information about the
+			# original client (their address and the request scheme). Because Falcon
+			# acts as the trust boundary, any client-supplied values are untrustworthy,
+			# so we strip every inbound forwarding header and author our own below from
+			# connection-level facts.
+			#
+			# We emit both the modern RFC 7239 {FORWARDED} header and the legacy
+			# `x-forwarded-for` / `x-forwarded-proto` headers, because many downstream
+			# consumers still read the legacy ones. Notably Rack's
+			# `Rack::Request#forwarded_for` (used by Rails' `ActionDispatch::RemoteIp`)
+			# only prefers `Forwarded` and falls back to `X-Forwarded-For`; older Rack
+			# (< 3) and a lot of application code read `X-Forwarded-For` directly.
+			#
+			# We also strip underscore variants of the same header names because Rack
+			# normalizes both `x-forwarded-for` and `x_forwarded_for` to the same
+			# `HTTP_X_FORWARDED_FOR` CGI environment key.
+			FORWARDING_HEADERS = [
+				FORWARDED,
+				X_FORWARDED_FOR,
+				X_FORWARDED_PROTO,
+				"x-forwarded-host",
+				"x-forwarded-port",
+				"x_forwarded_for",
+				"x_forwarded_proto",
+				"x_forwarded_host",
+				"x_forwarded_port",
+			]
+			
 			# HTTP hop headers which *should* not be passed through the proxy.
 			HOP_HEADERS = [
 				"connection",
@@ -100,10 +128,13 @@ module Falcon
 			end
 			
 			# Prepare the request to be proxied to the specified host.
-			# In particular, we set appropriate {VIA}, {FORWARDED}, {X_FORWARDED_FOR} and {X_FORWARDED_PROTO} headers.
+			#
+			# Falcon acts as the trust boundary, so we strip any client-supplied
+			# {FORWARDING_HEADERS} and author our own from connection-level facts: the
+			# RFC 7239 {FORWARDED} header plus the legacy {X_FORWARDED_FOR} /
+			# {X_FORWARDED_PROTO} headers, along with an appended {VIA} header. This
+			# prevents a client from spoofing the forwarded address or scheme.
 			def prepare_request(request, host)
-				forwarded = []
-				
 				Console.debug(self) do |buffer|
 					buffer.puts "Request authority: #{request.authority}"
 					buffer.puts "Host authority: #{host.authority}"
@@ -114,9 +145,17 @@ module Falcon
 				# The authority of the request must match the authority of the endpoint we are proxying to, otherwise SNI and other things won't work correctly.
 				request.authority = host.authority
 				
+				# Discard inbound hop-by-hop headers before authoring trusted forwarding
+				# headers, so client-supplied Connection tokens can't remove headers we add.
+				self.prepare_headers(request.headers)
+				# Discard any inbound forwarding headers so a client can't spoof them; we author our own below from connection-level facts.
+				request.headers.extract(FORWARDING_HEADERS)
+				
+				forwarded = []
+				
 				if address = request.remote_address
 					request.headers.add(X_FORWARDED_FOR, address.ip_address)
-					forwarded << "for=#{address.ip_address}"
+					forwarded << "for=#{forwarded_node(address)}"
 				end
 				
 				if scheme = request.scheme
@@ -130,9 +169,19 @@ module Falcon
 				
 				request.headers.add(VIA, "#{request.version} #{self.class}")
 				
-				self.prepare_headers(request.headers)
-				
 				return request
+			end
+			
+			# Format a remote address as an RFC 7239 `for=` node identifier.
+			# IPv6 addresses must be enclosed in square brackets and quoted.
+			# @parameter address [Addrinfo] The remote address of the client.
+			# @returns [String] The node identifier for use in a {FORWARDED} header.
+			def forwarded_node(address)
+				if address.ipv6?
+					"\"[#{address.ip_address}]\""
+				else
+					address.ip_address
+				end
 			end
 			
 			# Proxy the request if the authority matches a specific host.
