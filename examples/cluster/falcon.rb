@@ -4,30 +4,34 @@
 # Released under the MIT License.
 # Copyright, 2026, by Samuel Williams.
 
-require "fileutils"
-require "io/endpoint/unix_endpoint"
 require "protocol/http/middleware"
 
 require "falcon/environment/cluster"
 
-socket_directory = File.expand_path(ENV.fetch("SOCKET_DIRECTORY", "sockets"), __dir__)
-FileUtils.mkdir_p(socket_directory)
+addresses_path = File.expand_path(ENV.fetch("ADDRESSES_PATH", "addresses.txt"), __dir__)
+File.write(addresses_path, "")
+
+record_addresses = Module.new do
+	define_method(:prepare_worker!) do |instance, listener:|
+		super(instance, listener: listener)
+		
+		File.open(addresses_path, "a") do |file|
+			file.flock(File::LOCK_EX)
+			listener.addresses.each do |address|
+				file.puts(address.inspect_sockaddr) if address.ip?
+			end
+		end
+	end
+end
 
 service "cluster" do
 	include Falcon::Environment::Cluster
+	include record_addresses
 	
 	count 2
 	
-	endpoint do
-		worker_id = "#{Process.pid}-#{Thread.current.object_id}"
-		socket_path = File.join(socket_directory, "#{worker_id}.ipc")
-		transport = IO::Endpoint.unix(socket_path)
-		
-		Async::HTTP::Endpoint.parse(
-			"http://localhost",
-			transport,
-			protocol: Async::HTTP::Protocol::HTTP1
-		)
+	def url
+		"http://localhost:0"
 	end
 	
 	middleware do
