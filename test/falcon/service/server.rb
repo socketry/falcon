@@ -110,4 +110,31 @@ describe Falcon::Service::Server do
 			server.stop
 		end
 	end
+	
+	it "propagates server IO errors" do
+		evaluator = Object.new
+		bound_endpoint = Object.new
+		failing_server = Object.new
+		condition = Async::Condition.new
+		
+		failing_server.define_singleton_method(:run) do
+			Async do
+				condition.wait
+				raise IOError, "application failure"
+			end
+		end
+		
+		evaluator.define_singleton_method(:make_server) do |endpoint|
+			raise ArgumentError, "Unexpected endpoint!" unless endpoint.equal?(bound_endpoint)
+			failing_server
+		end
+		
+		expect do
+			Async do |task|
+				server.run(nil, evaluator, bound_endpoint)
+				condition.signal
+				task.children.each(&:wait)
+			end.wait
+		end.to raise_exception(IOError, message: be == "application failure")
+	end
 end
