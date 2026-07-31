@@ -22,7 +22,6 @@ module Falcon
 			def url
 				"http://[::]:0"
 			end
-			
 		end
 	end
 end
