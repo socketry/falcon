@@ -5,8 +5,10 @@ WORKDIR /code
 
 ENV BUNDLE_GEMFILE=/code/gems.rb
 
-COPY . .
+COPY gems.rb .
 
 RUN bundle install
+
+COPY . .
 
 CMD ["bundle", "exec", "async-service", "falcon.rb"]

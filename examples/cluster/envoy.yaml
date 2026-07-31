@@ -9,6 +9,9 @@ dynamic_resources:
     grpc_services:
       - envoy_grpc:
           cluster_name: xds_cluster
+  cds_config:
+    ads: {}
+    resource_api_version: V3
 
 static_resources:
   listeners:
@@ -25,6 +28,7 @@ static_resources:
                 stat_prefix: ingress_http
                 route_config:
                   name: local_route
+                  validate_clusters: false
                   virtual_hosts:
                     - name: falcon
                       domains: ["*"]
@@ -39,16 +43,6 @@ static_resources:
                       "@type": type.googleapis.com/envoy.extensions.filters.http.router.v3.Router
 
   clusters:
-    - name: cluster
-      connect_timeout: 1s
-      type: EDS
-      lb_policy: ROUND_ROBIN
-      eds_cluster_config:
-        service_name: cluster
-        eds_config:
-          ads: {}
-          resource_api_version: V3
-
     - name: xds_cluster
       connect_timeout: 1s
       type: STATIC
@@ -59,7 +53,7 @@ static_resources:
               - endpoint:
                   address:
                     socket_address:
-                      address: 127.0.0.1
+                      address: "::1"
                       port_value: 18000
       typed_extension_protocol_options:
         envoy.extensions.upstreams.http.v3.HttpProtocolOptions:

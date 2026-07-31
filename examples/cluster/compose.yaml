@@ -9,7 +9,7 @@ services:
       - "10000:10000"
 
   envoy:
-    image: envoyproxy/envoy:v1.32-latest
+    image: envoyproxy/envoy:v1.39-latest
     command: ["envoy", "-c", "/etc/envoy/envoy.yaml", "--log-level", "info"]
     network_mode: "service:falcon"
     volumes:
