@@ -4,11 +4,13 @@ rails-integration:
   order: 2
 deployment:
   order: 3
-performance-tuning:
+cluster-deployment:
   order: 4
-websockets:
+performance-tuning:
   order: 5
-interim-responses:
+websockets:
   order: 6
+interim-responses:
+  order: 7
 how-it-works:
   order: 10
