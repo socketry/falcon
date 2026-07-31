@@ -18,6 +18,10 @@ files:
   description: This guide explains how to deploy applications using the Falcon web
     server. It covers the recommended deployment methods, configuration options, and
     examples for different environments, including systemd and kubernetes.
+- path: cluster-deployment.md
+  title: Dynamic Clusters with Envoy
+  description: This guide explains how to run Falcon workers with independently bound
+    endpoints and publish them dynamically to Envoy using xDS.
 - path: performance-tuning.md
   title: Performance Tuning
   description: This guide explains the performance characteristics of Falcon.

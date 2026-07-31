@@ -35,6 +35,8 @@ Please see the [project documentation](https://socketry.github.io/falcon/) for m
 
   - [Deployment](https://socketry.github.io/falcon/guides/deployment/index) - This guide explains how to deploy applications using the Falcon web server. It covers the recommended deployment methods, configuration options, and examples for different environments, including systemd and kubernetes.
 
+  - [Dynamic Clusters with Envoy](https://socketry.github.io/falcon/guides/cluster-deployment/index) - This guide explains how to run Falcon workers with independently bound endpoints and publish them dynamically to Envoy using xDS.
+
   - [Performance Tuning](https://socketry.github.io/falcon/guides/performance-tuning/index) - This guide explains the performance characteristics of Falcon.
 
   - [WebSockets](https://socketry.github.io/falcon/guides/websockets/index) - This guide explains how to use WebSockets with Falcon.
@@ -47,7 +49,7 @@ Please see the [project documentation](https://socketry.github.io/falcon/) for m
 
 Please see the [project releases](https://socketry.github.io/falcon/releases/index) for all releases.
 
-### Unreleased
+### v0.56.0
 
   - Add `Falcon::Environment::Cluster` and `Falcon::Service::Cluster` for running workers with independently bound endpoints.
   - Add `Falcon::Listener` to describe bound listeners shared by regular server workers or owned by cluster workers.
