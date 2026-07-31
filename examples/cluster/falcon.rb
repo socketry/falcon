@@ -44,7 +44,8 @@ service "supervisor" do
 	monitors do
 		[
 			Async::Service::Supervisor::Envoy::Monitor.new(
-				bind: "http://127.0.0.1:18000",
+				bind: "http://[::]:18000",
+				orca: true,
 			),
 		]
 	end
