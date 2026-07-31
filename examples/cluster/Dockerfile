@@ -3,10 +3,10 @@ FROM ruby:${RUBY_VERSION}
 
 WORKDIR /code
 
-ENV BUNDLE_GEMFILE=/code/examples/cluster/gems.rb
+ENV BUNDLE_GEMFILE=/code/gems.rb
 
 COPY . .
 
 RUN bundle install
 
-CMD ["bundle", "exec", "async-service", "examples/cluster/falcon.rb"]
+CMD ["bundle", "exec", "async-service", "falcon.rb"]

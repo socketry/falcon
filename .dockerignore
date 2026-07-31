@@ -1,8 +1,0 @@
-.git
-.context
-.bundle
-.covered.db
-gems.locked
-pkg
-external
-**/*.ipc

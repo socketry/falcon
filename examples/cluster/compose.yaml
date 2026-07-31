@@ -2,8 +2,7 @@ services:
   falcon:
     image: cluster-falcon
     build:
-      context: ../..
-      dockerfile: examples/cluster/Dockerfile
+      context: .
     environment:
       CONSOLE_OUTPUT: XTerm
     ports:
@@ -21,7 +20,7 @@ services:
 
   client:
     image: cluster-falcon
-    command: ["bundle", "exec", "ruby", "examples/cluster/client.rb"]
+    command: ["bundle", "exec", "ruby", "client.rb"]
     environment:
       ENVOY_URI: http://127.0.0.1:10000
     network_mode: "service:falcon"

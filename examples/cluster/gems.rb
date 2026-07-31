@@ -5,5 +5,5 @@
 
 source "https://rubygems.org"
 
-gem "falcon", path: "../.."
+gem "falcon", "~> 0.56.0"
 gem "async-service-supervisor-envoy", "~> 0.2.0"

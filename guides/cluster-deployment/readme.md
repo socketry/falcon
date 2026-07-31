@@ -44,9 +44,10 @@ flowchart LR
 
 ## Configuration
 
-Add the Envoy supervisor integration to your `gems.rb`:
+Add Falcon and the Envoy supervisor integration to your `gems.rb`:
 
 ```ruby
+gem "falcon", "~> 0.56.0"
 gem "async-service-supervisor-envoy", "~> 0.2"
 ```
 
