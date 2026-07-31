@@ -15,7 +15,7 @@ A regular {ruby Falcon::Service::Server} binds one listener and shares it with e
 
 ## Architecture
 
-In the example, each cluster worker binds to `localhost` with port `0`, allowing the operating system to assign an available port. Falcon describes the bound resource with a {ruby Falcon::Listener}, including its name, scheme, supported protocols, and concrete addresses.
+In the accompanying [Docker Compose cluster example](https://github.com/socketry/falcon/tree/main/examples/cluster), each cluster worker binds to `localhost` with port `0`, allowing the operating system to assign an available port. Falcon describes the bound resource with a {ruby Falcon::Listener}, including its name, scheme, supported protocols, and concrete addresses.
 
 The worker registers that listener with `async-service-supervisor-envoy`. The supervisor publishes the current workers through an xDS control plane, and Envoy uses Endpoint Discovery Service (EDS) updates to maintain the upstream cluster.
 
