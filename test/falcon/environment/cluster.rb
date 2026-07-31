@@ -3,23 +3,20 @@
 # Released under the MIT License.
 # Copyright, 2026, by Samuel Williams.
 
-require "falcon/environment/server"
+require "falcon/environment/cluster"
 require "async/service/environment"
 
-describe Falcon::Environment::Server do
+describe Falcon::Environment::Cluster do
 	let(:evaluator) do
 		Async::Service::Environment.build(subject, name: "localhost").evaluator
 	end
 	
-	it "provides default server settings" do
+	it "provides default cluster settings" do
 		expect(evaluator).to have_attributes(
-			url: be == "http://[::]:9292",
+			service_class: be == Falcon::Service::Cluster,
+			url: be == "http://[::]:0",
 			authority: be == "localhost",
-			timeout: be == nil,
-			verbose: be == false,
-			cache: be == false,
 		)
-		expect(evaluator.client_endpoint).to be_a(Async::HTTP::Endpoint)
 	end
 	
 	it "prepares workers using the existing preparation hook" do

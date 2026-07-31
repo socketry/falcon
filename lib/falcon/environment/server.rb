@@ -67,6 +67,14 @@ module Falcon
 				::Async::HTTP::Endpoint.parse(url)
 			end
 			
+			# Prepare a server worker after its listener has been bound.
+			#
+			# @parameter instance [Object] The container instance.
+			# @parameter listener [Falcon::Listener] The worker's bound listener.
+			def prepare_worker!(instance, listener)
+				prepare!(instance)
+			end
+			
 			# Make a server instance using the given endpoint. The endpoint may be a bound endpoint, so we take care to specify the protocol and scheme as per the original endpoint.
 			#
 			# @parameter endpoint [IO::Endpoint] The endpoint to bind to.

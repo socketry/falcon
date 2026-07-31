@@ -4,6 +4,7 @@
 # Copyright, 2017-2026, by Samuel Williams.
 
 require_relative "falcon/version"
+require_relative "falcon/listener"
 require_relative "falcon/server"
 require_relative "falcon/composite_server"
 

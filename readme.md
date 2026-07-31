@@ -47,6 +47,11 @@ Please see the [project documentation](https://socketry.github.io/falcon/) for m
 
 Please see the [project releases](https://socketry.github.io/falcon/releases/index) for all releases.
 
+### Unreleased
+
+  - Add `Falcon::Environment::Cluster` and `Falcon::Service::Cluster` for running workers with independently bound endpoints.
+  - Add `Falcon::Listener` to describe bound listeners shared by regular server workers or owned by cluster workers.
+
 ### v0.55.6
 
   - Move Falcon middleware trace providers to `traces/provider/falcon/middleware`.
@@ -86,10 +91,6 @@ Please see the [project releases](https://socketry.github.io/falcon/releases/ind
 ### v0.54.0
 
   - Introduce `Falcon::CompositeServer` for hosting multiple server instances in a single worker.
-
-### v0.52.4
-
-  - Relax dependency on `async-container-supervisor` to allow `~> 0.6`.
 
 ## Contributing
 
