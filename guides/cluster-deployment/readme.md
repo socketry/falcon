@@ -15,7 +15,7 @@ A regular {ruby Falcon::Service::Server} binds one listener and shares it with e
 
 ## Architecture
 
-In the accompanying [Docker Compose cluster example](https://github.com/socketry/falcon/tree/main/examples/cluster), each cluster worker binds to `localhost` with port `0`, allowing the operating system to assign an available port. Falcon describes the bound resource with a {ruby Falcon::Listener}, including its name, scheme, supported protocols, and concrete addresses.
+Each cluster worker can bind to `localhost` with port `0`, allowing the operating system to assign an available port. Falcon describes the bound resource with a {ruby Falcon::Listener}, including its name, scheme, supported protocols, and concrete addresses.
 
 The worker registers that listener with `async-service-supervisor-envoy`. The supervisor publishes the current workers through an xDS control plane, and Envoy uses Endpoint Discovery Service (EDS) updates to maintain the upstream cluster.
 
@@ -61,7 +61,7 @@ This lifecycle is important when ports are ephemeral or a directory may contain 
 
 ## Network Topology
 
-The [cluster example](https://github.com/socketry/falcon/tree/main/examples/cluster) runs Falcon and Envoy in the same network namespace. Its Envoy service uses `network_mode: service:falcon`, so `127.0.0.1` and `localhost` refer to the same loopback interface for both processes.
+Falcon and Envoy can run in the same network namespace, allowing workers to bind to loopback addresses while remaining reachable by Envoy. With Docker Compose, `network_mode: service:falcon` gives the Envoy service access to Falcon's network namespace, so `127.0.0.1` and `localhost` refer to the same loopback interface for both processes.
 
 Without a shared network namespace, Envoy cannot connect to worker endpoints bound to Falcon's loopback interface. In a different deployment topology, bind workers to an interface that Envoy can reach and apply the appropriate network access controls.
 
