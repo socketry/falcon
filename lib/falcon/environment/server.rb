@@ -71,7 +71,7 @@ module Falcon
 			#
 			# @parameter instance [Object] The container instance.
 			# @parameter listener [Falcon::Listener] The worker's bound listener.
-			def prepare_worker!(instance, listener:)
+			def prepare_worker!(instance, listener)
 				prepare!(instance)
 			end
 			

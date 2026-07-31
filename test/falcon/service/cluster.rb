@@ -26,8 +26,8 @@ describe Falcon::Service::Cluster do
 				super.merge(restart: false)
 			end
 			
-			define_method(:prepare_worker!) do |instance, listener:|
-				super(instance, listener: listener)
+			define_method(:prepare_worker!) do |instance, listener|
+				super(instance, listener)
 				
 				File.open(path, "a") do |file|
 					listener.addresses.each do |address|

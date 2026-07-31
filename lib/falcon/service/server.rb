@@ -84,7 +84,7 @@ module Falcon
 							end
 							
 							instance.status!("Preparing...")
-							evaluator.prepare_worker!(instance, listener: listener)
+							evaluator.prepare_worker!(instance, listener)
 							emit_prepared(instance, clock)
 							
 							instance.status!("Running...")

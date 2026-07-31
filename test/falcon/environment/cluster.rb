@@ -25,6 +25,6 @@ describe Falcon::Environment::Cluster do
 		
 		expect(evaluator).to receive(:prepare!).with(instance)
 		
-		evaluator.prepare_worker!(instance, listener: listener)
+		evaluator.prepare_worker!(instance, listener)
 	end
 end
