@@ -23,13 +23,6 @@ module Falcon
 				"http://[::]:0"
 			end
 			
-			# Prepare a cluster worker after its endpoint has been bound.
-			#
-			# @parameter instance [Object] The container instance.
-			# @parameter listener [Service::Cluster::Listener] The worker's bound listener.
-			def prepare_worker!(instance, listener:)
-				prepare!(instance)
-			end
 		end
 	end
 end

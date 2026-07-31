@@ -3,6 +3,7 @@
 ## Unreleased
 
   - Add `Falcon::Environment::Cluster` and `Falcon::Service::Cluster` for running workers with independently bound endpoints.
+  - Add `Falcon::Listener` to describe bound listeners shared by regular server workers or owned by cluster workers.
 
 ## v0.55.6
 

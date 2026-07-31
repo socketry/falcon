@@ -21,4 +21,13 @@ describe Falcon::Environment::Server do
 		)
 		expect(evaluator.client_endpoint).to be_a(Async::HTTP::Endpoint)
 	end
+	
+	it "prepares workers using the existing preparation hook" do
+		instance = Object.new
+		listener = Object.new
+		
+		expect(evaluator).to receive(:prepare!).with(instance)
+		
+		evaluator.prepare_worker!(instance, listener: listener)
+	end
 end

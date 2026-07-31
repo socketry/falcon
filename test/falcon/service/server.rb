@@ -28,6 +28,22 @@ describe Falcon::Service::Server do
 		expect(server).to be_a subject
 	end
 	
+	it "binds a listener shared by its workers" do
+		server.start
+		
+		server.with_listener(environment.evaluator) do |listener|
+			expect(listener).to be_a(Falcon::Listener)
+			expect(listener).to have_attributes(
+				name: be == "hello",
+				scheme: be == "http",
+				protocols: be(:include?, "http/1.1"),
+			)
+			expect(listener.addresses.first.ip?).to be == true
+		end
+	ensure
+		server.stop
+	end
+	
 	it "can start and stop server" do
 		container = Async::Container.new
 		
@@ -114,6 +130,7 @@ describe Falcon::Service::Server do
 	it "propagates server IO errors" do
 		evaluator = Object.new
 		bound_endpoint = Object.new
+		listener = Struct.new(:endpoint).new(bound_endpoint)
 		failing_server = Object.new
 		condition = Async::Condition.new
 		
@@ -131,7 +148,7 @@ describe Falcon::Service::Server do
 		
 		expect do
 			Async do |task|
-				server.run(nil, evaluator, bound_endpoint)
+				server.run(nil, evaluator, listener)
 				condition.signal
 				task.children.each(&:wait)
 			end.wait

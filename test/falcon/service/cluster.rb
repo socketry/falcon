@@ -14,32 +14,6 @@ require "protocol/http/middleware"
 describe Falcon::Service::Cluster do
 	let(:ports_path) {File.expand_path(".cluster/ports.txt", __dir__)}
 	
-	def make_listener(*addresses, name: "hello", scheme: "http", protocols: ["http/1.1", "http/1.0"])
-		sockets = addresses.map do |address|
-			io = Struct.new(:local_address).new(address)
-			Struct.new(:to_io).new(io)
-		end
-		
-		endpoint = Struct.new(:sockets).new(sockets)
-		subject::Listener.new(name: name, scheme: scheme, protocols: protocols, endpoint: endpoint)
-	end
-	
-	it "describes the bound listener" do
-		ip_address = Addrinfo.tcp("127.0.0.1", 9292)
-		unix_address = Addrinfo.unix("/tmp/falcon.sock")
-		listener = make_listener(ip_address, unix_address)
-		
-		expect(listener).to have_attributes(
-			name: be == "hello",
-			scheme: be == "http",
-			protocols: be == ["http/1.1", "http/1.0"],
-			addresses: be == [ip_address, unix_address],
-			frozen?: be == true,
-		)
-		expect(listener.addresses.frozen?).to be == true
-		expect(listener.protocols.frozen?).to be == true
-	end
-	
 	let(:recorder) do
 		path = ports_path
 		
