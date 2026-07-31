@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # Released under the MIT License.
-# Copyright, 2018-2024, by Samuel Williams.
+# Copyright, 2018-2026, by Samuel Williams.
 # Copyright, 2026, by Fletcher Dares.
 
 require "falcon/middleware/proxy"
