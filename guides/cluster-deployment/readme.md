@@ -92,10 +92,14 @@ service "supervisor" do
 	include Async::Service::Supervisor::Environment
 	
 	monitors do
+		utilization_monitor = Async::Service::Supervisor::UtilizationMonitor.new
+		
 		[
+			utilization_monitor,
 			Async::Service::Supervisor::Envoy::Monitor.new(
 				bind: "http://[::]:18000",
 				orca: true,
+				utilization_monitor: utilization_monitor,
 			),
 		]
 	end
