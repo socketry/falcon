@@ -12,7 +12,13 @@ describe Falcon::Listener do
 			Struct.new(:to_io).new(io)
 		end
 		
-		endpoint = Struct.new(:sockets).new(sockets)
+		endpoint = Struct.new(:sockets) do
+			attr_reader :closed
+			
+			def close
+				@closed = true
+			end
+		end.new(sockets)
 		subject.new(name: name, scheme: scheme, protocols: protocols, endpoint: endpoint)
 	end
 	
@@ -30,5 +36,13 @@ describe Falcon::Listener do
 		)
 		expect(listener.addresses.frozen?).to be == true
 		expect(listener.protocols.frozen?).to be == true
+	end
+	
+	it "closes the bound endpoint" do
+		listener = make_listener(Addrinfo.tcp("127.0.0.1", 9292))
+		
+		listener.close
+		
+		expect(listener.endpoint.closed).to be == true
 	end
 end

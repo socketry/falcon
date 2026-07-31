@@ -34,5 +34,10 @@ module Falcon
 		
 		# @attribute [Array(Addrinfo)] The bound addresses.
 		attr_reader :addresses
+		
+		# Close the bound endpoint.
+		def close
+			@endpoint.close
+		end
 	end
 end

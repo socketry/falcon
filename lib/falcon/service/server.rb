@@ -135,7 +135,7 @@ module Falcon
 			# Close the bound endpoint.
 			def stop(...)
 				if @listener
-					@listener.endpoint.close
+					@listener.close
 					@listener = nil
 				end
 				
