@@ -6,4 +6,4 @@
 source "https://rubygems.org"
 
 gem "falcon", "~> 0.56.0"
-gem "async-service-supervisor-envoy", "~> 0.3.0"
+gem "async-service-supervisor-envoy", "~> 0.5.0"

@@ -38,7 +38,7 @@ flowchart LR
 
 		Worker1 -.->|Register endpoint| Supervisor
 		Worker2 -.->|Register endpoint| Supervisor
-		Supervisor -.->|CDS and EDS over ADS| Envoy
+		Supervisor -.->|Dedicated CDS and EDS streams| Envoy
 		Supervisor -.->|Per-worker ORCA reports| Envoy
 		Envoy -->|HTTP on dynamic port| Worker1
 		Envoy -->|HTTP on dynamic port| Worker2
@@ -51,7 +51,7 @@ Add Falcon and the Envoy supervisor integration to your `gems.rb`:
 
 ```ruby
 gem "falcon", "~> 0.56.0"
-gem "async-service-supervisor-envoy", "~> 0.3"
+gem "async-service-supervisor-envoy", "~> 0.5"
 ```
 
 Define a Falcon cluster service and an accompanying supervisor in `falcon.rb`:
@@ -114,15 +114,14 @@ node:
   cluster: falcon-cluster
 
 dynamic_resources:
-  ads_config:
-    api_type: GRPC
-    transport_api_version: V3
-    grpc_services:
-      - envoy_grpc:
-          cluster_name: xds_cluster
   cds_config:
-    ads: {}
     resource_api_version: V3
+    api_config_source:
+      api_type: GRPC
+      transport_api_version: V3
+      grpc_services:
+        - envoy_grpc:
+            cluster_name: xds_cluster
 
 static_resources:
   listeners:
@@ -173,7 +172,7 @@ static_resources:
             http2_protocol_options: {}
 ```
 
-The `xds_cluster` connection uses HTTP/2 because ADS is served over gRPC. The supervisor serves both ADS and ORCA on port `18000`; Envoy uses that as an alternative to each worker's HTTP port when opening ORCA streams. Envoy 1.39 or later is required for this alternative reporting-port configuration.
+The `xds_cluster` connection uses HTTP/2 because CDS and EDS are served over gRPC. The supervisor serves dedicated CDS and EDS streams together with ORCA on port `18000`; Envoy uses that as an alternative to each worker's HTTP port when opening ORCA streams. Envoy 1.39 or later is required for this alternative reporting-port configuration.
 
 ## Worker Registration
 
@@ -182,7 +181,7 @@ When each worker starts:
 1. Falcon binds the worker to an available loopback port.
 2. The worker registers its concrete addresses and supported protocols with the supervisor.
 3. The supervisor's Envoy monitor publishes the cluster policy and current worker endpoints as CDS and EDS resources.
-4. Envoy receives the resources over its Aggregated Discovery Service (ADS) connection and updates its upstream cluster.
+4. Envoy receives the resources over dedicated CDS and EDS streams and updates its upstream cluster.
 5. The supervisor samples worker CPU time and request totals, then streams the current load reports to Envoy using ORCA.
 
 The first processor and request samples establish baselines. Load-aware weights become available after the next sampling interval. If a report is temporarily unavailable, Envoy retains its normal policy fallback rather than making the worker unreachable.
@@ -191,7 +190,7 @@ The listener preserves all addresses returned by the bound endpoint. This allows
 
 ## Worker Restarts
 
-If a worker exits, its supervisor connection closes and the monitor removes both its endpoint and ORCA report. Falcon restarts the worker, which binds a new available port and registers it. The monitor then publishes another update, and Envoy receives both changes over its existing ADS stream without polling or restarting.
+If a worker exits, its supervisor connection closes and the monitor removes both its endpoint and ORCA report. Falcon restarts the worker, which binds a new available port and registers it. The monitor then publishes another update, and Envoy receives both changes over its existing EDS stream without polling or restarting.
 
 This lifecycle is important when ports are ephemeral or a directory may contain stale Unix-domain socket paths: consumers should use the supervisor's current endpoint state as the source of truth.
 
@@ -199,6 +198,6 @@ This lifecycle is important when ports are ephemeral or a directory may contain 
 
 Falcon and Envoy can run in the same network namespace, allowing workers to bind to loopback addresses while remaining reachable by Envoy. With Docker Compose, `network_mode: service:falcon` gives the Envoy service access to Falcon's network namespace, so loopback addresses refer to the same interface for both processes.
 
-The configuration binds the supervisor endpoint to the IPv6 wildcard address because `localhost` worker endpoints use IPv6 in the container. Envoy connects to ADS through `::1`; for each ORCA stream it uses the worker's address with the configured supervisor port `18000`. The supervisor listener must therefore be reachable using the same address family as every published worker endpoint.
+The configuration binds the supervisor endpoint to the IPv6 wildcard address because `localhost` worker endpoints use IPv6 in the container. Envoy connects to CDS and EDS through `::1`; for each ORCA stream it uses the worker's address with the configured supervisor port `18000`. The supervisor listener must therefore be reachable using the same address family as every published worker endpoint.
 
 Without a shared network namespace, Envoy cannot connect to worker endpoints bound to Falcon's loopback interface. In a different deployment topology, bind workers to an interface that Envoy can reach and apply the appropriate network access controls.

@@ -1,5 +1,9 @@
 # Releases
 
+## Unreleased
+
+  - Update the Envoy cluster example to use dedicated CDS and EDS services from `async-service-supervisor-envoy` v0.5.
+
 ## v0.56.0
 
   - Add `Falcon::Environment::Cluster` and `Falcon::Service::Cluster` for running workers with independently bound endpoints.
