@@ -21,7 +21,8 @@ files:
 - path: cluster-deployment.md
   title: Dynamic Clusters with Envoy
   description: This guide explains how to run Falcon workers with independently bound
-    endpoints and publish them dynamically to Envoy using xDS.
+    endpoints, publish them dynamically using xDS, and balance requests according
+    to their current load using ORCA.
 - path: performance-tuning.md
   title: Performance Tuning
   description: This guide explains the performance characteristics of Falcon.

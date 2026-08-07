@@ -35,7 +35,7 @@ Please see the [project documentation](https://socketry.github.io/falcon/) for m
 
   - [Deployment](https://socketry.github.io/falcon/guides/deployment/index) - This guide explains how to deploy applications using the Falcon web server. It covers the recommended deployment methods, configuration options, and examples for different environments, including systemd and kubernetes.
 
-  - [Dynamic Clusters with Envoy](https://socketry.github.io/falcon/guides/cluster-deployment/index) - This guide explains how to run Falcon workers with independently bound endpoints and publish them dynamically to Envoy using xDS.
+  - [Dynamic Clusters with Envoy](https://socketry.github.io/falcon/guides/cluster-deployment/index) - This guide explains how to run Falcon workers with independently bound endpoints, publish them dynamically using xDS, and balance requests according to their current load using ORCA.
 
   - [Performance Tuning](https://socketry.github.io/falcon/guides/performance-tuning/index) - This guide explains the performance characteristics of Falcon.
 
@@ -48,6 +48,10 @@ Please see the [project documentation](https://socketry.github.io/falcon/) for m
 ## Releases
 
 Please see the [project releases](https://socketry.github.io/falcon/releases/index) for all releases.
+
+### Unreleased
+
+  - Update the Envoy cluster example to use dedicated CDS and EDS services from `async-service-supervisor-envoy` v0.5.
 
 ### v0.56.0
 
@@ -89,10 +93,6 @@ Please see the [project releases](https://socketry.github.io/falcon/releases/ind
 ### v0.54.1
 
   - Fix handling of old style supervisors from `Async::Container::Supervisor`.
-
-### v0.54.0
-
-  - Introduce `Falcon::CompositeServer` for hosting multiple server instances in a single worker.
 
 ## Contributing
 
