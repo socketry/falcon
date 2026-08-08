@@ -29,6 +29,13 @@ describe Falcon::Environment::Serve do
 		expect(evaluator.resolved_configuration_path).to be == File.join(root, "config/serve.rb")
 	end
 	
+	it "loads config/serve.rb as protocol middleware" do
+		FileUtils.mkdir_p(File.join(root, "config"))
+		File.write(File.join(root, "config/serve.rb"), "run Protocol::HTTP::Middleware::Okay\n")
+		
+		expect(evaluator.middleware).to be_a(Protocol::HTTP::Middleware)
+	end
+	
 	it "falls back to config.ru" do
 		File.write(File.join(root, "config.ru"), "run ->(env) {[200, {}, []]}\n")
 		
