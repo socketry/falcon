@@ -71,8 +71,7 @@ module Falcon
 			# Create the environment for the serve command.
 			# @returns [Async::Service::Environment] The configured server environment.
 			def environment
-				Async::Service::Environment.new(Falcon::Environment::Server).with(
-					Falcon::Environment::Serve,
+				environment_options = {
 					root: Dir.pwd,
 					
 					verbose: self.parent&.verbose?,
@@ -81,13 +80,21 @@ module Falcon
 					container_options: self.container_options,
 					endpoint_options: self.endpoint_options,
 					
-					configuration_path: @options[:config],
 					preload: [@options[:preload]].compact,
 					url: @options[:bind],
 					
 					name: self.name,
 					
-					endpoint: ->{Endpoint.parse(url, **endpoint_options)}
+					endpoint: ->{Endpoint.parse(url, **endpoint_options)},
+				}
+				
+				if configuration_path = @options[:config]
+					environment_options[:configuration_path] = File.expand_path(configuration_path, Dir.pwd)
+				end
+				
+				return Async::Service::Environment.new(Falcon::Environment::Server).with(
+					Falcon::Environment::Serve,
+					**environment_options,
 				)
 			end
 			

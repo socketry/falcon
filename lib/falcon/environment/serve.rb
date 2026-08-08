@@ -12,19 +12,9 @@ module Falcon
 	module Environment
 		# Provides configuration discovery and loading for `falcon serve`.
 		module Serve
-			# The explicitly specified application configuration path, if any.
-			# @returns [String | Nil]
-			def configuration_path
-				nil
-			end
-			
-			# Resolve the application configuration path.
+			# Discover the application configuration path.
 			# @returns [String] The absolute application configuration path.
-			def resolved_configuration_path
-				if configuration_path
-					return File.expand_path(configuration_path, root)
-				end
-				
+			def configuration_path
 				serve_path = File.expand_path("config/serve.rb", root)
 				if File.file?(serve_path)
 					return serve_path
@@ -41,7 +31,7 @@ module Falcon
 			# Load and wrap the configured application.
 			# @returns [Protocol::HTTP::Middleware] The middleware stack.
 			def middleware
-				path = resolved_configuration_path
+				path = configuration_path
 				
 				case File.extname(path)
 				when ".rb"
