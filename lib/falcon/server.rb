@@ -22,6 +22,14 @@ module Falcon
 		# @parameter verbose [Boolean] Whether to add the {Middleware::Verbose} middleware.
 		# @parameter cache [Boolean] Whether to add the {Async::HTTP::Cache} middleware.
 		def self.middleware(rack_app, verbose: false, cache: true)
+			return self.protocol_middleware(::Protocol::Rack::Adapter.new(rack_app), verbose: verbose, cache: cache)
+		end
+		
+		# Wrap a protocol application with the standard server middleware.
+		# @parameter application [Protocol::HTTP::Middleware] The protocol application/middleware.
+		# @parameter verbose [Boolean] Whether to add the {Middleware::Verbose} middleware.
+		# @parameter cache [Boolean] Whether to add the {Async::HTTP::Cache} middleware.
+		def self.protocol_middleware(application, verbose: false, cache: true)
 			::Protocol::HTTP::Middleware.build do
 				if verbose
 					use Middleware::Verbose
@@ -32,9 +40,7 @@ module Falcon
 				end
 				
 				use ::Protocol::HTTP::ContentEncoding
-				
-				use ::Protocol::Rack::Adapter
-				run rack_app
+				run application
 			end
 		end
 		

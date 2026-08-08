@@ -14,9 +14,11 @@ ServeCommand = Sus::Shared("falcon serve") do
 	let(:command) do
 		subject[
 			"--port", port,
-			"--config", File.expand_path("config.ru", __dir__), *options
+			"--config", File.expand_path(configuration, __dir__), *options
 		]
 	end
+	
+	let(:configuration) {"config.ru"}
 	
 	it "can listen on specified port" do
 		configuration = command.configuration
@@ -53,6 +55,13 @@ describe Falcon::Command::Serve do
 	with "one instance" do
 		let(:port) {8091}
 		let(:options) {["--count", 1]}
+		it_behaves_like ServeCommand
+	end
+	
+	with "a protocol application" do
+		let(:port) {8096}
+		let(:configuration) {".serve/config.rb"}
+		
 		it_behaves_like ServeCommand
 	end
 	

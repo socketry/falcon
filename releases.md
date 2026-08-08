@@ -3,6 +3,7 @@
 ## Unreleased
 
   - Update the Envoy cluster example to use dedicated CDS and EDS services from `async-service-supervisor-envoy` v0.5.
+  - Add protocol-native `config/serve.rb` support to `falcon serve`, with fallback to Rack `config.ru` applications.
 
 ## v0.56.0
 
