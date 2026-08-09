@@ -49,9 +49,10 @@ Please see the [project documentation](https://socketry.github.io/falcon/) for m
 
 Please see the [project releases](https://socketry.github.io/falcon/releases/index) for all releases.
 
-### Unreleased
+### v0.57.0
 
   - Update the Envoy cluster example to use dedicated CDS and EDS services from `async-service-supervisor-envoy` v0.5.
+  - [Rack Compatibility](https://socketry.github.io/falcon/releases/index#rack-compatibility)
 
 ### v0.56.0
 
