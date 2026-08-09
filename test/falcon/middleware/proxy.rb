@@ -93,4 +93,57 @@ describe Falcon::Middleware::Proxy do
 			message: be(:include?, "Request authority: www.google.com"),
 		)
 	end
+	
+	it "strips forwarded headers before preparing requests" do
+		headers = Protocol::HTTP::Headers[
+			"forwarded" => "for=203.0.113.1;proto=http",
+			"x-forwarded-for" => "203.0.113.1",
+			"x-forwarded-proto" => "http",
+			"x-forwarded-host" => "example.com",
+			"x-forwarded-port" => "80",
+			"x-forwarded-scheme" => "http",
+			"x-forwarded-ssl" => "off",
+			"x-real-ip" => "203.0.113.1",
+			"client-ip" => "203.0.113.1",
+		]
+		request = Protocol::HTTP::Request.new("https", "www.google.com", "GET", "/", "HTTP/1.1", headers, nil)
+		host = proxy_for(authority: "www.google.com", endpoint: Async::HTTP::Endpoint.parse("https://www.google.com"))
+		
+		expect(request).to receive(:remote_address).and_return(Addrinfo.ip("127.0.0.1"))
+		
+		proxy.prepare_request(request, host)
+		
+		expect(request.headers["forwarded"]).to be == ["for=127.0.0.1;proto=https"]
+		expect(request.headers["x-forwarded-for"]).to be == ["127.0.0.1"]
+		expect(request.headers["x-forwarded-proto"]).to be == ["https"]
+		expect(request.headers["x-forwarded-host"]).to be_nil
+		expect(request.headers["x-forwarded-port"]).to be_nil
+		expect(request.headers["x-forwarded-scheme"]).to be_nil
+		expect(request.headers["x-forwarded-ssl"]).to be_nil
+		expect(request.headers["x-real-ip"]).to be_nil
+		expect(request.headers["client-ip"]).to be_nil
+	end
+	
+	it "allows forwarded header preparation to be overridden" do
+		klass = Class.new(subject) do
+			def prepare_forwarded_headers(headers)
+			end
+		end
+		proxy = klass.new(Falcon::Middleware::BadRequest, {})
+		headers = Protocol::HTTP::Headers[
+			"forwarded" => "for=203.0.113.1;proto=http",
+			"x-forwarded-for" => "203.0.113.1",
+			"x-forwarded-proto" => "http",
+		]
+		request = Protocol::HTTP::Request.new("https", "www.google.com", "GET", "/", "HTTP/1.1", headers, nil)
+		host = proxy_for(authority: "www.google.com", endpoint: Async::HTTP::Endpoint.parse("https://www.google.com"))
+		
+		expect(request).to receive(:remote_address).and_return(Addrinfo.ip("127.0.0.1"))
+		
+		proxy.prepare_request(request, host)
+		
+		expect(request.headers["forwarded"]).to be == ["for=203.0.113.1;proto=http", "for=127.0.0.1;proto=https"]
+		expect(request.headers["x-forwarded-for"]).to be == ["203.0.113.1", "127.0.0.1"]
+		expect(request.headers["x-forwarded-proto"]).to be == ["http", "https"]
+	end
 end
