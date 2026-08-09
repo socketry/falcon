@@ -10,7 +10,21 @@ require_relative "../server"
 
 module Falcon
 	module Environment
-		# Provides configuration discovery and loading for `falcon serve`.
+		# Provides application configuration discovery and loading for `falcon serve`.
+		#
+		# When {#configuration_path} is `nil`, {#resolved_configuration_path} looks for
+		# `config/serve.rb` first and falls back to `config.ru`. An explicit
+		# {#configuration_path} bypasses this discovery order.
+		#
+		# The file extension selects the application interface:
+		#
+		# - `.rb` files are evaluated by {Protocol::HTTP::Middleware.load} using the
+		#   protocol middleware builder interface.
+		# - `.ru` files are parsed as Rack applications and wrapped with
+		#   {Protocol::Rack::Adapter}.
+		#
+		# Both application interfaces respond to `call`, so the configuration file
+		# extension is the explicit contract rather than inspecting the loaded object.
 		module Serve
 			# The explicitly specified application configuration path, if any.
 			# @returns [String | Nil]
