@@ -26,7 +26,7 @@ describe Falcon::Environment::Serve do
 		File.write(File.join(root, "config.ru"), "run ->(env) {[200, {}, []]}\n")
 		File.write(File.join(root, "config/serve.rb"), "run Protocol::HTTP::Middleware::Okay\n")
 		
-		expect(evaluator.configuration_path).to be == File.join(root, "config/serve.rb")
+		expect(evaluator.resolved_configuration_path).to be == File.join(root, "config/serve.rb")
 	end
 	
 	it "loads config/serve.rb as protocol middleware" do
@@ -39,21 +39,33 @@ describe Falcon::Environment::Serve do
 	it "falls back to config.ru" do
 		File.write(File.join(root, "config.ru"), "run ->(env) {[200, {}, []]}\n")
 		
-		expect(evaluator.configuration_path).to be == File.join(root, "config.ru")
+		expect(evaluator.resolved_configuration_path).to be == File.join(root, "config.ru")
 	end
 	
 	it "uses an explicit configuration path" do
-		configuration_path = File.join(root, "application.rb")
+		evaluator = Async::Service::Environment.build(
+			Falcon::Environment::Server,
+			subject,
+			root: root,
+			name: "localhost",
+			configuration_path: "application.rb",
+		).evaluator
+		
+		expect(evaluator.resolved_configuration_path).to be == File.join(root, "application.rb")
+	end
+	
+	it "discovers a configuration when the explicit path is nil" do
+		File.write(File.join(root, "config.ru"), "run ->(env) {[200, {}, []]}\n")
 		
 		evaluator = Async::Service::Environment.build(
 			Falcon::Environment::Server,
 			subject,
 			root: root,
 			name: "localhost",
-			configuration_path: configuration_path,
+			configuration_path: nil,
 		).evaluator
 		
-		expect(evaluator.configuration_path).to be == configuration_path
+		expect(evaluator.resolved_configuration_path).to be == File.join(root, "config.ru")
 	end
 	
 	it "rejects unsupported configuration extensions" do
@@ -72,7 +84,7 @@ describe Falcon::Environment::Serve do
 	
 	it "fails when no configuration exists" do
 		expect do
-			evaluator.configuration_path
+			evaluator.resolved_configuration_path
 		end.to raise_exception(ArgumentError, message: be(:include?, "Could not find"))
 	end
 end
