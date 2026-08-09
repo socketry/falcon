@@ -48,7 +48,7 @@ $ falcon serve
 
 Rack can load a Ruby file directly and infer the application constant from its filename. For example, `Rack::Builder.parse_file("app.rb")` requires the file and uses `::App` as the Rack application.
 
-Falcon reserves `.rb` serve configurations for protocol middleware. Existing Rack applications can be exposed through `config/serve.rb` using {ruby Protocol::Rack::Adapter}:
+Falcon reserves `.rb` serve configurations for protocol HTTP middleware. Existing Rack applications can be exposed through `config/serve.rb` using {ruby Protocol::Rack::Adapter}:
 
 ~~~ ruby
 # config/serve.rb
@@ -59,7 +59,7 @@ require_relative "../app"
 run Protocol::Rack::Adapter.new(App)
 ~~~
 
-Running `falcon serve` loads `config/serve.rb` as protocol middleware, while the adapter translates requests and responses for the existing Rack application. This replaces the older `falcon serve --config app.rb` convention without requiring changes to `App` itself.
+Running `falcon serve` loads `config/serve.rb` as protocol HTTP middleware, while the adapter translates requests and responses for the existing Rack application. This replaces the older `falcon serve --config app.rb` convention without requiring changes to `App` itself.
 
 ## Running a Local Server
 

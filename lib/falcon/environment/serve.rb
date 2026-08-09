@@ -19,7 +19,7 @@ module Falcon
 		# The file extension selects the application interface:
 		#
 		# - `.rb` files are evaluated by {Protocol::HTTP::Middleware.load} using the
-		#   protocol middleware builder interface.
+		#   protocol HTTP middleware builder interface.
 		# - `.ru` files are parsed as Rack applications and wrapped with
 		#   {Protocol::Rack::Adapter}.
 		#
