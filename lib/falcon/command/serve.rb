@@ -71,7 +71,7 @@ module Falcon
 			# Create the environment for the serve command.
 			# @returns [Async::Service::Environment] The configured server environment.
 			def environment
-				return Async::Service::Environment.new(Falcon::Environment::Server).with(
+				Async::Service::Environment.new(Falcon::Environment::Server).with(
 					Falcon::Environment::Serve,
 					root: Dir.pwd,
 					
