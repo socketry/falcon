@@ -8,7 +8,7 @@ require_relative "../server"
 require_relative "../endpoint"
 require_relative "../service/server"
 require_relative "../environment/server"
-require_relative "../environment/rackup"
+require_relative "../environment/serve"
 
 require "async/service/configuration"
 require "async/container"
@@ -32,7 +32,7 @@ module Falcon
 				option "-h/--hostname <hostname>", "Specify the hostname which would be used for certificates, etc."
 				option "-t/--timeout <duration>", "Specify the maximum time to wait for non-blocking operations.", type: Float, default: nil
 				
-				option "-c/--config <path>", "Rackup configuration file to load.", default: "config.ru"
+				option "-c/--config <path>", "Application configuration file to load."
 				option "--preload <path>", "Preload the specified path before creating containers."
 				
 				option "--cache", "Enable the response cache."
@@ -72,7 +72,7 @@ module Falcon
 			# @returns [Async::Service::Environment] The configured server environment.
 			def environment
 				Async::Service::Environment.new(Falcon::Environment::Server).with(
-					Falcon::Environment::Rackup,
+					Falcon::Environment::Serve,
 					root: Dir.pwd,
 					
 					verbose: self.parent&.verbose?,
@@ -81,7 +81,7 @@ module Falcon
 					container_options: self.container_options,
 					endpoint_options: self.endpoint_options,
 					
-					rackup_path: @options[:config],
+					configuration_path: @options[:config],
 					preload: [@options[:preload]].compact,
 					url: @options[:bind],
 					

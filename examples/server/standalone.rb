@@ -23,7 +23,7 @@ end
 Async do
 	websocket_endpoint = Async::HTTP::Endpoint.parse("http://127.0.0.1:3000")
 	
-	app = Falcon::Server.middleware(WebSocketApp)
+	app = Falcon::Server.rack_middleware(WebSocketApp)
 	
 	server = Falcon::Server.new(app, websocket_endpoint)
 	

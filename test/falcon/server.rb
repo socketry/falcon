@@ -13,7 +13,21 @@ describe Falcon::Server do
 			[200, {}, ["OK"]]
 		end
 		
+		expect(subject.rack_middleware(app, cache: true)).to be_a(Async::HTTP::Cache::General)
+	end
+	
+	it "warns when using the deprecated middleware wrapper" do
+		app = lambda do |env|
+			[200, {}, ["OK"]]
+		end
+		
+		verbose = $VERBOSE
+		$VERBOSE = true
+		
+		expect(subject).to receive(:warn).and_return(nil)
 		expect(subject.middleware(app, cache: true)).to be_a(Async::HTTP::Cache::General)
+	ensure
+		$VERBOSE = verbose
 	end
 	
 	it "formats large statistics counts" do

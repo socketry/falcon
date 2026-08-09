@@ -4,6 +4,12 @@
 
   - Update the Envoy cluster example to use dedicated CDS and EDS services from `async-service-supervisor-envoy` v0.5.
 
+### Rack Compatibility
+
+Falcon is shifting its application boundary from a Rack-centric design to {ruby Protocol::HTTP::Middleware}. `falcon serve` now prefers protocol HTTP middleware configured by `config/serve.rb`, while continuing to discover and run Rack `config.ru` applications through {ruby Protocol::Rack::Adapter}.
+
+Use {ruby Falcon::Server.protocol_middleware} for protocol HTTP applications and {ruby Falcon::Server.rack_middleware} for Rack applications. {ruby Falcon::Server.middleware} is deprecated. Explicit `.rb` serve configurations are now interpreted as {ruby Protocol::HTTP::Middleware}; Rack applications defined in Ruby files should use `config.ru` or wrap the application explicitly with {ruby Protocol::Rack::Adapter}.
+
 ## v0.56.0
 
   - Add `Falcon::Environment::Cluster` and `Falcon::Service::Cluster` for running workers with independently bound endpoints.

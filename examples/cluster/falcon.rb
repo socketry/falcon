@@ -34,7 +34,7 @@ service "cluster" do
 			]
 		end
 		
-		Falcon::Server.middleware(rack_application, cache: false)
+		Falcon::Server.rack_middleware(rack_application, cache: false)
 	end
 end
 

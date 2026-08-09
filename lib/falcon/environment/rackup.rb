@@ -25,7 +25,7 @@ module Falcon
 			# Build the middleware stack for the rack application.
 			# @returns [Protocol::HTTP::Middleware] The middleware stack.
 			def middleware
-				::Falcon::Server.middleware(rack_app, verbose: verbose, cache: cache)
+				::Falcon::Server.rack_middleware(rack_app, verbose: verbose, cache: cache)
 			end
 		end
 	end

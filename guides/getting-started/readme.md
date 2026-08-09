@@ -44,6 +44,23 @@ Then run the application with:
 $ falcon serve
 ~~~
 
+#### Rack Applications Defined in Ruby Files
+
+Rack can load a Ruby file directly and infer the application constant from its filename. For example, `Rack::Builder.parse_file("app.rb")` requires the file and uses `::App` as the Rack application.
+
+Falcon reserves `.rb` serve configurations for protocol HTTP middleware. Existing Rack applications can be exposed through `config/serve.rb` using {ruby Protocol::Rack::Adapter}:
+
+~~~ ruby
+# config/serve.rb
+
+require "protocol/rack"
+require_relative "../app"
+
+run Protocol::Rack::Adapter.new(App)
+~~~
+
+Running `falcon serve` loads `config/serve.rb` as protocol HTTP middleware, while the adapter translates requests and responses for the existing Rack application. This replaces the older `falcon serve --config app.rb` convention without requiring changes to `App` itself.
+
 ## Running a Local Server
 
 For local application development, you can use the `falcon serve` command. This will start a local server on `https://localhost:9292`. Falcon generates self-signed certificates for `localhost`. This allows you to test your application with HTTPS locally.
