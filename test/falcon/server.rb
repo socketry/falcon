@@ -13,6 +13,14 @@ describe Falcon::Server do
 			[200, {}, ["OK"]]
 		end
 		
+		expect(subject.rack_middleware(app, cache: true)).to be_a(Async::HTTP::Cache::General)
+	end
+	
+	it "provides the deprecated middleware wrapper" do
+		app = lambda do |env|
+			[200, {}, ["OK"]]
+		end
+		
 		expect(subject.middleware(app, cache: true)).to be_a(Async::HTTP::Cache::General)
 	end
 	

@@ -30,7 +30,7 @@ service "web" do
 	
 	# Define the middleware stack for this server
 	middleware do
-		Falcon::Server.middleware(SimpleApp.new, verbose: false, cache: false)
+		Falcon::Server.rack_middleware(SimpleApp.new, verbose: false, cache: false)
 	end
 	
 	# Define the utilization schema for this service

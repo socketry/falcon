@@ -17,11 +17,16 @@ require "protocol/rack"
 module Falcon
 	# A server listening on a specific endpoint, hosting a specific middleware.
 	class Server < Async::HTTP::Server
-		# Wrap a rack application into a middleware suitable the server.
+		# @deprecated Use {rack_middleware} instead.
+		def self.middleware(...)
+			return self.rack_middleware(...)
+		end
+		
+		# Wrap a Rack application with the standard server middleware.
 		# @parameter rack_app [Proc | Object] A rack application/middleware.
 		# @parameter verbose [Boolean] Whether to add the {Middleware::Verbose} middleware.
 		# @parameter cache [Boolean] Whether to add the {Async::HTTP::Cache} middleware.
-		def self.middleware(rack_app, verbose: false, cache: true)
+		def self.rack_middleware(rack_app, verbose: false, cache: true)
 			return self.protocol_middleware(::Protocol::Rack::Adapter.new(rack_app), verbose: verbose, cache: cache)
 		end
 		

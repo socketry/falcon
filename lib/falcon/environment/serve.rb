@@ -63,7 +63,7 @@ module Falcon
 					return ::Falcon::Server.protocol_middleware(application, verbose: verbose, cache: cache)
 				when ".ru"
 					application = ::Protocol::Rack::Adapter.parse_file(path)
-					return ::Falcon::Server.middleware(application, verbose: verbose, cache: cache)
+					return ::Falcon::Server.rack_middleware(application, verbose: verbose, cache: cache)
 				else
 					raise ArgumentError, "Unsupported application configuration: #{path}!"
 				end
