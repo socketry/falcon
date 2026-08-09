@@ -19,6 +19,8 @@ module Falcon
 	class Server < Async::HTTP::Server
 		# @deprecated Use {rack_middleware} instead.
 		def self.middleware(...)
+			warn("`Falcon::Server.middleware` is deprecated, use `.rack_middleware` instead.", uplevel: 1, category: :deprecated) if $VERBOSE
+			
 			return self.rack_middleware(...)
 		end
 		
