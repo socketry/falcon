@@ -1,5 +1,9 @@
 # Releases
 
+## Unreleased
+
+  - `Falcon::Service::Virtual#assume_privileges` now resets supplementary groups with `Process.initgroups` before dropping privileges when running as root, and sets `USER` and `LOGNAME` alongside `HOME` in the child environment.
+
 ## v0.57.0
 
   - Update the Envoy cluster example to use dedicated CDS and EDS services from `async-service-supervisor-envoy` v0.5.

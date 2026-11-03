@@ -5,6 +5,7 @@
 
 require "async/service/generic"
 require "console"
+require "etc"
 
 module Falcon
 	module Service
@@ -29,12 +30,19 @@ module Falcon
 				env["PWD"] = File.dirname(path)
 				
 				stat = File.stat(path)
+				user = Etc.getpwuid(stat.uid)
+				
+				# Changing the real/effective uid and gid does not touch the supplementary group list, so a process started as root would otherwise retain root's supplementary groups. `initgroups` requires root, so skip it when running unprivileged (in which case `change_privilege` is a no-op anyway):
+				if Process.euid == 0
+					Process.initgroups(user.name, stat.gid)
+				end
 				
 				Process::GID.change_privilege(stat.gid)
 				Process::UID.change_privilege(stat.uid)
 				
-				home = Etc.getpwuid(stat.uid).dir
-				env["HOME"] = home
+				env["HOME"] = user.dir
+				env["USER"] = user.name
+				env["LOGNAME"] = user.name
 				
 				return env
 			end

@@ -29,10 +29,36 @@ describe Falcon::Service::Virtual do
 	end
 	
 	with "#assume_privileges" do
-		it "builds a child environment with path privileges" do
-			stat = File.stat(path)
-			user = Etc.getpwuid(stat.uid)
+		let(:stat) {File.stat(path)}
+		let(:user) {Etc.getpwuid(stat.uid)}
+		
+		def record_privilege_changes(euid)
+			calls = []
 			
+			mock(Process) do |mock|
+				mock.replace(:euid){euid}
+				mock.replace(:initgroups) do |*arguments|
+					calls << [:initgroups, *arguments]
+				end
+			end
+			
+			mock(Process::GID) do |mock|
+				mock.replace(:change_privilege) do |*arguments|
+					calls << [:gid, *arguments]
+				end
+			end
+			
+			mock(Process::UID) do |mock|
+				mock.replace(:change_privilege) do |*arguments|
+					calls << [:uid, *arguments]
+				end
+			end
+			
+			return calls
+		end
+		
+		it "builds a child environment with path privileges" do
+			expect(Process).to receive(:euid).and_return(1000)
 			expect(Process::GID).to receive(:change_privilege).with(stat.gid)
 			expect(Process::UID).to receive(:change_privilege).with(stat.uid)
 			
@@ -48,6 +74,31 @@ describe Falcon::Service::Virtual do
 			expect(env["PATH"]).to be == "/bin"
 			expect(env["PWD"]).to be == File.dirname(path)
 			expect(env["HOME"]).to be == user.dir
+			expect(env["USER"]).to be == user.name
+			expect(env["LOGNAME"]).to be == user.name
+		end
+		
+		it "resets supplementary groups before dropping privileges when running as root" do
+			calls = record_privilege_changes(0)
+			
+			service.assume_privileges(path)
+			
+			expect(calls).to be == [
+				[:initgroups, user.name, stat.gid],
+				[:gid, stat.gid],
+				[:uid, stat.uid],
+			]
+		end
+		
+		it "does not reset supplementary groups when running unprivileged" do
+			calls = record_privilege_changes(1000)
+			
+			service.assume_privileges(path)
+			
+			expect(calls).to be == [
+				[:gid, stat.gid],
+				[:uid, stat.uid],
+			]
 		end
 	end
 	
