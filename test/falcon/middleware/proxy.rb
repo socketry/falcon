@@ -39,6 +39,34 @@ describe Falcon::Middleware::Proxy do
 		expect(headers["proxy-authorization"]).to be_nil
 	end
 	
+	it "removes hop-by-hop headers" do
+		headers = Protocol::HTTP::Headers[
+			"accept" => "*/*",
+			"te" => "gzip, trailers",
+			"trailer" => "etag",
+			"proxy-connection" => "keep-alive",
+			"upgrade" => "h2c",
+		]
+		proxy.prepare_headers(headers)
+		expect(headers["accept"]).to be == ["*/*"]
+		expect(headers["te"]).to be_nil
+		expect(headers["trailer"]).to be_nil
+		expect(headers["proxy-connection"]).to be_nil
+		expect(headers["upgrade"]).to be_nil
+	end
+	
+	it "removes headers named by the connection header" do
+		headers = Protocol::HTTP::Headers[
+			"accept" => "*/*",
+			"connection" => "x-custom-hop",
+			"x-custom-hop" => "value",
+		]
+		proxy.prepare_headers(headers)
+		expect(headers["accept"]).to be == ["*/*"]
+		expect(headers["connection"]).to be_nil
+		expect(headers["x-custom-hop"]).to be_nil
+	end
+	
 	it "can select client based on authority" do
 		request = Protocol::HTTP::Request.new("https", "www.google.com", "GET", "/", nil, headers, nil)
 		

@@ -1,5 +1,9 @@
 # Releases
 
+## Unreleased
+
+  - Strip `te`, `trailer` and `proxy-connection` hop-by-hop headers in `Falcon::Middleware::Proxy`.
+
 ## v0.57.0
 
   - Update the Envoy cluster example to use dedicated CDS and EDS services from `async-service-supervisor-envoy` v0.5.
