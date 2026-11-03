@@ -1,5 +1,9 @@
 # Releases
 
+## Unreleased
+
+  - Document that `falcon virtual` evaluates every `falcon.rb` in the proxy and redirect processes, so configuration files must be trusted and writable only by administrators.
+
 ## v0.57.0
 
   - Update the Envoy cluster example to use dedicated CDS and EDS services from `async-service-supervisor-envoy` v0.5.

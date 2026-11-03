@@ -274,3 +274,9 @@ Restart=always
 [Install]
 WantedBy=multi-user.target
 ```
+
+### Security Considerations
+
+Each `falcon.rb` is Ruby code, not a static configuration format. When `falcon virtual` starts, and whenever it reloads on `SIGHUP`, every matched `falcon.rb` is evaluated by the proxy and redirect processes, which run with the same privileges as `falcon virtual` itself (often root, in order to bind ports 80 and 443), to determine each host's authority, endpoint and TLS configuration. The application is then started separately as the owner of its `falcon.rb`. Anyone who can modify a `falcon.rb` can therefore execute arbitrary code with the privileges of the proxy on the next start or reload.
+
+Treat these files as part of the server configuration: they should be owned by root or the service user and must not be writable by other users or groups. Giving each `falcon.rb` a different owner isolates the applications from each other, but does not isolate them from the proxy, which is only as trustworthy as the least trusted `falcon.rb` it loads. The systemd example above runs everything as a single `http` user, in which case the proxy and all applications share one trust domain.
