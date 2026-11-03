@@ -1,5 +1,9 @@
 # Releases
 
+## Unreleased
+
+  - Redact `authorization`, `proxy-authorization`, `cookie` and `set-cookie` header values in `Falcon::Middleware::Verbose` so that credentials and session tokens are not written to logs.
+
 ## v0.57.0
 
   - Update the Envoy cluster example to use dedicated CDS and EDS services from `async-service-supervisor-envoy` v0.5.
