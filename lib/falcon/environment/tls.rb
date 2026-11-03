@@ -79,8 +79,8 @@ module Falcon
 						end
 					end
 					
-					# TODO Ruby 2.4 requires using ssl_version.
-					context.ssl_version = :TLSv1_2_server
+					# Require at least TLS 1.2, but allow newer versions (e.g. TLS 1.3) to be negotiated. Using `ssl_version=` would pin both the minimum and maximum version to TLS 1.2.
+					context.min_version = OpenSSL::SSL::TLS1_2_VERSION
 					
 					context.set_params(
 						ciphers: ssl_ciphers,
