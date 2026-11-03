@@ -40,13 +40,23 @@ module Falcon
 				::File.expand_path("application.ipc", root)
 			end
 			
+			# The file mode applied to the IPC socket after it is bound.
+			#
+			# The proxy adds `x-forwarded-for`, `x-forwarded-proto` and `forwarded` headers which the application trusts, so the socket must not be accessible to other local users. The default permits the owner and group, which allows a proxy running as a different user in the same group to connect.
+			#
+			# @returns [Integer | Nil] The file mode, or `nil` to leave the permissions as determined by the process umask.
+			def ipc_mode
+				::Falcon::ProxyEndpoint::DEFAULT_MODE
+			end
+			
 			# The endpoint that will be used for communicating with the application server.
 			# @returns [::Falcon::ProxyEndpoint]
 			def endpoint
 				::Falcon::ProxyEndpoint.unix(ipc_path,
 					protocol: protocol,
 					scheme: scheme,
-					authority: authority
+					authority: authority,
+					mode: ipc_mode,
 				)
 			end
 		end

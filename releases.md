@@ -1,5 +1,9 @@
 # Releases
 
+## Unreleased
+
+  - Restrict the permissions of the `application.ipc` unix socket bound by `Falcon::Environment::Application` to the owner and group (`0o660`), preventing other local users from bypassing the proxy and forging `x-forwarded-*` headers. `Falcon::ProxyEndpoint` accepts a `mode:` option and the environment exposes `ipc_mode` to override the default.
+
 ## v0.57.0
 
   - Update the Envoy cluster example to use dedicated CDS and EDS services from `async-service-supervisor-envoy` v0.5.

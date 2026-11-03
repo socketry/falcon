@@ -27,6 +27,23 @@ describe Falcon::Environment::Application do
 		expect(endpoint).to have_attributes(
 			scheme: be == "https",
 			authority: be == "localhost",
+			mode: be == 0o660,
 		)
+	end
+	
+	it "restricts the IPC socket to the owner and group by default" do
+		expect(evaluator.ipc_mode).to be == 0o660
+	end
+	
+	with "a custom IPC mode" do
+		let(:evaluator) do
+			Async::Service::Environment.build(subject, root: root, name: "localhost") do
+				ipc_mode 0o600
+			end.evaluator
+		end
+		
+		it "passes the mode through to the endpoint" do
+			expect(evaluator.endpoint.mode).to be == 0o600
+		end
 	end
 end
