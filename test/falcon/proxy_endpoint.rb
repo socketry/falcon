@@ -33,13 +33,13 @@ describe Falcon::ProxyEndpoint do
 	end
 	
 	it "has a default mode" do
-		expect(proxy_endpoint.mode).to be == 0o660
+		expect(proxy_endpoint.mode).to be == 0o600
 	end
 	
 	it "propagates the mode to proxied endpoints" do
-		proxy_endpoint = subject.new(endpoint, mode: 0o600)
+		proxy_endpoint = subject.new(endpoint, mode: 0o660)
 		
-		expect(proxy_endpoint.each.first.mode).to be == 0o600
+		expect(proxy_endpoint.each.first.mode).to be == 0o660
 	end
 	
 	with "#bind" do
@@ -60,7 +60,7 @@ describe Falcon::ProxyEndpoint do
 			begin
 				expect(bound_endpoint.sockets).to have_attributes(size: be == 1)
 				expect(File.socket?(path)).to be == true
-				expect(permissions(path)).to be == 0o660
+				expect(permissions(path)).to be == 0o600
 			ensure
 				bound_endpoint.close
 			end
@@ -73,15 +73,15 @@ describe Falcon::ProxyEndpoint do
 				observed.value = permissions(path)
 			end
 			
-			expect(observed.wait).to be == 0o660
+			expect(observed.wait).to be == 0o600
 		end
 		
-		with "a custom mode", options: {mode: 0o600} do
+		with "a custom mode", options: {mode: 0o660} do
 			it "applies the custom mode" do
 				bound_endpoint = proxy_endpoint.bound
 				
 				begin
-					expect(permissions(path)).to be == 0o600
+					expect(permissions(path)).to be == 0o660
 				ensure
 					bound_endpoint.close
 				end

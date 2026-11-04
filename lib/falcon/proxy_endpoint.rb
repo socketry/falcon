@@ -46,14 +46,18 @@ module Falcon
 			@options[:authority]
 		end
 		
-		# The default file mode applied to bound unix sockets: readable and writable by the owner and group only.
-		DEFAULT_MODE = 0o660
+		# The default file mode applied to bound unix sockets: readable and writable by the owner only.
+		#
+		# Connecting to a unix socket requires write permission on the socket file, so this permits only the owner (and root, which ignores mode bits) to connect. The topologies supported by `falcon virtual` run the proxy either as root or as the same user as the application, so neither requires group access.
+		DEFAULT_MODE = 0o600
 		
 		# The file mode to apply to bound unix sockets.
 		#
 		# The proxy forwards client details (e.g. `x-forwarded-for`) to the application via this endpoint, and the application trusts those headers. Restricting the socket's permissions prevents other local users from connecting directly and forging them.
 		#
-		# @returns [Integer | Nil] The file mode, or `nil` to leave the permissions as determined by the process umask.
+		# Use `0o660` to allow a separate front-end proxy running in the application's group to connect, or `nil` to leave the permissions as determined by the process umask.
+		#
+		# @returns [Integer | Nil] The file mode, or `nil` (or `false`) to leave the permissions as determined by the process umask.
 		def mode
 			@options.fetch(:mode, DEFAULT_MODE)
 		end
@@ -100,7 +104,7 @@ module Falcon
 		
 		# Apply {#mode} to the socket file backing the given socket, if it is a named unix socket.
 		#
-		# The socket file is created by `bind(2)` with permissions derived from the process umask, which is typically world-accessible. We restrict the permissions immediately after binding, before the socket is handed over for accepting connections. There is a brief window between `bind` and `chmod` in which a local user could connect; a fully race-free approach would require setting the umask around `bind`, but the umask is process-wide and that would affect unrelated files created concurrently.
+		# The socket file is created by `bind(2)` with permissions of `0777 & ~umask`, and connecting requires write permission on it. Under the common `022` umask that already limits connections to the owner, but a permissive umask (`002` or `000`) leaves the socket connectable by the group or by everyone. We restrict the permissions immediately after binding, before the socket is handed over for accepting connections. There is a brief window between `bind` and `chmod` in which a local user could connect; a fully race-free approach would require setting the umask around `bind`, but the umask is process-wide and that would affect unrelated files created concurrently.
 		#
 		# @parameter socket [Socket] The bound socket.
 		private def restrict_permissions!(socket)
