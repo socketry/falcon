@@ -14,7 +14,7 @@ describe Falcon::Middleware::Verbose do
 	
 	let(:app) do
 		Protocol::HTTP::Middleware.for do |request|
-			Protocol::HTTP::Response[200, {"content-type" => "text/plain", "set-cookie" => "session=xyz"}, ["ok"]]
+			Protocol::HTTP::Response[200, {"content-type" => "text/plain", "set-cookie" => "session=s3cr3t-response-cookie"}, ["ok"]]
 		end
 	end
 	
@@ -23,14 +23,23 @@ describe Falcon::Middleware::Verbose do
 	let(:headers) do
 		Protocol::HTTP::Headers[
 			"accept" => "*/*",
-			"authorization" => "Bearer secret",
+			"authorization" => "Bearer s3cr3t-bearer-token",
 			"proxy-authorization" => "Basic cHJveHk6aHVudGVyMg==",
-			"cookie" => "session=abc",
+			"cookie" => "session=s3cr3t-request-cookie",
 		]
 	end
 	
+	# Server requests expose the client address, which the middleware logs:
+	let(:request_class) do
+		Class.new(Protocol::HTTP::Request) do
+			def remote_address
+				Addrinfo.ip("127.0.0.1")
+			end
+		end
+	end
+	
 	let(:request) do
-		Protocol::HTTP::Request.new("http", "localhost", "GET", "/index", "HTTP/1.1", headers, nil)
+		request_class.new("http", "localhost", "GET", "/index", "HTTP/1.1", headers, nil)
 	end
 	
 	def request_record
@@ -41,9 +50,12 @@ describe Falcon::Middleware::Verbose do
 		console_capture.find{|record| record[:message].start_with?("<-")}
 	end
 	
+	# Everything that would be written to a log sink. The captured record also retains the request object itself as `:subject`, but the console outputs only ever write its class name, so it is excluded here.
+	def logged(record)
+		record.except(:subject).inspect
+	end
+	
 	it "logs the request and response" do
-		expect(request).to receive(:remote_address).and_return(Addrinfo.ip("127.0.0.1"))
-		
 		response = verbose.call(request)
 		expect(response.read).to be == "ok"
 		
@@ -60,48 +72,42 @@ describe Falcon::Middleware::Verbose do
 	end
 	
 	it "redacts sensitive request headers" do
-		expect(request).to receive(:remote_address).and_return(Addrinfo.ip("127.0.0.1"))
-		
 		verbose.call(request).read
 		
-		logged_headers = request_record[:headers]
+		record = request_record
 		
-		expect(logged_headers).to have_keys(
+		expect(record[:headers]).to have_keys(
 			"accept" => be == ["*/*"],
 			"authorization" => be == "[REDACTED]",
 			"proxy-authorization" => be == "[REDACTED]",
 			"cookie" => be == "[REDACTED]",
 		)
 		
-		expect(logged_headers.inspect).not.to be(:include?, "secret")
-		expect(logged_headers.inspect).not.to be(:include?, "cHJveHk6aHVudGVyMg==")
-		expect(logged_headers.inspect).not.to be(:include?, "abc")
+		expect(logged(record)).not.to be(:include?, "s3cr3t-bearer-token")
+		expect(logged(record)).not.to be(:include?, "cHJveHk6aHVudGVyMg==")
+		expect(logged(record)).not.to be(:include?, "s3cr3t-request-cookie")
 	end
 	
 	it "redacts sensitive response headers" do
-		expect(request).to receive(:remote_address).and_return(Addrinfo.ip("127.0.0.1"))
-		
 		verbose.call(request).read
 		
-		logged_headers = response_record[:headers]
+		record = response_record
 		
-		expect(logged_headers).to have_keys(
+		expect(record[:headers]).to have_keys(
 			"content-type" => be == "text/plain",
 			"set-cookie" => be == "[REDACTED]",
 		)
 		
-		expect(logged_headers.inspect).not.to be(:include?, "xyz")
+		expect(logged(record)).not.to be(:include?, "s3cr3t-response-cookie")
 	end
 	
 	it "does not modify the original headers" do
-		expect(request).to receive(:remote_address).and_return(Addrinfo.ip("127.0.0.1"))
-		
 		response = verbose.call(request)
 		response.read
 		
-		expect(request.headers["authorization"]).to be == "Bearer secret"
-		expect(request.headers["cookie"]).to be == ["session=abc"]
-		expect(response.headers["set-cookie"]).to be == ["session=xyz"]
+		expect(request.headers["authorization"]).to be == "Bearer s3cr3t-bearer-token"
+		expect(request.headers["cookie"]).to be == ["session=s3cr3t-request-cookie"]
+		expect(response.headers["set-cookie"]).to be == ["session=s3cr3t-response-cookie"]
 	end
 	
 	with "#redacted_headers" do
@@ -122,6 +128,17 @@ describe Falcon::Middleware::Verbose do
 			redacted = verbose.redacted_headers(headers)
 			
 			expect(redacted).to be == {"content-length" => "2", "accept" => ["*/*"]}
+		end
+		
+		it "does not modify the memoised header index" do
+			headers = Protocol::HTTP::Headers["authorization" => "Bearer s3cr3t-bearer-token"]
+			index = headers.to_h
+			
+			redacted = verbose.redacted_headers(headers)
+			
+			expect(redacted).not.to be_equal(index)
+			expect(index["authorization"]).to be == "Bearer s3cr3t-bearer-token"
+			expect(headers.to_h["authorization"]).to be == "Bearer s3cr3t-bearer-token"
 		end
 	end
 end
