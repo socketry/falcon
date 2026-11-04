@@ -26,6 +26,7 @@ describe Falcon::Middleware::Verbose do
 			"authorization" => "Bearer s3cr3t-bearer-token",
 			"proxy-authorization" => "Basic cHJveHk6aHVudGVyMg==",
 			"cookie" => "session=s3cr3t-request-cookie",
+			"x-api-key" => "s3cr3t-api-key",
 		]
 	end
 	
@@ -81,11 +82,13 @@ describe Falcon::Middleware::Verbose do
 			"authorization" => be == "[REDACTED]",
 			"proxy-authorization" => be == "[REDACTED]",
 			"cookie" => be == "[REDACTED]",
+			"x-api-key" => be == "[REDACTED]",
 		)
 		
 		expect(logged(record)).not.to be(:include?, "s3cr3t-bearer-token")
 		expect(logged(record)).not.to be(:include?, "cHJveHk6aHVudGVyMg==")
 		expect(logged(record)).not.to be(:include?, "s3cr3t-request-cookie")
+		expect(logged(record)).not.to be(:include?, "s3cr3t-api-key")
 	end
 	
 	it "redacts sensitive response headers" do
@@ -107,7 +110,46 @@ describe Falcon::Middleware::Verbose do
 		
 		expect(request.headers["authorization"]).to be == "Bearer s3cr3t-bearer-token"
 		expect(request.headers["cookie"]).to be == ["session=s3cr3t-request-cookie"]
+		expect(request.headers["x-api-key"]).to be == ["s3cr3t-api-key"]
 		expect(response.headers["set-cookie"]).to be == ["session=s3cr3t-response-cookie"]
+	end
+	
+	with "custom redacted headers" do
+		let(:verbose) {subject.new(app, redacted_headers: ["x-custom-secret"])}
+		
+		let(:headers) do
+			Protocol::HTTP::Headers[
+				"authorization" => "Bearer visible-token",
+				"x-custom-secret" => "s3cr3t-custom-value",
+			]
+		end
+		
+		it "redacts only the configured headers" do
+			verbose.call(request).read
+			
+			record = request_record
+			
+			expect(record[:headers]).to have_keys(
+				"authorization" => be == "Bearer visible-token",
+				"x-custom-secret" => be == "[REDACTED]",
+			)
+			
+			expect(logged(record)).not.to be(:include?, "s3cr3t-custom-value")
+		end
+	end
+	
+	with "REDACTED_HEADERS" do
+		it "is frozen" do
+			expect(subject::REDACTED_HEADERS).to be(:frozen?)
+		end
+		
+		it "includes standard credential and common API token headers" do
+			expect(subject::REDACTED_HEADERS).to be(:superset?, Set[
+				"authorization", "proxy-authorization", "cookie", "set-cookie",
+				"x-api-key", "x-auth-token", "x-access-token", "x-csrf-token", "x-xsrf-token",
+				"x-amz-security-token", "x-forwarded-authorization", "private-token",
+			])
+		end
 	end
 	
 	with "#redacted_headers" do
