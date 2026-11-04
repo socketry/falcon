@@ -37,7 +37,7 @@ module Falcon
 			VIA = "via"
 			CONNECTION = "connection"
 			
-			# HTTP hop-by-hop headers which *should* not be passed through the proxy, per RFC 9110 §7.6.1 and RFC 9112 §6.1/§7.1. `proxy-connection` is non-standard, but widely emitted by clients and treated as hop-by-hop by other proxies.
+			# Connection-specific fields which intermediaries must remove before forwarding (RFC 9110 §7.6.1; RFC 9112 §7.1.3 for `trailer`, which is meaningless once the body is de-chunked), plus the legacy RFC 2616 §13.5.1 proxy-authentication fields. `public` is a response-only relic of RFC 2068 §14.35.
 			HOP_HEADERS = [
 				"connection",
 				"keep-alive",
