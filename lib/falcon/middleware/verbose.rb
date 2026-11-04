@@ -31,14 +31,14 @@ module Falcon
 			# @parameter headers [Protocol::HTTP::Headers] The headers to redact.
 			# @returns [Hash] The headers as a hash, with sensitive values replaced by {REDACTED}.
 			def redacted_headers(headers)
-				# `Headers#to_h` returns the internal index, so we must not modify it in place:
-				headers.to_h.to_h do |name, value|
-					if REDACTED_HEADERS.include?(name)
-						[name, REDACTED]
-					else
-						[name, value]
-					end
+				# `Headers#to_h` returns the memoised internal index, so we must copy it rather than modify it in place:
+				copy = headers.to_h.dup
+				
+				REDACTED_HEADERS.each do |name|
+					copy[name] = REDACTED if copy.key?(name)
 				end
+				
+				return copy
 			end
 			
 			# Log details of the incoming request.
