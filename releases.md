@@ -2,7 +2,7 @@
 
 ## Unreleased
 
-  - Redact `authorization`, `proxy-authorization`, `cookie` and `set-cookie` header values in `Falcon::Middleware::Verbose` so that credentials and session tokens are not written to logs.
+  - Redact `authorization`, `proxy-authorization`, `cookie`, `set-cookie` and common API token header values in `Falcon::Middleware::Verbose` logs. The list of redacted headers can be customised with the `redacted_headers:` option.
 
 ## v0.57.0
 
