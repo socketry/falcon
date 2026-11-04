@@ -91,6 +91,17 @@ describe Falcon::Service::Virtual do
 			expect(calls).to be(:empty?)
 		end
 		
+		it "refuses to run an application whose owner has no passwd entry" do
+			calls = record_privilege_changes(0)
+			expect(Etc).to receive(:getpwuid).with(stat.uid).and_return(nil)
+			
+			expect do
+				service.assume_privileges(path)
+			end.to raise_exception(ArgumentError, message: be =~ /No passwd entry for uid #{stat.uid}/)
+			
+			expect(calls).to be(:empty?)
+		end
+		
 		it "builds a child environment with path privileges" do
 			expect(Process).to receive(:euid).and_return(1000)
 			expect(Process::GID).to receive(:change_privilege).with(stat.gid)

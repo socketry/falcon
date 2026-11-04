@@ -20,7 +20,7 @@ module Falcon
 			#
 			# @parameter path [String] The path to the application directory.
 			# @returns [Hash] The environment to use for the spawned process.
-			# @raises [ArgumentError] If the path is owned by root, or the containing directory is owned by a different user.
+			# @raises [ArgumentError] If the path is owned by root, the containing directory is owned by a different user, or the owner has no passwd entry.
 			def assume_privileges(path)
 				# Process.exec / Process.spawn don't replace the environment but instead update it, so we need to clear out any existing BUNDLE_ variables using `nil` values, which will cause them to be removed from the child environment:
 				env = ENV.to_h do |key, value|
@@ -48,7 +48,9 @@ module Falcon
 					raise ArgumentError, "Refusing to run #{path} as the containing directory is owned by a different user!"
 				end
 				
-				user = Etc.getpwuid(stat.uid)
+				unless user = Etc.getpwuid(stat.uid)
+					raise ArgumentError, "No passwd entry for uid #{stat.uid} (owner of #{path})!"
+				end
 				
 				# Changing the real/effective uid and gid does not touch the supplementary group list, so a process started as root would otherwise retain root's supplementary groups. `initgroups` requires root, so skip it when running unprivileged (in which case `change_privilege` is a no-op anyway):
 				if Process.euid == 0
