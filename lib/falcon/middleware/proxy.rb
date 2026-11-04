@@ -36,6 +36,7 @@ module Falcon
 			
 			VIA = "via"
 			CONNECTION = "connection"
+			HOST = "host"
 			
 			TE = "te"
 			TRAILERS = "trailers"
@@ -128,6 +129,9 @@ module Falcon
 				
 				# The authority of the request must match the authority of the endpoint we are proxying to, otherwise SNI and other things won't work correctly.
 				request.authority = host.authority
+				
+				# HTTP/2 clients may send `host` alongside `:authority`; it now refers to the original authority, and the upstream connection derives its own from `request.authority` (RFC 9113 §8.3.1).
+				request.headers.delete(HOST)
 				
 				if address = request.remote_address
 					request.headers.add(X_FORWARDED_FOR, address.ip_address)

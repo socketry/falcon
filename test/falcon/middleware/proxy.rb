@@ -133,6 +133,19 @@ describe Falcon::Middleware::Proxy do
 		expect(response.read).to be == "RuntimeError"
 	end
 	
+	it "removes the host header when rewriting the authority" do
+		headers = Protocol::HTTP::Headers["host" => "www.google.com"]
+		request = Protocol::HTTP::Request.new("https", "www.google.com", "GET", "/", "HTTP/2", headers, nil)
+		host = proxy_for(authority: "upstream.example.com", endpoint: Async::HTTP::Endpoint.parse("https://upstream.example.com"))
+		
+		expect(request).to receive(:remote_address).and_return(nil)
+		
+		proxy.prepare_request(request, host)
+		
+		expect(request.authority).to be == "upstream.example.com"
+		expect(request.headers["host"]).to be_nil
+	end
+	
 	it "logs proxy request details when preparing requests" do
 		request = Protocol::HTTP::Request.new("https", "www.google.com", "GET", "/", "HTTP/1.1", headers, nil)
 		host = proxy_for(authority: "www.google.com", endpoint: Async::HTTP::Endpoint.parse("https://www.google.com"))
