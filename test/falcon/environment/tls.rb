@@ -116,10 +116,14 @@ describe Falcon::Environment::TLS do
 			end
 		end
 		
+		# This is a behavioural guard that the server refuses legacy clients. It does not prove that `min_version` is the mechanism: OpenSSL 3+ at the default security level also refuses TLS 1.1, and `SSLContext` has no `min_version` reader to inspect.
 		it "rejects clients older than TLS 1.2" do
 			# Modern OpenSSL refuses TLS 1.1 at the default security level, so lower it on the client to ensure the server is what rejects the handshake:
 			legacy_client_context = client_context(max_version: OpenSSL::SSL::TLS1_1_VERSION)
 			legacy_client_context.security_level = 0
+			
+			# A system `openssl.cnf` may set `MinProtocol = TLSv1.2`, in which case the client would fail locally with "no protocols available" before sending anything, so pin the client's floor explicitly:
+			legacy_client_context.min_version = OpenSSL::SSL::TLS1_1_VERSION
 			
 			expect do
 				handshake(legacy_client_context) {}
