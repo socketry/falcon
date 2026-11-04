@@ -13,7 +13,7 @@ module Falcon
 		#
 		# A virtual host is an application bound to a specific authority (essentially a hostname). The virtual controller manages multiple hosts and allows a single server to host multiple applications easily.
 		#
-		# Each configuration file is Ruby code which is evaluated by the {Proxy} and {Redirect} processes with the privileges of the virtual controller, as well as by the application process as the file's owner (see {assume_privileges}). Configuration files must therefore be trusted and writable only by administrators.
+		# Each configuration file is Ruby code which is evaluated by the {Command::Proxy} and {Command::Redirect} processes with the privileges of the virtual controller, as well as by the application process as the file's owner (see {assume_privileges}). The owner of a configuration file can modify it and thereby execute code with the privileges of the virtual controller, so every owner must be trusted to the same extent as the user running the virtual controller.
 		class Virtual < Async::Service::Generic
 			# Drop privileges according to the user and group of the specified path.
 			# @parameter path [String] The path to the application directory.
