@@ -2,7 +2,7 @@
 
 ## Unreleased
 
-  - Document that `falcon virtual` evaluates every `falcon.rb` in the proxy and redirect processes, so configuration files must be trusted and writable only by administrators.
+  - Document that `falcon virtual` evaluates every `falcon.rb` in the proxy and redirect processes, so every user who owns a `falcon.rb` must be trusted to the same extent as the user running `falcon virtual`, and that an unprivileged `falcon virtual` requires every `falcon.rb` to be owned by that same user.
 
 ## v0.57.0
 
