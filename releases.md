@@ -1,5 +1,9 @@
 # Releases
 
+## Unreleased
+
+  - Redact `authorization`, `proxy-authorization`, `cookie`, `set-cookie` and common API token header values in `Falcon::Middleware::Verbose` logs. The list of redacted headers can be customised with the `redacted_headers:` option.
+
 ## v0.57.0
 
   - Update the Envoy cluster example to use dedicated CDS and EDS services from `async-service-supervisor-envoy` v0.5.
