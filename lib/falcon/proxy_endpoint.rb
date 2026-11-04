@@ -69,19 +69,26 @@ module Falcon
 		end
 		
 		# Bind to the endpoint, restricting the permissions of any unix socket files that were created.
+		#
+		# The socket file is created by `bind(2)` with permissions of `0777 & ~umask`, and connecting requires write permission on it. Under the common `022` umask that already limits connections to the owner, but a permissive umask (`002` or `000`) leaves the socket connectable by the group or by everyone. To avoid a window between `bind(2)` and `chmod(2)` in which another local user could connect, the umask is set from {#mode} for the duration of the underlying `bind`, so the socket file never exists with wider permissions. The explicit `chmod` afterwards ensures the final mode is exactly {#mode} regardless of how the platform applies the umask to socket files.
+		#
+		# The umask is process-wide, but {Falcon::Service::Server#bind_endpoint} binds from the single-threaded controller before any workers are started, so nothing else is creating files concurrently. In the block form, the wrapper may start running the block before the umask is restored, so the block should not depend on the umask.
+		#
 		# @parameter wrapper [::IO::Endpoint::Wrapper] The wrapper to use for binding, as passed by {::IO::Endpoint::Generic#accept}.
 		# @yields {|socket| ...} If a block is given, yields each bound socket after its permissions have been restricted.
 		# 	@parameter socket [Socket] The bound socket.
 		# @returns [Array(Socket)] The bound sockets.
 		def bind(wrapper = self.wrapper, &block)
-			if block_given?
-				@endpoint.bind(wrapper) do |socket|
-					restrict_permissions!(socket)
-					yield socket
-				end
-			else
-				@endpoint.bind(wrapper).each do |socket|
-					restrict_permissions!(socket)
+			with_restricted_umask do
+				if block_given?
+					@endpoint.bind(wrapper) do |socket|
+						restrict_permissions!(socket)
+						yield socket
+					end
+				else
+					@endpoint.bind(wrapper).each do |socket|
+						restrict_permissions!(socket)
+					end
 				end
 			end
 		end
@@ -104,9 +111,25 @@ module Falcon
 			self.new(::IO::Endpoint.unix(path), **options)
 		end
 		
+		# Set the process umask so that any socket file created by `bind(2)` within the block has at most {#mode}, restoring the previous umask afterwards.
+		#
+		# @yields {...} The block during which the umask is restricted.
+		# @returns [Object] The result of the block.
+		private def with_restricted_umask
+			return yield unless mode = self.mode
+			
+			previous_umask = ::File.umask(~mode & 0o777)
+			
+			begin
+				yield
+			ensure
+				::File.umask(previous_umask)
+			end
+		end
+		
 		# Apply {#mode} to the socket file backing the given socket, if it is a named unix socket.
 		#
-		# The socket file is created by `bind(2)` with permissions of `0777 & ~umask`, and connecting requires write permission on it. Under the common `022` umask that already limits connections to the owner, but a permissive umask (`002` or `000`) leaves the socket connectable by the group or by everyone. We restrict the permissions immediately after binding, before the socket is handed over for accepting connections. There is a brief window between `bind` and `chmod` in which a local user could connect; a fully race-free approach would require setting the umask around `bind`, but the umask is process-wide and that would affect unrelated files created concurrently.
+		# The path is taken from the socket's local address, so when {::IO::Endpoint::UNIXEndpoint} falls back to a short symlinked path, the mode is applied to the real socket file rather than the symlink.
 		#
 		# @parameter socket [Socket] The bound socket.
 		private def restrict_permissions!(socket)

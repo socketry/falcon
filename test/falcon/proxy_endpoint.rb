@@ -77,6 +77,58 @@ describe Falcon::ProxyEndpoint do
 			expect(observed.wait).to be == 0o600
 		end
 		
+		def with_umask(umask)
+			previous_umask = File.umask(umask)
+			yield
+		ensure
+			File.umask(previous_umask)
+		end
+		
+		it "creates the socket with the restricted mode even if chmod is skipped" do
+			mock(proxy_endpoint) do |mock|
+				mock.replace(:restrict_permissions!){|socket|}
+			end
+			
+			with_umask(0o000) do
+				bound_endpoint = proxy_endpoint.bound
+				
+				begin
+					expect(permissions(path)).to be == 0o600
+				ensure
+					bound_endpoint.close
+				end
+			end
+		end
+		
+		it "restores the umask after binding" do
+			with_umask(0o022) do
+				bound_endpoint = proxy_endpoint.bound
+				
+				begin
+					expect(File.umask).to be == 0o022
+				ensure
+					bound_endpoint.close
+				end
+			end
+		end
+		
+		it "restores the umask after binding with a block" do
+			with_umask(0o022) do
+				proxy_endpoint.bind{|socket|}
+				
+				expect(File.umask).to be == 0o022
+			end
+		end
+		
+		it "restores the umask if binding fails" do
+			proxy_endpoint = subject.unix(File.join(root, "missing", "application.ipc"))
+			
+			with_umask(0o022) do
+				expect{proxy_endpoint.bound}.to raise_exception(Errno::ENOENT)
+				expect(File.umask).to be == 0o022
+			end
+		end
+		
 		it "accepts the wrapper argument" do
 			sockets = proxy_endpoint.bind(IO::Endpoint::Wrapper.default)
 			
