@@ -57,6 +57,40 @@ describe Falcon::Service::Virtual do
 			return calls
 		end
 		
+		# Replace `File.stat` so that ownership checks can be exercised without changing real file ownership.
+		# @parameter owners [Hash(String, Integer)] The uid to report for each path.
+		def mock_file_owners(owners)
+			stat_class = Struct.new(:uid, :gid)
+			
+			mock(File) do |mock|
+				mock.replace(:stat) do |path|
+					stat_class.new(owners.fetch(path), owners.fetch(path))
+				end
+			end
+		end
+		
+		it "refuses to run an application owned by root" do
+			calls = record_privilege_changes(0)
+			mock_file_owners(path => 0, File.dirname(path) => 0)
+			
+			expect do
+				service.assume_privileges(path)
+			end.to raise_exception(ArgumentError, message: be =~ /Refusing to run .* as root/)
+			
+			expect(calls).to be(:empty?)
+		end
+		
+		it "refuses to run an application whose directory is owned by a different user" do
+			calls = record_privilege_changes(0)
+			mock_file_owners(path => 1000, File.dirname(path) => 1001)
+			
+			expect do
+				service.assume_privileges(path)
+			end.to raise_exception(ArgumentError, message: be =~ /owned by a different user/)
+			
+			expect(calls).to be(:empty?)
+		end
+		
 		it "builds a child environment with path privileges" do
 			expect(Process).to receive(:euid).and_return(1000)
 			expect(Process::GID).to receive(:change_privilege).with(stat.gid)

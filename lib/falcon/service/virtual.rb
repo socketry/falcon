@@ -15,8 +15,12 @@ module Falcon
 		# A virtual host is an application bound to a specific authority (essentially a hostname). The virtual controller manages multiple hosts and allows a single server to host multiple applications easily.
 		class Virtual < Async::Service::Generic
 			# Drop privileges according to the user and group of the specified path.
+			#
+			# The path must be owned by a non-root user who also owns the containing directory. Running an application as root is refused: `File.stat` follows symbolic links, and `bundle exec` evaluates the application's `gems.rb` before the target is loaded, so a user who controls the application directory could otherwise execute arbitrary code as root. The containing directory must have the same owner as the file, since whoever owns the directory can replace the file with arbitrary content.
+			#
 			# @parameter path [String] The path to the application directory.
 			# @returns [Hash] The environment to use for the spawned process.
+			# @raises [ArgumentError] If the path is owned by root, or the containing directory is owned by a different user.
 			def assume_privileges(path)
 				# Process.exec / Process.spawn don't replace the environment but instead update it, so we need to clear out any existing BUNDLE_ variables using `nil` values, which will cause them to be removed from the child environment:
 				env = ENV.to_h do |key, value|
@@ -27,9 +31,23 @@ module Falcon
 					end
 				end
 				
-				env["PWD"] = File.dirname(path)
+				directory = File.dirname(path)
+				env["PWD"] = directory
 				
+				# `File.stat` follows symbolic links, so this is the owner of the file that will actually be loaded:
 				stat = File.stat(path)
+				
+				if stat.uid == 0
+					raise ArgumentError, "Refusing to run #{path} as root!"
+				end
+				
+				# The owner of the directory can replace the file, so it must be the same user:
+				directory_stat = File.stat(directory)
+				
+				if directory_stat.uid != stat.uid
+					raise ArgumentError, "Refusing to run #{path} as the containing directory is owned by a different user!"
+				end
+				
 				user = Etc.getpwuid(stat.uid)
 				
 				# Changing the real/effective uid and gid does not touch the supplementary group list, so a process started as root would otherwise retain root's supplementary groups. `initgroups` requires root, so skip it when running unprivileged (in which case `change_privilege` is a no-op anyway):

@@ -3,6 +3,7 @@
 ## Unreleased
 
   - `Falcon::Service::Virtual#assume_privileges` now resets supplementary groups with `Process.initgroups` before dropping privileges when running as root, and sets `USER` and `LOGNAME` alongside `HOME` in the child environment.
+  - `Falcon::Service::Virtual#assume_privileges` now refuses to run an application whose configuration file is owned by root, or whose containing directory is owned by a different user than the file.
 
 ## v0.57.0
 
