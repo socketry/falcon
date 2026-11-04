@@ -53,11 +53,12 @@ describe Falcon::Environment::TLS do
 		
 		yield server, client
 	ensure
+		# Close the client side before joining: if `connect` raised before sending anything, the server is still blocked in `accept` and would otherwise never return.
+		client&.close
+		client_socket&.close
 		server_thread&.join
 		server&.close
-		client&.close
 		server_socket&.close
-		client_socket&.close
 	end
 	
 	it "provides default TLS paths and settings" do
