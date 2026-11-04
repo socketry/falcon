@@ -2,7 +2,7 @@
 
 ## Unreleased
 
-  - Strip `te`, `trailer` and `proxy-connection` hop-by-hop headers in `Falcon::Middleware::Proxy`.
+  - Strip `te`, `trailer` and `proxy-connection` hop-by-hop headers in `Falcon::Middleware::Proxy`, preserving `te: trailers` which is permitted over HTTP/2 and required by gRPC.
 
 ## v0.57.0
 

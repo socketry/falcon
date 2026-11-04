@@ -37,6 +37,9 @@ module Falcon
 			VIA = "via"
 			CONNECTION = "connection"
 			
+			TE = "te"
+			TRAILERS = "trailers"
+			
 			# Connection-specific fields which intermediaries must remove before forwarding (RFC 9110 §7.6.1; RFC 9112 §7.1.3 for `trailer`, which is meaningless once the body is de-chunked), plus the legacy RFC 2616 §13.5.1 proxy-authentication fields. `public` is a response-only relic of RFC 2068 §14.35.
 			HOP_HEADERS = [
 				"connection",
@@ -93,13 +96,22 @@ module Falcon
 			end
 			
 			# Prepare the headers to be sent to an upstream host.
-			# In particular, we delete all connection and hop headers.
+			# In particular, we delete all connection and hop headers, but preserve `te: trailers` if the client sent it.
+			# @parameter headers [Protocol::HTTP::Headers] The request headers, modified in place.
 			def prepare_headers(headers)
+				# Capture `te` before extraction, as a compliant HTTP/1.1 client also lists it in `connection`:
+				te = headers[TE]
+				
 				if connection = headers[CONNECTION]
 					headers.extract(connection)
 				end
 				
 				headers.extract(HOP_HEADERS)
+				
+				# RFC 9113 §8.2.2 permits `te: trailers` over HTTP/2 and gRPC requires it to detect incompatible proxies. We forward request trailers end-to-end, so advertising them is accurate. Over HTTP/1.1, RFC 9110 §10.1.4 also requires `te` to be listed in `connection`, but the upstream protocol is not known here and the client writes its own `connection` header; this is the same trade-off made by Envoy and nginx.
+				if te&.trailers?
+					headers.add(TE, TRAILERS)
+				end
 			end
 			
 			# Prepare the request to be proxied to the specified host.

@@ -49,10 +49,36 @@ describe Falcon::Middleware::Proxy do
 		]
 		proxy.prepare_headers(headers)
 		expect(headers["accept"]).to be == ["*/*"]
-		expect(headers["te"]).to be_nil
+		expect(headers["te"]).to be == ["trailers"]
 		expect(headers["trailer"]).to be_nil
 		expect(headers["proxy-connection"]).to be_nil
 		expect(headers["upgrade"]).to be_nil
+	end
+	
+	it "removes te if it does not include trailers" do
+		headers = Protocol::HTTP::Headers[
+			"te" => "gzip",
+		]
+		proxy.prepare_headers(headers)
+		expect(headers["te"]).to be_nil
+	end
+	
+	it "preserves te: trailers" do
+		headers = Protocol::HTTP::Headers[
+			"te" => "trailers",
+		]
+		proxy.prepare_headers(headers)
+		expect(headers["te"]).to be == ["trailers"]
+	end
+	
+	it "preserves te: trailers when te is listed in the connection header" do
+		headers = Protocol::HTTP::Headers[
+			"connection" => "te",
+			"te" => "trailers",
+		]
+		proxy.prepare_headers(headers)
+		expect(headers["connection"]).to be_nil
+		expect(headers["te"]).to be == ["trailers"]
 	end
 	
 	it "removes headers named by the connection header" do
