@@ -3,6 +3,7 @@
 # Released under the MIT License.
 # Copyright, 2019-2026, by Samuel Williams.
 
+require "io/endpoint/bound_endpoint"
 require "io/endpoint/unix_endpoint"
 
 module Falcon

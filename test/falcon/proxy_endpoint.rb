@@ -5,6 +5,7 @@
 
 require "falcon/proxy_endpoint"
 
+require "async/http/protocol"
 require "async/variable"
 require "sus/fixtures/async/reactor_context"
 require "sus/fixtures/temporary_directory_context"
