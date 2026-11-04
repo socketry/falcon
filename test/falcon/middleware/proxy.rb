@@ -93,6 +93,20 @@ describe Falcon::Middleware::Proxy do
 		expect(headers["x-custom-hop"]).to be_nil
 	end
 	
+	it "removes headers named by the connection header regardless of case" do
+		headers = Protocol::HTTP::Headers[
+			"Accept" => "*/*",
+			"Connection" => "TE, Keep-Alive",
+			"TE" => "gzip",
+			"Keep-Alive" => "timeout=5",
+		]
+		proxy.prepare_headers(headers)
+		expect(headers["accept"]).to be == ["*/*"]
+		expect(headers["connection"]).to be_nil
+		expect(headers["te"]).to be_nil
+		expect(headers["keep-alive"]).to be_nil
+	end
+	
 	it "can select client based on authority" do
 		request = Protocol::HTTP::Request.new("https", "www.google.com", "GET", "/", nil, headers, nil)
 		
