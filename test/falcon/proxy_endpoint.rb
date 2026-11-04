@@ -6,6 +6,7 @@
 require "falcon/proxy_endpoint"
 
 require "async/http/protocol"
+require "io/endpoint/host_endpoint"
 require "async/variable"
 require "sus/fixtures/async/reactor_context"
 require "sus/fixtures/temporary_directory_context"
@@ -165,10 +166,30 @@ describe Falcon::ProxyEndpoint do
 		
 		with "no mode", options: {mode: nil} do
 			it "leaves the permissions determined by the umask" do
+				with_umask(0o022) do
+					bound_endpoint = proxy_endpoint.bound
+					
+					begin
+						expect(permissions(path)).to be == 0o755
+					ensure
+						bound_endpoint.close
+					end
+				end
+			end
+		end
+		
+		with "a non-unix endpoint" do
+			let(:proxy_endpoint) {subject.new(IO::Endpoint.tcp("localhost", 0))}
+			
+			it "binds without restricting permissions" do
 				bound_endpoint = proxy_endpoint.bound
 				
 				begin
-					expect(permissions(path)).to be == (0o777 & ~File.umask)
+					expect(bound_endpoint.sockets).not.to be(:empty?)
+					
+					bound_endpoint.sockets.each do |socket|
+						expect(socket.local_address).to be(:ip?)
+					end
 				ensure
 					bound_endpoint.close
 				end
