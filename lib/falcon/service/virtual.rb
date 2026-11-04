@@ -18,7 +18,9 @@ module Falcon
 			#
 			# The path must be owned by a non-root user who also owns the containing directory. Running an application as root is refused: `File.stat` follows symbolic links, and `bundle exec` evaluates the application's `gems.rb` before the target is loaded, so a user who controls the application directory could otherwise execute arbitrary code as root. The containing directory must have the same owner as the file, since whoever owns the directory can replace the file with arbitrary content.
 			#
-			# @parameter path [String] The path to the application directory.
+			# When running as root, the supplementary group list is reset with `Process.initgroups(user.name, stat.gid)`, which yields the user's `/etc/group` memberships plus the file's group; the user's primary group from the passwd entry is only included if it is the file's group or is also listed in `/etc/group`.
+			#
+			# @parameter path [String] The path to the application's `falcon.rb` configuration file.
 			# @returns [Hash] The environment to use for the spawned process.
 			# @raises [ArgumentError] If the path is owned by root, the containing directory is owned by a different user, or the owner has no passwd entry.
 			def assume_privileges(path)
@@ -52,7 +54,7 @@ module Falcon
 					raise ArgumentError, "No passwd entry for uid #{stat.uid} (owner of #{path})!"
 				end
 				
-				# Changing the real/effective uid and gid does not touch the supplementary group list, so a process started as root would otherwise retain root's supplementary groups. `initgroups` requires root, so skip it when running unprivileged (in which case `change_privilege` is a no-op anyway):
+				# Changing the real/effective uid and gid does not touch the supplementary group list, so a process started as root would otherwise retain root's supplementary groups. `initgroups` requires root, so skip it when running unprivileged; in that case `change_privilege` only succeeds if the file is owned by the current user (and group), otherwise it raises `EPERM`:
 				if Process.euid == 0
 					Process.initgroups(user.name, stat.gid)
 				end
@@ -68,7 +70,7 @@ module Falcon
 			end
 			
 			# Spawn an application instance from the specified path.
-			# @parameter path [String] The path to the application directory.
+			# @parameter path [String] The path to the application's `falcon.rb` configuration file.
 			# @parameter container [Async::Container::Generic] The container to spawn into.
 			# @parameter options [Options] The options which are passed to `exec`.
 			def spawn(path, container, **options)
