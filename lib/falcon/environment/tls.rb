@@ -80,9 +80,10 @@ module Falcon
 					end
 					
 					# Require at least TLS 1.2, but allow newer versions (e.g. TLS 1.3) to be negotiated. Using `ssl_version=` would pin both the minimum and maximum version to TLS 1.2.
-					context.min_version = OpenSSL::SSL::TLS1_2_VERSION
-					
+					#
+					# The minimum version must be passed to `set_params` rather than assigned beforehand: on non-OpenSSL builds (e.g. LibreSSL), `DEFAULT_PARAMS` includes `min_version: TLS1_VERSION`, which would otherwise override an earlier assignment.
 					context.set_params(
+						min_version: OpenSSL::SSL::TLS1_2_VERSION,
 						ciphers: ssl_ciphers,
 						verify_mode: OpenSSL::SSL::VERIFY_NONE,
 					)
