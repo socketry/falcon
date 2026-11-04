@@ -1,5 +1,9 @@
 # Releases
 
+## Unreleased
+
+  - `Falcon::Environment::TLS#ssl_context` now sets a minimum version of TLS 1.2 instead of pinning TLS 1.2 exactly, allowing TLS 1.3 to be negotiated.
+
 ## v0.57.0
 
   - Update the Envoy cluster example to use dedicated CDS and EDS services from `async-service-supervisor-envoy` v0.5.
