@@ -68,17 +68,18 @@ module Falcon
 		end
 		
 		# Bind to the endpoint, restricting the permissions of any unix socket files that were created.
+		# @parameter wrapper [::IO::Endpoint::Wrapper] The wrapper to use for binding, as passed by {::IO::Endpoint::Generic#accept}.
 		# @yields {|socket| ...} If a block is given, yields each bound socket after its permissions have been restricted.
 		# 	@parameter socket [Socket] The bound socket.
 		# @returns [Array(Socket)] The bound sockets.
-		def bind(&block)
+		def bind(wrapper = self.wrapper, &block)
 			if block_given?
-				@endpoint.bind do |socket|
+				@endpoint.bind(wrapper) do |socket|
 					restrict_permissions!(socket)
 					yield socket
 				end
 			else
-				@endpoint.bind.each do |socket|
+				@endpoint.bind(wrapper).each do |socket|
 					restrict_permissions!(socket)
 				end
 			end

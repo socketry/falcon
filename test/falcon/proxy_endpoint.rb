@@ -76,6 +76,28 @@ describe Falcon::ProxyEndpoint do
 			expect(observed.wait).to be == 0o600
 		end
 		
+		it "accepts the wrapper argument" do
+			sockets = proxy_endpoint.bind(IO::Endpoint::Wrapper.default)
+			
+			begin
+				expect(sockets).to have_attributes(size: be == 1)
+				expect(permissions(path)).to be == 0o600
+			ensure
+				sockets.each(&:close)
+			end
+		end
+		
+		it "can accept connections" do
+			proxy_endpoint.accept do |peer|
+				peer.write("hello")
+				peer.close
+			end
+			
+			proxy_endpoint.connect do |socket|
+				expect(socket.read).to be == "hello"
+			end
+		end
+		
 		with "a custom mode", options: {mode: 0o660} do
 			it "applies the custom mode" do
 				bound_endpoint = proxy_endpoint.bound
