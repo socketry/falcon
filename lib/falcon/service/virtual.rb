@@ -12,6 +12,8 @@ module Falcon
 		# Spawns instances of {Proxy} and {Redirect} to handle incoming requests.
 		#
 		# A virtual host is an application bound to a specific authority (essentially a hostname). The virtual controller manages multiple hosts and allows a single server to host multiple applications easily.
+		#
+		# Each configuration file is Ruby code evaluated with the privileges of the virtual controller, so every file owner must be trusted to the same extent as the user running it.
 		class Virtual < Async::Service::Generic
 			# Drop privileges according to the user and group of the specified path.
 			# @parameter path [String] The path to the application directory.

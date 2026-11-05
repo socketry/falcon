@@ -267,6 +267,8 @@ After=network.target
 [Service]
 Type=notify
 User=http
+AmbientCapabilities=CAP_NET_BIND_SERVICE
+CapabilityBoundingSet=CAP_NET_BIND_SERVICE
 WorkingDirectory=/srv/http
 ExecStart=/usr/local/bin/falcon virtual /srv/http/*/falcon.rb
 Restart=always
@@ -274,3 +276,15 @@ Restart=always
 [Install]
 WantedBy=multi-user.target
 ```
+
+`AmbientCapabilities=CAP_NET_BIND_SERVICE` allows the unprivileged `http` user to bind ports 80 and 443. In this configuration every `falcon.rb` must be owned by `http:http`, as explained below.
+
+### Security Considerations
+
+Each `falcon.rb` is Ruby code, not a static configuration format. `falcon virtual` itself only expands the glob; it then spawns `falcon proxy` and `falcon redirect`, which evaluate every matched `falcon.rb` to determine each host's authority, endpoint and TLS configuration. These two processes run with the full privileges of `falcon virtual` (root, or a user granted `CAP_NET_BIND_SERVICE`), and they evaluate the files at startup and again on every `SIGHUP` reload. The `authority`, `endpoint` and `ssl_context` blocks are evaluated lazily, and the proxy workers re-evaluate them on every TLS handshake, so the proxy user must also be able to read every host's certificate and private key.
+
+Each application is started separately, after dropping privileges to the owner (user and group) of its `falcon.rb`. Ownership therefore determines the identity the application runs as: each `falcon.rb` should be owned by the user and group the application should run as, and must never be owned by root. Applications whose `falcon.rb` is owned by root, or whose containing directory is owned by a different user than the file, are refused.
+
+Per-file ownership separates applications from each other at runtime, but it is not a security boundary against a compromised application. The owner of a file can always make it writable again, so an application which is compromised can rewrite its own `falcon.rb` and execute arbitrary code with the privileges of the proxy on the next start or reload. Every user who owns a `falcon.rb` must therefore be trusted to the same extent as the user running `falcon virtual`. The same applies to anyone who can write to the directory containing a `falcon.rb`, since they can replace the file regardless of its mode, and symlinks are followed when the file is resolved.
+
+There are two supported configurations. The first runs `falcon virtual` as root, with each application's `falcon.rb` owned by that application's own user and group. This isolates the applications from each other at runtime, but all of those users must be trusted as described above. The second runs `falcon virtual` as a single unprivileged user, as in the systemd example above. An unprivileged process cannot change to any other user or group, so in this mode every `falcon.rb` must be owned by that user and its primary group (`http:http` in the example), otherwise the application will fail to start and be restarted repeatedly. The proxy and all applications then run as the same user.
