@@ -29,10 +29,81 @@ describe Falcon::Service::Virtual do
 	end
 	
 	with "#assume_privileges" do
-		it "builds a child environment with path privileges" do
-			stat = File.stat(path)
-			user = Etc.getpwuid(stat.uid)
+		let(:stat) {File.stat(path)}
+		let(:user) {Etc.getpwuid(stat.uid)}
+		
+		def record_privilege_changes(euid)
+			calls = []
 			
+			mock(Process) do |mock|
+				mock.replace(:euid){euid}
+				mock.replace(:initgroups) do |*arguments|
+					calls << [:initgroups, *arguments]
+				end
+			end
+			
+			mock(Process::GID) do |mock|
+				mock.replace(:change_privilege) do |*arguments|
+					calls << [:gid, *arguments]
+				end
+			end
+			
+			mock(Process::UID) do |mock|
+				mock.replace(:change_privilege) do |*arguments|
+					calls << [:uid, *arguments]
+				end
+			end
+			
+			return calls
+		end
+		
+		# Replace `File.stat` so that ownership checks can be exercised without changing real file ownership.
+		# @parameter owners [Hash(String, Integer)] The uid to report for each path.
+		def mock_file_owners(owners)
+			stat_class = Struct.new(:uid, :gid)
+			
+			mock(File) do |mock|
+				mock.replace(:stat) do |path|
+					stat_class.new(owners.fetch(path), owners.fetch(path))
+				end
+			end
+		end
+		
+		it "refuses to run an application owned by root" do
+			calls = record_privilege_changes(0)
+			mock_file_owners(path => 0, File.dirname(path) => 0)
+			
+			expect do
+				service.assume_privileges(path)
+			end.to raise_exception(ArgumentError, message: be =~ /Refusing to run .* as root/)
+			
+			expect(calls).to be(:empty?)
+		end
+		
+		it "refuses to run an application whose directory is owned by a different user" do
+			calls = record_privilege_changes(0)
+			mock_file_owners(path => 1000, File.dirname(path) => 1001)
+			
+			expect do
+				service.assume_privileges(path)
+			end.to raise_exception(ArgumentError, message: be =~ /owned by a different user/)
+			
+			expect(calls).to be(:empty?)
+		end
+		
+		it "refuses to run an application whose owner has no passwd entry" do
+			calls = record_privilege_changes(0)
+			expect(Etc).to receive(:getpwuid).with(stat.uid).and_return(nil)
+			
+			expect do
+				service.assume_privileges(path)
+			end.to raise_exception(ArgumentError, message: be =~ /No passwd entry for uid #{stat.uid}/)
+			
+			expect(calls).to be(:empty?)
+		end
+		
+		it "builds a child environment with path privileges" do
+			expect(Process).to receive(:euid).and_return(1000)
 			expect(Process::GID).to receive(:change_privilege).with(stat.gid)
 			expect(Process::UID).to receive(:change_privilege).with(stat.uid)
 			
@@ -48,6 +119,31 @@ describe Falcon::Service::Virtual do
 			expect(env["PATH"]).to be == "/bin"
 			expect(env["PWD"]).to be == File.dirname(path)
 			expect(env["HOME"]).to be == user.dir
+			expect(env["USER"]).to be == user.name
+			expect(env["LOGNAME"]).to be == user.name
+		end
+		
+		it "resets supplementary groups before dropping privileges when running as root" do
+			calls = record_privilege_changes(0)
+			
+			service.assume_privileges(path)
+			
+			expect(calls).to be == [
+				[:initgroups, user.name, stat.gid],
+				[:gid, stat.gid],
+				[:uid, stat.uid],
+			]
+		end
+		
+		it "does not reset supplementary groups when running unprivileged" do
+			calls = record_privilege_changes(1000)
+			
+			service.assume_privileges(path)
+			
+			expect(calls).to be == [
+				[:gid, stat.gid],
+				[:uid, stat.uid],
+			]
 		end
 	end
 	

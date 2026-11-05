@@ -5,6 +5,7 @@
 
 require "async/service/generic"
 require "console"
+require "etc"
 
 module Falcon
 	module Service
@@ -14,8 +15,12 @@ module Falcon
 		# A virtual host is an application bound to a specific authority (essentially a hostname). The virtual controller manages multiple hosts and allows a single server to host multiple applications easily.
 		class Virtual < Async::Service::Generic
 			# Drop privileges according to the user and group of the specified path.
-			# @parameter path [String] The path to the application directory.
+			#
+			# The path and its containing directory must be owned by the same non-root user, since that user's code is executed with the resulting privileges.
+			#
+			# @parameter path [String] The path to the application's `falcon.rb` configuration file.
 			# @returns [Hash] The environment to use for the spawned process.
+			# @raises [ArgumentError] If the path is owned by root, the containing directory is owned by a different user, or the owner has no passwd entry.
 			def assume_privileges(path)
 				# Process.exec / Process.spawn don't replace the environment but instead update it, so we need to clear out any existing BUNDLE_ variables using `nil` values, which will cause them to be removed from the child environment:
 				env = ENV.to_h do |key, value|
@@ -26,21 +31,44 @@ module Falcon
 					end
 				end
 				
-				env["PWD"] = File.dirname(path)
+				directory = File.dirname(path)
+				env["PWD"] = directory
 				
+				# `File.stat` follows symbolic links, so this is the owner of the file that will actually be loaded:
 				stat = File.stat(path)
+				
+				if stat.uid == 0
+					raise ArgumentError, "Refusing to run #{path} as root!"
+				end
+				
+				# The owner of the directory can replace the file, so it must be the same user:
+				directory_stat = File.stat(directory)
+				
+				if directory_stat.uid != stat.uid
+					raise ArgumentError, "Refusing to run #{path} as the containing directory is owned by a different user!"
+				end
+				
+				unless user = Etc.getpwuid(stat.uid)
+					raise ArgumentError, "No passwd entry for uid #{stat.uid} (owner of #{path})!"
+				end
+				
+				# Changing the uid and gid does not touch the supplementary groups, which would otherwise remain root's. `initgroups` requires root, so skip it when running unprivileged:
+				if Process.euid == 0
+					Process.initgroups(user.name, stat.gid)
+				end
 				
 				Process::GID.change_privilege(stat.gid)
 				Process::UID.change_privilege(stat.uid)
 				
-				home = Etc.getpwuid(stat.uid).dir
-				env["HOME"] = home
+				env["HOME"] = user.dir
+				env["USER"] = user.name
+				env["LOGNAME"] = user.name
 				
 				return env
 			end
 			
 			# Spawn an application instance from the specified path.
-			# @parameter path [String] The path to the application directory.
+			# @parameter path [String] The path to the application's `falcon.rb` configuration file.
 			# @parameter container [Async::Container::Generic] The container to spawn into.
 			# @parameter options [Options] The options which are passed to `exec`.
 			def spawn(path, container, **options)
