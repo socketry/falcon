@@ -1,5 +1,12 @@
 # Releases
 
+## Unreleased
+
+  - Restrict the permissions of the `application.ipc` unix socket bound by `Falcon::Environment::Application` to the owner (`0o600`), preventing other local users from bypassing the proxy and forging `x-forwarded-*` headers. Connecting to a unix socket requires write permission on the socket file, so previously the socket was connectable by whoever the process umask allowed: the owner only under the common `022` umask, but the group under `002` and everyone under `000`. `Falcon::ProxyEndpoint` accepts a `mode:` option and the environment exposes `ipc_mode` to override the default.
+      - **Breaking change:** Deployments which relied on a permissive umask to let a separate process connect to `application.ipc` (e.g. nginx running as `www-data`) will receive `EACCES` after upgrading. Set `ipc_mode 0o660` (same group), `ipc_mode 0o666` (everyone) or `ipc_mode nil` (previous umask-dependent behaviour) in your `falcon.rb` as appropriate.
+      - Restricting the application root directory itself (e.g. `0o700`) remains the stronger control: the socket mode only matters when other users can traverse the application root.
+  - Fix `Falcon::ProxyEndpoint#bind` to accept the `wrapper` argument passed by `IO::Endpoint::Generic#accept`, so `accept` no longer raises `ArgumentError`.
+
 ## v0.57.0
 
   - Update the Envoy cluster example to use dedicated CDS and EDS services from `async-service-supervisor-envoy` v0.5.

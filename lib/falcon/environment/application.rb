@@ -40,13 +40,21 @@ module Falcon
 				::File.expand_path("application.ipc", root)
 			end
 			
+			# The file mode applied to the IPC socket, which only the proxy should connect to since the application trusts its forwarded headers. Use `0o660` to admit a front-end proxy in the application's group, or `nil` to leave the umask in control.
+			#
+			# @returns [Integer | Nil] The file mode, or `nil` to leave the permissions as determined by the process umask.
+			def ipc_mode
+				::Falcon::ProxyEndpoint::DEFAULT_MODE
+			end
+			
 			# The endpoint that will be used for communicating with the application server.
 			# @returns [::Falcon::ProxyEndpoint]
 			def endpoint
 				::Falcon::ProxyEndpoint.unix(ipc_path,
 					protocol: protocol,
 					scheme: scheme,
-					authority: authority
+					authority: authority,
+					mode: ipc_mode,
 				)
 			end
 		end
