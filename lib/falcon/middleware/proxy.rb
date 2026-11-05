@@ -41,7 +41,7 @@ module Falcon
 			TE = "te"
 			TRAILERS = "trailers"
 			
-			# Connection-specific fields which intermediaries must remove before forwarding (RFC 9110 §7.6.1; RFC 9112 §7.1.3 for `trailer`, which is meaningless once the body is de-chunked), plus the legacy RFC 2616 §13.5.1 proxy-authentication fields. `public` is a response-only relic of RFC 2068 §14.35.
+			# Connection-specific fields which intermediaries must remove before forwarding (RFC 9110 Section 7.6.1), plus the legacy proxy-authentication fields.
 			HOP_HEADERS = [
 				"connection",
 				"keep-alive",
@@ -109,7 +109,7 @@ module Falcon
 				
 				headers.extract(HOP_HEADERS)
 				
-				# RFC 9113 §8.2.2 permits `te: trailers` over HTTP/2 and gRPC requires it to detect incompatible proxies. We forward request trailers end-to-end, so advertising them is accurate. Over HTTP/1.1, RFC 9110 §10.1.4 also requires `te` to be listed in `connection`, but the upstream protocol is not known here and the client writes its own `connection` header; this is the same trade-off made by Envoy and nginx.
+				# `te: trailers` is preserved since request trailers are forwarded end-to-end, and gRPC requires it:
 				if te&.trailers?
 					headers.add(TE, TRAILERS)
 				end
@@ -130,7 +130,7 @@ module Falcon
 				# The authority of the request must match the authority of the endpoint we are proxying to, otherwise SNI and other things won't work correctly.
 				request.authority = host.authority
 				
-				# HTTP/2 clients may send `host` alongside `:authority`; it now refers to the original authority, and the upstream connection derives its own from `request.authority` (RFC 9113 §8.3.1).
+				# The upstream connection derives its own `host` from `request.authority`:
 				request.headers.delete(HOST)
 				
 				if address = request.remote_address
