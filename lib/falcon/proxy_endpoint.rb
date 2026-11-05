@@ -47,18 +47,12 @@ module Falcon
 			@options[:authority]
 		end
 		
-		# The default file mode applied to bound unix sockets: readable and writable by the owner only.
-		#
-		# Connecting to a unix socket requires write permission on the socket file, so this permits only the owner (and root, which ignores mode bits) to connect. The topologies supported by `falcon virtual` run the proxy either as root or as the same user as the application, so neither requires group access.
+		# The default file mode applied to bound unix sockets: connectable by the owner only, since the application trusts headers forwarded over this socket.
 		DEFAULT_MODE = 0o600
 		
 		# The file mode to apply to bound unix sockets.
 		#
-		# The proxy forwards client details (e.g. `x-forwarded-for`) to the application via this endpoint, and the application trusts those headers. Restricting the socket's permissions prevents other local users from connecting directly and forging them.
-		#
-		# Use `0o660` to allow a separate front-end proxy running in the application's group to connect, or `nil` to leave the permissions as determined by the process umask.
-		#
-		# @returns [Integer | Nil] The file mode, or `nil` (or `false`) to leave the permissions as determined by the process umask.
+		# @returns [Integer | Nil] The file mode, or `nil` to leave the permissions as determined by the process umask.
 		def mode
 			@options.fetch(:mode, DEFAULT_MODE)
 		end
@@ -70,9 +64,7 @@ module Falcon
 		
 		# Bind to the endpoint, restricting the permissions of any unix socket files that were created.
 		#
-		# The socket file is created by `bind(2)` with permissions of `0777 & ~umask`, and connecting requires write permission on it. Under the common `022` umask that already limits connections to the owner, but a permissive umask (`002` or `000`) leaves the socket connectable by the group or by everyone. To avoid a window between `bind(2)` and `chmod(2)` in which another local user could connect, the umask is set from {#mode} for the duration of the underlying `bind`, so the socket file never exists with wider permissions. The explicit `chmod` afterwards ensures the final mode is exactly {#mode} regardless of how the platform applies the umask to socket files.
-		#
-		# The umask is process-wide, but {Falcon::Service::Server#bind_endpoint} binds from the single-threaded controller before any workers are started, so nothing else is creating files concurrently. In the block form, the wrapper may start running the block before the umask is restored, so the block should not depend on the umask.
+		# The umask is restricted during `bind(2)` so the socket file never exists with wider permissions, and `chmod(2)` afterwards makes the final mode exact.
 		#
 		# @parameter wrapper [::IO::Endpoint::Wrapper] The wrapper to use for binding, as passed by {::IO::Endpoint::Generic#accept}.
 		# @yields {|socket| ...} If a block is given, yields each bound socket after its permissions have been restricted.
@@ -111,7 +103,7 @@ module Falcon
 			self.new(::IO::Endpoint.unix(path), **options)
 		end
 		
-		# Set the process umask so that any socket file created by `bind(2)` within the block has at most {#mode}, restoring the previous umask afterwards.
+		# Restrict the process umask to {#mode} for the duration of the block.
 		#
 		# @yields {...} The block during which the umask is restricted.
 		# @returns [Object] The result of the block.
@@ -127,9 +119,7 @@ module Falcon
 			end
 		end
 		
-		# Apply {#mode} to the socket file backing the given socket, if it is a named unix socket.
-		#
-		# The path is taken from the socket's local address, so when {::IO::Endpoint::UNIXEndpoint} falls back to a short symlinked path, the mode is applied to the real socket file rather than the symlink.
+		# Apply {#mode} to the socket file backing the given socket, if it is a named unix socket. The path comes from the socket's local address, so a symlinked bind path resolves to the real file.
 		#
 		# @parameter socket [Socket] The bound socket.
 		private def restrict_permissions!(socket)

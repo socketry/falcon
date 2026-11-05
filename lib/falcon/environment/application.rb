@@ -40,11 +40,7 @@ module Falcon
 				::File.expand_path("application.ipc", root)
 			end
 			
-			# The file mode applied to the IPC socket after it is bound.
-			#
-			# The proxy adds `x-forwarded-for`, `x-forwarded-proto` and `forwarded` headers which the application trusts, so the socket must not be connectable by other local users. Connecting requires write permission on the socket file, so the default (`0o600`) permits only the owner (and root). Use `ipc_mode 0o660` if a separate front-end proxy (e.g. nginx) running in the application's group needs to connect, or `ipc_mode nil` to leave the permissions as determined by the process umask.
-			#
-			# Note that restricting the application root directory itself (e.g. `0o700`) is a stronger control; the socket mode only matters when other users can traverse the application root.
+			# The file mode applied to the IPC socket, which only the proxy should connect to since the application trusts its forwarded headers. Use `0o660` to admit a front-end proxy in the application's group, or `nil` to leave the umask in control.
 			#
 			# @returns [Integer | Nil] The file mode, or `nil` to leave the permissions as determined by the process umask.
 			def ipc_mode
