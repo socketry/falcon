@@ -1,5 +1,10 @@
 # Releases
 
+## Unreleased
+
+  - Strip `te`, `trailer` and `proxy-connection` hop-by-hop headers in `Falcon::Middleware::Proxy`, preserving `te: trailers` which is permitted over HTTP/2 and required by gRPC.
+  - Remove the `host` header in `Falcon::Middleware::Proxy` when rewriting the request authority, so HTTP/2 upstreams no longer receive a `host` that disagrees with `:authority`.
+
 ## v0.57.0
 
   - Update the Envoy cluster example to use dedicated CDS and EDS services from `async-service-supervisor-envoy` v0.5.

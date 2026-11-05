@@ -36,14 +36,21 @@ module Falcon
 			
 			VIA = "via"
 			CONNECTION = "connection"
+			HOST = "host"
 			
-			# HTTP hop headers which *should* not be passed through the proxy.
+			TE = "te"
+			TRAILERS = "trailers"
+			
+			# Connection-specific fields which intermediaries must remove before forwarding (RFC 9110 Section 7.6.1), plus the legacy proxy-authentication fields.
 			HOP_HEADERS = [
 				"connection",
 				"keep-alive",
-				"public",
 				"proxy-authenticate",
 				"proxy-authorization",
+				"proxy-connection",
+				"public",
+				"te",
+				"trailer",
 				"transfer-encoding",
 				"upgrade",
 			]
@@ -90,13 +97,22 @@ module Falcon
 			end
 			
 			# Prepare the headers to be sent to an upstream host.
-			# In particular, we delete all connection and hop headers.
+			# In particular, we delete all connection and hop headers, but preserve `te: trailers` if the client sent it.
+			# @parameter headers [Protocol::HTTP::Headers] The request headers, modified in place.
 			def prepare_headers(headers)
+				# Capture `te` before extraction, as a compliant HTTP/1.1 client also lists it in `connection`:
+				te = headers[TE]
+				
 				if connection = headers[CONNECTION]
 					headers.extract(connection)
 				end
 				
 				headers.extract(HOP_HEADERS)
+				
+				# `te: trailers` is preserved since request trailers are forwarded end-to-end, and gRPC requires it:
+				if te&.trailers?
+					headers.add(TE, TRAILERS)
+				end
 			end
 			
 			# Prepare the request to be proxied to the specified host.
@@ -113,6 +129,9 @@ module Falcon
 				
 				# The authority of the request must match the authority of the endpoint we are proxying to, otherwise SNI and other things won't work correctly.
 				request.authority = host.authority
+				
+				# The upstream connection derives its own `host` from `request.authority`:
+				request.headers.delete(HOST)
 				
 				if address = request.remote_address
 					request.headers.add(X_FORWARDED_FOR, address.ip_address)
