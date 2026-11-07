@@ -1,5 +1,9 @@
 # Releases
 
+## Unreleased
+
+  - Document that `falcon virtual` evaluates every `falcon.rb` in the proxy and redirect processes, so every user who owns a `falcon.rb` must be trusted to the same extent as the user running `falcon virtual`, and that an unprivileged `falcon virtual` requires every `falcon.rb` to be owned by that same user.
+
 ## v0.57.0
 
   - Update the Envoy cluster example to use dedicated CDS and EDS services from `async-service-supervisor-envoy` v0.5.
