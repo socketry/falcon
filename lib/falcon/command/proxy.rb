@@ -12,7 +12,7 @@ module Falcon
 	module Command
 		# Implements the `falcon proxy` command.
 		#
-		# Manages a {Controller::Proxy} instance which is responsible for proxing incoming requests.
+		# Manages a {Controller::Proxy} instance which is responsible for proxying incoming requests.
 		class Proxy < Samovar::Command
 			self.description = "Proxy to one or more backend hosts."
 			

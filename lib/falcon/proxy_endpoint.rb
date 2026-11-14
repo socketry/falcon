@@ -6,7 +6,7 @@
 require "io/endpoint/unix_endpoint"
 
 module Falcon
-	# An endpoint suitable for proxing requests, typically via a unix pipe.
+	# An endpoint suitable for proxying requests, typically via a unix pipe.
 	class ProxyEndpoint < ::IO::Endpoint::Generic
 		# Initialize the proxy endpoint.
 		# @parameter endpoint [::IO::Endpoint::Generic] The endpoint which will be used for connecting/binding.
