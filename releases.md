@@ -48,7 +48,7 @@ Use {ruby Falcon::Server.protocol\_middleware} for protocol HTTP applications an
 
   - **Breaking**: Drop dependency on `async-container-supervisor`, you should migrate to `async-service-supervisor` instead.
   - **Breaking**: Remove support for legacy environments, including `Falcon::Configuration`, now using `Async::Service::Configuration` directly.
-  - **Breaking**: `bake falcon:supervisor:restart` removed – superceeded by `async:service:supervisor:restart`.
+  - **Breaking**: `bake falcon:supervisor:restart` removed – superseded by `async:service:supervisor:restart`.
   - Add support for `async-utilization` metrics.
 
 ## v0.54.1
@@ -116,7 +116,7 @@ We retain the `falcon:supervisor:restart` task, but you may prefer to use `async
 
 ### Falcon Server Process Title
 
-The Falcon server process title is now updated periodically (alongside the health check) to include information about the numnber of connections and requests.
+The Falcon server process title is now updated periodically (alongside the health check) to include information about the number of connections and requests.
 
     12211 ttys002    0:00.28 /Users/samuel/.gem/ruby/3.4.1/bin/falcon serve --bind http://localhost:8000      
     12213 ttys002    0:04.14 http://localhost:8000 (C=2/2 R=0/49.45K L=0.353)

@@ -8,7 +8,7 @@ require "console"
 
 module Falcon
 	module Service
-		# A controller which mananages several virtual hosts.
+		# A controller which manages several virtual hosts.
 		# Spawns instances of {Proxy} and {Redirect} to handle incoming requests.
 		#
 		# A virtual host is an application bound to a specific authority (essentially a hostname). The virtual controller manages multiple hosts and allows a single server to host multiple applications easily.

@@ -3,7 +3,7 @@
 The problem to solve is to have long running requests limited to a
 certain number of concurrent request.
 
-If more requests are comming in they are responded with code 429.
+If more requests are coming in, they are responded to with code 429.
 
 # Running it
 ```

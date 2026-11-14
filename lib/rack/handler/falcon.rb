@@ -8,7 +8,7 @@ require "rack/handler"
 
 require_relative "../../falcon/rackup/handler"
 
-# Generally speaking, you should not require this file directly, or assume the existance of the `Rack::Handler::Falcon` constant. Instead, use `Rack::Handler.get(:falcon)` to load and access the handler.
+# Generally speaking, you should not require this file directly, or assume the existence of the `Rack::Handler::Falcon` constant. Instead, use `Rack::Handler.get(:falcon)` to load and access the handler.
 
 # @namespace
 module Rack
