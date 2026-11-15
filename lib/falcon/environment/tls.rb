@@ -55,7 +55,7 @@ module Falcon
 			# The private key.
 			# @returns [OpenSSL::PKey::RSA]
 			def ssl_private_key
-				OpenSSL::PKey::RSA.new(File.read(ssl_private_key_path))
+				OpenSSL::PKey.read(File.read(ssl_private_key_path))
 			end
 			
 			# The SSL context to use for incoming connections.
