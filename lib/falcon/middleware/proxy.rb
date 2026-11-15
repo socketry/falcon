@@ -33,6 +33,12 @@ module Falcon
 			FORWARDED = "forwarded"
 			X_FORWARDED_FOR = "x-forwarded-for"
 			X_FORWARDED_PROTO = "x-forwarded-proto"
+			X_FORWARDED_HOST = "x-forwarded-host"
+			X_FORWARDED_PORT = "x-forwarded-port"
+			X_FORWARDED_SCHEME = "x-forwarded-scheme"
+			X_FORWARDED_SSL = "x-forwarded-ssl"
+			X_REAL_IP = "x-real-ip"
+			CLIENT_IP = "client-ip"
 			
 			VIA = "via"
 			CONNECTION = "connection"
@@ -46,6 +52,19 @@ module Falcon
 				"proxy-authorization",
 				"transfer-encoding",
 				"upgrade",
+			]
+			
+			# Headers which disclose client/proxy provenance across a trust boundary.
+			FORWARDED_HEADERS = [
+				FORWARDED,
+				X_FORWARDED_FOR,
+				X_FORWARDED_PROTO,
+				X_FORWARDED_HOST,
+				X_FORWARDED_PORT,
+				X_FORWARDED_SCHEME,
+				X_FORWARDED_SSL,
+				X_REAL_IP,
+				CLIENT_IP,
 			]
 			
 			# Initialize the proxy middleware.
@@ -99,6 +118,12 @@ module Falcon
 				headers.extract(HOP_HEADERS)
 			end
 			
+			# Prepare forwarded headers before adding the proxy's own provenance.
+			# Override this method to preserve or transform trusted upstream headers.
+			def prepare_forwarded_headers(headers)
+				headers.extract(FORWARDED_HEADERS)
+			end
+			
 			# Prepare the request to be proxied to the specified host.
 			# In particular, we set appropriate {VIA}, {FORWARDED}, {X_FORWARDED_FOR} and {X_FORWARDED_PROTO} headers.
 			def prepare_request(request, host)
@@ -113,6 +138,8 @@ module Falcon
 				
 				# The authority of the request must match the authority of the endpoint we are proxying to, otherwise SNI and other things won't work correctly.
 				request.authority = host.authority
+				
+				self.prepare_forwarded_headers(request.headers)
 				
 				if address = request.remote_address
 					request.headers.add(X_FORWARDED_FOR, address.ip_address)
