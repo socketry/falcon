@@ -20,6 +20,7 @@ module Falcon
 				super
 				
 				@listener = nil
+				@multiprocess = false
 			end
 			
 			# Build a listener from a configured and bound endpoint.
@@ -41,7 +42,7 @@ module Falcon
 				@endpoint = @evaluator.endpoint
 				
 				Sync do
-					bound_endpoint = @endpoint.bound
+					bound_endpoint = Listener::Endpoint.bound(@endpoint)
 					@listener = make_listener(@evaluator, @endpoint, bound_endpoint)
 				end
 				
@@ -66,6 +67,8 @@ module Falcon
 			# Setup the service into the specified container.
 			# @parameter container [Async::Container] The container to configure.
 			def setup(container)
+				@multiprocess = container.class.multiprocess?
+				
 				container_options = @evaluator.container_options
 				health_check_timeout = container_options[:health_check_timeout]
 				
@@ -132,9 +135,11 @@ module Falcon
 				"#{evaluator.name} (#{server.statistics_string} L=#{load})"
 			end
 			
-			# Close the bound endpoint.
+			# Stop listening, and close the bound endpoint. New connections are refused while the workers finish the requests they have already accepted.
 			def stop(...)
 				if @listener
+					# Closing the listener is enough, unless workers in other processes hold their own descriptors for it:
+					@listener.shutdown if @multiprocess
 					@listener.close
 					@listener = nil
 				end

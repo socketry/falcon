@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+  - Refuse new connections as soon as a server stops, while it finishes the requests in flight. Forked and hybrid workers hold their own descriptors for the listening socket, so it kept listening until the last worker exited: connections that arrived in the meantime were queued, and then reset. `Falcon::Service::Server#stop` now shuts the socket down with `Falcon::Listener#shutdown`. This applies to TCP sockets on Linux. UNIX sockets, and other platforms, behave as before.
   - Document that `falcon virtual` evaluates every `falcon.rb` in the proxy and redirect processes, so every user who owns a `falcon.rb` must be trusted to the same extent as the user running `falcon virtual`, and that an unprivileged `falcon virtual` requires every `falcon.rb` to be owned by that same user.
 
 ## v0.57.0
