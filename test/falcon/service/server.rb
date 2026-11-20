@@ -7,6 +7,76 @@ require "falcon/service/server"
 require "falcon/environment/server"
 require "falcon/environment/rackup"
 require "sus/fixtures/async/scheduler_context"
+require "async/container"
+require "async/http/client"
+require "async/service/environment"
+
+AStoppingServer = Sus::Shared("a stopping server") do
+	let(:arrived) {IO.pipe}
+	let(:proceed) {IO.pipe}
+	
+	# Reports each request to `/slow`, and then holds it until the test lets it proceed.
+	let(:application) do
+		arrived_output = arrived.last
+		proceed_input = proceed.first
+		
+		Module.new do
+			define_method(:middleware) do
+				Protocol::HTTP::Middleware.for do |request|
+					if request.path == "/slow"
+						arrived_output.write(".")
+						proceed_input.read(1)
+					end
+					
+					Protocol::HTTP::Response[200, {}, ["Hello World"]]
+				end
+			end
+		end
+	end
+	
+	let(:environment) do
+		Async::Service::Environment.new(Falcon::Environment::Server).with(
+			application,
+			name: "hello",
+			root: __dir__,
+			url: "http://127.0.0.1:0",
+			container_options: container_options,
+		)
+	end
+	
+	after do
+		[*arrived, *proceed].each(&:close)
+	end
+	
+	it "refuses new connections and finishes the requests in flight" do
+		container = container_class.new
+		
+		server.start
+		address = server.with_listener(environment.evaluator){|listener| listener.addresses.first}
+		server.setup(container)
+		container.wait_until_ready
+		
+		client = Async::HTTP::Client.new(Async::HTTP::Endpoint.parse("http://#{address.ip_address}:#{address.ip_port}"))
+		request = Async{client.get("/slow").read}
+		arrived.first.read(1)
+		
+		server.stop
+		
+		# Only Linux can shut down a listening socket:
+		if RUBY_PLATFORM.include?("linux")
+			expect do
+				Socket.tcp(address.ip_address, address.ip_port).close
+			end.to raise_exception(Errno::ECONNREFUSED)
+		end
+		
+		proceed.last.write(".")
+		expect(request.wait).to be == "Hello World"
+	ensure
+		client&.close
+		server.stop
+		container&.stop
+	end
+end
 
 describe Falcon::Service::Server do
 	include Sus::Fixtures::Async::SchedulerContext
@@ -33,6 +103,7 @@ describe Falcon::Service::Server do
 		
 		server.with_listener(environment.evaluator) do |listener|
 			expect(listener).to be_a(Falcon::Listener)
+			expect(listener.endpoint).to be_a(Falcon::Listener::Endpoint)
 			expect(listener).to have_attributes(
 				name: be == "hello",
 				scheme: be == "http",
@@ -153,5 +224,42 @@ describe Falcon::Service::Server do
 				task.children.each(&:wait)
 			end.wait
 		end.to raise_exception(IOError, message: be == "application failure")
+	end
+	
+	with "a forked container", if: Process.respond_to?(:fork) do
+		let(:container_class) {Async::Container::Forked}
+		let(:container_options) {{restart: false, count: 2}}
+		
+		it_behaves_like AStoppingServer
+	end
+	
+	it "doesn't shut down the listener when its workers are threads" do
+		container = Class.new(Async::Container::Threaded) do
+			def run(...)
+				self
+			end
+		end.new
+		
+		server.start
+		address, shared = server.with_listener(environment.evaluator) do |listener|
+			# These duplicates keep the sockets open, so they go on listening unless they are shut down:
+			[listener.addresses.first, listener.endpoint.bind]
+		end
+		server.setup(container)
+		
+		server.stop
+		
+		expect do
+			Socket.tcp(address.ip_address, address.ip_port).close
+		end.not.to raise_exception
+	ensure
+		shared&.each(&:close)
+	end
+	
+	with "a hybrid container", if: Process.respond_to?(:fork) do
+		let(:container_class) {Async::Container::Hybrid}
+		let(:container_options) {{restart: false, forks: 1, threads: 2}}
+		
+		it_behaves_like AStoppingServer
 	end
 end
